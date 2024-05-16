@@ -1,0 +1,68 @@
+name: CI/CD meteorology-eurac-dc
+
+on: 
+  push:
+    paths:
+      - "collectors/meteorology-eurac/**"
+      - ".github/workflows/meteorology-eurac-dc.yml"
+
+env:
+  AWS_REGION : eu-west-1
+  AWS_EKS_CLUSTER_NAME : aws-main-eu-01
+  AWS_ACCESS_KEY_ID : ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_ACCESS_SECRET_KEY : ${{ secrets.AWS_ACCESS_SECRET_KEY }}
+  JAVA_VERSION: 17
+  WORKING_DIRECTORY: collectors/meteorology-eurac
+  DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/meteorology-eurac-dc
+  DOCKER_TAG: ${{ github.sha }}
+  KUBERNETES_NAMESPACE: collector
+
+jobs:
+  deploy-test:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    concurrency: deploy-test-meteorology-eurac-dc
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_ACCESS_SECRET_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Authenticate to AWS EKS
+        run: aws eks --region ${{ env.AWS_REGION }} update-kubeconfig --name ${{ env.AWS_EKS_CLUSTER_NAME }}
+
+      - name: Build libs
+        uses: noi-techpark/github-actions/maven-build@v2
+        with:
+          working-directory: collectors/lib/ingress-mq
+          java-version: ${{ env.JAVA_VERSION }}
+          build-command: 'mvn clean install'
+
+      - name: Build project
+        uses: noi-techpark/github-actions/maven-build@v2
+        with:
+          working-directory: ${{ env.WORKING_DIRECTORY }}
+          java-version: ${{ env.JAVA_VERSION }}
+          build-command: 'mvn clean install'
+
+      - name: Build and push images
+        uses: noi-techpark/github-actions/docker-build-and-push@v2
+        with:
+          working-directory: ${{ env.WORKING_DIRECTORY }}/infrastructure
+          docker-username: ${{ github.actor }}
+          docker-password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Helm deployment
+        run: |
+            cd collectors/meteorology-eurac
+            helm upgrade --install dc-meteorology-eurac ../../helm/generic-collector \
+              --values infrastructure/helm/values.yaml \
+              --set-string image.repository=$DOCKER_IMAGE \
+              --set-string image.tag=$DOCKER_TAG \
+              --set-string image.pullPolicy=IfNotPresent \
+              --namespace $KUBERNETES_NAMESPACE 
