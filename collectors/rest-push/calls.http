@@ -1,0 +1,59 @@
+@host=http://localhost:{{$dotenv SERVER_PORT}}
+
+### Healthcheck 
+GET {{host}}/health
+
+### get openapi spec
+GET {{host}}/apispec
+
+### Request without authorization toke (must fail)
+POST {{host}}/push/test123/123
+Content-Type: application/octet-stream
+test
+
+### Get access token for the writer (LOCAL DEV)
+# @name login
+POST https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials
+&client_id=opendatahub-push
+&client_secret=*********
+&scope=openid
+
+###
+@token={{login.response.body.access_token}}
+
+### Push nonexisting authorization
+POST {{host}}/push/testprovider/invalidname
+Content-Type: text/plain
+Authorization: Bearer {{token}}
+
+### Push empty
+POST {{host}}/push/testprovider/testdataset
+Content-Type: text/plain
+Authorization: Bearer {{token}}
+
+### Push json
+POST {{host}}/push/testprovider/testdataset
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{"value": 123}
+
+### Push binary
+POST {{host}}/push/testprovider/testdataset
+Content-Type: application/octet-stream
+Authorization: Bearer {{token}}
+
+asdfasdfasdfasdf^&*&@#
+
+### Keycloak authorization request
+POST https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+Authorization: Bearer {{token}}
+
+grant_type=urn:ietf:params:oauth:grant-type:uma-ticket
+&audience=opendatahub-push-testing
+&permission=/testprovider/testdataset
+&response_mode=decision

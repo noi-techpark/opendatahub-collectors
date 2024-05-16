@@ -1,0 +1,31 @@
+# SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+nameOverride: dc-parking-offstreet-merano
+fullnameOverride: dc-parking-offstreet-merano
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/rest-poller
+  pullPolicy: IfNotPresent
+  tag: "0.2.0" # Set this when upgrading chart with --set-value
+
+imagePullSecrets:
+  - name: container-registry-r
+
+resources:
+  requests:
+    cpu: 1m
+    memory: 200Mi
+
+env:
+  CRON_SCHEDULE: 0 */2 * * * ?
+  INGRESS_PROVIDER: parking-offstreet/merano
+  INGRESS_RABBITMQ_CLIENTNAME: parking-offstreet-datacollector-merano
+  HTTP_ENDPOINT: "http://84.18.132.129/trafficstudiorestwebservice/getParkingAreasSituation"
+  HTTP_METHOD: GET
+  HTTP_HEADERS_Accept: "application/json"
+
+envSecretRef:
+  - name: INGRESS_RABBITMQ_URI 
+    secret: rabbitmq-svcbind
+    key: uri

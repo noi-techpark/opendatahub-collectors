@@ -1,0 +1,6 @@
+@trigger = http://localhost:8082/trigger
+#@trigger = https://spreadsheets.dev.testingmachine.eu/sta-echarging/trigger
+
+POST {{trigger}}
+# The token is generated on application start, you can find it in the log
+X-Goog-Channel-Token: 07e71a98-3cdb-449c-886a-fcb85aee63d3

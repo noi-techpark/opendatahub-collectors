@@ -1,0 +1,30 @@
+# SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+nameOverride: dc-echarging-alperia
+fullnameOverride: dc-echarging-alperia
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/rest-poller
+  pullPolicy: IfNotPresent
+  tag: "0.2.0" # Set this when upgrading chart with --set-value
+
+imagePullSecrets:
+  - name: container-registry-r
+
+resources:
+  requests:
+    cpu: 1m
+    memory: 200Mi 
+
+env:
+  CRON_SCHEDULE: 0 */2 * * * ?
+  INGRESS_PROVIDER: echarging/alperia
+  INGRESS_RABBITMQ_CLIENTNAME: echarging-datacollector-alperia
+  HTTP_ENDPOINT: http://api.alperia-emobility.eu/e-mobility/api/v3/chargingunits?includePartners=false
+  HTTP_METHOD: GET
+  HTTP_HEADERS_X-Caller-ID: NOI-Techpark
+envSecretRef:
+  - name: INGRESS_RABBITMQ_URI 
+    secret: rabbitmq-svcbind
+    key: uri

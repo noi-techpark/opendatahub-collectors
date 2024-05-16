@@ -1,0 +1,30 @@
+# SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+nameOverride: dc-rest-poller-echarging-route220
+fullnameOverride: dc-rest-poller-echarging-route220
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/rest-poller
+  pullPolicy: IfNotPresent
+  tag: "0.2.0" # Set this when upgrading chart with --set-value
+
+imagePullSecrets:
+  - name: container-registry-r
+
+resources:
+  requests:
+    cpu: 1m
+    memory: 200Mi
+
+env:
+  CRON_SCHEDULE: 0 */5 * * * ?
+  INGRESS_PROVIDER: echarging/route220
+  INGRESS_RABBITMQ_CLIENTNAME: echarging-datacollector-route220
+  HTTP_ENDPOINT: https://platform.evway.net/api/idm/getAllRoute220Stations
+  HTTP_METHOD: GET
+  HTTP_HEADERS_X-Caller-ID: NOI-Techpark
+envSecretRef:
+  - name: INGRESS_RABBITMQ_URI 
+    secret: rabbitmq-svcbind
+    key: uri

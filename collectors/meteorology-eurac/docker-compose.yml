@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+  app:
+    image: maven:3-openjdk-17-slim
+    env_file:
+      - .env
+    environment:
+      MAVEN_CONFIG: /var/maven/.m2
+      MAVEN_OPTS: -Dmaven.repo.local=/var/maven/.m2/repository -Dspring-boot.run.jvmArguments="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:9000"
+    command: >
+      mvn clean spring-boot:run -debug
+    volumes:
+      - ~/.m2/:/var/maven/.m2
+      - ./:/code
+    working_dir: /code
+    tty: true
+    network_mode: host

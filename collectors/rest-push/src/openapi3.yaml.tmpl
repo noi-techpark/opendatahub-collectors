@@ -1,0 +1,80 @@
+openapi: "3.0.0"
+info:
+  title: Push API / Open Data Hub
+  version: 1.0.0
+  description: A simple API to push generic data to the Open Data Hub via REST
+  contact:
+    name: Open Data Hub
+    url: https://opendatahub.com
+    email: help@opendatahub.com
+paths: 
+  /push/{provider}/{dataset}:
+    post:
+      summary: Push freeform data
+      description: |
+        Push data to the Open Data Hub
+
+        This only refers to receiving your data, it might still fail validation or processing at a later stage.  
+        It also does not guarantee that your data will be visible on the outbound APIs of the Open Data Hub
+        
+      parameters:
+        - name: provider
+          required: true
+          description: Will be provided to you by the Open Data Hub team
+          in: path
+          schema:
+            type: string
+        - name: dataset
+          required: true
+          description: Will be provided to you by the Open Data Hub team
+          in: path
+          schema:
+            type: string
+      security: 
+        - oauth: []
+      requestBody: 
+        description: Freeform data of any content type (JSON, XML, binary formats...)
+        required: true
+        content:
+          "*/*":
+            schema:
+              type: object
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response'
+              example:
+                message: Data accepted
+                id: "17b48379-7f6d-4188-a385-b7a9272afd0b"
+        401: 
+          description: Unauthorized
+        403: 
+          description: Forbidden
+        500:
+          description: Internal Server Error
+        
+components:
+  schemas:
+    response:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Data accepted"
+        id:
+          type: string
+          description: a unique message ID that we use to trace your date. Ideally you provide this when reporting an issue
+          example: "17b48379-7f6d-4188-a385-b7a9272afd0b"
+
+  securitySchemes:
+    oauth:
+      type: oauth2
+      description: This API uses Oauth 2 with the `client_credentials` flow. Credentials will be provided to you by the Open Data Hub team
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: "{{index . "authurl"}}"
+            

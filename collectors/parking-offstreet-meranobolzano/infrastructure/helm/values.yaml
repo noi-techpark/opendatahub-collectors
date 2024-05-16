@@ -1,0 +1,29 @@
+# SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+nameOverride: dc-parking-offstreet-bolzano
+fullnameOverride: dc-parking-offstreet-bolzano
+
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/parking-offstreet-bolzano
+  pullPolicy: Always
+  tag: "0.0.0" # Set this when upgrading chart with --set-value
+
+imagePullSecrets:
+  - name: container-registry-r
+    
+env:
+  INGRESS_PROVIDER: parking-offstreet/bolzano
+  INGRESS_RABBITMQ_CLIENTNAME: parking-offstreet-bolzano-datacollector
+
+  CRON_SCHEDULE: "10 */5 * * * ?"
+
+  pbz_default_server_host: "109.117.22.203"
+  pbz_default_server_port: 7075
+  pbz_default_site_name: "/RPC2"
+
+envSecretRef:
+  - name: INGRESS_RABBITMQ_URI 
+    secret: rabbitmq-svcbind
+    key: uri

@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+nameOverride: dc-meteorology-eurac
+fullnameOverride: dc-meteorology-eurac
+
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/dc-meteorology-eurac
+  pullPolicy: Always
+  tag: "0.0.0" # Set this when upgrading chart with --set-value
+
+imagePullSecrets:
+  - name: container-registry-r
+
+env:
+  INGRESS_RABBITMQ_CLIENTNAME: meteorology-eurac-datacollector
+  CRON_STATIONS: "0 0 */1 * * ?"
+  CRON_MONTHLY: "0 */5 * * * ?"
+  CRON_DAILY: "0 0 */24 * * ?"
+  INGRESS_PROVIDER: meteorology/eurac
+
+envSecretRef:
+  - name: INGRESS_RABBITMQ_URI 
+    secret: rabbitmq-svcbind
+    key: uri

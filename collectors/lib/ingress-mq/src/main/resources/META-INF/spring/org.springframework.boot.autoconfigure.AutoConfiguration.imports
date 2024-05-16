@@ -1,0 +1,3 @@
+com.opendatahub.collector.lib.ingress.mq.MsgRoute
+com.opendatahub.collector.lib.ingress.mq.RabbitMQConnection
+com.opendatahub.collector.lib.ingress.mq.WrapperProcessor

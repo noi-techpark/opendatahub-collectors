@@ -1,0 +1,52 @@
+# SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+nameOverride: tr-echarging-driwe
+fullnameOverride: tr-echarging-driwe
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/emobility-echarging
+  pullPolicy: Always
+  tag: "0.1.0"
+
+imagePullSecrets:
+  - name: container-registry-r
+    
+resources:
+  requests:
+    memory: 200Mi
+
+env:
+  # Alperia Config
+  app_callerId: NOI-Techpark
+  app_dataOrigin: DRIWE
+  app_period: 600
+  
+  # ODH Core Writer Connection
+  BASE_URI: http://bdp-core.core.svc.cluster.local:8080/json
+  authorizationUri: https://auth.opendatahub.testingmachine.eu/auth
+  tokenUri: https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token
+  clientId: odh-mobility-datacollector-development
+  clientName: odh-mobility-datacollector-development
+  scope: openid
+  clientSecret: 7bd46f8f-c296-416d-a13d-dc81e68d0830
+  
+  # Get it from your pom.xml -> project/version and project/artifactId
+  provenance_name: dc-emobility-echarging-local
+  provenance_version: 0.0.0
+  
+  # Logging level and style (text or json)
+  LOG_LEVEL: debug
+  LOG_STYLE: text
+  
+  MQ_LISTEN_KEY: echarging.driwe
+  MQ_LISTEN_QUEUE: echarging.driwe
+  MQ_LISTEN_ACKTIMEOUT: 300000
+  
+envSecretRef:
+  - name: MQ_LISTEN_URI 
+    secret: rabbitmq-svcbind
+    key: uri
+  - name: MONGO_CONNECTIONSTRING
+    secret: mongodb-collector-svcbind
+    key: uri
