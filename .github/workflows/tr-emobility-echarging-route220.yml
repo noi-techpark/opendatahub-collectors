@@ -27,7 +27,7 @@ jobs:
       with:
         java-version: ${{ env.JAVA_VERSION }}
         build-command: |
-          mvn -f transformers/lib/rabbit-mongo-listener/pom.xml build-helper:remove-project-artifact clean install
+          mvn -f transformers/lib/rabbit-mongo-listener/pom.xml build-helper:remove-project-artifact clean install \
           && mvn -f ${{ env.WORKING_DIRECTORY }}/pom.xml clean package
 
     - name: Build and push images
