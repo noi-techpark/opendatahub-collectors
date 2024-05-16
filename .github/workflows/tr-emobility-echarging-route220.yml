@@ -27,14 +27,9 @@ jobs:
       with:
         working-directory: transformers/lib/rabbit-mongo-listener
         java-version: ${{ env.JAVA_VERSION }}
-        build-command: 'mvn build-helper:remove-project-artifact clean install'
-
-    - name: Build project
-      uses: noi-techpark/github-actions/maven-build@v2
-      with:
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        java-version: ${{ env.JAVA_VERSION }}
-        build-command: 'mvn clean install'
+        build-command: |
+          mvn -f transformers/lib/rabbit-mongo-listener/pom.xml build-helper:remove-project-artifact clean install
+          && mvn -f ${{ env.WORKING_DIRECTORY }}/pom.xml clean package
 
     - name: Build and push images
       uses: noi-techpark/github-actions/docker-build-and-push@v2
