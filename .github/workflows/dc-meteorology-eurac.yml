@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - "collectors/meteorology-eurac/**"
-      - ".github/workflows/meteorology-eurac-dc.yml"
+      - ".github/workflows/dc-meteorology-eurac.yml"
 
 env:
   AWS_REGION : eu-west-1
