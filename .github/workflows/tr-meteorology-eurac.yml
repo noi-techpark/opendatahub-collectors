@@ -11,6 +11,7 @@ env:
   WORKING_DIRECTORY: transformers/meteorology-eurac
   DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/tr-meteorology-eurac
   DOCKER_TAG: ${{ github.sha }}
+  DOCKER_SOURCE: https://github.com/noi-techpark/opendatahub-collectors/tr-meteorology-eurac
   KUBERNETES_NAMESPACE: collector
   JAVA_VERSION: 17
   VALUES_YAML: infrastructure/helm/values.yaml
