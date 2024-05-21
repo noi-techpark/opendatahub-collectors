@@ -1,13 +1,13 @@
-name: CI/CD tr-emobility-echarging-route220
+name: CI/CD tr-emobility-echarging-driwe
 
 on: 
   push:
     paths:
       - "transformers/emobility-echarging/**"
-      - ".github/workflows/tr-emobility-echarging-route220.yml"
+      - ".github/workflows/tr-emobility-echarging-driwe.yml"
 
 env:
-  PROJECT_NAME: tr-emobility-echarging-route220
+  PROJECT_NAME: tr-emobility-echarging-driwe
   WORKING_DIRECTORY: transformers/emobility-echarging
   DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/tr-emobility-echarging
   DOCKER_TAG: ${{ github.sha }}
@@ -17,7 +17,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    concurrency: tr-emobility-echarging-route220-build
+    concurrency: tr-emobility-echarging-driwe-build
     steps:
     - name: Checkout source code
       uses: actions/checkout@v4
@@ -41,10 +41,10 @@ jobs:
     if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-22.04
-    concurrency: tr-emobility-echarging-route220-deploy-test
+    concurrency: tr-emobility-echarging-driwe-deploy-test
     environment: test
     env:
-      VALUES_YAML: infrastructure/helm/route220.yaml
+      VALUES_YAML: infrastructure/helm/driwe.yaml
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -74,40 +74,40 @@ jobs:
           aws-eks-cluster-name: aws-main-eu-01
           aws-region: eu-west-1
 
-  deploy-route220-prod:
-    if: github.ref == 'refs/heads/prod'
-    needs: build
-    runs-on: ubuntu-22.04
-    concurrency: tr-emobility-echarging-route220-deploy-prod
-    environment: prod
-    env:
-      VALUES_YAML: infrastructure/helm/route220.yaml
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
+  # deploy-driwe-prod:
+  #   if: github.ref == 'refs/heads/prod'
+  #   needs: build
+  #   runs-on: ubuntu-22.04
+  #   concurrency: tr-emobility-echarging-driwe-deploy-prod
+  #   environment: prod
+  #   env:
+  #     VALUES_YAML: infrastructure/helm/driwe.yaml
+  #   steps:
+  #     - name: Checkout source code
+  #       uses: actions/checkout@v4
 
-      - name: Customize values.yaml
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: |
-          yq -i '
-            .image.repository="${{ env.DOCKER_IMAGE }}" |
-            .image.tag="${{ env.DOCKER_TAG }}" |
-            .image.pullPolicy="IfNotPresent" |
+  #     - name: Customize values.yaml
+  #       working-directory: ${{ env.WORKING_DIRECTORY }}
+  #       run: |
+  #         yq -i '
+  #           .image.repository="${{ env.DOCKER_IMAGE }}" |
+  #           .image.tag="${{ env.DOCKER_TAG }}" |
+  #           .image.pullPolicy="IfNotPresent" |
 
-            .env.provenance_name="${{ env.PROJECT_NAME }}" |
-            .env.provenance_version="${{ github.sha}}" |
+  #           .env.provenance_name="${{ env.PROJECT_NAME }}" |
+  #           .env.provenance_version="${{ github.sha}}" |
 
-            .env.BASE_URI="https://mobility.share.opendatahub.com/json" 
+  #           .env.BASE_URI="https://mobility.share.opendatahub.com/json" 
 
-          ' ${{ env.VALUES_YAML }}
-      - name: Deploy on cluster  
-        uses: noi-techpark/github-actions/helm-deploy@v2
-        with:
-          k8s-name: ${{ env.PROJECT_NAME }}
-          k8s-namespace: collector
-          chart-path: helm/generic-collector
-          values-file: ${{ env.WORKING_DIRECTORY}}/${{ env.VALUES_YAML }}
-          aws-access-key-id: ${{ secrets.AWS_PROD_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_PROD_ACCESS_KEY_SECRET }}
-          aws-eks-cluster-name: aws-main-eu-01
-          aws-region: eu-west-1
+  #         ' ${{ env.VALUES_YAML }}
+  #     - name: Deploy on cluster  
+  #       uses: noi-techpark/github-actions/helm-deploy@v2
+  #       with:
+  #         k8s-name: ${{ env.PROJECT_NAME }}
+  #         k8s-namespace: collector
+  #         chart-path: helm/generic-collector
+  #         values-file: ${{ env.WORKING_DIRECTORY}}/${{ env.VALUES_YAML }}
+  #         aws-access-key-id: ${{ secrets.AWS_PROD_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_PROD_ACCESS_KEY_SECRET }}
+  #         aws-eks-cluster-name: aws-main-eu-01
+  #         aws-region: eu-west-1
