@@ -18,12 +18,7 @@ env:
   
   # ODH Core Writer Connection
   BASE_URI: http://bdp-core.core.svc.cluster.local:8080/json
-  authorizationUri: https://auth.opendatahub.testingmachine.eu/auth
-  tokenUri: https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token
-  clientId: odh-mobility-datacollector-development
-  clientName: odh-mobility-datacollector-development
   scope: openid
-  clientSecret: 7bd46f8f-c296-416d-a13d-dc81e68d0830
   
   # Get it from your pom.xml -> project/version and project/artifactId
   provenance_name: dc-meteorology-eurac-local
@@ -31,7 +26,7 @@ env:
   
   # Logging level and style (text or json)
   LOG_LEVEL: debug
-  LOG_STYLE: text
+  LOG_STYLE: json
   
   MQ_LISTEN_KEY: meteorology.eurac
   MQ_LISTEN_QUEUE: meteorology.eurac
@@ -44,3 +39,19 @@ envSecretRef:
   - name: MONGO_CONNECTIONSTRING
     secret: mongodb-collector-svcbind
     key: uri
+
+  - name: authorizationUri
+    secret: oauth-collector
+    key: authorizationUri
+  - name: tokenUri
+    secret: oauth-collector
+    key: tokenUri
+  - name: clientId
+    secret: oauth-collector
+    key: clientId
+  - name: clientName
+    secret: oauth-collector
+    key: clientId
+  - name: clientSecret
+    secret: oauth-collector
+    key: clientSecret
