@@ -111,3 +111,5 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_PROD_ACCESS_KEY_SECRET }}
           aws-eks-cluster-name: aws-main-eu-01
           aws-region: eu-west-1
+
+# trigger workflow
