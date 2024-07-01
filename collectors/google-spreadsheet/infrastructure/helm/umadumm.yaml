@@ -1,0 +1,71 @@
+# SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+nameOverride: dc-spreadsheets-google-umadumm
+fullnameOverride: dc-spreadsheets-google-umadumm
+
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/google-spreadsheet
+  pullPolicy: Always
+  tag: "0.0.0" # Set this when upgrading chart with --set-value
+
+imagePullSecrets:
+  - name: container-registry-r
+    
+service:
+  enabled: true
+  type: ClusterIP
+  port: 8082
+  health:
+    delay: 30
+
+ingress:
+  enabled: true
+
+  annotations:
+    cert-manager.io/issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/rewrite-target: "/$1"
+
+  className: nginx
+  tls:
+    - hosts:
+      - spreadsheets.dev.testingmachine.eu
+      secretName: tls-spreadsheets
+  hosts:
+    - host: spreadsheets.dev.testingmachine.eu
+      paths: 
+        - path: "/umadumm/(.*)"
+          pathType: Prefix
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 200Mi
+
+env:
+  SHEETS_APPLICATION_NAME: dc-spreadsheets-google-umadumm
+
+  TRIGGER_PATH: trigger
+  TRIGGER_PORT: 8082
+
+  INGRESS_PROVIDER: spreadsheets/umadumm
+
+  # consolidate update triggers and only update every n milliseconds
+  TRIGGER_MAX_UPDATE_FREQUENCY: 20000
+  SPREADSHEET_NOTIFICATION_URL: "https://spreadsheets.dev.testingmachine.eu/umadumm/trigger"
+
+  GOOGLE_WATCH_EXPIRATION_HOURS: 24
+  INGRESS_RABBITMQ_CLIENTNAME: spreadsheet-datacollector-umadumm
+
+envSecretRef:
+  - name: INGRESS_RABBITMQ_URI 
+    secret: rabbitmq-svcbind
+    key: uri
+
+envSecret:
+  SHEETS_CLIENT_ID: 
+  SHEETS_CLIENT_SECRET: 
+  SHEETS_REFRESH_TOKEN: 
+
+  SPREADSHEET_ID: 

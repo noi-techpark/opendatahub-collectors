@@ -1,0 +1,70 @@
+# SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+nameOverride: tr-spreadsheets-google-creative-industries
+fullnameOverride: tr-spreadsheets-google-creative-industries
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-google-spreadsheet
+  pullPolicy: Always
+  tag: "0.1.0"
+
+imagePullSecrets:
+  - name: container-registry-r
+    
+resources:
+  requests:
+    memory: 500Mi
+
+env:
+  # ODH Core Writer Connection
+  BASE_URI: http://bdp-core.core.svc.cluster.local:8080/json
+  scope: openid
+
+  origin: municipality bolzano
+  provenance_name: odh-mobility-dc-spreadsheets-google-creative-industries
+  provenance_version: 0.0.0
+
+  stationtype: CreativeIndustry
+  suportedLanguages: en,it,de,lad
+
+  composite_unique_key: name,address
+  headers_addressId: address
+  headers_latitudeId: latitude
+  headers_longitudeId: longitude
+  headers_metaDataId: metadata-id
+  headers_nameId: name
+
+  MQ_LISTEN_KEY: spreadsheets.creative-industries
+  MQ_LISTEN_QUEUE: spreadsheets.creative-industries
+  MQ_LISTEN_ACKTIMEOUT: 300000
+
+  LOGGING_LEVEL_COM_OPENDATAHUB: INFO
+  LOG_STYLE: json
+
+envSecret:
+  spreadsheetId:  
+
+envSecretRef:
+  - name: MQ_LISTEN_URI 
+    secret: rabbitmq-svcbind
+    key: uri
+  - name: MONGO_CONNECTIONSTRING
+    secret: mongodb-collector-svcbind
+    key: uri
+
+  - name: authorizationUri
+    secret: oauth-collector
+    key: authorizationUri
+  - name: tokenUri
+    secret: oauth-collector
+    key: tokenUri
+  - name: clientId
+    secret: oauth-collector
+    key: clientId
+  - name: clientName
+    secret: oauth-collector
+    key: clientId
+  - name: clientSecret
+    secret: oauth-collector
+    key: clientSecret
