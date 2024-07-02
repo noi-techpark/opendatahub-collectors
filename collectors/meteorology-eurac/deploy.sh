@@ -1,4 +1,9 @@
 #!/bin/bash
+
+# SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
 #docker login ghcr.io (create token with read/write package permissions in github developer settings)
 RELEASETIME=`date +%s`
 (cd ../lib/ingress-mq; mvn clean install) \

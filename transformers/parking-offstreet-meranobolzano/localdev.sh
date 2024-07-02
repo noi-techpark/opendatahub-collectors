@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
 # Setup port forwards to services in cluster
 # They keep running in the background as long as the shell is alive
 # use 'killall kubectl' to terminate them

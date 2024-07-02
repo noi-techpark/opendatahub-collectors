@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
 FROM quay.io/keycloak/keycloak:20.0
 WORKDIR /opt/keycloak
 COPY keycloak-realm.json data/import/keycloak-realm.json

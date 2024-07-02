@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
 ### Creating google credentials
 In google cloud under APIs and services enable google sheets and google drive  
 Still under APIs and services, go to Credentials and create a new OAuth 2.0 Client ID  

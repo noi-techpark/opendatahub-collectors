@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
 # Inbound REST API
 Generic API to push data to the Open Data Hub via REST
 
