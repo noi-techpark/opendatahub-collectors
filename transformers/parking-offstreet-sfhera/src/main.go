@@ -5,11 +5,20 @@
 package main
 
 import (
+	"context"
+	"encoding/base64"
+	"encoding/json"
 	"log"
 	"log/slog"
 	"os"
+	"time"
 
 	"github.com/rabbitmq/amqp091-go"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"opendatahub.com/tr-parking-offstreet-sfhera/bdplib"
 )
 
 // read logger level from env and uses INFO as default
@@ -32,9 +41,21 @@ func failOnError(err error, msg string) {
 	}
 }
 
+const ParkingStation = "ParkingStation"
+
+func dataTypes() []bdplib.DataType {
+	ds := []bdplib.DataType{
+		bdplib.CreateDataType("free", "", "free", "Instantaneous"),
+		bdplib.CreateDataType("entering-vehicles", "", "Number of vehicles that entered the parking station", "Instananteous"),
+		bdplib.CreateDataType("exiting-vehicles", "", "Number of vehicles that exited the parking station", "Instananteous"),
+	}
+	return ds
+}
+
 func main() {
 	initLogging()
-	conn, err := amqp091.Dial(os.Getenv("MQ_URI"))
+
+	conn, err := amqp091.Dial(os.Getenv("MQ_LISTEN_URI"))
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
@@ -42,49 +63,100 @@ func main() {
 	failOnError(err, "Failed to open a channel")
 	defer ch.Close()
 
-	q, err := ch.QueueDeclare(
-		os.Getenv("MQ_QUEUE"), // name
-		true,                  // durable
-		false,                 // delete when unused
-		false,                 // exclusive
-		false,                 // no-wait
-		nil,                   // arguments
-	)
+	q, err := ch.QueueDeclare(os.Getenv("MQ_LISTEN_QUEUE"), true, false, false, false, nil)
 	failOnError(err, "Failed to declare a queue")
-
-	err = ch.QueueBind(
-		q.Name,
-		os.Getenv("MQ_KEY"),
-		os.Getenv("MQ_EXCHANGE"),
-		false, //nowait
-		nil)   //args
-
+	err = ch.QueueBind(q.Name, os.Getenv("MQ_LISTEN_KEY"), os.Getenv("MQ_LISTEN_EXCHANGE"), false, nil)
 	failOnError(err, "Failed binding queue to exchange")
-
-	msgs, err := ch.Consume(
-		q.Name,                   // queue
-		os.Getenv("MQ_CONSUMER"), // consumer
-		true,                     // auto-ack
-		false,                    // exclusive
-		false,                    // no-local
-		false,                    // no-wait
-		nil,                      // args
-	)
+	msgs, err := ch.Consume(q.Name, os.Getenv("MQ_LISTEN_CONSUMER"), false, false, false, false, nil)
 	failOnError(err, "Failed to register a consumer")
 
-	var forever chan struct{}
-
-	// push bdp provenance
-	// push bdp datatype
-
 	go func() {
+		b := bdplib.FromEnv()
+		failOnError(b.SyncDataTypes(ParkingStation, dataTypes()), "Error pushing datatypes")
+
 		for d := range msgs {
 			log.Printf("Received a message: %s", d.Body)
 			// Get raw data from mongo
-			// decode base64
+			m := incoming{}
+			if err := json.Unmarshal(d.Body, &m); err != nil {
+				slog.Error("Error unmarshalling mq message", "err", err)
+				msgReject(&d)
+			}
+			raw, err := getMongo(m)
+			if err != nil {
+				slog.Error("Error getting raw from mongo", "err", err)
+				msgReject(&d)
+			}
+
+			slog.Debug("Dumping raw data", "dto", raw)
+
+			decoded, err := base64.StdEncoding.DecodeString(raw.Rawdata)
+			if err != nil {
+				slog.Error("Error decoding raw payload from base64", "err", err)
+				msgReject(&d)
+			}
+			var payload payload
+			if err := json.Unmarshal(decoded, &payload); err != nil {
+				slog.Error("Error unmarshalling payload to json dto", "err", err)
+				msgReject(&d)
+			}
+
+			slog.Debug("Decoded payload", "payload", payload)
+
 			// push bdp
+			failOnError(d.Nack(false, true), "Could not ACK elaborated msg")
+
 		}
+		log.Fatal("Message channel closed!")
 	}()
 
-	<-forever
+	<-make(chan int) //wait forever
+}
+
+func msgReject(d *amqp091.Delivery) {
+	if err := d.Reject(false); err != nil {
+		slog.Error("Error rejecting already errored message", "err", err)
+		panic(err)
+	}
+}
+
+type payload struct {
+	Uid      string
+	Park     string
+	Lat      string
+	Long     string
+	In       string
+	Out      string
+	Floor    string
+	Lots     int
+	Tot      string
+	Reserved string
+}
+type raw struct {
+	Provider  string
+	Timestamp time.Time
+	Rawdata   string
+	ID        string
+}
+type incoming struct {
+	Id         string
+	Db         string
+	Collection string
+}
+
+func getMongo(m incoming) (*raw, error) {
+	c, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(os.Getenv("MONGO_URI")))
+	if err != nil {
+		return nil, err
+	}
+	defer c.Disconnect(context.TODO())
+	id, err := primitive.ObjectIDFromHex(m.Id)
+	if err != nil {
+		return nil, err
+	}
+	r := &raw{}
+	if err := c.Database(m.Db).Collection(m.Collection).FindOne(context.TODO(), bson.M{"_id": id}).Decode(r); err != nil {
+		return nil, err
+	}
+	return r, nil
 }
