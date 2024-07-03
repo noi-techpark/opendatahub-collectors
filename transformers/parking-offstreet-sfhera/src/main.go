@@ -111,7 +111,11 @@ func main() {
 
 			dm := b.CreateDataMap()
 			dm.AddRecord(s.Id, dtFree.Name, bdplib.CreateRecord(raw.Timestamp.UnixMilli(), payload.Tot, 300))
-			b.PushData(ParkingStation, dm)
+			if err := b.PushData(ParkingStation, dm); err != nil {
+				slog.Error("Error pushing data to bdp", "err", err, "msg", m)
+				msgReject(&d)
+				continue
+			}
 
 			failOnError(d.Nack(false, true), "Could not ACK elaborated msg")
 
