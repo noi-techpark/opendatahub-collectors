@@ -8,9 +8,11 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"log"
 	"log/slog"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/rabbitmq/amqp091-go"
@@ -43,15 +45,6 @@ func failOnError(err error, msg string) {
 
 const ParkingStation = "ParkingStation"
 
-func dataTypes() []bdplib.DataType {
-	ds := []bdplib.DataType{
-		bdplib.CreateDataType("free", "", "free", "Instantaneous"),
-		bdplib.CreateDataType("entering-vehicles", "", "Number of vehicles that entered the parking station", "Instananteous"),
-		bdplib.CreateDataType("exiting-vehicles", "", "Number of vehicles that exited the parking station", "Instananteous"),
-	}
-	return ds
-}
-
 func main() {
 	initLogging()
 
@@ -72,38 +65,54 @@ func main() {
 
 	go func() {
 		b := bdplib.FromEnv()
-		failOnError(b.SyncDataTypes(ParkingStation, dataTypes()), "Error pushing datatypes")
+
+		dtFree := bdplib.CreateDataType("free", "", "free", "Instantaneous")
+		dtEnter := bdplib.CreateDataType("entering-vehicles", "", "Number of vehicles that entered the parking station", "Instananteous")
+		dtExit := bdplib.CreateDataType("exiting-vehicles", "", "Number of vehicles that exited the parking station", "Instananteous")
+
+		ds := []bdplib.DataType{dtFree, dtEnter, dtExit}
+		failOnError(b.SyncDataTypes(ParkingStation, ds), "Error pushing datatypes")
 
 		for d := range msgs {
 			log.Printf("Received a message: %s", d.Body)
-			// Get raw data from mongo
+
+			// Unmarshal incoming message
 			m := incoming{}
 			if err := json.Unmarshal(d.Body, &m); err != nil {
 				slog.Error("Error unmarshalling mq message", "err", err)
 				msgReject(&d)
+				continue
 			}
-			raw, err := getMongo(m)
+
+			// Get raw data from mongo
+			raw, err := getRaw(m)
 			if err != nil {
-				slog.Error("Error getting raw from mongo", "err", err)
+				slog.Error("Cannot get mongo raw data", "err", err, "msg", m)
 				msgReject(&d)
+				continue
 			}
 
-			slog.Debug("Dumping raw data", "dto", raw)
-
-			decoded, err := base64.StdEncoding.DecodeString(raw.Rawdata)
+			payload, err := unmarshalPayload(raw.Rawdata)
 			if err != nil {
-				slog.Error("Error decoding raw payload from base64", "err", err)
+				slog.Error("Unable to unmarshal raw payload", "err", err, "msg", m, "raw", payload)
 				msgReject(&d)
-			}
-			var payload payload
-			if err := json.Unmarshal(decoded, &payload); err != nil {
-				slog.Error("Error unmarshalling payload to json dto", "err", err)
-				msgReject(&d)
+				continue
 			}
 
-			slog.Debug("Decoded payload", "payload", payload)
+			lat, _ := strconv.ParseFloat(payload.Lat, 64)
+			lon, _ := strconv.ParseFloat(payload.Long, 64)
 
-			// push bdp
+			s := bdplib.CreateStation(payload.Uid, payload.Park, ParkingStation, lat, lon, b.Origin)
+			if err := b.SyncStations(ParkingStation, []bdplib.Station{s}, true, true); err != nil {
+				slog.Error("Error syncing stations", "err", err, "msg", m)
+				msgReject(&d)
+				continue
+			}
+
+			dm := b.CreateDataMap()
+			dm.AddRecord(s.Id, dtFree.Name, bdplib.CreateRecord(raw.Timestamp.UnixMilli(), payload.Tot, 300))
+			b.PushData(ParkingStation, dm)
+
 			failOnError(d.Nack(false, true), "Could not ACK elaborated msg")
 
 		}
@@ -113,9 +122,19 @@ func main() {
 	<-make(chan int) //wait forever
 }
 
+func getRaw(m incoming) (*raw, error) {
+	raw, err := getMongo(m)
+	if err != nil {
+		return nil, fmt.Errorf("error getting raw from mongo: %w", err)
+	}
+
+	slog.Debug("Dumping raw data", "dto", raw)
+	return raw, nil
+}
+
 func msgReject(d *amqp091.Delivery) {
 	if err := d.Reject(false); err != nil {
-		slog.Error("Error rejecting already errored message", "err", err)
+		slog.Error("error rejecting already errored message", "err", err)
 		panic(err)
 	}
 }
@@ -132,6 +151,21 @@ type payload struct {
 	Tot      string
 	Reserved string
 }
+
+func unmarshalPayload(s string) (payload, error) {
+	var p payload
+	decoded, err := base64.StdEncoding.DecodeString(s)
+	if err != nil {
+		slog.Error("Debug failed base64", "string", s)
+		return p, fmt.Errorf("error decoding raw from base64: %w", err)
+	}
+	if err := json.Unmarshal(decoded, &p); err != nil {
+		return p, fmt.Errorf("error unmarshalling payload json: %w", err)
+	}
+
+	return p, nil
+}
+
 type raw struct {
 	Provider  string
 	Timestamp time.Time
