@@ -102,15 +102,28 @@ func main() {
 			lat, _ := strconv.ParseFloat(payload.Lat, 64)
 			lon, _ := strconv.ParseFloat(payload.Long, 64)
 
-			s := bdplib.CreateStation(payload.Uid, payload.Park, ParkingStation, lat, lon, b.Origin)
-			if err := b.SyncStations(ParkingStation, []bdplib.Station{s}, true, true); err != nil {
+			sname := fmt.Sprintf("parking-bz:%s", payload.Uid)
+			s := bdplib.CreateStation(sname, payload.Park, ParkingStation, lat, lon, b.Origin)
+
+			floor, _ := strconv.Atoi(payload.Floor)
+			s.MetaData = map[string]any{
+				"floor":    floor,
+				"capacity": payload.Lots,
+			}
+			if err := b.SyncStations(ParkingStation, []bdplib.Station{s}, true, false); err != nil {
 				slog.Error("Error syncing stations", "err", err, "msg", m)
 				msgReject(&d)
 				continue
 			}
 
 			dm := b.CreateDataMap()
-			dm.AddRecord(s.Id, dtFree.Name, bdplib.CreateRecord(raw.Timestamp.UnixMilli(), payload.Tot, 300))
+			tot, _ := strconv.Atoi(payload.Tot)
+			dm.AddRecord(s.Id, dtFree.Name, bdplib.CreateRecord(raw.Timestamp.UnixMilli(), tot, 300))
+			in, _ := strconv.Atoi(payload.In)
+			dm.AddRecord(s.Id, dtEnter.Name, bdplib.CreateRecord(raw.Timestamp.UnixMilli(), in, 300))
+			out, _ := strconv.Atoi(payload.Out)
+			dm.AddRecord(s.Id, dtExit.Name, bdplib.CreateRecord(raw.Timestamp.UnixMilli(), out, 300))
+
 			if err := b.PushData(ParkingStation, dm); err != nil {
 				slog.Error("Error pushing data to bdp", "err", err, "msg", m)
 				msgReject(&d)
