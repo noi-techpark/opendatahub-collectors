@@ -130,7 +130,7 @@ func main() {
 				continue
 			}
 
-			failOnError(d.Nack(false, true), "Could not ACK elaborated msg")
+			failOnError(d.Ack(false), "Could not ACK elaborated msg")
 
 		}
 		log.Fatal("Message channel closed!")
