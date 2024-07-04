@@ -26,7 +26,7 @@ env:
   MQ_LISTEN_CONSUMER: tr-parking-offstreet-sfhera
   
 envSecretRef:
-  - name: MQ_LISTEN_LISTEN_URI 
+  - name: MQ_LISTEN_URI 
     secret: rabbitmq-svcbind
     key: uri
   - name: MONGO_URI
