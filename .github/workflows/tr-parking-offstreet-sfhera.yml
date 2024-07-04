@@ -36,7 +36,7 @@ jobs:
     concurrency: tr-parking-offstreet-sfhera-deploy-test
     environment: test
     env:
-      VALUES_YAML: ${{ env.WORKING_DIRECTORY}}/infrastructure/helm/values.yaml
+      VALUES_YAML: infrastructure/helm/values.yaml
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
