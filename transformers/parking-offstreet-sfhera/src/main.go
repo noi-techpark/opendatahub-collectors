@@ -136,9 +136,6 @@ func main() {
 	<-make(chan int) //wait forever
 }
 
-func setupMqListener() <-chan amqp091.Delivery {
-}
-
 func getRawFrame(m incoming) (*raw, error) {
 	raw, err := getMongo(m)
 	if err != nil {
