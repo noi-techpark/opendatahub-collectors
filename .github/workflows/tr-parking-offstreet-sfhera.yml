@@ -62,7 +62,7 @@ jobs:
           k8s-name: ${{ env.PROJECT_NAME }}
           k8s-namespace: collector
           chart-path: helm/generic-collector
-          values-file: ${{ env.VALUES_YAML }}
+          values-file: ${{ env.WORKGIN_DIRECTORY }}/${{ env.VALUES_YAML }}
           aws-access-key-id: ${{ secrets.AWS_DEV_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_DEV_ACCESS_KEY_SECRET }}
           aws-eks-cluster-name: aws-main-eu-01
