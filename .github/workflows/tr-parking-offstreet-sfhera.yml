@@ -51,8 +51,8 @@ jobs:
             .image.tag="${{ env.DOCKER_TAG }}" |
             .image.pullPolicy="IfNotPresent" |
 
-            .env.provenance_name="${{ env.PROJECT_NAME }}" |
-            .env.provenance_version="${{ github.sha}}" 
+            .env.BDP_PROVENANCE_NAME="${{ env.PROJECT_NAME }}" |
+            .env.BDP_PROVENANCE_VERSION="${{ github.sha}}" 
 
           ' ${{ env.VALUES_YAML }}
 
