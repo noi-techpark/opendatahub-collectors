@@ -59,7 +59,7 @@ jobs:
       - name: Deploy on cluster  
         uses: noi-techpark/github-actions/helm-deploy@v2
         with:
-          k8s-name: ${{ env.K8S_NAME }}
+          k8s-name: ${{ env.PROJECT_NAME }}
           k8s-namespace: collector
           chart-path: helm/generic-collector
           values-file: ${{ env.VALUES_YAML }}
