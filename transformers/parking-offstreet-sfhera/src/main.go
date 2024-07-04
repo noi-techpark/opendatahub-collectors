@@ -48,7 +48,20 @@ const ParkingStation = "ParkingStation"
 func main() {
 	initLogging()
 
-	mq := setupMqListener()
+	conn, err := amqp091.Dial(os.Getenv("MQ_LISTEN_URI"))
+	failOnError(err, "Failed to connect to RabbitMQ")
+	defer conn.Close()
+
+	ch, err := conn.Channel()
+	failOnError(err, "Failed to open a channel")
+	defer ch.Close()
+
+	q, err := ch.QueueDeclare(os.Getenv("MQ_LISTEN_QUEUE"), true, false, false, false, nil)
+	failOnError(err, "Failed to declare a queue")
+	err = ch.QueueBind(q.Name, os.Getenv("MQ_LISTEN_KEY"), os.Getenv("MQ_LISTEN_EXCHANGE"), false, nil)
+	failOnError(err, "Failed binding queue to exchange")
+	mq, err := ch.Consume(q.Name, os.Getenv("MQ_LISTEN_CONSUMER"), false, false, false, false, nil)
+	failOnError(err, "Failed to register a consumer")
 
 	go func() {
 		b := bdplib.FromEnv()
@@ -116,7 +129,6 @@ func main() {
 			}
 
 			failOnError(msg.Ack(false), "Could not ACK elaborated msg")
-
 		}
 		log.Fatal("Message channel closed!")
 	}()
@@ -125,21 +137,6 @@ func main() {
 }
 
 func setupMqListener() <-chan amqp091.Delivery {
-	conn, err := amqp091.Dial(os.Getenv("MQ_LISTEN_URI"))
-	failOnError(err, "Failed to connect to RabbitMQ")
-	defer conn.Close()
-
-	ch, err := conn.Channel()
-	failOnError(err, "Failed to open a channel")
-	defer ch.Close()
-
-	q, err := ch.QueueDeclare(os.Getenv("MQ_LISTEN_QUEUE"), true, false, false, false, nil)
-	failOnError(err, "Failed to declare a queue")
-	err = ch.QueueBind(q.Name, os.Getenv("MQ_LISTEN_KEY"), os.Getenv("MQ_LISTEN_EXCHANGE"), false, nil)
-	failOnError(err, "Failed binding queue to exchange")
-	msgs, err := ch.Consume(q.Name, os.Getenv("MQ_LISTEN_CONSUMER"), false, false, false, false, nil)
-	failOnError(err, "Failed to register a consumer")
-	return msgs
 }
 
 func getRawFrame(m incoming) (*raw, error) {
