@@ -14,7 +14,7 @@ fullnameOverride: "tr-parking-offstreet-sfhera"
 
 env:
   # ODH Core Writer Connection
-  BDP_BASE_URL: http://bdp-core.core.svc.cluster.local:8080/json
+  BDP_BASE_URL: http://bdp-core.core.svc.cluster.local:8080
   BDP_PROVENANCE_NAME: 
   BDP_PROVENANCE_VERSION: 
   
