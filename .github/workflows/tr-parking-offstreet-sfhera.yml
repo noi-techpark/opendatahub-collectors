@@ -3,8 +3,10 @@ name: CI/CD tr-parking-offstreet-sfhera
 on: 
   push:
     paths:
-      - "collectors/rest-push/**"
+      - "transformers/tr-parking-offstreet-sfhera/infrastructure/**"
+      - "transformers/tr-parking-offstreet-sfhera/src/**"
       - ".github/workflows/tr-parking-offstreet-sfhera.yml"
+      
 
 env:
   PROJECT_NAME: tr-parking-offstreet-sfhera
