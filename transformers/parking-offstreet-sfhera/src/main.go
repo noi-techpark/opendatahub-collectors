@@ -67,8 +67,8 @@ func main() {
 		b := bdplib.FromEnv()
 
 		dtFree := bdplib.CreateDataType("free", "", "free", "Instantaneous")
-		dtEnter := bdplib.CreateDataType("entering-vehicles", "", "Number of vehicles that entered the parking station", "Instananteous")
-		dtExit := bdplib.CreateDataType("exiting-vehicles", "", "Number of vehicles that exited the parking station", "Instananteous")
+		dtEnter := bdplib.CreateDataType("entering-vehicles-today", "", "Number of vehicles that entered since start of day", "Instantaneous")
+		dtExit := bdplib.CreateDataType("exiting-vehicles-today", "", "Number of vehicles that exited since start of day", "Instantaneous")
 
 		ds := []bdplib.DataType{dtFree, dtEnter, dtExit}
 		failOnError(b.SyncDataTypes(ParkingStation, ds), "Error pushing datatypes")
