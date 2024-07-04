@@ -1,0 +1,67 @@
+name: CI/CD tr-parking-offstreet-sfhera
+
+on: 
+  push:
+    paths:
+      - "collectors/rest-push/**"
+      - ".github/workflows/tr-parking-offstreet-sfhera.yml"
+
+env:
+  PROJECT_NAME: tr-parking-offstreet-sfhera
+  WORKING_DIRECTORY: transformers/parking-offstreet-sfhera
+  DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/tr-parking-offstreet-sfhera
+  DOCKER_TAG: ${{ github.sha }}
+  KUBERNETES_NAMESPACE: collector
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    concurrency: tr-parking-offstreet-sfhera-build
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    - name: Build and push images
+      uses: noi-techpark/github-actions/docker-build-and-push@v2
+      with:
+        working-directory: ${{ env.WORKING_DIRECTORY }}/infrastructure
+        docker-username: ${{ github.actor }}
+        docker-password: ${{ secrets.GITHUB_TOKEN }}
+          
+  deploy-test:
+    if: github.ref == 'refs/heads/main'
+    needs: 
+      - build
+    runs-on: ubuntu-22.04
+    concurrency: tr-parking-offstreet-sfhera-deploy-test
+    environment: test
+    env:
+      VALUES_YAML: ${{ env.WORKING_DIRECTORY}}/infrastructure/helm/values.yaml
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Customize values.yaml
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          yq -i '
+            .image.repository="${{ env.DOCKER_IMAGE }}" |
+            .image.tag="${{ env.DOCKER_TAG }}" |
+            .image.pullPolicy="IfNotPresent" |
+
+            .env.provenance_name="${{ env.PROJECT_NAME }}" |
+            .env.provenance_version="${{ github.sha}}" 
+
+          ' ${{ env.VALUES_YAML }}
+
+      - name: Deploy on cluster  
+        uses: noi-techpark/github-actions/helm-deploy@v2
+        with:
+          k8s-name: ${{ env.K8S_NAME }}
+          k8s-namespace: collector
+          chart-path: helm/generic-collector
+          values-file: ${{ env.VALUES_YAML }}
+          aws-access-key-id: ${{ secrets.AWS_DEV_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_DEV_ACCESS_KEY_SECRET }}
+          aws-eks-cluster-name: aws-main-eu-01
+          aws-region: eu-west-1
