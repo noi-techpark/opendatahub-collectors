@@ -48,6 +48,83 @@ const ParkingStation = "ParkingStation"
 func main() {
 	initLogging()
 
+	mq := setupMqListener()
+
+	go func() {
+		b := bdplib.FromEnv()
+
+		dtFree := bdplib.CreateDataType("free", "", "free", "Instantaneous")
+		dtEnter := bdplib.CreateDataType("entering-vehicles", "", "Number of vehicles that entered the parking station", "Instananteous")
+		dtExit := bdplib.CreateDataType("exiting-vehicles", "", "Number of vehicles that exited the parking station", "Instananteous")
+
+		ds := []bdplib.DataType{dtFree, dtEnter, dtExit}
+		failOnError(b.SyncDataTypes(ParkingStation, ds), "Error pushing datatypes")
+
+		for msg := range mq {
+			log.Printf("Received a message: %s", msg.Body)
+
+			msgBody := incoming{}
+			if err := json.Unmarshal(msg.Body, &msgBody); err != nil {
+				slog.Error("Error unmarshalling mq message", "err", err)
+				msgReject(&msg)
+				continue
+			}
+
+			rawFrame, err := getRawFrame(msgBody)
+			if err != nil {
+				slog.Error("Cannot get mongo raw data", "err", err, "msg", msgBody)
+				msgReject(&msg)
+				continue
+			}
+
+			raw, err := unmarshalRaw(rawFrame.Rawdata)
+			if err != nil {
+				slog.Error("Unable to unmarshal raw payload", "err", err, "msg", msgBody, "raw", raw)
+				msgReject(&msg)
+				continue
+			}
+
+			lat, _ := strconv.ParseFloat(raw.Lat, 64)
+			lon, _ := strconv.ParseFloat(raw.Long, 64)
+
+			sname := fmt.Sprintf("parking-bz:%s:%s", raw.Uid, raw.Floor)
+			s := bdplib.CreateStation(sname, raw.Park, ParkingStation, lat, lon, b.Origin)
+
+			tot, _ := strconv.Atoi(raw.Tot)
+			floor, _ := strconv.Atoi(raw.Floor)
+			s.MetaData = map[string]any{
+				"floor":    floor,
+				"capacity": tot,
+			}
+			if err := b.SyncStations(ParkingStation, []bdplib.Station{s}, true, false); err != nil {
+				slog.Error("Error syncing stations", "err", err, "msg", msgBody)
+				msgReject(&msg)
+				continue
+			}
+
+			dm := b.CreateDataMap()
+			dm.AddRecord(s.Id, dtFree.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), raw.Lots, 300))
+			in, _ := strconv.Atoi(raw.In)
+			dm.AddRecord(s.Id, dtEnter.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), in, 300))
+			out, _ := strconv.Atoi(raw.Out)
+			dm.AddRecord(s.Id, dtExit.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), out, 300))
+
+			if err := b.PushData(ParkingStation, dm); err != nil {
+				slog.Error("Error pushing data to bdp", "err", err, "msg", msgBody)
+				msgReject(&msg)
+				continue
+			}
+
+			failOnError(msg.Ack(false), "Could not ACK elaborated msg")
+
+		}
+		log.Fatal("Message channel closed!")
+	}()
+
+	<-make(chan int) //wait forever
+}
+
+func setupMqListener() <-chan amqp091.Delivery {
 	conn, err := amqp091.Dial(os.Getenv("MQ_LISTEN_URI"))
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
@@ -62,84 +139,10 @@ func main() {
 	failOnError(err, "Failed binding queue to exchange")
 	msgs, err := ch.Consume(q.Name, os.Getenv("MQ_LISTEN_CONSUMER"), false, false, false, false, nil)
 	failOnError(err, "Failed to register a consumer")
-
-	go func() {
-		b := bdplib.FromEnv()
-
-		dtFree := bdplib.CreateDataType("free", "", "free", "Instantaneous")
-		dtEnter := bdplib.CreateDataType("entering-vehicles", "", "Number of vehicles that entered the parking station", "Instananteous")
-		dtExit := bdplib.CreateDataType("exiting-vehicles", "", "Number of vehicles that exited the parking station", "Instananteous")
-
-		ds := []bdplib.DataType{dtFree, dtEnter, dtExit}
-		failOnError(b.SyncDataTypes(ParkingStation, ds), "Error pushing datatypes")
-
-		for d := range msgs {
-			log.Printf("Received a message: %s", d.Body)
-
-			// Unmarshal incoming message
-			m := incoming{}
-			if err := json.Unmarshal(d.Body, &m); err != nil {
-				slog.Error("Error unmarshalling mq message", "err", err)
-				msgReject(&d)
-				continue
-			}
-
-			// Get raw data from mongo
-			raw, err := getRaw(m)
-			if err != nil {
-				slog.Error("Cannot get mongo raw data", "err", err, "msg", m)
-				msgReject(&d)
-				continue
-			}
-
-			payload, err := unmarshalPayload(raw.Rawdata)
-			if err != nil {
-				slog.Error("Unable to unmarshal raw payload", "err", err, "msg", m, "raw", payload)
-				msgReject(&d)
-				continue
-			}
-
-			lat, _ := strconv.ParseFloat(payload.Lat, 64)
-			lon, _ := strconv.ParseFloat(payload.Long, 64)
-
-			sname := fmt.Sprintf("parking-bz:%s:%s", payload.Uid, payload.Floor)
-			s := bdplib.CreateStation(sname, payload.Park, ParkingStation, lat, lon, b.Origin)
-
-			tot, _ := strconv.Atoi(payload.Tot)
-			floor, _ := strconv.Atoi(payload.Floor)
-			s.MetaData = map[string]any{
-				"floor":    floor,
-				"capacity": tot,
-			}
-			if err := b.SyncStations(ParkingStation, []bdplib.Station{s}, true, false); err != nil {
-				slog.Error("Error syncing stations", "err", err, "msg", m)
-				msgReject(&d)
-				continue
-			}
-
-			dm := b.CreateDataMap()
-			dm.AddRecord(s.Id, dtFree.Name, bdplib.CreateRecord(raw.Timestamp.UnixMilli(), payload.Lots, 300))
-			in, _ := strconv.Atoi(payload.In)
-			dm.AddRecord(s.Id, dtEnter.Name, bdplib.CreateRecord(raw.Timestamp.UnixMilli(), in, 300))
-			out, _ := strconv.Atoi(payload.Out)
-			dm.AddRecord(s.Id, dtExit.Name, bdplib.CreateRecord(raw.Timestamp.UnixMilli(), out, 300))
-
-			if err := b.PushData(ParkingStation, dm); err != nil {
-				slog.Error("Error pushing data to bdp", "err", err, "msg", m)
-				msgReject(&d)
-				continue
-			}
-
-			failOnError(d.Ack(false), "Could not ACK elaborated msg")
-
-		}
-		log.Fatal("Message channel closed!")
-	}()
-
-	<-make(chan int) //wait forever
+	return msgs
 }
 
-func getRaw(m incoming) (*raw, error) {
+func getRawFrame(m incoming) (*raw, error) {
 	raw, err := getMongo(m)
 	if err != nil {
 		return nil, fmt.Errorf("error getting raw from mongo: %w", err)
@@ -169,7 +172,7 @@ type payload struct {
 	Reserved string
 }
 
-func unmarshalPayload(s string) (payload, error) {
+func unmarshalRaw(s string) (payload, error) {
 	var p payload
 	decoded, err := base64.StdEncoding.DecodeString(s)
 	if err != nil {
