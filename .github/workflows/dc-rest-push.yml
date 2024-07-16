@@ -113,7 +113,7 @@ jobs:
             APP_AUTHREALM: "noi"
             APP_AUTHCLIENTID: "opendatahub-push"
             APP_RABBITCLIENTNAME: "dc-rest-push"
-          ingress
+          ingress:
             tls:
               - hosts:
                 - push.api.opendatahub.com
