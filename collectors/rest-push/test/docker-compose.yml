@@ -38,6 +38,7 @@ services:
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 2s
+      retries: 20
         
   keycloak:
     image: quay.io/keycloak/keycloak:20.0
