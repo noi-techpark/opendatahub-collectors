@@ -113,6 +113,12 @@ jobs:
             APP_AUTHREALM: "noi"
             APP_AUTHCLIENTID: "opendatahub-push"
             APP_RABBITCLIENTNAME: "dc-rest-push"
+          ingress
+            tls:
+              - hosts:
+                - push.api.opendatahub.com
+            hosts:
+              - host: push.api.opendatahub.com
           EOF
 
           # Merge yaml files https://mikefarah.gitbook.io/yq/operators/multiply-merge
