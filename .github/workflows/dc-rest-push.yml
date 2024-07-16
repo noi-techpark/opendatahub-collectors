@@ -85,7 +85,7 @@ jobs:
           aws-region: eu-west-1
 
   deploy-prod:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/prod'
     needs: 
       - test
       - build
