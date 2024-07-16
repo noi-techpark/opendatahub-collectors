@@ -15,12 +15,12 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"github.com/rabbitmq/amqp091-go"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"opendatahub.com/tr-parking-offstreet-sfhera/bdplib"
 )
 
 // read logger level from env and uses INFO as default
