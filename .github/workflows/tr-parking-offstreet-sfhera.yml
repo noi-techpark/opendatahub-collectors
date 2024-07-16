@@ -91,7 +91,7 @@ jobs:
 
             .env.BDP_PROVENANCE_NAME="${{ env.PROJECT_NAME }}" |
             .env.BDP_PROVENANCE_VERSION="${{ github.sha}}" 
-            .env.BDP_BASE_URL: https://mobility.share.opendatahub.com
+            .env.BDP_BASE_URL="https://mobility.share.opendatahub.com"
 
           ' ${{ env.VALUES_YAML }}
 
