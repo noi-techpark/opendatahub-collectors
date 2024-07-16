@@ -122,10 +122,10 @@ jobs:
             className: nginx
             tls:
               - hosts:
-                - push.api.dev.testingmachine.eu
+                - push.api.opendatahub.com
                 secretName: tls-rest-push
             hosts:
-              - host: push.api.dev.testingmachine.eu
+              - host: push.api.opendatahub.com
                 paths: 
                   - path: "/"
                     pathType: Prefix
