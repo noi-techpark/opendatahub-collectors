@@ -44,6 +44,7 @@ func failOnError(err error, msg string) {
 }
 
 const ParkingStation = "ParkingStation"
+const Period = 1
 
 func main() {
 	initLogging()
@@ -118,12 +119,12 @@ func main() {
 			}
 
 			dm := b.CreateDataMap()
-			dm.AddRecord(s.Id, dtFree.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), raw.Lots, 300))
-			dm.AddRecord(s.Id, dtOccupied.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), tot-raw.Lots, 300))
+			dm.AddRecord(s.Id, dtFree.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), raw.Lots, Period))
+			dm.AddRecord(s.Id, dtOccupied.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), tot-raw.Lots, Period))
 			in, _ := strconv.Atoi(raw.In)
-			dm.AddRecord(s.Id, dtEnter.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), in, 300))
+			dm.AddRecord(s.Id, dtEnter.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), in, Period))
 			out, _ := strconv.Atoi(raw.Out)
-			dm.AddRecord(s.Id, dtExit.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), out, 300))
+			dm.AddRecord(s.Id, dtExit.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), out, Period))
 
 			if err := b.PushData(ParkingStation, dm); err != nil {
 				slog.Error("Error pushing data to bdp", "err", err, "msg", msgBody)
