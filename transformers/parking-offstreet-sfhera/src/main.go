@@ -67,10 +67,11 @@ func main() {
 		b := bdplib.FromEnv()
 
 		dtFree := bdplib.CreateDataType("free", "", "free", "Instantaneous")
+		dtOccupied := bdplib.CreateDataType("occupied", "", "occupied", "Instantaneous")
 		dtEnter := bdplib.CreateDataType("entering-vehicles-today", "", "Number of vehicles that entered since start of day", "Instantaneous")
 		dtExit := bdplib.CreateDataType("exiting-vehicles-today", "", "Number of vehicles that exited since start of day", "Instantaneous")
 
-		ds := []bdplib.DataType{dtFree, dtEnter, dtExit}
+		ds := []bdplib.DataType{dtFree, dtOccupied, dtEnter, dtExit}
 		failOnError(b.SyncDataTypes(ParkingStation, ds), "Error pushing datatypes")
 
 		for msg := range mq {
@@ -106,8 +107,9 @@ func main() {
 			tot, _ := strconv.Atoi(raw.Tot)
 			floor, _ := strconv.Atoi(raw.Floor)
 			s.MetaData = map[string]any{
-				"floor":    floor,
-				"capacity": tot,
+				"floor":        floor,
+				"capacity":     tot,
+				"municipality": "Bolzano - Bozen",
 			}
 			if err := b.SyncStations(ParkingStation, []bdplib.Station{s}, true, false); err != nil {
 				slog.Error("Error syncing stations", "err", err, "msg", msgBody)
@@ -117,6 +119,7 @@ func main() {
 
 			dm := b.CreateDataMap()
 			dm.AddRecord(s.Id, dtFree.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), raw.Lots, 300))
+			dm.AddRecord(s.Id, dtOccupied.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), tot-raw.Lots, 300))
 			in, _ := strconv.Atoi(raw.In)
 			dm.AddRecord(s.Id, dtEnter.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), in, 300))
 			out, _ := strconv.Atoi(raw.Out)
