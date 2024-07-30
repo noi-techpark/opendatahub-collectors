@@ -6,12 +6,20 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"log/slog"
 	"os"
 	"time"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
+
+type mqMsg struct {
+	Provider  string    `json:"provider"`
+	Timestamp time.Time `json:"timestamp"`
+	Rawdata   []byte    `json:"rawdata"`
+	ID        string    `json:"id"`
+}
 
 /*
 Heavily based on
@@ -59,14 +67,24 @@ func main() {
 	body, err := os.ReadFile(fName)
 	failOnError(err, "Failed to read file "+fName)
 
+	msg := mqMsg{}
+	msg.Provider = provider
+	msg.Timestamp = time.Now()
+	msg.Rawdata = body
+
+	payload, err := json.Marshal(msg)
+	if err != nil {
+		slog.Error("Error marshalling message to json", "err", err, "UID", msg.ID)
+	}
+
 	err = ch.PublishWithContext(ctx,
 		"ingress", // exchange
 		q.Name,    // routing key
 		false,     // mandatory
 		false,     // immediate
 		amqp.Publishing{
-			ContentType: "text/plain",
-			Body:        []byte(body),
+			ContentType: "application/json",
+			Body:        payload,
 			Headers:     amqp.Table{"provider": provider},
 		})
 	failOnError(err, "Failed to publish a message")

@@ -21,6 +21,7 @@ services:
       - ./:/code
     working_dir: /code
     tty: true
+
   rabbitmq:
     image: rabbitmq:management-alpine
     environment:
