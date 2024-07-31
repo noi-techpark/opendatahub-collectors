@@ -44,7 +44,7 @@ func failOnError(err error, msg string) {
 }
 
 const ParkingStation = "ParkingStation"
-const Period = 1
+const Period = 300
 
 func main() {
 	initLogging()
