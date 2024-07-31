@@ -1,5 +1,5 @@
-nameOverride: dc-echarging-alperia
-fullnameOverride: dc-echarging-alperia
+nameOverride: dc-rest-poller-echarging-alperia
+fullnameOverride: dc-rest-poller-echarging-alperia
 image:
   repository: ghcr.io/noi-techpark/opendatahub-collectors/rest-poller
   pullPolicy: IfNotPresent
