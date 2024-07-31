@@ -1,5 +1,5 @@
-nameOverride: dc-rest-poller-echarging-driwe
-fullnameOverride: dc-rest-poller-echarging-driwe
+nameOverride: dc-rest-poll-echarging-driwe
+fullnameOverride: dc-rest-poll-echarging-driwe
 image:
   repository: ghcr.io/noi-techpark/opendatahub-collectors/rest-poller
   pullPolicy: IfNotPresent
