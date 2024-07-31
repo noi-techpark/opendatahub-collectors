@@ -74,40 +74,40 @@ jobs:
           aws-eks-cluster-name: aws-main-eu-01
           aws-region: eu-west-1
 
-  deploy-alperia-prod:
-    if: github.ref == 'refs/heads/prod'
-    needs: build
-    runs-on: ubuntu-22.04
-    concurrency: tr-emobility-echarging-alperia-deploy-prod
-    environment: prod
-    env:
-      VALUES_YAML: infrastructure/helm/alperia.yaml
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
+  # deploy-alperia-prod:
+  #   if: github.ref == 'refs/heads/prod'
+  #   needs: build
+  #   runs-on: ubuntu-22.04
+  #   concurrency: tr-emobility-echarging-alperia-deploy-prod
+  #   environment: prod
+  #   env:
+  #     VALUES_YAML: infrastructure/helm/alperia.yaml
+  #   steps:
+  #     - name: Checkout source code
+  #       uses: actions/checkout@v4
 
-      - name: Customize values.yaml
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: |
-          yq -i '
-            .image.repository="${{ env.DOCKER_IMAGE }}" |
-            .image.tag="${{ env.DOCKER_TAG }}" |
-            .image.pullPolicy="IfNotPresent" |
+  #     - name: Customize values.yaml
+  #       working-directory: ${{ env.WORKING_DIRECTORY }}
+  #       run: |
+  #         yq -i '
+  #           .image.repository="${{ env.DOCKER_IMAGE }}" |
+  #           .image.tag="${{ env.DOCKER_TAG }}" |
+  #           .image.pullPolicy="IfNotPresent" |
 
-            .env.provenance_name="${{ env.PROJECT_NAME }}" |
-            .env.provenance_version="${{ github.sha}}" |
+  #           .env.provenance_name="${{ env.PROJECT_NAME }}" |
+  #           .env.provenance_version="${{ github.sha}}" |
 
-            .env.BASE_URI="https://mobility.share.opendatahub.com/json" 
+  #           .env.BASE_URI="https://mobility.share.opendatahub.com/json" 
 
-          ' ${{ env.VALUES_YAML }}
-      - name: Deploy on cluster  
-        uses: noi-techpark/github-actions/helm-deploy@v2
-        with:
-          k8s-name: ${{ env.PROJECT_NAME }}
-          k8s-namespace: collector
-          chart-path: helm/generic-collector
-          values-file: ${{ env.WORKING_DIRECTORY}}/${{ env.VALUES_YAML }}
-          aws-access-key-id: ${{ secrets.AWS_PROD_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_PROD_ACCESS_KEY_SECRET }}
-          aws-eks-cluster-name: aws-main-eu-01
-          aws-region: eu-west-1
+  #         ' ${{ env.VALUES_YAML }}
+  #     - name: Deploy on cluster  
+  #       uses: noi-techpark/github-actions/helm-deploy@v2
+  #       with:
+  #         k8s-name: ${{ env.PROJECT_NAME }}
+  #         k8s-namespace: collector
+  #         chart-path: helm/generic-collector
+  #         values-file: ${{ env.WORKING_DIRECTORY}}/${{ env.VALUES_YAML }}
+  #         aws-access-key-id: ${{ secrets.AWS_PROD_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_PROD_ACCESS_KEY_SECRET }}
+  #         aws-eks-cluster-name: aws-main-eu-01
+  #         aws-region: eu-west-1
