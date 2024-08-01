@@ -30,7 +30,7 @@ public class Transformer {
     private static final Logger log = LoggerFactory.getLogger(Transformer.class);
 
     private static final int DATA_CHUNK_SIZE = 1000;
-    private static final int STATION_CHUNK_SIZE = 500;
+    private static final int STATION_CHUNK_SIZE = 50;
 
     @Autowired
     private ObjectMapper mapper;
