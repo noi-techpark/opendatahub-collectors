@@ -27,7 +27,7 @@ env:
   provenance_version: 0.0.0
   
   # Logging level and style (text or json)
-  LOG_LEVEL: debug
+  LOG_LEVEL: info
   LOG_STYLE: json
   
   MQ_LISTEN_KEY: echarging.driwe
