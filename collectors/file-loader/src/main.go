@@ -52,18 +52,6 @@ func main() {
 	failOnError(err, "Failed to open a channel")
 	defer ch.Close()
 
-	q, err := ch.QueueDeclarePassive(
-		"ingress-q", // name
-		true,        // durable
-		false,       // delete when unused
-		false,       // exclusive
-		false,       // no-wait
-		nil,         // arguments
-	)
-	failOnError(err, "Failed to declare a queue")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
 	body, err := os.ReadFile(fName)
 	failOnError(err, "Failed to read file "+fName)
 
@@ -77,9 +65,12 @@ func main() {
 		slog.Error("Error marshalling message to json", "err", err, "UID", msg.ID)
 	}
 
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	err = ch.PublishWithContext(ctx,
 		"ingress", // exchange
-		q.Name,    // routing key
+		provider,  // routing key
 		false,     // mandatory
 		false,     // immediate
 		amqp.Publishing{
