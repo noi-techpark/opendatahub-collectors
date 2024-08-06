@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "collectors/rest-poller/**"
+      - "collectors/lib/ingress-mq/**"
       - ".github/workflows/dc-rest-poller.yml"
 
 env:
