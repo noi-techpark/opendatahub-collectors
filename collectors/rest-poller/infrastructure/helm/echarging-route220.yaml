@@ -1,5 +1,3 @@
-nameOverride: dc-rest-poll-echarging-route220
-fullnameOverride: dc-rest-poll-echarging-route220
 image:
   repository: ghcr.io/noi-techpark/opendatahub-collectors/rest-poller
   pullPolicy: IfNotPresent

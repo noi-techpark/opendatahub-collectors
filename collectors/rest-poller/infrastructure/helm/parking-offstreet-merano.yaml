@@ -1,5 +1,3 @@
-nameOverride: dc-parking-offstreet-merano
-fullnameOverride: dc-parking-offstreet-merano
 image:
   repository: ghcr.io/noi-techpark/opendatahub-collectors/rest-poller
   pullPolicy: IfNotPresent
