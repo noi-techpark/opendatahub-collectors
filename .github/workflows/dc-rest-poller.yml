@@ -1,4 +1,4 @@
-name: CI/CD dc-rest-poller-route220
+name: CI/CD dc-rest-poller
 
 on: 
   push:
