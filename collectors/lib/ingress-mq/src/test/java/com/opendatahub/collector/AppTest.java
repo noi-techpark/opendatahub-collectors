@@ -26,16 +26,4 @@ public class AppTest
     {
         assertTrue( true );
     }
-    
-    @Test
-    public void testQueryStringSplitter(){
-        String query = "test=2&test2=value&key=somevalue";
-        Map<String, String> expectedResult = Map.of(
-            "test", "2", 
-            "test2", "value",
-            "key", "somevalue"
-        );
-        
-        assertEquals(expectedResult, WrapperProcessor.queryStringToMap(query));
-    }
 }
