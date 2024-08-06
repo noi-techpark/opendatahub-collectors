@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "collectors/meteorology-eurac/**"
+      - "collectors/lib/ingress-mq/**"
       - ".github/workflows/dc-meteorology-eurac.yml"
 
 env:
