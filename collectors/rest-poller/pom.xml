@@ -13,7 +13,7 @@ SPDX-License-Identifier: CC0-1.0
   <groupId>com.opendatahub.collector</groupId>
   <artifactId>rest-poller</artifactId>
   <packaging>jar</packaging>
-  <version>0.1</version>
+  <version>1.0</version>
 
   <name>Infra v2 camel route test</name>
 
