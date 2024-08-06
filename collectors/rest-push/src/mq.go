@@ -35,7 +35,6 @@ type restMsg struct {
 type rCon struct {
 	con *amqp.Connection
 	ch  *amqp.Channel
-	q   *amqp.Queue
 }
 
 func (r *rCon) connect(url string) error {
@@ -49,21 +48,8 @@ func (r *rCon) connect(url string) error {
 		return err
 	}
 
-	q, err := ch.QueueDeclarePassive(
-		"ingress-q", // name
-		true,        // durable
-		false,       // delete when unused
-		false,       // exclusive
-		false,       // no-wait
-		nil,         // arguments
-	)
-	if err != nil {
-		return err
-	}
-
 	r.ch = ch
 	r.con = con
-	r.q = &q
 
 	return nil
 }
@@ -122,10 +108,10 @@ func InitRabbitMq(msgQ <-chan restMsg) {
 					defer cancel()
 
 					return r.ch.PublishWithContext(ctx,
-						"ingress", // exchange
-						r.q.Name,  // routing key
-						false,     // mandatory
-						false,     // immediate
+						"ingress",    // exchange
+						msg.Provider, // routing key
+						false,        // mandatory
+						false,        // immediate
 						amqp.Publishing{
 							ContentType: "application/json",
 							Body:        payload,
