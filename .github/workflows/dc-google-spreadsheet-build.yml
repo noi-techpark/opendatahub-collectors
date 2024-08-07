@@ -27,7 +27,7 @@ jobs:
       run: |
         curl -X GET https://${{ env.DOCKER_IMAGE }}/manifests/${{ env.DOCKER_TAG }} \
           -H "Authorization: Bearer $(echo ${{ secrets.GITHUB_TOKEN }} | base64)" \
-          -s -f -o /dev/null
+          -sfL -o /dev/null
         exit $?
       # the exit code results in a corresponding step.outcome (success vs failure)
       
