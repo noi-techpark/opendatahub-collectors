@@ -11,7 +11,7 @@ env:
 
 # There are multiple workflows using this build job, but it only really needs to run once.
 # Before building, we check if the docker image with this git sha already exists on the repo, and don't build it again if it does
-concurrency: ${{ github.sha }}
+concurrency: dc-google-spreadsheet-build-${{ github.sha }}
 jobs:
   check-package:
     runs-on: ubuntu-22.04
@@ -33,7 +33,7 @@ jobs:
   build:
     needs: check-package
     # Only build if package doesn't exist yet
-    if: needs.check-package.outputs.does-not-exist
+    if: needs.check-package.outputs.does-not-exist == true
     runs-on: ubuntu-22.04
     steps:
     - name: Checkout source code
