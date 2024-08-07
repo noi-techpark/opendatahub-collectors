@@ -24,10 +24,12 @@ jobs:
       # error just means the package doesn't exist
       continue-on-error: true
       # check the package repo to see if image exists
+      # Some URL hackery required: https://renehernandez.io/snippets/check-image-tag-container-registry/
       run: |
-        curl -X GET https://${{ env.DOCKER_IMAGE }}/manifests/${{ env.DOCKER_TAG }} \
+        API_URL="https://ghcr.io/v2${'${{ env.DOCKER_IMAGE }}'#'ghcr.io'}/manifests/${{ env.DOCKER_TAG }}"
+        curl $API_URL \
           -H "Authorization: Bearer $(echo ${{ secrets.GITHUB_TOKEN }} | base64)" \
-          -sfL -o /dev/null
+          -sfIL -o /dev/null
         exit $?
       # the exit code results in a corresponding step.outcome (success vs failure)
       
