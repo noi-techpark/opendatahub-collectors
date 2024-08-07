@@ -16,7 +16,8 @@ jobs:
   check-package:
     runs-on: ubuntu-22.04
     outputs:
-        exists: ${{ steps.check.outcome == 'success' }}
+      exists: ${{ steps.check.outcome == 'success' }}
+
     steps:
     - name: Check image exists
       id: check
