@@ -4,7 +4,7 @@ on:
   workflow_call:
 
 env:
-  WORKING_DIRECTORY: collector/google-spreadsheet
+  WORKING_DIRECTORY: collectors/google-spreadsheet
   DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/dc-google-spreadsheet
   DOCKER_TAG: ${{ github.sha }}
   JAVA_VERSION: 17
