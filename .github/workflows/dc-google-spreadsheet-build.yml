@@ -26,7 +26,7 @@ jobs:
       # check the package repo to see if image exists
       # Some URL hackery required: https://renehernandez.io/snippets/check-image-tag-container-registry/
       run: |
-        API_URL="https://ghcr.io/v2${'${{ env.DOCKER_IMAGE }}'#'ghcr.io'}/manifests/${{ env.DOCKER_TAG }}"
+        API_URL=$(echo "https://${{ env.DOCKER_IMAGE }}/manifests/${{ env.DOCKER_TAG }}" | sed -e "s/^ghcr.io/ghcr.io\/v2/")
         curl $API_URL \
           -H "Authorization: Bearer $(echo ${{ secrets.GITHUB_TOKEN }} | base64)" \
           -sfIL -o /dev/null
