@@ -33,7 +33,7 @@ jobs:
   build:
     needs: check-package
     # Only build if package doesn't exist yet
-    if: needs.check-package.outputs.exists == 'true'
+    if: needs.check-package.outputs.exists == 'false'
     runs-on: ubuntu-22.04
     steps:
     - name: Checkout source code
