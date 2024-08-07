@@ -22,9 +22,9 @@ jobs:
       id: check
       # error just means the package doesn't exist
       continue-on-error: true
-      # http HEAD the package repo to see if image exists
+      # check the package repo to see if image exists
       run: |
-        curl -I https://${{ env.DOCKER_IMAGE }}/manifests/${{ env.DOCKER_TAG }} \
+        curl -X GET https://${{ env.DOCKER_IMAGE }}/manifests/${{ env.DOCKER_TAG }} \
           -H "Authorization: Bearer $(echo ${{ secrets.GITHUB_TOKEN }} | base64)" \
           -s -f -o /dev/null
         exit $?
@@ -33,7 +33,7 @@ jobs:
   build:
     needs: check-package
     # Only build if package doesn't exist yet
-    if: needs.check-package.outputs.does-not-exist == true
+    if: needs.check-package.outputs.does-not-exist
     runs-on: ubuntu-22.04
     steps:
     - name: Checkout source code
