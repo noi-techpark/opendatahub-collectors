@@ -33,12 +33,22 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Customize values.yaml
-        working-directory: ${{ env.WORKING_DIRECTORY }}
+      - name: Write environment-specific Helm values
         run: |
-          yq -i '.image.repository="${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML}}
-          yq -i '.image.tag="${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
-          yq -i '.image.pullPolicy="IfNotPresent"' ${{ env.VALUES_YAML }}
+          cat <<EOF > override.yml
+          image:
+            repository:  ${{ env.DOCKER_IMAGE }}
+            tag:  ${{ env.DOCKER_TAG }}
+            pullPolicy: "IfNotPresent"
+          envSecret:
+            SHEETS_CLIENT_ID: ${{ secrets.G_SHEETS_CLIENT_ID }}
+            SHEETS_CLIENT_SECRET:  ${{ secrets.G_SHEETS_CLIENT_SECRET }}
+            SHEETS_REFRESH_TOKEN:  ${{ secrets.G_SHEETS_REFRESH_TOKEN }}
+            SPREADSHEET_ID:  ${{ secrets.G_SHEETS_STA_ECHARGING_ID }}
+          EOF
+
+          # Merge yaml files https://mikefarah.gitbook.io/yq/operators/multiply-merge
+          yq -i '. *= load("override.yml")' ${{env.VALUES_YAML}}
 
       - name: Deploy on cluster  
         uses: noi-techpark/github-actions/helm-deploy@v2
