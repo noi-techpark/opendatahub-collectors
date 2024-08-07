@@ -16,7 +16,7 @@ jobs:
   check-package:
     runs-on: ubuntu-22.04
     outputs:
-        does-not-exist: ${{ steps.check.outcome == 'failure' }}
+        exists: ${{ steps.check.outcome == 'success' }}
     steps:
     - name: Check image exists
       id: check
@@ -33,7 +33,7 @@ jobs:
   build:
     needs: check-package
     # Only build if package doesn't exist yet
-    if: needs.check-package.outputs.does-not-exist
+    if: needs.check-package.outputs.exists == 'true'
     runs-on: ubuntu-22.04
     steps:
     - name: Checkout source code
