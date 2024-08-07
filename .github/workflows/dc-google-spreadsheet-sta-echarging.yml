@@ -14,6 +14,8 @@ env:
   DOCKER_TAG: ${{ github.sha }}
   KUBERNETES_NAMESPACE: collector
   JAVA_VERSION: 17
+  VALUES_YAML: infrastructure/helm/sta_echarging.yaml
+  K8S_NAME: dc-google-spreadsheet-sta-echarging
 
 jobs:
   build:
@@ -26,14 +28,12 @@ jobs:
     runs-on: ubuntu-22.04
     concurrency: dc-google-spreadsheet-sta-echarging-test
     environment: test
-    env:
-      VALUES_YAML: infrastructure/helm/sta_echarging.yaml
-      K8S_NAME: dc-google-spreadsheet-sta-echarging
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
 
       - name: Write environment-specific Helm values
+        working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
           cat <<EOF > override.yml
           image:
@@ -48,7 +48,7 @@ jobs:
           EOF
 
           # Merge yaml files https://mikefarah.gitbook.io/yq/operators/multiply-merge
-          yq -i '. *= load("override.yml")' ${{env.VALUES_YAML}}
+          yq -i '. *= load("override.yml")' ${{ env.VALUES_YAML }}
 
       - name: Deploy on cluster  
         uses: noi-techpark/github-actions/helm-deploy@v2
