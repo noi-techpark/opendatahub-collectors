@@ -38,12 +38,12 @@ jobs:
         run: |
           cat <<EOF > override.yml
           image:
-            repository:  ${{ env.DOCKER_IMAGE }}
-            tag:  ${{ env.DOCKER_TAG }}
+            repository: ${{ env.DOCKER_IMAGE }}
+            tag: ${{ env.DOCKER_TAG }}
             pullPolicy: "IfNotPresent"
           env:
-            provenance_name=${{ env.K8S_NAME }}
-            provenance_version="${{ github.sha}}" 
+            provenance_name: ${{ env.K8S_NAME }}
+            provenance_version: ${{ github.sha}} 
           envSecret:
             spreadsheetId: ${{ secrets.G_SHEETS_STA_ECHARGING_ID }}
           EOF
