@@ -1,0 +1,39 @@
+name: CI/CD tr-google-spreadsheet build
+
+on: 
+  workflow_call:
+
+env:
+  WORKING_DIRECTORY: collectors/google-spreadsheet
+  DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/dc-google-spreadsheet
+  DOCKER_TAG: ${{ github.sha }}
+  JAVA_VERSION: 17
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    - name: Build libs 
+      uses: noi-techpark/github-actions/maven-build@v2
+      with:
+        working-directory: transformers/lib/rabbit-mongo-listener
+        java-version: ${{ env.JAVA_VERSION }}
+        build-command: 'mvn clean install'
+
+    - name: Build project
+      uses: noi-techpark/github-actions/maven-build@v2
+      with:
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        java-version: ${{ env.JAVA_VERSION }}
+        build-command: 'mvn clean install'
+
+    - name: Build and push images
+      uses: noi-techpark/github-actions/docker-build-and-push@v2
+      with:
+        working-directory: ${{ env.WORKING_DIRECTORY }}/infrastructure
+        docker-username: ${{ github.actor }}
+        docker-password: ${{ secrets.GITHUB_TOKEN }}
+          
