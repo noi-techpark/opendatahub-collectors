@@ -7,12 +7,12 @@ on:
       - "transformers/lib/rabbit-mongo-listener/**"
       - ".github/workflows/tr-google-spreadsheet-build.yml"
       - ".github/workflows/tr-google-spreadsheet-sta-echarging.yml"
-      - "!collectors/google-spreadsheet/infrastructure/helm/*.yaml"
-      - "collectors/google-spreadsheet/infrastructure/helm/sta_echarging.yaml"
+      - "!transformers/google-spreadsheet/infrastructure/helm/*.yaml"
+      - "transformers/google-spreadsheet/infrastructure/helm/sta_echarging.yaml"
 
 env:
   K8S_NAME: tr-google-spreadsheet-sta-echarging
-  WORKING_DIRECTORY: collectors/google-spreadsheet
+  WORKING_DIRECTORY: transformers/google-spreadsheet
   DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/tr-google-spreadsheet
   DOCKER_TAG: ${{ github.sha }}
   KUBERNETES_NAMESPACE: collector
