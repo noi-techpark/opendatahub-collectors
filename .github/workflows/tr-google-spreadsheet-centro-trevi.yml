@@ -1,0 +1,64 @@
+name: CI/CD tr-google-spreadsheet-centro-trevi
+
+on: 
+  push:
+    paths:
+      - "transformers/google-spreadsheet/**"
+      - "transformers/lib/rabbit-mongo-listener/**"
+      - ".github/workflows/tr-google-spreadsheet-build.yml"
+      - ".github/workflows/tr-google-spreadsheet-centro-trevi.yml"
+      - "!transformers/google-spreadsheet/infrastructure/helm/*.yaml"
+      - "transformers/google-spreadsheet/infrastructure/helm/centro_trevi.yaml"
+
+env:
+  K8S_NAME: tr-google-spreadsheet-centro-trevi
+  WORKING_DIRECTORY: transformers/google-spreadsheet
+  DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/tr-google-spreadsheet
+  DOCKER_TAG: ${{ github.sha }}
+  KUBERNETES_NAMESPACE: collector
+  VALUES_YAML: infrastructure/helm/centro_trevi.yaml
+
+jobs:
+  build:
+    uses: ./.github/workflows/tr-google-spreadsheet-build.yml
+    secrets: inherit
+          
+  deploy-test:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-22.04
+    concurrency: tr-google-spreadsheet-centro-trevi-test
+    environment: test
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Write environment-specific Helm values
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          cat <<EOF > override.yml
+          image:
+            repository: ${{ env.DOCKER_IMAGE }}
+            tag: ${{ env.DOCKER_TAG }}
+            pullPolicy: "IfNotPresent"
+          env:
+            provenance_name: ${{ env.K8S_NAME }}
+            provenance_version: ${{ github.sha}} 
+          envSecret:
+            spreadsheetId: ${{ secrets.G_SHEETS_CENTRO_TREVI_ID }}
+          EOF
+
+          # Merge yaml files https://mikefarah.gitbook.io/yq/operators/multiply-merge
+          yq -i '. *= load("override.yml")' ${{ env.VALUES_YAML }}
+
+      - name: Deploy on cluster  
+        uses: noi-techpark/github-actions/helm-deploy@v2
+        with:
+          k8s-name: ${{ env.K8S_NAME }}
+          k8s-namespace: collector
+          chart-path: helm/generic-collector
+          values-file: ${{ env.WORKING_DIRECTORY}}/${{ env.VALUES_YAML }}
+          aws-access-key-id: ${{ secrets.AWS_DEV_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_DEV_ACCESS_KEY_SECRET }}
+          aws-eks-cluster-name: aws-main-eu-01
+          aws-region: eu-west-1
