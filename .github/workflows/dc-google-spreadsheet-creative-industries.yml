@@ -24,6 +24,7 @@ jobs:
   build:
     uses: ./.github/workflows/dc-google-spreadsheet-build.yml
     secrets: inherit
+    concurrency: dc-google-spreadsheet-build-${{ github.sha }}
           
   deploy-test:
     if: github.ref == 'refs/heads/main'
