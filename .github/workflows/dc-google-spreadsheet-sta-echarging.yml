@@ -7,6 +7,8 @@ on:
       - "collectors/lib/ingress-mq/**"
       - ".github/workflows/dc-google-spreadsheet-build.yml"
       - ".github/workflows/dc-google-spreadsheet-sta-echarging.yml"
+      - "!collectors/google-spreadsheet/infrastructure/helm/*.yaml"
+      - "collectors/google-spreadsheet/infrastructure/helm/sta_echarging.yaml"
 
 env:
   WORKING_DIRECTORY: collectors/google-spreadsheet

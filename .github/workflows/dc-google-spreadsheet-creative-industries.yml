@@ -1,4 +1,4 @@
-name: CI/CD dc-google-spreadsheet centro-trevi
+name: CI/CD dc-google-spreadsheet creative-industries
 
 on: 
   push:
@@ -6,9 +6,10 @@ on:
       - "collectors/google-spreadsheet/**"
       - "collectors/lib/ingress-mq/**"
       - ".github/workflows/dc-google-spreadsheet-build.yml"
-      - ".github/workflows/dc-google-spreadsheet-centro-trevi.yml"
+      - ".github/workflows/dc-google-spreadsheet-creative-industries.yml"
       - "!collectors/google-spreadsheet/infrastructure/helm/*.yaml"
-      - "collectors/google-spreadsheet/infrastructure/helm/centro_trevi.yaml"
+      - "collectors/google-spreadsheet/infrastructure/helm/creative_industries.yaml"
+
 
 env:
   WORKING_DIRECTORY: collectors/google-spreadsheet
@@ -16,8 +17,8 @@ env:
   DOCKER_TAG: ${{ github.sha }}
   KUBERNETES_NAMESPACE: collector
   JAVA_VERSION: 17
-  VALUES_YAML: infrastructure/helm/centro_trevi.yaml
-  K8S_NAME: dc-google-spreadsheet-centro-trevi
+  VALUES_YAML: infrastructure/helm/creative_industries.yaml
+  K8S_NAME: dc-google-spreadsheet-creative-industries
 
 jobs:
   build:
@@ -28,7 +29,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-22.04
-    concurrency: dc-google-spreadsheet-centro-trevi-test
+    concurrency: dc-google-spreadsheet-creative-industries-test
     environment: test
     steps:
       - name: Checkout source code
@@ -46,7 +47,7 @@ jobs:
             SHEETS_CLIENT_ID: ${{ secrets.G_SHEETS_CLIENT_ID }}
             SHEETS_CLIENT_SECRET:  ${{ secrets.G_SHEETS_CLIENT_SECRET }}
             SHEETS_REFRESH_TOKEN:  ${{ secrets.G_SHEETS_REFRESH_TOKEN }}
-            SPREADSHEET_ID:  ${{ secrets.G_SHEETS_CENTRO_TREVI_ID }}
+            SPREADSHEET_ID:  ${{ secrets.G_SHEETS_STA_ECHARGING_ID }}
           EOF
 
           # Merge yaml files https://mikefarah.gitbook.io/yq/operators/multiply-merge
