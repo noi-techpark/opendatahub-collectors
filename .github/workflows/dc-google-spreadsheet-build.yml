@@ -9,9 +9,6 @@ env:
   DOCKER_TAG: ${{ github.sha }}
   JAVA_VERSION: 17
 
-# There are multiple workflows using this build job, but it only really needs to run once.
-# Calling workflows need to use a shared concurrency group
-#
 # Before building, we check if the docker image with this git sha already exists on the repo, and don't build it again if it does
 jobs:
   check-package:
@@ -20,6 +17,10 @@ jobs:
       exists: ${{ steps.check.outcome == 'success' }}
 
     steps:
+      # Prevent multiple jobs from proceeding
+    - name: Mutex Action
+      uses: ben-z/gh-action-mutex@v1.0.0-alpha.9
+
     - name: Check image exists
       id: check
       # error just means the package doesn't exist
