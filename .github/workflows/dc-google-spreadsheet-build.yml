@@ -9,36 +9,8 @@ env:
   DOCKER_TAG: ${{ github.sha }}
   JAVA_VERSION: 17
 
-# Before building, we check if the docker image with this git sha already exists on the repo, and don't build it again if it does
 jobs:
-  check-package:
-    runs-on: ubuntu-22.04
-    outputs:
-      exists: ${{ steps.check.outcome == 'success' }}
-
-    steps:
-      # Prevent multiple jobs from proceeding
-    - name: Mutex Action
-      uses: ben-z/gh-action-mutex@v1.0.0-alpha.9
-
-    - name: Check image exists
-      id: check
-      # error just means the package doesn't exist
-      continue-on-error: true
-      # check the package repo to see if image exists
-      # Some URL hackery required: https://renehernandez.io/snippets/check-image-tag-container-registry/
-      run: |
-        API_URL=$(echo "https://${{ env.DOCKER_IMAGE }}/manifests/${{ env.DOCKER_TAG }}" | sed -e "s/ghcr.io/ghcr.io\/v2/")
-        curl $API_URL \
-          -H "Authorization: Bearer $(echo ${{ secrets.GITHUB_TOKEN }} | base64)" \
-          -sfIL -o /dev/null
-        exit $?
-      # the exit code results in a corresponding step.outcome (success vs failure)
-      
   build:
-    needs: check-package
-    # Only build if package doesn't exist yet
-    if: needs.check-package.outputs.exists == 'false'
     runs-on: ubuntu-22.04
     steps:
     - name: Checkout source code
