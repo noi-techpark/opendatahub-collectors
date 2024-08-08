@@ -11,7 +11,9 @@ env:
 
 # There are multiple workflows using this build job, but it only really needs to run once.
 # Before building, we check if the docker image with this git sha already exists on the repo, and don't build it again if it does
-concurrency: dc-google-spreadsheet-build-${{ github.sha }}
+concurrency: 
+  group: dc-google-spreadsheet-build-${{ github.sha }}
+  cancel-in-progress: false
 jobs:
   check-package:
     runs-on: ubuntu-22.04
