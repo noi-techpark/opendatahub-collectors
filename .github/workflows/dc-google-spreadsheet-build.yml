@@ -7,6 +7,7 @@ env:
   WORKING_DIRECTORY: collectors/google-spreadsheet
   DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/dc-google-spreadsheet
   DOCKER_TAG: ${{ github.sha }}
+  DOCKER_SOURCE: https://github.com/noi-techpark/opendatahub-collectors
   JAVA_VERSION: 17
 
 jobs:

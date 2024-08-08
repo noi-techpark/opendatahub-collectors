@@ -8,3 +8,5 @@ services:
     build:
       context: ../
       dockerfile: infrastructure/docker/Dockerfile
+      labels: 
+        - "org.opencontainers.image.source=${DOCKER_SOURCE}"
