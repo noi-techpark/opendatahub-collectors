@@ -5,7 +5,7 @@ on:
 
 env:
   WORKING_DIRECTORY: transformers/google-spreadsheet
-  DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/dc-google-spreadsheet
+  DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/tr-google-spreadsheet
   DOCKER_TAG: ${{ github.sha }}
   JAVA_VERSION: 17
 
