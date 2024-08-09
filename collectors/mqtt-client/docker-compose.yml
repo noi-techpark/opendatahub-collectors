@@ -4,9 +4,9 @@
 
 services:
   app:
-    depends_on: 
-      rabbitmq:
-        condition: service_healthy
+    # depends_on: 
+    #   rabbitmq:
+    #     condition: service_healthy
     build:
       dockerfile: infrastructure/docker/Dockerfile
       context: . 
@@ -18,9 +18,10 @@ services:
       - pkg:/go/pkg/mod
     working_dir: /code
 
-  rabbitmq:
-    extends:
-      file: ../lib/docker-compose/docker-compose.rabbitmq.yml
-      service: rabbitmq
+  # rabbitmq:
+  #   extends:
+  #     file: ../lib/docker-compose/docker-compose.rabbitmq.yml
+  #     service: rabbitmq
+  #   attach: false
 volumes:
   pkg:

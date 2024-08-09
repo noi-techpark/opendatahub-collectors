@@ -13,9 +13,9 @@ import (
 )
 
 var cfg struct {
-	MQ_URI        string
-	MQ_Exchange   string
-	MQ_ClientNAME string
+	RABBITMQ_URI        string
+	RABBITMQ_Exchange   string
+	RABBITMQ_ClientNAME string
 
 	MQTT_user     string
 	MQTT_pass     string
@@ -38,6 +38,8 @@ func main() {
 	envconfig.MustProcess("APP", &cfg)
 	initLog()
 
+	slog.Info("Started with config", "cfg", cfg)
+
 	opts := mqtt.NewClientOptions()
 	opts.AddBroker(cfg.MQTT_uri)
 	opts.SetClientID(cfg.MQTT_clientid)
@@ -45,10 +47,10 @@ func main() {
 	opts.SetPassword(cfg.MQTT_pass)
 	opts.SetAutoReconnect(true)
 
-	incoming := make(chan mqtt.Message)
-
 	opts.SetOnConnectHandler(func(c mqtt.Client) {
-		c.Subscribe(cfg.MQTT_topic, 1, func(c mqtt.Client, m mqtt.Message) { incoming <- m })
+		c.Subscribe(cfg.MQTT_topic, 1, func(c mqtt.Client, m mqtt.Message) {
+			slog.Info("got message", "msg", m)
+		})
 	})
 
 	client := mqtt.NewClient(opts)
@@ -56,4 +58,5 @@ func main() {
 		panic(token.Error())
 	}
 
+	select {}
 }
