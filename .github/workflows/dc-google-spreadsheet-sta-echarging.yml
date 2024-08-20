@@ -82,6 +82,12 @@ jobs:
             repository:  ${{ env.DOCKER_IMAGE }}
             tag:  ${{ env.DOCKER_TAG }}
             pullPolicy: "IfNotPresent"
+          ingress:
+            tls:
+              - hosts:
+                - spreadsheets.opendatahub.com
+            hosts:
+              - host: spreadsheets.opendatahub.com
           envSecret:
             SHEETS_CLIENT_ID: ${{ secrets.G_SHEETS_CLIENT_ID }}
             SHEETS_CLIENT_SECRET:  ${{ secrets.G_SHEETS_CLIENT_SECRET }}
