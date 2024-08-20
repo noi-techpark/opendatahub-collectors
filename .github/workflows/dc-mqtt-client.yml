@@ -37,7 +37,7 @@ jobs:
     environment: test
     env:
       VALUES_YAML: collectors/mqtt-client/infrastructure/helm/env-a22.yaml
-      K8S_NAME: dc-mqtt-client
+      K8S_NAME: dc-mqtt-client-env-a22
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
