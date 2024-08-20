@@ -7,12 +7,13 @@ env:
   APP_RABBITMQ_EXCHANGE: ingress
   APP_RABBITMQ_CLIENTNAME: dc-mqtt-client-env-a22
   APP_MQTT_USER: airQuino
-  APP_MQTT_PASS:
-  APP_MQTT_URI:
   APP_MQTT_CLIENTID: airQuinoRaw
   APP_MQTT_TOPIC: AirQuino/RawData
   APP_LOGLEVEL: INFO
   APP_PROVIDER: a22/environment
+envSecret:
+  APP_MQTT_PASS:
+  APP_MQTT_URI:
 envSecretRef:
   - name: APP_RABBITMQ_URI 
     secret: rabbitmq-svcbind
