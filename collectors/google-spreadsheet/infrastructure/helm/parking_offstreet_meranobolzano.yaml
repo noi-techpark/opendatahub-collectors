@@ -1,6 +1,3 @@
-nameOverride: dc-spreadsheets-google-parking-offstreet-mebo
-fullnameOverride: dc-spreadsheets-google-parking-offstreet-mebo
-
 image:
   repository: ghcr.io/noi-techpark/opendatahub-collectors/google-spreadsheet
   pullPolicy: Always

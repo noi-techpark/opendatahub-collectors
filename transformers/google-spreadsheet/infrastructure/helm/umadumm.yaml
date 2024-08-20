@@ -1,5 +1,3 @@
-nameOverride: tr-spreadsheets-google-umadumm
-fullnameOverride: tr-spreadsheets-google-umadumm
 image:
   repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-google-spreadsheet
   pullPolicy: Always

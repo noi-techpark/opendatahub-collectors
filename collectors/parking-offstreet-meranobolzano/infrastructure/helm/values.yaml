@@ -1,6 +1,3 @@
-nameOverride: dc-parking-offstreet-bolzano
-fullnameOverride: dc-parking-offstreet-bolzano
-
 image:
   repository: ghcr.io/noi-techpark/opendatahub-collectors/parking-offstreet-bolzano
   pullPolicy: Always

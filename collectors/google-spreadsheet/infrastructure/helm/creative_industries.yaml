@@ -1,6 +1,3 @@
-nameOverride: dc-spreadsheets-google-creative-industries
-fullnameOverride: dc-spreadsheets-google-creative-industries
-
 image:
   repository: ghcr.io/noi-techpark/opendatahub-collectors/google-spreadsheet
   pullPolicy: Always

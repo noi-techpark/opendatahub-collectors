@@ -9,9 +9,6 @@ image:
 imagePullSecrets:
   - name: container-registry-r
 
-nameOverride: "tr-parking-offstreet-sfhera"
-fullnameOverride: "tr-parking-offstreet-sfhera"
-
 env:
   # ODH Core Writer Connection
   BDP_BASE_URL: https://share.opendatahub.testingmachine.eu

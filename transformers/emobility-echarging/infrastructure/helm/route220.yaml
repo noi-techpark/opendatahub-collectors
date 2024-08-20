@@ -1,5 +1,3 @@
-nameOverride: tr-echarging-route220
-fullnameOverride: tr-echarging-route220
 image:
   repository: ghcr.io/noi-techpark/opendatahub-collectors/emobility-echarging
   pullPolicy: Always

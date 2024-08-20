@@ -1,6 +1,3 @@
-nameOverride: dc-spreadsheets-google-traffic-bluetooth
-fullnameOverride: dc-spreadsheets-google-traffic-bluetooth
-
 image:
   repository: ghcr.io/noi-techpark/opendatahub-collectors/google-spreadsheet
   pullPolicy: Always

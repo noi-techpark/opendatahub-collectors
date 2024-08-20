@@ -1,5 +1,3 @@
-nameOverride: tr-meteorology-eurac
-fullnameOverride: tr-meteorology-eurac
 image:
   repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-meteorology-eurac
   pullPolicy: Always

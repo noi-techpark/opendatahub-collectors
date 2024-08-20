@@ -42,7 +42,7 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}/infrastructure
         docker-username: ${{ github.actor }}
         docker-password: ${{ secrets.GITHUB_TOKEN }}
-          
+
   deploy-route220-test:
     if: github.ref == 'refs/heads/main'
     needs: build

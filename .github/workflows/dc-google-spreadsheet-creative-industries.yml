@@ -24,7 +24,7 @@ jobs:
   build:
     uses: ./.github/workflows/dc-google-spreadsheet-build.yml
     secrets: inherit
-          
+
   deploy-test:
     if: github.ref == 'refs/heads/main'
     needs: build

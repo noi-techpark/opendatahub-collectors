@@ -1,5 +1,3 @@
-nameOverride: tr-parking-offstreet-meranobolzano
-fullnameOverride: tr-parking-offstreet-meranobolzano
 image:
   repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-parking-offstreet-meranobolzano
   pullPolicy: Always

@@ -1,6 +1,3 @@
-nameOverride: dc-spreadsheets-google-umadumm
-fullnameOverride: dc-spreadsheets-google-umadumm
-
 image:
   repository: ghcr.io/noi-techpark/opendatahub-collectors/google-spreadsheet
   pullPolicy: Always

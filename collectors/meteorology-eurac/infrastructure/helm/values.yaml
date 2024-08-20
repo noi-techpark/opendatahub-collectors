@@ -1,6 +1,3 @@
-nameOverride: dc-meteorology-eurac
-fullnameOverride: dc-meteorology-eurac
-
 image:
   repository: ghcr.io/noi-techpark/opendatahub-collectors/dc-meteorology-eurac
   pullPolicy: Always

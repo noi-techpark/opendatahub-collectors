@@ -9,9 +9,6 @@ image:
 imagePullSecrets:
   - name: container-registry-r
 
-nameOverride: "tr-parking-offstreet-teratronik"
-fullnameOverride: "tr-parking-offstreet-teratronik"
-
 env:
   # ODH Core Writer Connection
   BDP_BASE_URL: https://share.opendatahub.testingmachine.eu

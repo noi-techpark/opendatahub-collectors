@@ -1,5 +1,3 @@
-nameOverride: tr-echarging-driwe
-fullnameOverride: tr-echarging-driwe
 image:
   repository: ghcr.io/noi-techpark/opendatahub-collectors/emobility-echarging
   pullPolicy: Always

@@ -9,9 +9,6 @@ image:
 imagePullSecrets:
   - name: container-registry-r
 
-nameOverride: "dc-rest-push"
-fullnameOverride: "dc-rest-push"
-
 service:
   type: ClusterIP
   port: 8080
