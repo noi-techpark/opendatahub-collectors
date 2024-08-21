@@ -31,7 +31,7 @@ jobs:
     uses: ./.github/workflows/dc-google-spreadsheet-deploy.yml
     secrets: inherit
     with:
-      name: creativ-industries
+      name: creative-industries
       environment: test
       spreadsheet-id-secret: G_SHEETS_CREATIVE_INDUSTRIES_ID
 
@@ -41,6 +41,6 @@ jobs:
     uses: ./.github/workflows/dc-google-spreadsheet-deploy.yml
     secrets: inherit
     with:
-      name: creativ-industries
+      name: creative-industries
       environment: prod
       spreadsheet-id-secret: G_SHEETS_CREATIVE_INDUSTRIES_ID
