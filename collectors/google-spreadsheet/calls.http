@@ -4,6 +4,7 @@
 
 @trigger = http://localhost:8082/trigger
 #@trigger = https://spreadsheets.dev.testingmachine.eu/sta-echarging/trigger
+@trigger = https://spreadsheets.opendatahub.com/sta-echarging/trigger
 
 POST {{trigger}}
 # The token is generated on application start, you can find it in the log
