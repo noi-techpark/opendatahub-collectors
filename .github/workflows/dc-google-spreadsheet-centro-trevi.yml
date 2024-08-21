@@ -27,39 +27,19 @@ jobs:
   deploy-test:
     if: github.ref == 'refs/heads/main'
     needs: build
-    runs-on: ubuntu-22.04
-    concurrency: dc-google-spreadsheet-centro-trevi-test
-    environment: test
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
+    uses: ./.github/workflows/dc-google-spreadsheet-deploy.yml
+    secrets: inherit
+    with:
+      name: centro-trevi
+      environment: test
+      spreadsheet-id-secret: G_SHEETS_CENTRO_TREVI_ID
 
-      - name: Write environment-specific Helm values
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: |
-          cat <<EOF > override.yml
-          image:
-            repository:  ${{ env.DOCKER_IMAGE }}
-            tag:  ${{ env.DOCKER_TAG }}
-            pullPolicy: "IfNotPresent"
-          envSecret:
-            SHEETS_CLIENT_ID: ${{ secrets.G_SHEETS_CLIENT_ID }}
-            SHEETS_CLIENT_SECRET:  ${{ secrets.G_SHEETS_CLIENT_SECRET }}
-            SHEETS_REFRESH_TOKEN:  ${{ secrets.G_SHEETS_REFRESH_TOKEN }}
-            SPREADSHEET_ID:  ${{ secrets.G_SHEETS_CENTRO_TREVI_ID }}
-          EOF
-
-          # Merge yaml files https://mikefarah.gitbook.io/yq/operators/multiply-merge
-          yq -i '. *= load("override.yml")' ${{ env.VALUES_YAML }}
-
-      - name: Deploy on cluster  
-        uses: noi-techpark/github-actions/helm-deploy@v2
-        with:
-          k8s-name: ${{ env.K8S_NAME }}
-          k8s-namespace: collector
-          chart-path: helm/generic-collector
-          values-file: ${{ env.WORKING_DIRECTORY}}/${{ env.VALUES_YAML }}
-          aws-access-key-id: ${{ secrets.AWS_DEV_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_DEV_ACCESS_KEY_SECRET }}
-          aws-eks-cluster-name: aws-main-eu-01
-          aws-region: eu-west-1
+  deploy-prod:
+    if: github.ref == 'refs/heads/prod'
+    needs: build
+    uses: ./.github/workflows/dc-google-spreadsheet-deploy.yml
+    secrets: inherit
+    with:
+      name: centro-trevi
+      environment: prod
+      spreadsheet-id-secret: G_SHEETS_CENTRO_TREVI_ID
