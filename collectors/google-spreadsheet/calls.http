@@ -7,7 +7,7 @@
 @path=/centro-trevi
 @trigger = {{host}}{{path}}/trigger
 # The token is generated on application start, you can find it in the log
-@token = 2c2cb34d-477e-4582-aa1d-0f4d849d1447
+@token = caeb6c2e-8220-41f2-b9a0-b716fd840188
 
 POST {{trigger}}
 X-Goog-Channel-Token: {{token}}

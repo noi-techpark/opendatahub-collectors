@@ -42,7 +42,7 @@ jobs:
             tls:
               - hosts:
                 - ${{ vars.G_SHEETS_CALLBACK_HOST }}
-                secretName: tls-spreadsheets-${{inputs.name}}
+                secretName: tls-spreadsheets
             hosts:
               - host: ${{ vars.G_SHEETS_CALLBACK_HOST }}
                 paths: 
