@@ -46,8 +46,12 @@ jobs:
             tls:
               - hosts:
                 - ${{ vars.G_SHEETS_CALLBACK_HOST }}
+                secretName: tls-spreadsheets
             hosts:
               - host: ${{ vars.G_SHEETS_CALLBACK_HOST }}
+                paths: 
+                  - path: "/sta-echarging/(.*)"
+                    pathType: Prefix
           env:
             SPREADSHEET_NOTIFICATION_URL: "https://${{ vars.G_SHEETS_CALLBACK_HOST }}/sta-echarging/trigger"
           envSecret:
@@ -94,8 +98,12 @@ jobs:
             tls:
               - hosts:
                 - ${{ vars.G_SHEETS_CALLBACK_HOST }}
+                secretName: tls-spreadsheets
             hosts:
               - host: ${{ vars.G_SHEETS_CALLBACK_HOST }}
+                paths: 
+                  - path: "/sta-echarging/(.*)"
+                    pathType: Prefix
           env:
             SPREADSHEET_NOTIFICATION_URL: "https://${{ vars.G_SHEETS_CALLBACK_HOST }}/sta-echarging/trigger"
           envSecret:
