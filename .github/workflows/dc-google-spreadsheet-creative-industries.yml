@@ -8,7 +8,7 @@ on:
       - ".github/workflows/dc-google-spreadsheet-build.yml"
       - ".github/workflows/dc-google-spreadsheet-creative-industries.yml"
       - "!collectors/google-spreadsheet/infrastructure/helm/*.yaml"
-      - "collectors/google-spreadsheet/infrastructure/helm/creative_industries.yaml"
+      - "collectors/google-spreadsheet/infrastructure/helm/creative-industries.yaml"
 
 
 env:

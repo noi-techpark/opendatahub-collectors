@@ -8,7 +8,7 @@ on:
       - ".github/workflows/dc-google-spreadsheet-build.yml"
       - ".github/workflows/dc-google-spreadsheet-centro-trevi.yml"
       - "!collectors/google-spreadsheet/infrastructure/helm/*.yaml"
-      - "collectors/google-spreadsheet/infrastructure/helm/centro_trevi.yaml"
+      - "collectors/google-spreadsheet/infrastructure/helm/centro-trevi.yaml"
 
 env:
   WORKING_DIRECTORY: collectors/google-spreadsheet
