@@ -2,10 +2,12 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-@trigger = http://localhost:8082/trigger
-#@trigger = https://spreadsheets.dev.testingmachine.eu/sta-echarging/trigger
-@trigger = https://spreadsheets.opendatahub.com/sta-echarging/trigger
+@host = http://localhost:8082/trigger
+@host=https://spreadsheets.opendatahub.com
+@path=/centro-trevi
+@trigger = {{host}}{{path}}/trigger
+# The token is generated on application start, you can find it in the log
+@token = 2c2cb34d-477e-4582-aa1d-0f4d849d1447
 
 POST {{trigger}}
-# The token is generated on application start, you can find it in the log
-X-Goog-Channel-Token: 07e71a98-3cdb-449c-886a-fcb85aee63d3
+X-Goog-Channel-Token: {{token}}
