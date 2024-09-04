@@ -1,0 +1,43 @@
+# 
+@versions_enpoint={{$dotenv VERSIONS_ENDPOINT}}
+@token_a={{$dotenv TOKEN_A}}
+@token_b={{$dotenv TOKEN_B}}
+@token_c={{$dotenv TOKEN_C}}
+
+
+### token a
+# @name login
+GET {{versions_enpoint}}
+Authorization: Token {{ token_a }} 
+
+###
+
+@versions_url = {{$dotenv VERSIONS_ENDPOINT}}
+
+### versions
+GET {{versions_url}}
+Authorization: Token {{ token_a }} 
+
+
+### token b
+POST https://ocpi.driwe.club/2.2.1/credentials
+Authorization: Token {{ token_a }}
+
+{
+	"url": "plapla",
+	"token": "{{token_b}}"
+}
+
+
+### credentials
+GET {{versions_url}}/credentials
+Authorization: Token {{ token_a }} 
+
+
+### locations
+GET {{versions_url}}/locations/
+Authorization: Token {{ token_c }} 
+
+### locations NEOGY
+GET https://uuapp-dev.plus4u.net/uu-chargeupcpo-ocpirg01/614354a0ecc4436fb6f6c5a4b6fceac1/cpo/2.2/locations
+Authorization: Token {{ token_c }} 
