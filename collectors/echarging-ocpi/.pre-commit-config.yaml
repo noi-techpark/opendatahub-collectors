@@ -1,5 +1,0 @@
-repos:
--   repo: https://github.com/fsfe/reuse-tool
-    rev: v3.0.0
-    hooks:
-    - id: reuse

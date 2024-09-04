@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
 FROM golang:1.22.3-bookworm as base
 
 # install if docker host doesn't has libc6 installed
