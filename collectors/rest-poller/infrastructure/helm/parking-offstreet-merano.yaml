@@ -17,7 +17,8 @@ env:
   INGRESS_RABBITMQ_CLIENTNAME: parking-offstreet-datacollector-merano
   HTTP_ENDPOINT: "http://84.18.132.129/trafficstudiorestwebservice/getParkingAreasSituation"
   HTTP_METHOD: GET
-  HTTP_HEADERS_Accept: "application/json"
+  HTTP_HEADERS_ACCEPT_NAME: Accept
+  HTTP_HEADERS_ACCEPT_VALUE: "application/json"
 
 envSecretRef:
   - name: INGRESS_RABBITMQ_URI 

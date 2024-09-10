@@ -17,7 +17,8 @@ env:
   INGRESS_RABBITMQ_CLIENTNAME: echarging-datacollector-alperia
   HTTP_ENDPOINT: http://api.alperia-emobility.eu/e-mobility/api/v3/chargingunits?includePartners=false
   HTTP_METHOD: GET
-  HTTP_HEADERS_X-Caller-ID: NOI-Techpark
+  HTTP_HEADERS_CALLER_NAME: X-Caller-ID
+  HTTP_HEADERS_CALLER_VALUE: NOI-Techpark
 envSecretRef:
   - name: INGRESS_RABBITMQ_URI 
     secret: rabbitmq-svcbind

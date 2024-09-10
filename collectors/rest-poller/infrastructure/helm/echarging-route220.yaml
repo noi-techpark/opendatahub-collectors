@@ -17,7 +17,8 @@ env:
   INGRESS_RABBITMQ_CLIENTNAME: echarging-datacollector-route220
   HTTP_ENDPOINT: https://platform.evway.net/api/idm/getAllRoute220Stations
   HTTP_METHOD: GET
-  HTTP_HEADERS_X-Caller-ID: NOI-Techpark
+  HTTP_HEADERS_CALLER_NAME: X-Caller-ID
+  HTTP_HEADERS_CALLER_VALUE: NOI-Techpark
 envSecretRef:
   - name: INGRESS_RABBITMQ_URI 
     secret: rabbitmq-svcbind

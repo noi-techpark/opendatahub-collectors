@@ -15,8 +15,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RestPollerRoute extends RouteBuilder {
-    private static final String PROP_HTTP_HEADERS = "HTTP_HEADERS_";
-
     @PropertyInject("env:HTTP_METHOD")
     private String httpMethod;
 
@@ -37,9 +35,10 @@ public class RestPollerRoute extends RouteBuilder {
                     msg.setHeader(Exchange.HTTP_METHOD, HttpMethods.valueOf(httpMethod));
                     // get custom headers from config
                     env.keySet().stream()
-                        .filter(k -> k.startsWith(PROP_HTTP_HEADERS))
+                        .filter(k -> k.startsWith("HTTP_HEADERS_") && k.endsWith("_NAME"))
+                        .map(k -> k.replaceAll("_NAME$", ""))
                         .forEach(k -> {
-                            msg.setHeader(k.substring(PROP_HTTP_HEADERS.length()), env.get(k));
+                            msg.setHeader(env.get(k + "_NAME"), env.get(k + "_VALUE"));
                         });
                 })
                 .to(httpEndpoint) // actual http call

@@ -16,7 +16,8 @@ env:
   INGRESS_PROVIDER: echarging/driwe
   INGRESS_RABBITMQ_CLIENTNAME: echarging-datacollector-driwe
   HTTP_METHOD: GET
-  HTTP_HEADERS_X-Caller-ID: NOI-Techpark
+  HTTP_HEADERS_CALLER_NAME: X-Caller-ID
+  HTTP_HEADERS_CALLER_VALUE: NOI-Techpark
 envSecret:
   HTTP_ENDPOINT: https://www.driwe.club/api/stations/metadata?auth-token=******
 envSecretRef:

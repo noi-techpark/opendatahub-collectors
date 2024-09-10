@@ -18,7 +18,8 @@ services:
       - 9000:9000
     volumes:
       - ~/.m2/:/var/maven/.m2
-      - ./:/code
+      - ./pom.xml:/code/pom.xml
+      - ./src:/code/src
     working_dir: /code
     tty: true
 
