@@ -5,13 +5,12 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log/slog"
 	"os"
-	"time"
 
 	"github.com/noi-techpark/go-bdp-client/bdplib"
+	"golang.org/x/exp/maps"
 )
 
 func initLogging() {
@@ -39,13 +38,11 @@ func main() {
 
 	b := bdplib.FromEnv()
 
-	dtFree := bdplib.CreateDataType("free", "", "free", "Instantaneous")
-	dtOccupied := bdplib.CreateDataType("occupied", "", "occupied", "Instantaneous")
-
-	ds := []bdplib.DataType{dtFree, dtOccupied}
-	failOnError(b.SyncDataTypes("stationtype", ds), "Error pushing datatypes")
+	dtmap := readDataTypes()
+	failOnError(b.SyncDataTypes("", maps.Values(dtmap)), "Error pushing datatypes")
 
 	// push data types
+
 	// load station configs from CSV
 	// sync stations
 
@@ -74,27 +71,14 @@ func main() {
 	})
 }
 
-type payload struct {
-	MsgId   int
-	Topic   string
-	Payload strMqttPayload
-}
+type bdpDataTypeMap map[string]bdplib.DataType
 
-// the Payload JSON is a string that we have to first unmarshal
-type strMqttPayload mqttPayload
-
-type mqttPayload []struct {
-	DateTimeAcquisition time.Time
-	ControlUnitId       string
-	Resval              []struct {
+func readDataTypes() bdpDataTypeMap {
+	dts := readCsv("datatypes.csv")
+	dtm := bdpDataTypeMap{}
+	for _, dt := range dts[1:] {
+		// in the old data collector, for raw datatypes the unit is always null instead of using the one from CSV. Is this correct?
+		dtm[dt[0]] = bdplib.CreateDataType(dt[1], dt[2], dt[3], dt[4])
 	}
-}
-
-func unmarshalRaw(s string) (payload, error) {
-	var p payload
-	if err := json.Unmarshal([]byte(s), &p); err != nil {
-		return p, fmt.Errorf("error unmarshalling payload json: %w", err)
-	}
-
-	return p, nil
+	return dtm
 }

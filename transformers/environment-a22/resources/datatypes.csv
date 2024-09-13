@@ -1,0 +1,14 @@
+id,dataType,unit,description,rtype
+1,CO2_raw,,CO2,Mean
+2,temperature-external_raw,°C,Temperatura,Mean
+3,RH,,Umidità relativa_raw,Mean
+7,temperature-internal_raw,°C,Temperatura interna,Mean
+8,O3_raw,,O3,Mean
+9,NO2_raw,,NO2,Mean
+10,CO_raw,,CO,Mean
+11,VOC_raw,,VOC,Mean
+12,PM10_raw,,PM10,Mean
+13,PM2.5_raw,,PM2.5,Mean
+14,NO2-Alphasense_raw,,NO2 (Alphasense),Mean
+15,NO-Alphasense_raw,,NO (Alphasense),Mean
+16,NO2-Orion_raw,,NO2 (Orion),Mean
