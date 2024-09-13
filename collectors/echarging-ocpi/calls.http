@@ -43,7 +43,3 @@ Authorization: Token {{ token_a }}
 ### locations
 GET {{versions_url}}/locations/
 Authorization: Token {{ token_c }} 
-
-### locations NEOGY
-GET https://uuapp-dev.plus4u.net/uu-chargeupcpo-ocpirg01/614354a0ecc4436fb6f6c5a4b6fceac1/cpo/2.2/locations
-Authorization: Token {{ token_c }} 
