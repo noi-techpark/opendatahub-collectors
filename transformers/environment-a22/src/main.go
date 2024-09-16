@@ -41,9 +41,8 @@ func main() {
 	dtmap := readDataTypes()
 	failOnError(b.SyncDataTypes("", maps.Values(dtmap)), "Error pushing datatypes")
 
-	// push data types
-
 	// load station configs from CSV
+
 	// sync stations
 
 	s := bdplib.CreateStation("id", "name", "type", 46.1, 11.2, b.Origin)
@@ -53,19 +52,18 @@ func main() {
 	failOnError(b.SyncStations("stationtype", []bdplib.Station{s}, true, false), "Error syncing stations")
 
 	listen(func(r *raw) error {
-		raw, err := unmarshalRaw(r.Rawdata)
+		_, err := unmarshalRaw(r.Rawdata)
 		if err != nil {
-			return fmt.Errorf("Unable to unmarshal raw payload: %w", err)
+			return fmt.Errorf("unable to unmarshal raw payload: %w", err)
 		}
 
 		// Get matching physical station from config. If not found, reject with error
 
 		dm := b.CreateDataMap()
-		dm.AddRecord(s.Id, dtFree.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), raw.Lots, Period))
-		dm.AddRecord(s.Id, dtOccupied.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), tot-raw.Lots, Period))
+		// dm.AddRecord(s.Id, dtFree.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), raw.Lots, Period))
 
 		if err := b.PushData("stationtype", dm); err != nil {
-			return fmt.Errorf("Error pushing data: %w", err)
+			return fmt.Errorf("error pushing data: %w", err)
 		}
 		return nil
 	})
