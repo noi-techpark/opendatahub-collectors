@@ -88,6 +88,20 @@ func compileHistory(cfgs []stationcfg) ([]station, error) {
 	return maps.Values(smap), nil
 }
 
-func currentStation(sensor string, ts time.Time) {
+func currentStation(sts []station, sensor string, ts time.Time) (station, error) {
+	var ret station
+	var latest time.Time
+	for _, s := range sts {
+		for _, h := range s.history {
+			if h.sensor_id == sensor && (ts.After(h.sensor_start) || ts.Equal(h.sensor_start)) && (h.sensor_end.IsZero() || ts.Before(h.sensor_end)) && h.sensor_start.After(latest) {
+				ret = s
+				latest = h.sensor_start
+			}
+		}
+	}
 
+	if latest.IsZero() {
+		return ret, fmt.Errorf("missing sensor mapping for sensor %s at time %s", sensor, ts)
+	}
+	return ret, nil
 }
