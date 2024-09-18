@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"strconv"
 
 	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"golang.org/x/exp/maps"
@@ -33,34 +34,48 @@ func failOnError(err error, msg string) {
 	}
 }
 
+const period = 60
+
 func main() {
 	initLogging()
 
 	b := bdplib.FromEnv()
 
 	dtmap := readDataTypes()
-	failOnError(b.SyncDataTypes("", maps.Values(dtmap)), "Error pushing datatypes")
+	failOnError(b.SyncDataTypes("", maps.Values(dtmap)), "error pushing datatypes")
 
-	// load station configs from CSV
-
-	// sync stations
-
-	s := bdplib.CreateStation("id", "name", "type", 46.1, 11.2, b.Origin)
-	s.MetaData = map[string]any{
-		"keyname": "value",
+	scfg, err := readStationCSV("stations.csv")
+	failOnError(err, "error loading station csv")
+	stations, err := compileHistory(scfg)
+	failOnError(err, "error compiling station history")
+	bdpStations := []bdplib.Station{}
+	for _, s := range stations {
+		bdpStations = append(bdpStations, map2Bdp(s, b.Origin))
 	}
-	failOnError(b.SyncStations("stationtype", []bdplib.Station{s}, true, false), "Error syncing stations")
+	failOnError(b.SyncStations("stationtype", bdpStations, true, false), "error syncing stations")
 
 	listen(func(r *raw) error {
-		_, err := unmarshalRaw(r.Rawdata)
+		payload, err := unmarshalRaw(r.Rawdata)
 		if err != nil {
 			return fmt.Errorf("unable to unmarshal raw payload: %w", err)
 		}
+		sensorid := payload.Payload.ControlUnitId
+		ts := payload.Payload.DateTimeAcquisition
 
-		// Get matching physical station from config. If not found, reject with error
+		station, err := currentStation(stations, sensorid, ts)
+		if err != nil {
+			return fmt.Errorf("error mapping station for sensor %s: %w", sensorid, err)
+		}
 
 		dm := b.CreateDataMap()
-		// dm.AddRecord(s.Id, dtFree.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), raw.Lots, Period))
+
+		for _, v := range payload.Payload.Resval {
+			dt, ok := dtmap[strconv.Itoa(v.Id)]
+			if !ok {
+				return fmt.Errorf("error mapping data type %d for sensor %s", v.Id, sensorid)
+			}
+			dm.AddRecord(station.id, dt.Name, bdplib.CreateRecord(ts.UnixMilli(), v.Value, 60))
+		}
 
 		if err := b.PushData("stationtype", dm); err != nil {
 			return fmt.Errorf("error pushing data: %w", err)

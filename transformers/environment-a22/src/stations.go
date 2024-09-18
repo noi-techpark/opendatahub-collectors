@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"golang.org/x/exp/maps"
 )
 
@@ -58,6 +59,10 @@ func readStationCSV(path string) ([]stationcfg, error) {
 		stm = append(stm, stationcfg{station: station{id: st[0], name: st[1], lat: lat, lon: lon}, sensor_id: st[4], sensor_start: sensor_start})
 	}
 	return stm, nil
+}
+
+func map2Bdp(s station, origin string) bdplib.Station {
+	return bdplib.CreateStation(s.id, s.name, "EnvironmentStation", s.lat, s.lon, origin)
 }
 
 func compileHistory(cfgs []stationcfg) ([]station, error) {

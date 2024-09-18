@@ -19,10 +19,13 @@ type payload struct {
 // the Payload JSON is a string that we have to first unmarshal
 type strMqttPayload mqttPayload
 
-type mqttPayload []struct {
+type mqttPayload struct {
 	DateTimeAcquisition time.Time
 	ControlUnitId       string
 	Resval              []struct {
+		Id    int
+		Value float64
+		// ignoring other fields
 	}
 }
 
@@ -34,3 +37,5 @@ func unmarshalRaw(s string) (payload, error) {
 
 	return p, nil
 }
+
+func ma
