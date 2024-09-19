@@ -37,6 +37,7 @@ func failOnError(err error, msg string) {
 }
 
 const period = 60
+const stationtype = "EnvironmentStation"
 
 func main() {
 	initLogging()
@@ -54,7 +55,7 @@ func main() {
 	for _, s := range stations {
 		bdpStations = append(bdpStations, map2Bdp(s, b.Origin))
 	}
-	failOnError(b.SyncStations("stationtype", bdpStations, true, false), "error syncing stations")
+	failOnError(b.SyncStations(stationtype, bdpStations, true, false), "error syncing stations")
 
 	listen(func(r *raw) error {
 		payload, err := unmarshalRaw(r.Rawdata)
@@ -79,7 +80,7 @@ func main() {
 			dm.AddRecord(station.id, dt.Name, bdplib.CreateRecord(ts.UnixMilli(), v.Value, 60))
 		}
 
-		if err := b.PushData("stationtype", dm); err != nil {
+		if err := b.PushData(stationtype, dm); err != nil {
 			return fmt.Errorf("error pushing data: %w", err)
 		}
 		return nil
