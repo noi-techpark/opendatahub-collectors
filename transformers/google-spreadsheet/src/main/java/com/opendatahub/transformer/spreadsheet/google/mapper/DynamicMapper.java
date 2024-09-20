@@ -111,6 +111,9 @@ public class DynamicMapper {
         for (List<Object> row : values) {
             if (!row.isEmpty()) {
                 String key = row.get(metaDataPosition) != null ? row.get(metaDataPosition).toString() : null;
+                if (StringUtils.isBlank(key)){
+                    continue;
+                }
                 Map<String, Object> metaDataMap = buildMetaDataMap(headerMapping, row);
                 langUtil.mergeTranslations(metaDataMap, headerMapping);
                 normalizeMetaData(metaDataMap);
