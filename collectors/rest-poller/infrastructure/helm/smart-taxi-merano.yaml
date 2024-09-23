@@ -11,7 +11,7 @@ resources:
     memory: 200Mi
 
 env:
-  CRON_SCHEDULE: 0 */5 * * * ? 
+  CRON_SCHEDULE: 0 */1 * * * ? 
   INGRESS_PROVIDER: smarttaxi/merano
   INGRESS_RABBITMQ_CLIENTNAME: smarttaxi-datacollector-merano
   HTTP_ENDPOINT: https://appclient.smarttaxi.it/terzeparti/elencotassisti/ThrPartMrn2024/91/
