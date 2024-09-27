@@ -116,6 +116,7 @@ func main() {
 				continue
 			}
 
+			dm := b.CreateDataMap()
 			for _, raw := range rawArray {
 				lat, _ := strconv.ParseFloat(raw.Lat, 64)
 				lon, _ := strconv.ParseFloat(raw.Long, 64)
@@ -133,15 +134,14 @@ func main() {
 					"lon": raw.Long,
 				}
 
-				dm := b.CreateDataMap()
 				dm.AddRecord(s.Id, dtState.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), raw.State, Period))
 				dm.AddRecord(s.Id, dtPosition.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), latLongMap, Period))
 
-				if err := b.PushData(Vehicle, dm); err != nil {
-					slog.Error("Error pushing data to bdp", "err", err, "msg", msgBody)
-					msgReject(&msg)
-					continue
-				}
+			}
+
+			if err := b.PushData(Vehicle, dm); err != nil {
+				slog.Error("Error pushing data to bdp", "err", err, "msg", msgBody)
+				msgReject(&msg)
 			}
 
 			failOnError(msg.Ack(false), "Could not ACK elaborated msg")
