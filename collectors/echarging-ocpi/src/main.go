@@ -94,8 +94,17 @@ type Locations struct {
 	TimeZone           string `json:"time_zone"`
 }
 
+func initLogger() {
+	logLevel := os.Getenv("LOG_LEVEL")
+	level := &slog.LevelVar{}
+	level.UnmarshalText([]byte(logLevel))
+	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+		Level: level,
+	})))
+}
+
 func main() {
-	InitLogger()
+	initLogger()
 
 	r := gin.New()
 
