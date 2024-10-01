@@ -1,0 +1,42 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-parking-offstreet-teratronik
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: sometaghere
+
+imagePullSecrets:
+  - name: container-registry-r
+
+env:
+  # ODH Core Writer Connection
+  BDP_BASE_URL: https://share.opendatahub.testingmachine.eu
+  BDP_PROVENANCE_NAME: 
+  BDP_PROVENANCE_VERSION: 
+  BDP_ORIGIN: STA
+  
+  LOG_LEVEL: INFO
+
+  MQ_LISTEN_QUEUE: sta.parking-marlengo
+  MQ_LISTEN_EXCHANGE: routed
+  MQ_LISTEN_KEY: sta.parking-marlengo
+  MQ_LISTEN_CONSUMER: tr-parking-offstreet-teratronik
+  
+envSecretRef:
+  - name: MQ_LISTEN_URI 
+    secret: rabbitmq-svcbind
+    key: uri
+  - name: MONGO_URI
+    secret: mongodb-collector-svcbind
+    key: uri
+
+  - name: ODH_TOKEN_URL
+    secret: oauth-collector
+    key: tokenUri
+  - name: ODH_CLIENT_ID
+    secret: oauth-collector
+    key: clientId
+  - name: ODH_CLIENT_SECRET
+    secret: oauth-collector
+    key: clientSecret
