@@ -49,7 +49,7 @@ type OCPILocations struct {
 		Operator     OCPILocationsOperator `json:"operator"`
 		Suboperator  OCPILocationsOperator `json:"suboperator"`
 		Owner        OCPILocationsOperator `json:"owner"`
-		Facilities   string                `json:"facilities"`
+		Facilities   []string              `json:"facilities"`
 		TimeZone     string                `json:"time_zone"`
 		OpeningTimes struct {
 			Twentyfourseven     bool          `json:"twentyfourseven"`
