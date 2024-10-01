@@ -9,7 +9,6 @@ on:
       
 
 env:
-  PROJECT_NAME: tr-echarging-ocpi
   WORKING_DIRECTORY: transformers/echarging-ocpi
   DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/tr-echarging-ocpi
   DOCKER_TAG: ${{ github.sha }}
@@ -35,9 +34,10 @@ jobs:
     needs: 
       - build
     runs-on: ubuntu-22.04
-    concurrency: tr-echarging-ocpi-deploy-test
+    concurrency: tr-echarging-ocpi-deploy-driwe-test
     environment: test
     env:
+      PROJECT_NAME: tr-echarging-ocpi-driwe
       VALUES_YAML: infrastructure/helm/values.yaml
     steps:
       - name: Checkout source code
