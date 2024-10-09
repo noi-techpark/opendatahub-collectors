@@ -15,7 +15,7 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
-func failOnError(err error, msg string) {
+func FailOnError(err error, msg string) {
 	if err != nil {
 		slog.Error(msg, "err", err)
 		panic(err)
@@ -58,10 +58,10 @@ func Pub(uri string, exchange string, client string, provider string) chan<- MqM
 	conn, err := amqp.DialConfig(uri, amqp.Config{
 		Properties: amqp.Table{"connection_name": client},
 	})
-	failOnError(err, "Failed to connect to RabbitMQ")
+	FailOnError(err, "Failed to connect to RabbitMQ")
 
 	ch, err := conn.Channel()
-	failOnError(err, "Failed to open a channel")
+	FailOnError(err, "Failed to open a channel")
 
 	rabbitChan := make(chan MqMsg)
 
@@ -82,7 +82,7 @@ func Pub(uri string, exchange string, client string, provider string) chan<- MqM
 					Body:        payload,
 					Headers:     amqp.Table{"provider": provider},
 				})
-			failOnError(err, "Failed to publish a message")
+			FailOnError(err, "Failed to publish a message")
 			cancel()
 		}
 	}()
