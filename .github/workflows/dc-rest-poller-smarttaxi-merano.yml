@@ -1,4 +1,4 @@
-name: CI/CD dc-rest-poller build
+name: CI/CD dc-rest-poller smarttaxi-merano
 
 on: 
   push:
