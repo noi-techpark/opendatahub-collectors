@@ -4,17 +4,7 @@ SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
 SPDX-License-Identifier: CC0-1.0
 -->
 
-=== How to build
+# REST polling data collector
+Polls an HTTP endpoint on a cron shedule and posts the response body to rabbitmq
 
-To build this project use
-
-    mvn install
-
-=== How to run
-
-You can run this example using
-
-    mvn camel:run
-    
-
-Trigger
+For documentation on configuration, refer to the `.env.example` file

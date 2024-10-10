@@ -3,24 +3,15 @@ image:
   pullPolicy: IfNotPresent
   tag: "0.2.0" # Set this when upgrading chart with --set-value
 
-imagePullSecrets:
-  - name: container-registry-r
-
-resources:
-  requests:
-    cpu: 1m
-    memory: 200Mi
-
 env:
-  CRON_SCHEDULE: 0 */2 * * * ?
-  INGRESS_PROVIDER: parking-offstreet/merano
-  INGRESS_RABBITMQ_CLIENTNAME: parking-offstreet-datacollector-merano
-  HTTP_ENDPOINT: "http://84.18.132.129/trafficstudiorestwebservice/getParkingAreasSituation"
-  HTTP_METHOD: GET
-  HTTP_HEADERS_ACCEPT_NAME: Accept
-  HTTP_HEADERS_ACCEPT_VALUE: "application/json"
+  RABBITMQ_CLIENTNAME: dc-parking-offstreet-merano
+  PROVIDER: parking-offstreet/merano
+
+  CRON: "0 */2 * * * *"
+  HTTP_URL: "http://84.18.132.129/trafficstudiorestwebservice/getParkingAreasSituation"
+  HTTP_HEADERS_ACCEPT: "Accept: application/json"
 
 envSecretRef:
-  - name: INGRESS_RABBITMQ_URI 
+  - name: RABBITMQ_URI
     secret: rabbitmq-svcbind
     key: uri

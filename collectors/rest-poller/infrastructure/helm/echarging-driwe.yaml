@@ -3,24 +3,16 @@ image:
   pullPolicy: IfNotPresent
   tag: "0.2.0" # Set this when upgrading chart with --set-value
 
-imagePullSecrets:
-  - name: container-registry-r
-
-resources:
-  requests:
-    cpu: 1m
-    memory: 200Mi
-
 env:
-  CRON_SCHEDULE: 0 */2 * * * ?
-  INGRESS_PROVIDER: echarging/driwe
-  INGRESS_RABBITMQ_CLIENTNAME: echarging-datacollector-driwe
-  HTTP_METHOD: GET
-  HTTP_HEADERS_CALLER_NAME: X-Caller-ID
-  HTTP_HEADERS_CALLER_VALUE: NOI-Techpark
-envSecret:
-  HTTP_ENDPOINT: https://www.driwe.club/api/stations/metadata?auth-token=******
+  RABBITMQ_CLIENTNAME: dc-echarging-driwe
+  PROVIDER: echarging/driwe-ocpi
+
+  CRON: "0 */5 * * * *"
+  HTTP_URL: https://www.driwe.club/api/stations/metadata?auth-token=******
+  HTTP_HEADER_CALLER: "X-Caller-ID: NOI-Techpark"
+
 envSecretRef:
-  - name: INGRESS_RABBITMQ_URI 
+  - name: RABBITMQ_URI
     secret: rabbitmq-svcbind
     key: uri
+

@@ -2,32 +2,26 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-version: "3"
-
 services:
   app:
-    image: maven:3-openjdk-17-slim
+    depends_on: 
+      rabbitmq:
+        condition: service_healthy
+    build:
+      dockerfile: infrastructure/docker/Dockerfile
+      context: . 
+      target: dev
     env_file:
       - .env
-    environment:
-      MAVEN_CONFIG: /var/maven/.m2
-      MAVEN_OPTS: -Dmaven.repo.local=/var/maven/.m2/repository -Dspring-boot.run.jvmArguments="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:9000"
-    command: >
-      mvn clean spring-boot:run -debug
-    ports:
-      - 9000:9000
     volumes:
-      - ~/.m2/:/var/maven/.m2
-      - ./pom.xml:/code/pom.xml
-      - ./src:/code/src
+      - ./src:/code
+      - pkg:/go/pkg/mod
     working_dir: /code
-    tty: true
 
   rabbitmq:
-    image: rabbitmq:management-alpine
-    environment:
-      - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbitmq_management load_definitions "/etc/rabbitmq/definitions.json"
-    ports:
-      - 15672:15672
-    volumes:
-      - ./rabbitmq-definitions.json:/etc/rabbitmq/definitions.json
+    extends:
+      file: ../lib/docker-compose/docker-compose.rabbitmq.yml
+      service: rabbitmq
+    attach: false
+volumes:
+  pkg:

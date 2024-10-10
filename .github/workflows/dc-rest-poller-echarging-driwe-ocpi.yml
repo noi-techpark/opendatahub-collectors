@@ -1,25 +1,25 @@
-name: CI/CD dc-rest-poller smarttaxi-merano
+name: CI/CD dc-rest-poller echarging-ocpi-driwe
 
 on: 
   push:
     paths:
       - "collectors/rest-poller/**"
       - "!collectors/rest-poller/infrastructure/helm/*"
-      - "collectors/rest-poller/infrastructure/helm/smarttaxi-merano.yml"
-      - ".github/workflows/dc-rest-poller-smarttaxi-merano.yml"
+      - "collectors/rest-poller/infrastructure/helm/echarging-driwe-ocpi.yml"
+      - ".github/workflows/dc-rest-poller-echarging-driwe-ocpi.yml"
 
 env:
   WORKING_DIRECTORY: collectors/rest-poller
   DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/dc-rest-poller
   DOCKER_TAG: ${{ github.sha }}
   KUBERNETES_NAMESPACE: collector
-  VALUES_YAML: infrastructure/helm/smarttaxi-merano.yaml
-  K8S_NAME: dc-rest-poller-smarttaxi-merano
+  VALUES_YAML: infrastructure/helm/echarging-driwe-ocpi.yaml
+  K8S_NAME: dc-rest-poller-echarging-ocpi-driwe
 
 jobs:
   build:
     runs-on: ubuntu-22.04
-    concurrency: dc-rest-poller-build
+    concurrency: dc-rest-poller-echarging-ocpi-driwe-build
     steps:
     - name: Checkout source code
       uses: actions/checkout@v4
@@ -31,11 +31,11 @@ jobs:
         docker-username: ${{ github.actor }}
         docker-password: ${{ secrets.GITHUB_TOKEN }}
 
-  deploy-smarttaxi-merano-test:
+  deploy-test:
     if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-22.04
-    concurrency: dc-rest-poller-smarttaxi-merano-test
+    concurrency: dc-rest-poller-echarging-ocpi-driwe-deploy-test
     environment: test
     steps:
       - name: Checkout source code
@@ -47,11 +47,12 @@ jobs:
           yq -i '.image.repository="${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML}}
           yq -i '.image.tag="${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
           yq -i '.image.pullPolicy="IfNotPresent"' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.HTTP_HEADER_AUTH="Authorization: Token ${{ secrets.ECHARGING_DRIWE_OCPI_TOKEN_C }}"' ${{ env.VALUES_YAML }}
 
       - name: Deploy on cluster  
         uses: noi-techpark/github-actions/helm-deploy@v2
         with:
-          k8s-name: dc-rest-poller-smarttaxi-merano
+          k8s-name: ${{ env.K8S_NAME }}
           k8s-namespace: collector
           chart-path: helm/generic-collector
           values-file: ${{ env.WORKING_DIRECTORY}}/${{ env.VALUES_YAML }}
