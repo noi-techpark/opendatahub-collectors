@@ -1,16 +1,19 @@
-name: CI/CD dc-rest-poller-v2
+name: CI/CD dc-rest-poller build
 
 on: 
   push:
     paths:
       - "collectors/rest-poller-v2/**"
-      - ".github/workflows/dc-rest-poller-v2.yml"
+      - "!collectors/rest-poller-v2/infrastructure/helm/*"
+      - "collectors/rest-poller-v2/infrastructure/helm/smarttaxi-merano.yml"
 
 env:
   WORKING_DIRECTORY: collectors/rest-poller-v2
   DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/dc-rest-poller-v2
   DOCKER_TAG: ${{ github.sha }}
   KUBERNETES_NAMESPACE: collector
+  VALUES_YAML: infrastructure/helm/smarttaxi-merano.yaml
+  K8S_NAME: dc-rest-poller-smarttaxi-merano
 
 jobs:
   build:
@@ -33,8 +36,6 @@ jobs:
     runs-on: ubuntu-22.04
     concurrency: dc-rest-poller-v2-smarttaxi-merano-test
     environment: test
-    env:
-      VALUES_YAML: infrastructure/helm/smart-taxi-merano.yaml
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -53,7 +54,7 @@ jobs:
           k8s-namespace: collector
           chart-path: helm/generic-collector
           values-file: ${{ env.WORKING_DIRECTORY}}/${{ env.VALUES_YAML }}
-          aws-access-key-id: ${{ secrets.AWS_DEV_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_DEV_ACCESS_KEY_SECRET }}
+          aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
+          aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
           aws-eks-cluster-name: aws-main-eu-01
           aws-region: eu-west-1

@@ -1,0 +1,61 @@
+name: CI/CD dc-rest-poller build
+
+on: 
+  push:
+    paths:
+      - "collectors/rest-poller-v2/**"
+      - "!collectors/rest-poller-v2/infrastructure/helm/*"
+      - "collectors/rest-poller-v2/infrastructure/helm/echarging-driwe-ocpi.yml"
+
+env:
+  WORKING_DIRECTORY: collectors/rest-poller-v2
+  DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/dc-rest-poller-v2
+  DOCKER_TAG: ${{ github.sha }}
+  KUBERNETES_NAMESPACE: collector
+  VALUES_YAML: infrastructure/helm/echarging-driwe-ocpi.yaml
+  K8S_NAME: dc-rest-poller-echarging-ocpi-driwe
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    concurrency: dc-rest-poller-echarging-ocpi-driwe-build
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    - name: Build and push images
+      uses: noi-techpark/github-actions/docker-build-and-push@v2
+      with:
+        working-directory: ${{ env.WORKING_DIRECTORY }}/infrastructure
+        docker-username: ${{ github.actor }}
+        docker-password: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy-test:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-22.04
+    concurrency: dc-rest-poller-echarging-ocpi-driwe-deploy-test
+    environment: test
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Customize values.yaml
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          yq -i '.image.repository="${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML}}
+          yq -i '.image.tag="${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
+          yq -i '.image.pullPolicy="IfNotPresent"' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.HTTP_HEADER_AUTH="Autorization: Token ${{ secrets.ECHARGING_DRIWE_OCPI_TOKEN_C }}"' ${{ env.VALUES_YAML }}
+
+      - name: Deploy on cluster  
+        uses: noi-techpark/github-actions/helm-deploy@v2
+        with:
+          k8s-name: ${{ env.K8S_NAME }}
+          k8s-namespace: collector
+          chart-path: helm/generic-collector
+          values-file: ${{ env.WORKING_DIRECTORY}}/${{ env.VALUES_YAML }}
+          aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
+          aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
+          aws-eks-cluster-name: aws-main-eu-01
+          aws-region: eu-west-1

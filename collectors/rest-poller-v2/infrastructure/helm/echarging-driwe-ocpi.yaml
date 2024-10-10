@@ -1,0 +1,17 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/rest-poller
+  pullPolicy: IfNotPresent
+  tag: "0.2.0" # Set this when upgrading chart with --set-value
+
+env:
+  RABBITMQ_CLIENTNAME: dc-echarging-driwe-ocpi
+  PROVIDER: echarging/driwe-ocpi
+
+  CRON: "0 */5 * * * *"
+  HTTP_URL: https://ocpi.driwe.club/2.2.1/locations
+  HTTP_HEADER_AUTH: 'Authorization: Token ******'
+
+envSecretRef:
+  - name: RABBITMQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
