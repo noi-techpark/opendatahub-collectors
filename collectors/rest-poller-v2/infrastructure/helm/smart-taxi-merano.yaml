@@ -7,7 +7,7 @@ env:
   RABBITMQ_CLIENTNAME: dc-smarttaxi-merano
   PROVIDER: smarttaxi/merano-v2
 
-  CRON: "* */1 * * * *"
+  CRON: "0 */1 * * * *"
   HTTP_URL: https://appclient.smarttaxi.it/terzeparti/elencotassisti/ThrPartMrn2024/91/
 
 envSecretRef:
