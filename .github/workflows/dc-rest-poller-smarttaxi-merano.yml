@@ -51,7 +51,7 @@ jobs:
       - name: Deploy on cluster  
         uses: noi-techpark/github-actions/helm-deploy@v2
         with:
-          k8s-name: dc-rest-poller-v2-smarttaxi-merano
+          k8s-name: dc-rest-poller-smarttaxi-merano
           k8s-namespace: collector
           chart-path: helm/generic-collector
           values-file: ${{ env.WORKING_DIRECTORY}}/${{ env.VALUES_YAML }}
