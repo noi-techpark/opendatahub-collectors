@@ -6,6 +6,7 @@ on:
       - "collectors/rest-poller-v2/**"
       - "!collectors/rest-poller-v2/infrastructure/helm/*"
       - "collectors/rest-poller-v2/infrastructure/helm/smarttaxi-merano.yml"
+      - ".github/workflows/dc-rest-poller-smarttaxi-merano.yml"
 
 env:
   WORKING_DIRECTORY: collectors/rest-poller-v2

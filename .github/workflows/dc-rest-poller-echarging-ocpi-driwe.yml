@@ -6,6 +6,7 @@ on:
       - "collectors/rest-poller-v2/**"
       - "!collectors/rest-poller-v2/infrastructure/helm/*"
       - "collectors/rest-poller-v2/infrastructure/helm/echarging-driwe-ocpi.yml"
+      - ".github/workflows/dc-rest-poller-echarging-ocpi-driwe.yml"
 
 env:
   WORKING_DIRECTORY: collectors/rest-poller-v2
