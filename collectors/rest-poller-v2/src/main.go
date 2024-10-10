@@ -35,6 +35,7 @@ var env struct {
 const ENV_HEADER_PREFIX = "HTTP_HEADER_"
 
 func main() {
+	slog.Info("Starting data collector...")
 	dc.LoadEnv(&env)
 	dc.InitLog(env.LogLevel)
 
@@ -43,8 +44,12 @@ func main() {
 	dc.FailOnError(err, "failed parsing poll URL")
 
 	mq := dc.PubFromEnv(env.Env)
+
 	c := cron.New(cron.WithSeconds())
 	c.AddFunc(env.CRON, func() {
+		slog.Info("Starting poll job")
+		jobstart := time.Now()
+
 		req, err := http.NewRequest(env.HTTP_METHOD, u.String(), http.NoBody)
 		dc.FailOnError(err, "could not create http request")
 
@@ -79,7 +84,9 @@ func main() {
 			Timestamp: time.Now(),
 			Rawdata:   raw,
 		}
+		slog.Info("Polling job completed", "runtime_ms", time.Since(jobstart).Milliseconds())
 	})
+	slog.Info("Setup complete. Starting cron scheduler")
 	c.Run()
 }
 
