@@ -60,6 +60,8 @@ jobs:
             .env.provenance_name="${{ env.PROJECT_NAME }}" |
             .env.provenance_version="${{ github.sha}}" 
 
+            .env.BASE_URI="https://mobility.share.opendatahub.testingmachine.eu/json" 
+
           ' ${{ env.VALUES_YAML }}
 
       - name: Deploy on cluster  

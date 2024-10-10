@@ -54,6 +54,8 @@ jobs:
             .env.BDP_PROVENANCE_NAME="${{ env.PROJECT_NAME }}" |
             .env.BDP_PROVENANCE_VERSION="${{ github.sha}}" 
 
+            .env.BASE_URI="https://mobility.share.opendatahub.testingmachine.eu/json" 
+
           ' ${{ env.VALUES_YAML }}
 
       - name: Deploy on cluster  
