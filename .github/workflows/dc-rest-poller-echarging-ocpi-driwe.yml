@@ -47,7 +47,7 @@ jobs:
           yq -i '.image.repository="${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML}}
           yq -i '.image.tag="${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
           yq -i '.image.pullPolicy="IfNotPresent"' ${{ env.VALUES_YAML }}
-          yq -i '.envSecret.HTTP_HEADER_AUTH="Autorization: Token ${{ secrets.ECHARGING_DRIWE_OCPI_TOKEN_C }}"' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.HTTP_HEADER_AUTH="Authorization: Token ${{ secrets.ECHARGING_DRIWE_OCPI_TOKEN_C }}"' ${{ env.VALUES_YAML }}
 
       - name: Deploy on cluster  
         uses: noi-techpark/github-actions/helm-deploy@v2
