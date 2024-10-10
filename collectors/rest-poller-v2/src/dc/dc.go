@@ -47,7 +47,7 @@ type MqMsg struct {
 	Provider  string    `json:"provider"`
 	Timestamp time.Time `json:"timestamp"`
 	Rawdata   any       `json:"rawdata"`
-	Meta      any       `json:"metadata"`
+	Meta      any       `json:"metadata,omitempty"`
 }
 
 func PubFromEnv(e Env) chan<- MqMsg {
