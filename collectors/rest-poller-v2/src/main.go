@@ -14,21 +14,22 @@ import (
 	"time"
 
 	"github.com/robfig/cron/v3"
-	"opendatahub.com/rest-paging-poller/dc"
+	"opendatahub.com/rest-poller/dc"
 )
 
 var env struct {
 	dc.Env
-	CRON               string
-	POLL_URL           string
+	CRON string
+
+	RAW_BINARY bool
+
+	HTTP_URL    string
+	HTTP_METHOD string `default:"GET"`
+
 	PAGING_PARAM_TYPE  string // query, header, path...
 	PAGING_SIZE        int
 	PAGING_LIMIT_NAME  string
 	PAGING_OFFSET_NAME string
-
-	RAW_BINARY bool
-
-	HTTP_METHOD string `default:"GET"`
 }
 
 const ENV_HEADER_PREFIX = "HTTP_HEADER_"
@@ -38,7 +39,7 @@ func main() {
 	dc.InitLog(env.LogLevel)
 
 	headers := customHeaders()
-	u, err := url.Parse(env.POLL_URL)
+	u, err := url.Parse(env.HTTP_URL)
 	dc.FailOnError(err, "failed parsing poll URL")
 
 	mq := dc.PubFromEnv(env.Env)

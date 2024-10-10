@@ -1,4 +1,4 @@
-module opendatahub.com/rest-paging-poller
+module opendatahub.com/rest-poller
 
 go 1.22.7
 

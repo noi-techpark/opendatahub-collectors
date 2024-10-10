@@ -1,0 +1,16 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/rest-poller-v2
+  pullPolicy: IfNotPresent
+  tag: "0.2.0" 
+
+env:
+  RABBITMQ_CLIENTNAME: dc-smarttaxi-merano
+  PROVIDER: smarttaxi/merano-v2
+
+  CRON: "* */1 * * * *"
+  HTTP_URL: https://appclient.smarttaxi.it/terzeparti/elencotassisti/ThrPartMrn2024/91/
+
+envSecretRef:
+  - name: RABBITMQ_URI
+    secret: rabbitmq-svcbind
+    key: uri

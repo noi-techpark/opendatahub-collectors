@@ -32,7 +32,7 @@ func InitLog(lv string) {
 
 type Env struct {
 	RABBITMQ_URI        string
-	RABBITMQ_Exchange   string
+	RABBITMQ_Exchange   string `default:"ingress"`
 	RABBITMQ_Clientname string
 
 	Provider string
