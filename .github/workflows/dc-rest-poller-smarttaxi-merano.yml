@@ -19,7 +19,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    concurrency: dc-rest-poller-build
+    concurrency: dc-rest-poller-smarttaxi-merano-build
     steps:
     - name: Checkout source code
       uses: actions/checkout@v4
