@@ -58,7 +58,7 @@ jobs:
             .image.pullPolicy="IfNotPresent" |
 
             .env.provenance_name="${{ env.PROJECT_NAME }}" |
-            .env.provenance_version="${{ github.sha}}" 
+            .env.provenance_version="${{ github.sha}}" |
 
             .env.BASE_URI="https://mobility.share.opendatahub.testingmachine.eu/json" 
 
