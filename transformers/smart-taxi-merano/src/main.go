@@ -29,6 +29,17 @@ func failOnError(err error, msg string) {
 	}
 }
 
+func contains(whitelist []int, value int) bool {
+	for _, item := range whitelist {
+		if item == value {
+			return true
+		}
+	}
+	return false
+}
+
+var Whitelist = []int{2343, 2344, 2345, 2350, 2764}
+
 const Vehicle = "Vehicle"
 const Period = 60
 const Origin = "smart-taxi-merano"
@@ -118,25 +129,28 @@ func main() {
 
 			dm := b.CreateDataMap()
 			for _, raw := range rawArray {
-				lat, _ := strconv.ParseFloat(raw.Lat, 64)
-				lon, _ := strconv.ParseFloat(raw.Long, 64)
-				sname := fmt.Sprintf("vehicle:%s", raw.Uid)
-				s := bdplib.CreateStation(sname, raw.Nickname, Vehicle, lat, lon, Origin)
+				num, _ := strconv.Atoi(raw.Uid)
+				if contains(Whitelist, num) {
+					fmt.Println("INSERTING RAW_ID", raw.Uid)
+					lat, _ := strconv.ParseFloat(raw.Lat, 64)
+					lon, _ := strconv.ParseFloat(raw.Long, 64)
+					sname := fmt.Sprintf("vehicle:%s", raw.Uid)
+					s := bdplib.CreateStation(sname, raw.Nickname, Vehicle, lat, lon, Origin)
 
-				if err := b.SyncStations(Vehicle, []bdplib.Station{s}, false, false); err != nil {
-					slog.Error("Error syncing stations", "err", err, "msg", msgBody)
-					msgReject(&msg)
-					continue
+					if err := b.SyncStations(Vehicle, []bdplib.Station{s}, false, false); err != nil {
+						slog.Error("Error syncing stations", "err", err, "msg", msgBody)
+						msgReject(&msg)
+						continue
+					}
+
+					latLongMap := map[string]string{
+						"lat": raw.Lat,
+						"lon": raw.Long,
+					}
+
+					dm.AddRecord(s.Id, dtState.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), raw.State, Period))
+					dm.AddRecord(s.Id, dtPosition.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), latLongMap, Period))
 				}
-
-				latLongMap := map[string]string{
-					"lat": raw.Lat,
-					"lon": raw.Long,
-				}
-
-				dm.AddRecord(s.Id, dtState.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), raw.State, Period))
-				dm.AddRecord(s.Id, dtPosition.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), latLongMap, Period))
-
 			}
 
 			if err := b.PushData(Vehicle, dm); err != nil {
