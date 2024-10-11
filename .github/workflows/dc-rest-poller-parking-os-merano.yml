@@ -5,7 +5,7 @@ on:
     paths:
       - "collectors/rest-poller/**"
       - "!collectors/rest-poller/infrastructure/helm/*"
-      - "collectors/rest-poller/infrastructure/helm/parking-offstreet-merano.yml"
+      - "collectors/rest-poller/infrastructure/helm/parking-offstreet-merano.yaml"
       - ".github/workflows/dc-rest-poller-parking-offstreet-merano.yml"
 
 env:

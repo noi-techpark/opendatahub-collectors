@@ -5,7 +5,7 @@ on:
     paths:
       - "collectors/rest-poller/**"
       - "!collectors/rest-poller/infrastructure/helm/*"
-      - "collectors/rest-poller/infrastructure/helm/echarging-driwe-ocpi.yml"
+      - "collectors/rest-poller/infrastructure/helm/echarging-driwe-ocpi.yaml"
       - ".github/workflows/dc-rest-poller-echarging-driwe-ocpi.yml"
 
 env:

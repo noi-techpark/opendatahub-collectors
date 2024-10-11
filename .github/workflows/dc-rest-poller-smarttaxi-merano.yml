@@ -5,7 +5,7 @@ on:
     paths:
       - "collectors/rest-poller/**"
       - "!collectors/rest-poller/infrastructure/helm/*"
-      - "collectors/rest-poller/infrastructure/helm/smarttaxi-merano.yml"
+      - "collectors/rest-poller/infrastructure/helm/smarttaxi-merano.yaml"
       - ".github/workflows/dc-rest-poller-smarttaxi-merano.yml"
 
 env:
