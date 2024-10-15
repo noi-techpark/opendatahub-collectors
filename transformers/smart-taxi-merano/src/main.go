@@ -98,8 +98,8 @@ func main() {
 	//from here on it might be better to run everything with go fun() (meaning within a go routine)
 	go func() {
 		b := bdplib.FromEnv()
-		dtState := bdplib.CreateDataType("state", "", "description", "Instantaneous")
-		dtPosition := bdplib.CreateDataType("position", "", "description", "Instantaneous")
+		dtState := bdplib.CreateDataType("state", "", "label indicating the status of the taxi (1= free; 2 = occupied; 3 = available)", "Instantaneous")
+		dtPosition := bdplib.CreateDataType("position", "", "current latitude and longitude of the taxi", "Instantaneous")
 		ds := []bdplib.DataType{dtState, dtPosition}
 		failOnError(b.SyncDataTypes(Vehicle, ds), "Error pushing datatypes")
 		log.Println("Waiting for messages. To exit press CTRL+C")
