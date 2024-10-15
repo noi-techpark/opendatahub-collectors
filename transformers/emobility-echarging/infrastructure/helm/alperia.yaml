@@ -17,7 +17,7 @@ env:
   app_period: 600
   
   # ODH Core Writer Connection
-  BASE_URI: http://bdp-core.core.svc.cluster.local:8080/json
+  BASE_URI: http://bdp-core.core.svc.cal:8080/json
   scope: openid
   
   # Get it from your pom.xml -> project/version and project/artifactId
