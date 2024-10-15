@@ -108,76 +108,73 @@ func main() {
 
 	failOnError(err, "Failed to register a consumer")
 
-	go func() {
-		b := bdplib.FromEnv()
-		dtState := bdplib.CreateDataType("state", "", "state", "Instantaneous")
-		dtPosition := bdplib.CreateDataType("position", "", "position", "Instantaneous")
-		ds := []bdplib.DataType{dtState, dtPosition}
-		failOnError(b.SyncDataTypes(Vehicle, ds), "Error pushing datatypes")
-		log.Println("Waiting for messages. To exit press CTRL+C")
+	b := bdplib.FromEnv()
+	dtState := bdplib.CreateDataType("state", "", "state", "Instantaneous")
+	dtPosition := bdplib.CreateDataType("position", "", "position", "Instantaneous")
+	ds := []bdplib.DataType{dtState, dtPosition}
+	failOnError(b.SyncDataTypes(Vehicle, ds), "Error pushing datatypes")
+	log.Println("Waiting for messages. To exit press CTRL+C")
 
-		for msg := range msgs {
-			msgBody := incoming{}
-			if err := json.Unmarshal(msg.Body, &msgBody); err != nil {
-				slog.Error("Error unmarshalling mq message", "err", err)
-				msgReject(&msg)
-				continue
-			}
-
-			rawFrame, err := getRawFrame(msgBody)
-			if err != nil {
-				slog.Error("Cannot get mongo raw data", "err", err, "msg", msgBody)
-				msgReject(&msg)
-				continue
-			}
-
-			log.Printf("Received a message: %s", rawFrame.Rawdata)
-			rawArray, err := unmarshalRaw(rawFrame.Rawdata)
-			if err != nil {
-				slog.Error("Unable to unmarshal raw payload", "err", err, "msg", msgBody, "raw", rawArray)
-				msgReject(&msg)
-				continue
-			}
-
-			dm := b.CreateDataMap()
-			for _, raw := range rawArray {
-				num, _ := strconv.Atoi(raw.Uid)
-				if contains(Whitelist, num) {
-					fmt.Println("INSERTING RAW_ID", raw.Uid)
-					lat, _ := strconv.ParseFloat(raw.Lat, 64)
-					lon, _ := strconv.ParseFloat(raw.Long, 64)
-					sname := fmt.Sprintf("vehicle:%s", raw.Uid)
-					s := bdplib.CreateStation(sname, raw.Nickname, Vehicle, lat, lon, Origin)
-
-					if err := b.SyncStations(Vehicle, []bdplib.Station{s}, false, false); err != nil {
-						slog.Error("Error syncing stations", "err", err, "msg", msgBody)
-						msgReject(&msg)
-						continue
-					}
-
-					latLongMap := map[string]string{
-						"lat": raw.Lat,
-						"lon": raw.Long,
-					}
-					state := mapStatus(raw.State)
-					//substituted raw.state with an int version
-					dm.AddRecord(s.Id, dtState.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), state, Period))
-					dm.AddRecord(s.Id, dtPosition.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), latLongMap, Period))
-				}
-			}
-
-			if err := b.PushData(Vehicle, dm); err != nil {
-				slog.Error("Error pushing data to bdp", "err", err, "msg", msgBody)
-				msgReject(&msg)
-			}
-
-			failOnError(msg.Ack(false), "Could not ACK elaborated msg")
+	for msg := range msgs {
+		msgBody := incoming{}
+		if err := json.Unmarshal(msg.Body, &msgBody); err != nil {
+			slog.Error("Error unmarshalling mq message", "err", err)
+			msgReject(&msg)
+			continue
 		}
 
-		log.Fatal("Message channel closed!")
-	}()
+		rawFrame, err := getRawFrame(msgBody)
+		if err != nil {
+			slog.Error("Cannot get mongo raw data", "err", err, "msg", msgBody)
+			msgReject(&msg)
+			continue
+		}
 
-	<-make(chan int) //wait forever
+		log.Printf("Received a message: %s", rawFrame.Rawdata)
+		rawArray, err := unmarshalRaw(rawFrame.Rawdata)
+		if err != nil {
+			slog.Error("Unable to unmarshal raw payload", "err", err, "msg", msgBody, "raw", rawArray)
+			msgReject(&msg)
+			continue
+		}
+
+		dm := b.CreateDataMap()
+		for _, raw := range rawArray {
+			num, _ := strconv.Atoi(raw.Uid)
+			if contains(Whitelist, num) {
+				fmt.Println("INSERTING RAW_ID", raw.Uid)
+				lat, _ := strconv.ParseFloat(raw.Lat, 64)
+				lon, _ := strconv.ParseFloat(raw.Long, 64)
+				sname := fmt.Sprintf("vehicle:%s", raw.Uid)
+				s := bdplib.CreateStation(sname, raw.Nickname, Vehicle, lat, lon, Origin)
+
+				if err := b.SyncStations(Vehicle, []bdplib.Station{s}, false, false); err != nil {
+					slog.Error("Error syncing stations", "err", err, "msg", msgBody)
+					msgReject(&msg)
+					continue
+				}
+
+				latLongMap := map[string]string{
+					"lat": raw.Lat,
+					"lon": raw.Long,
+				}
+				state := mapStatus(raw.State)
+				//substituted raw.state with an int version
+				dm.AddRecord(s.Id, dtState.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), state, Period))
+				dm.AddRecord(s.Id, dtPosition.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), latLongMap, Period))
+			}
+		}
+
+		if err := b.PushData(Vehicle, dm); err != nil {
+			slog.Error("Error pushing data to bdp", "err", err, "msg", msgBody)
+			msgReject(&msg)
+		}
+
+		failOnError(msg.Ack(false), "Could not ACK elaborated msg")
+	}
+
+	log.Fatal("Message channel closed!")
+
 }
 
 func getRawFrame(m incoming) (*raw, error) {
