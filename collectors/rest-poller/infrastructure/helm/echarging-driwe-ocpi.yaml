@@ -9,6 +9,8 @@ env:
 
   CRON: "0 */5 * * * *"
   HTTP_URL: https://ocpi.driwe.club/2.2.1/locations
+
+envSecret:
   HTTP_HEADER_AUTH: 'Authorization: Token ******'
 
 envSecretRef:

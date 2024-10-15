@@ -1,4 +1,4 @@
-name: CI/CD tr-echarging-ocpi
+name: CI/CD tr-echarging-ocpi-neogy
 
 on: 
   push:
