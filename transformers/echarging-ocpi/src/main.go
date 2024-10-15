@@ -96,7 +96,7 @@ func main() {
 				if evse.Status == "AVAILABLE" {
 					numAvailable++
 				}
-				plugData.AddRecord(plug.Id, dtNumberAvailable.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), evse.Status, period))
+				plugData.AddRecord(plug.Id, dtPlugStatus.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), evse.Status, period))
 			}
 
 			locationData.AddRecord(station.Id, dtNumberAvailable.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), numAvailable, period))
@@ -111,7 +111,7 @@ func main() {
 		if err := b.PushData(stationTypeLocation, locationData); err != nil {
 			return fmt.Errorf("error pushing location data: %w", err)
 		}
-		if err := b.PushData(stationTypeLocation, plugData); err != nil {
+		if err := b.PushData(stationTypePlug, plugData); err != nil {
 			return fmt.Errorf("error pushing plug data: %w", err)
 		}
 
