@@ -44,6 +44,19 @@ const Vehicle = "Vehicle"
 const Period = 60
 const Origin = "smart-taxi-merano"
 
+func mapStatus(status string) string {
+	m := map[string]string{
+		"1": "FREE",
+		"2": "OCCUPIED",
+		"3": "AVAILABLE",
+	}
+	val, ok := m[status]
+	if ok {
+		return val
+	}
+	return "undefined status"
+}
+
 func main() {
 	// Read environment variables
 	mqURI := os.Getenv("MQ_LISTEN_URI")
@@ -95,11 +108,10 @@ func main() {
 
 	failOnError(err, "Failed to register a consumer")
 
-	//from here on it might be better to run everything with go fun() (meaning within a go routine)
 	go func() {
 		b := bdplib.FromEnv()
-		dtState := bdplib.CreateDataType("state", "", "label indicating the status of the taxi (1= free; 2 = occupied; 3 = available)", "Instantaneous")
-		dtPosition := bdplib.CreateDataType("position", "", "current latitude and longitude of the taxi", "Instantaneous")
+		dtState := bdplib.CreateDataType("state", "", "state", "Instantaneous")
+		dtPosition := bdplib.CreateDataType("position", "", "position", "Instantaneous")
 		ds := []bdplib.DataType{dtState, dtPosition}
 		failOnError(b.SyncDataTypes(Vehicle, ds), "Error pushing datatypes")
 		log.Println("Waiting for messages. To exit press CTRL+C")
@@ -147,8 +159,9 @@ func main() {
 						"lat": raw.Lat,
 						"lon": raw.Long,
 					}
-
-					dm.AddRecord(s.Id, dtState.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), raw.State, Period))
+					state := mapStatus(raw.State)
+					//substituted raw.state with an int version
+					dm.AddRecord(s.Id, dtState.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), state, Period))
 					dm.AddRecord(s.Id, dtPosition.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), latLongMap, Period))
 				}
 			}
