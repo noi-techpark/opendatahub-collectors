@@ -8,8 +8,9 @@ env:
   PROVIDER: echarging/driwe
 
   CRON: "0 */5 * * * *"
-  HTTP_URL: https://www.driwe.club/api/stations/metadata?auth-token=******
   HTTP_HEADER_CALLER: "X-Caller-ID: NOI-Techpark"
+envSecret:
+  HTTP_URL: https://www.driwe.club/api/stations/metadata?auth-token=******
 
 envSecretRef:
   - name: RABBITMQ_URI
