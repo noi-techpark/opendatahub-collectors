@@ -1,0 +1,87 @@
+{
+    "data": [
+        {
+            "country_code": "IT",
+            "party_id": "NEO",
+            "id": "64df6650817640d503003700384e",
+            "publish": true,
+            "name": "000 - ChargeUp Test Station",
+            "address": "Via Lorenz Böhler Straße 5",
+            "city": "BOLZANO - BOZEN",
+            "postal_code": "39100",
+            "country": "ITA",
+            "coordinates": {
+                "latitude": "46.4997770",
+                "longitude": "11.3101790"
+            },
+            "evses": [
+                {
+                    "uid": "b358280a0f79408784c29df7",
+                    "evse_id": "IT*NEO*E206790697*1",
+                    "status": "BLOCKED",
+                    "capabilities": [
+                        "REMOTE_START_STOP_CAPABLE",
+                        "RFID_READER"
+                    ],
+                    "connectors": [
+                        {
+                            "id": "1",
+                            "standard": "IEC_62196_T2_COMBO",
+                            "format": "CABLE",
+                            "power_type": "DC",
+                            "last_updated": "2024-10-15T07:54:49.230Z",
+                            "max_voltage": 0,
+                            "max_amperage": 0,
+                            "max_electric_power": 125000,
+                            "tariff_ids": [
+                                null
+                            ]
+                        }
+                    ],
+                    "last_updated": "2024-10-15T07:54:49.230Z"
+                },
+                {
+                    "uid": "c05c5a2fd5be447190a3d0fb",
+                    "evse_id": "IT*NEO*E206790697*2",
+                    "status": "BLOCKED",
+                    "capabilities": [
+                        "REMOTE_START_STOP_CAPABLE",
+                        "RFID_READER"
+                    ],
+                    "connectors": [
+                        {
+                            "id": "1",
+                            "standard": "IEC_62196_T2_COMBO",
+                            "format": "SOCKET",
+                            "power_type": "DC",
+                            "last_updated": "2024-10-15T07:54:51.164Z",
+                            "max_voltage": 0,
+                            "max_amperage": 0,
+                            "max_electric_power": 125000,
+                            "tariff_ids": [
+                                null
+                            ]
+                        }
+                    ],
+                    "last_updated": "2024-10-15T07:54:51.164Z"
+                }
+            ],
+            "time_zone": "Europe/Rome",
+            "opening_times": {
+                "twentyfourseven": true
+            },
+            "last_updated": "2024-10-15T07:54:51.164Z",
+            "directions": []
+        }
+    ],
+    "status_code": 1000,
+    "status_message": "Success",
+    "timestamp": "2024-10-15T09:21:47.462Z",
+    "pageInfo": {
+        "pageIndex": 0,
+        "pageSize": 100,
+        "total": 1
+    },
+    "httpStatusCode": 200,
+    "uuAppErrorMap": {}
+}

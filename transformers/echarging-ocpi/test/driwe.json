@@ -1,0 +1,67 @@
+{
+    "data": [
+        {
+            "opening_times": {
+                "regular_hours": [],
+                "exceptional_openings": [],
+                "exceptional_closings": []
+            },
+            "energy_mix": {
+                "energy_sources": [],
+                "environ_impact": []
+            },
+            "facilities": [],
+            "id": "326a6041-ac5c-4f38-911b-ef3e93f5e34d",
+            "country_code": "IT",
+            "party_id": "DWR",
+            "publish": true,
+            "name": "SportHotel Exclusive San Vigilio",
+            "address": "Strada al Plan Dessora",
+            "city": "San Vigilio",
+            "postal_code": "39030",
+            "country": "ITA",
+            "coordinates": {
+                "latitude": "46.698061",
+                "longitude": "11.934766"
+            },
+            "time_zone": "Europe/Rome",
+            "evses": [
+                {
+                    "capabilities": [],
+                    "parking_restrictions": [],
+                    "uid": "DW-000027-1",
+                    "evse_id": "IT*DWR*E1a867309-fd64-4bbc-9d12-c64beec5748c",
+                    "coordinates": {
+                        "latitude": "46.698061",
+                        "longitude": "11.934766"
+                    },
+                    "connectors": [
+                        {
+                            "tariff_ids": [],
+                            "id": "DW-000027-1",
+                            "standard": "IEC_62196_T2",
+                            "format": "SOCKET",
+                            "power_type": "AC_1_PHASE",
+                            "max_voltage": 400,
+                            "max_amperage": 16,
+                            "max_electric_power": 11000,
+                            "last_updated": "2024-02-02T11:20:00.000Z"
+                        }
+                    ],
+                    "status": "AVAILABLE",
+                    "last_updated": "2024-04-07T08:28:44.000Z",
+                    "status_schedule": [],
+                    "directions": [],
+                    "images": []
+                }
+            ],
+            "last_updated": "2024-02-02T11:20:00.000Z",
+            "publish_allowed_to": [],
+            "related_locations": [],
+            "directions": [],
+            "images": []
+        }
+    ],
+    "status_code": 1000,
+    "timestamp": "2024-09-11T07:54:36.408Z"
+}

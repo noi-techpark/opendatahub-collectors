@@ -13,12 +13,32 @@ import (
 	"github.com/noi-techpark/go-bdp-client/bdplib"
 )
 
-const stationtype = "EChargingStation"
+const stationTypeLocation = "EChargingStation"
+const stationTypePlug = "EChargingPlug"
+const period = 600
+
+var dtNumberAvailable = bdplib.DataType{
+	Name:        "number-available",
+	Description: "number of available vehicles / charging points",
+	Rtype:       "Instantaneous",
+}
+var dtPlugStatus = bdplib.DataType{
+	Name:        "echarging-plug-status-ocpi",
+	Description: "Current state of echarging plug according to OCPI standard",
+	Rtype:       "Instantaneous",
+}
+
+func syncDataTypes(b *bdplib.Bdp) {
+	failOnError(b.SyncDataTypes(stationTypeLocation, []bdplib.DataType{dtNumberAvailable}), "could not sync data types. aborting...")
+	failOnError(b.SyncDataTypes(stationTypePlug, []bdplib.DataType{dtPlugStatus}), "could not sync data types. aborting...")
+}
 
 func main() {
 	initLogging()
 
 	b := bdplib.FromEnv()
+
+	syncDataTypes(b)
 
 	listen(func(r *raw) error {
 		locations, err := unmarshalRaw(r.Rawdata)
@@ -27,19 +47,72 @@ func main() {
 		}
 
 		stations := []bdplib.Station{}
+		locationData := b.CreateDataMap()
+		plugs := []bdplib.Station{}
+		plugData := b.CreateDataMap()
 
 		for _, loc := range locations.Data {
-			stations = append(stations, bdplib.CreateStation(
+			station := bdplib.CreateStation(
 				loc.ID,
 				loc.Name,
-				stationtype,
+				stationTypeLocation,
 				loc.Coordinates.Latitude,
 				loc.Coordinates.Longitude,
-				b.Origin))
+				b.Origin)
+
+			station.MetaData = map[string]any{
+				"country_code":  loc.CountryCode,
+				"party_id":      loc.PartyID,
+				"publish":       loc.Publish,
+				"address":       loc.Address,
+				"city":          loc.City,
+				"postal_code":   loc.PostalCode,
+				"time_zone":     loc.TimeZone,
+				"opening_times": loc.OpeningTimes,
+				"directions":    loc.Directions,
+			}
+
+			stations = append(stations, station)
+
+			numAvailable := 0
+
+			for _, evse := range loc.Evses {
+				plug := bdplib.CreateStation(
+					evse.UID,
+					evse.EvseID,
+					stationTypePlug,
+					loc.Coordinates.Latitude,
+					loc.Coordinates.Longitude,
+					b.Origin)
+
+				plug.ParentStation = station.Id
+
+				plug.MetaData = map[string]any{
+					"capabilities": evse.Capabilities,
+					"connectors":   evse.Connectors,
+				}
+
+				plugs = append(plugs, plug)
+				if evse.Status == "AVAILABLE" {
+					numAvailable++
+				}
+				plugData.AddRecord(plug.Id, dtNumberAvailable.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), evse.Status, period))
+			}
+
+			locationData.AddRecord(station.Id, dtNumberAvailable.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), numAvailable, period))
 		}
 
-		if err := b.SyncStations(stationtype, stations, true, false); err != nil {
-			return fmt.Errorf("error syncing stations: %w", err)
+		if err := b.SyncStations(stationTypeLocation, stations, true, true); err != nil {
+			return fmt.Errorf("error syncing %s: %w", stationTypeLocation, err)
+		}
+		if err := b.SyncStations(stationTypePlug, plugs, true, true); err != nil {
+			return fmt.Errorf("error syncing %s: %w", stationTypePlug, err)
+		}
+		if err := b.PushData(stationTypeLocation, locationData); err != nil {
+			return fmt.Errorf("error pushing location data: %w", err)
+		}
+		if err := b.PushData(stationTypeLocation, plugData); err != nil {
+			return fmt.Errorf("error pushing plug data: %w", err)
 		}
 
 		// push all
