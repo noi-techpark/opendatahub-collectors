@@ -108,7 +108,7 @@ func customHeaders() http.Header {
 					}
 					headers[headerName] = []string{strings.TrimSpace(headerValue)}
 				}
-				continue
+				break
 			}
 		}
 	}
