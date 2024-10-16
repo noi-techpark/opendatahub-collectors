@@ -17,7 +17,7 @@ type OCPILocations struct {
 		CountryCode string `json:"country_code"`
 		PartyID     string `json:"party_id"`
 		ID          string `json:"id"`
-		Publish     bool   `json:"publish"`
+		Publish     *bool  `json:"publish"`
 		Name        string `json:"name"`
 		Address     string `json:"address"`
 		City        string `json:"city"`
@@ -31,7 +31,7 @@ type OCPILocations struct {
 			UID          string   `json:"uid"`
 			EvseID       string   `json:"evse_id"`
 			Status       string   `json:"status"`
-			Capabilities []string `json:"capabilities"`
+			Capabilities []string `json:"capabilities,omitempty"`
 			Connectors   []struct {
 				ID               string    `json:"id,omitempty"`
 				Standard         string    `json:"standard,omitempty"`
@@ -42,7 +42,7 @@ type OCPILocations struct {
 				MaxAmperage      int       `json:"max_amperage,omitempty"`
 				MaxElectricPower int       `json:"max_electric_power,omitempty"`
 				TariffIds        []string  `json:"tariff_ids,omitempty"`
-			} `json:"connectors"`
+			} `json:"connectors,omitempty"`
 			LastUpdated time.Time `json:"last_updated"`
 		} `json:"evses"`
 		ParkingType  string                `json:"parking_type"`
@@ -56,7 +56,7 @@ type OCPILocations struct {
 			RegularHours        []interface{} `json:"regular_hours,omitempty"`
 			ExceptionalOpenings []interface{} `json:"exceptional_openings,omitempty"`
 			ExceptionalClosings []interface{} `json:"exceptional_closings,omitempty"`
-		} `json:"opening_times"`
+		} `json:"opening_times,omitempty"`
 		LastUpdated      time.Time     `json:"last_updated"`
 		PublishAllowedTo []interface{} `json:"publish_allowed_to"`
 		RelatedLocations []interface{} `json:"related_locations"`
