@@ -33,15 +33,15 @@ type OCPILocations struct {
 			Status       string   `json:"status"`
 			Capabilities []string `json:"capabilities"`
 			Connectors   []struct {
-				ID               string    `json:"id"`
-				Standard         string    `json:"standard"`
-				Format           string    `json:"format"`
-				PowerType        string    `json:"power_type"`
-				LastUpdated      time.Time `json:"last_updated"`
-				MaxVoltage       int       `json:"max_voltage"`
-				MaxAmperage      int       `json:"max_amperage"`
-				MaxElectricPower int       `json:"max_electric_power"`
-				TariffIds        []string  `json:"tariff_ids"`
+				ID               string    `json:"id,omitempty"`
+				Standard         string    `json:"standard,omitempty"`
+				Format           string    `json:"format,omitempty"`
+				PowerType        string    `json:"power_type,omitempty"`
+				LastUpdated      time.Time `json:"last_updated,omitempty"`
+				MaxVoltage       int       `json:"max_voltage,omitempty"`
+				MaxAmperage      int       `json:"max_amperage,omitempty"`
+				MaxElectricPower int       `json:"max_electric_power,omitempty"`
+				TariffIds        []string  `json:"tariff_ids,omitempty"`
 			} `json:"connectors"`
 			LastUpdated time.Time `json:"last_updated"`
 		} `json:"evses"`
@@ -52,16 +52,16 @@ type OCPILocations struct {
 		Facilities   []string              `json:"facilities"`
 		TimeZone     string                `json:"time_zone"`
 		OpeningTimes struct {
-			Twentyfourseven     bool          `json:"twentyfourseven"`
-			RegularHours        []interface{} `json:"regular_hours"`
-			ExceptionalOpenings []interface{} `json:"exceptional_openings"`
-			ExceptionalClosings []interface{} `json:"exceptional_closings"`
+			Twentyfourseven     bool          `json:"twentyfourseven,omitempty"`
+			RegularHours        []interface{} `json:"regular_hours,omitempty"`
+			ExceptionalOpenings []interface{} `json:"exceptional_openings,omitempty"`
+			ExceptionalClosings []interface{} `json:"exceptional_closings,omitempty"`
 		} `json:"opening_times"`
 		LastUpdated      time.Time     `json:"last_updated"`
 		PublishAllowedTo []interface{} `json:"publish_allowed_to"`
 		RelatedLocations []interface{} `json:"related_locations"`
 		Images           []interface{} `json:"images"`
-		Directions       []interface{} `json:"directions"`
+		Directions       []interface{} `json:"directions,omitempty"`
 	} `json:"data"`
 	StatusCode    int       `json:"status_code"`
 	StatusMessage string    `json:"status_message"`
