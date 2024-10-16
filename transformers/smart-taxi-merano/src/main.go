@@ -113,7 +113,7 @@ func main() {
 	msgs, err := ch.Consume(
 		q.Name,     // queue
 		mqConsumer, // consumer
-		true,       // auto-ack
+		false,      // auto-ack
 		false,      // exclusive
 		false,      // no-local
 		false,      // no-wait
