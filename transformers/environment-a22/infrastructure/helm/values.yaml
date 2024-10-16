@@ -1,27 +1,22 @@
-replicaCount: 1
-
 image:
-  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-parking-offstreet-sfhera
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-environment-a22
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
   tag: sometaghere
-
-imagePullSecrets:
-  - name: container-registry-r
 
 env:
   # ODH Core Writer Connection
-  BDP_BASE_URL: https://share.opendatahub.testingmachine.eu
+  # BDP_BASE_URL: https://share.opendatahub.testingmachine.eu
+  BDP_BASE_URL: http://bdp-core.core.svc.cluster.local:8080
   BDP_PROVENANCE_NAME: 
   BDP_PROVENANCE_VERSION: 
-  BDP_ORIGIN: Municipality Bolzano
+  BDP_ORIGIN: A22
   
   LOG_LEVEL: INFO
 
-  MQ_LISTEN_QUEUE: municipality-bolzano.parking-macello
+  MQ_LISTEN_QUEUE: a22.environment
   MQ_LISTEN_EXCHANGE: routed
-  MQ_LISTEN_KEY: municipality-bolzano.parking-macello
-  MQ_LISTEN_CONSUMER: tr-parking-offstreet-sfhera
+  MQ_LISTEN_KEY: a22.environment
+  MQ_LISTEN_CONSUMER: tr-environment-a22
   
 envSecretRef:
   - name: MQ_LISTEN_URI 
