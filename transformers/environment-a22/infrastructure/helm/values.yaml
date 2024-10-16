@@ -9,7 +9,7 @@ env:
   BDP_BASE_URL: http://bdp-core.core.svc.cluster.local:8080
   BDP_PROVENANCE_NAME: 
   BDP_PROVENANCE_VERSION: 
-  BDP_ORIGIN: A22
+  BDP_ORIGIN: a22-algorab
   
   LOG_LEVEL: INFO
 
