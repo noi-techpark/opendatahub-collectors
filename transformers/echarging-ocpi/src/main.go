@@ -102,10 +102,11 @@ func main() {
 			locationData.AddRecord(station.Id, dtNumberAvailable.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), numAvailable, period))
 		}
 
-		if err := b.SyncStations(stationTypeLocation, stations, true, true); err != nil {
+		// TODO: once the paging data collector is implemented, figure out some way to sync the total set of stations, and identify inactive ones
+		if err := b.SyncStations(stationTypeLocation, stations, true, false); err != nil {
 			return fmt.Errorf("error syncing %s: %w", stationTypeLocation, err)
 		}
-		if err := b.SyncStations(stationTypePlug, plugs, true, true); err != nil {
+		if err := b.SyncStations(stationTypePlug, plugs, true, false); err != nil {
 			return fmt.Errorf("error syncing %s: %w", stationTypePlug, err)
 		}
 		if err := b.PushData(stationTypeLocation, locationData); err != nil {
