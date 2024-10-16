@@ -57,7 +57,21 @@ func mapStatus(status string) string {
 	return "undefined status"
 }
 
+func initLogging() {
+	logLevel := os.Getenv("LOG_LEVEL")
+
+	level := new(slog.LevelVar)
+	level.UnmarshalText([]byte(logLevel))
+
+	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+		Level: level,
+	})))
+
+	slog.Info("Start logger with level: " + logLevel)
+}
+
 func main() {
+	initLogging()
 	// Read environment variables
 	mqURI := os.Getenv("MQ_LISTEN_URI")
 	conn, err := amqp091.Dial(mqURI)
