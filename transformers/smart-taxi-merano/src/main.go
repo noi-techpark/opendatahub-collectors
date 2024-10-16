@@ -40,7 +40,7 @@ func contains(whitelist []int, value int) bool {
 
 var Whitelist = []int{2343, 2344, 2345, 2350, 2764}
 
-const Vehicle = "Vehicle"
+const Vehicle = "ON_DEMAND_VEHICLE"
 const Period = 60
 const Origin = "smart-taxi-merano"
 
