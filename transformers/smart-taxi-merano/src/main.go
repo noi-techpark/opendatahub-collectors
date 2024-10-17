@@ -173,9 +173,15 @@ func main() {
 					"lon": raw.Long,
 				}
 				state := mapStatus(raw.State)
+				parsedTime, err := time.Parse("02/01/2006 15:04:05", raw.Time)
+				if err != nil {
+					slog.Error("Error parsing time", "err", err, "raw_time", raw.Time)
+					// Handle the error appropriately
+				}
+
 				//substituted raw.state with an int version
-				dm.AddRecord(s.Id, dtState.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), state, Period))
-				dm.AddRecord(s.Id, dtPosition.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), latLongMap, Period))
+				dm.AddRecord(s.Id, dtState.Name, bdplib.CreateRecord(parsedTime.UnixMilli(), state, Period))
+				dm.AddRecord(s.Id, dtPosition.Name, bdplib.CreateRecord(parsedTime.UnixMilli(), latLongMap, Period))
 			}
 		}
 
