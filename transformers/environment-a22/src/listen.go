@@ -22,7 +22,7 @@ import (
 type raw struct {
 	Provider  string
 	Timestamp time.Time
-	Rawdata   string
+	Rawdata   payload
 	ID        string
 }
 type incoming struct {

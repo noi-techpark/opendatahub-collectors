@@ -5,7 +5,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log/slog"
 	"os"
@@ -58,10 +57,8 @@ func main() {
 	failOnError(b.SyncStations(stationtype, bdpStations, true, false), "error syncing stations")
 
 	listen(func(r *raw) error {
-		payload, err := unmarshalRaw(r.Rawdata)
-		if err != nil {
-			return fmt.Errorf("unable to unmarshal raw payload: %w", err)
-		}
+		payload := r.Rawdata
+
 		sensorid := payload.Payload.ControlUnitId
 		ts := payload.Payload.DateTimeAcquisition
 
@@ -77,7 +74,7 @@ func main() {
 			if !ok {
 				return fmt.Errorf("error mapping data type %d for sensor %s", v.Id, sensorid)
 			}
-			dm.AddRecord(station.id, dt.Name, bdplib.CreateRecord(ts.UnixMilli(), v.Value, 60))
+			dm.AddRecord(station.id, dt.Name, bdplib.CreateRecord(ts.UnixMilli(), v.Value, period))
 		}
 
 		if err := b.PushData(stationtype, dm); err != nil {
@@ -116,13 +113,4 @@ type mqttPayload struct {
 		Value float64
 		// ignoring other fields
 	}
-}
-
-func unmarshalRaw(s string) (payload, error) {
-	var p payload
-	if err := json.Unmarshal([]byte(s), &p); err != nil {
-		return p, fmt.Errorf("error unmarshalling payload json: %w", err)
-	}
-
-	return p, nil
 }
