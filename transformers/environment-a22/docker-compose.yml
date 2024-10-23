@@ -12,6 +12,8 @@ services:
       - .env
     volumes:
       - ./src:/code
+      - ./resources:/res
+      - ./test:/test
       - pkg:/go/pkg/mod
     working_dir: /code
     # host mode so we can use the port forwards

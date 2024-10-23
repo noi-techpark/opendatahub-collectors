@@ -5,13 +5,14 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log/slog"
 	"os"
 	"strconv"
-	"time"
 
 	"github.com/noi-techpark/go-bdp-client/bdplib"
+	"github.com/relvacode/iso8601"
 	"golang.org/x/exp/maps"
 )
 
@@ -62,7 +63,7 @@ func main() {
 		sensorid := payload.Payload.ControlUnitId
 		ts := payload.Payload.DateTimeAcquisition
 
-		station, err := currentStation(stations, sensorid, ts)
+		station, err := currentStation(stations, sensorid, ts.Time)
 		if err != nil {
 			return fmt.Errorf("error mapping station for sensor %s: %w", sensorid, err)
 		}
@@ -99,14 +100,23 @@ func readDataTypes(path string) bdpDataTypeMap {
 type payload struct {
 	MsgId   int
 	Topic   string
-	Payload strMqttPayload
+	Payload mqttPayload
 }
 
-// the Payload JSON is a string that we have to first unmarshal
-type strMqttPayload mqttPayload
+// Unmarshal json inside a json string
+func (p *mqttPayload) UnmarshalJSON(data []byte) error {
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return err
+	}
+	// wrap type to prevent infinite recursion
+	type P mqttPayload
+
+	return json.Unmarshal([]byte(s), (*P)(p))
+}
 
 type mqttPayload struct {
-	DateTimeAcquisition time.Time
+	DateTimeAcquisition iso8601.Time
 	ControlUnitId       string
 	Resval              []struct {
 		Id    int

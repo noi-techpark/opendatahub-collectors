@@ -8,10 +8,11 @@ import (
 	"encoding/csv"
 	"log"
 	"os"
+	"path/filepath"
 )
 
 func readCsv(filePath string) [][]string {
-	f, err := os.Open(filePath)
+	f, err := os.Open(filepath.Join(os.Getenv("RESOURCE_DIR"), filePath))
 	if err != nil {
 		log.Fatal("Unable to read input file "+filePath, err)
 	}
