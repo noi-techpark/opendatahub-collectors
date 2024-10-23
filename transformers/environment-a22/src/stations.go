@@ -26,13 +26,13 @@ type station struct {
 	name    string
 	lat     float64
 	lon     float64
-	history []sensorhistory
+	history []Sensorhistory
 }
 
-type sensorhistory struct {
-	sensor_id    string
-	sensor_start time.Time
-	sensor_end   time.Time
+type Sensorhistory struct {
+	Sensor_id    string    `json:"id"`
+	Sensor_start time.Time `json:"start"`
+	Sensor_end   time.Time `json:"end"`
 }
 
 func readStationCSV(path string) ([]stationcfg, error) {
@@ -62,7 +62,15 @@ func readStationCSV(path string) ([]stationcfg, error) {
 }
 
 func map2Bdp(s station, origin string) bdplib.Station {
-	return bdplib.CreateStation(s.id, s.name, "EnvironmentStation", s.lat, s.lon, origin)
+	mapped := bdplib.CreateStation(s.id, s.name, "EnvironmentStation", s.lat, s.lon, origin)
+
+	if len(s.history) > 0 {
+		currentSensor := s.history[len(s.history)-1]
+		mapped.MetaData["sensor_id"] = currentSensor.Sensor_id
+	}
+	mapped.MetaData["sensor_history"] = s.history
+
+	return mapped
 }
 
 func compileHistory(cfgs []stationcfg) ([]station, error) {
@@ -84,9 +92,9 @@ func compileHistory(cfgs []stationcfg) ([]station, error) {
 		}
 
 		if len(s.history) > 0 {
-			s.history[len(s.history)-1].sensor_end = cfg.sensor_start
+			s.history[len(s.history)-1].Sensor_end = cfg.sensor_start
 		}
-		s.history = append(s.history, sensorhistory{sensor_id: cfg.sensor_id, sensor_start: cfg.sensor_start})
+		s.history = append(s.history, Sensorhistory{Sensor_id: cfg.sensor_id, Sensor_start: cfg.sensor_start})
 
 		smap[cfg.id] = s
 	}

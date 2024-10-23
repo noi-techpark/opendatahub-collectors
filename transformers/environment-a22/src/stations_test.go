@@ -38,13 +38,13 @@ func assertSensorMapping(t *testing.T, sts []station, sensId string, ts time.Tim
 func TestSensorMapping(t *testing.T) {
 	now := time.Now()
 	sts := []station{
-		{id: "t1", history: []sensorhistory{
-			{sensor_id: "s2", sensor_start: now.Add(-1 * time.Hour), sensor_end: now},
-			{sensor_id: "s1", sensor_start: now, sensor_end: now.Add(time.Hour)},
-			{sensor_id: "s1", sensor_start: now.Add(time.Hour), sensor_end: now.Add(4 * time.Hour)},
+		{id: "t1", history: []Sensorhistory{
+			{Sensor_id: "s2", Sensor_start: now.Add(-1 * time.Hour), Sensor_end: now},
+			{Sensor_id: "s1", Sensor_start: now, Sensor_end: now.Add(time.Hour)},
+			{Sensor_id: "s1", Sensor_start: now.Add(time.Hour), Sensor_end: now.Add(4 * time.Hour)},
 		}},
-		{id: "t2", history: []sensorhistory{
-			{sensor_id: "s1", sensor_start: now.Add(4 * time.Hour)},
+		{id: "t2", history: []Sensorhistory{
+			{Sensor_id: "s1", Sensor_start: now.Add(4 * time.Hour)},
 		}},
 	}
 
