@@ -59,7 +59,7 @@ func readStationCSV(path string) ([]stationcfg, error) {
 		if err != nil {
 			return nil, fmt.Errorf("error parsing lat float value %s: %w", st[2], err)
 		}
-		lon, _ := strconv.ParseFloat(st[3], 64)
+		lon, err := strconv.ParseFloat(st[3], 64)
 		if err != nil {
 			return nil, fmt.Errorf("error parsing lon float value %s: %w", st[2], err)
 		}
