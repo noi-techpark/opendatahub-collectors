@@ -64,6 +64,8 @@ func readStationCSV(path string) ([]stationcfg, error) {
 func map2Bdp(s station, origin string) bdplib.Station {
 	mapped := bdplib.CreateStation(s.id, s.name, "EnvironmentStation", s.lat, s.lon, origin)
 
+	mapped.MetaData = make(map[string]interface{})
+
 	if len(s.history) > 0 {
 		currentSensor := s.history[len(s.history)-1]
 		mapped.MetaData["sensor_id"] = currentSensor.Sensor_id
@@ -106,9 +108,9 @@ func currentStation(sts []station, sensor string, ts time.Time) (station, error)
 	var latest time.Time
 	for _, s := range sts {
 		for _, h := range s.history {
-			if h.sensor_id == sensor && (ts.After(h.sensor_start) || ts.Equal(h.sensor_start)) && (h.sensor_end.IsZero() || ts.Before(h.sensor_end)) && h.sensor_start.After(latest) {
+			if h.Sensor_id == sensor && (ts.After(h.Sensor_start) || ts.Equal(h.Sensor_start)) && (h.Sensor_end.IsZero() || ts.Before(h.Sensor_end)) && h.Sensor_start.After(latest) {
 				ret = s
-				latest = h.sensor_start
+				latest = h.Sensor_start
 			}
 		}
 	}

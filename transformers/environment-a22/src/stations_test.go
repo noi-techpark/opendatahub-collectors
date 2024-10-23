@@ -24,7 +24,7 @@ func TestLoadStations(t *testing.T) {
 	for _, cfg := range stations {
 		t.Logf("Station %s", cfg.id)
 		for _, h := range cfg.history {
-			t.Logf("   %s - %s: %s", h.sensor_start.Format("20060102"), h.sensor_end.Format("20060102"), h.sensor_id)
+			t.Logf("   %s - %s: %s", h.Sensor_start.Format("20060102"), h.Sensor_end.Format("20060102"), h.Sensor_id)
 		}
 	}
 }
