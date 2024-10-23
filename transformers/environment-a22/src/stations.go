@@ -5,6 +5,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"sort"
 	"strconv"
@@ -30,9 +31,22 @@ type station struct {
 }
 
 type Sensorhistory struct {
-	Sensor_id    string    `json:"id"`
-	Sensor_start time.Time `json:"start"`
-	Sensor_end   time.Time `json:"end"`
+	Sensor_id    string
+	Sensor_start time.Time
+	Sensor_end   time.Time
+}
+
+func (h *Sensorhistory) MarshalJSON() ([]byte, error) {
+	var end any
+	end = ""
+	if !h.Sensor_end.IsZero() {
+		end = h.Sensor_end
+	}
+	return json.Marshal(map[string]any{
+		"id":    h.Sensor_id,
+		"start": h.Sensor_start,
+		"end":   end,
+	})
 }
 
 func readStationCSV(path string) ([]stationcfg, error) {
