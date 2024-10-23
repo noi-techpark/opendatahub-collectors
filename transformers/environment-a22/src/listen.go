@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/rabbitmq/amqp091-go"
@@ -73,6 +74,13 @@ func listen(handler func(*raw) error) {
 	ch, err := conn.Channel()
 	failOnError(err, "Failed to open a channel")
 	defer ch.Close()
+
+	prefetch := 10
+	if s, found := os.LookupEnv("MQ_LISTEN_QOS_PREFETCH_COUNT"); found {
+		prefetch, err = strconv.Atoi(s)
+		failOnError(err, fmt.Sprintf("Invalid prefetch setting: %s", s))
+	}
+	ch.Qos(prefetch, 0, true)
 
 	q, err := ch.QueueDeclare(os.Getenv("MQ_LISTEN_QUEUE"), true, false, false, false, nil)
 	failOnError(err, "Failed to declare a queue")
