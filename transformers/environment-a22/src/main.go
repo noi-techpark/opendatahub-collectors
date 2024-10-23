@@ -58,10 +58,13 @@ func main() {
 	failOnError(b.SyncStations(stationtype, bdpStations, true, false), "error syncing stations")
 
 	listen(func(r *raw) error {
-		payload := r.Rawdata
+		payload := mqttPayload{}
+		if err := json.Unmarshal([]byte(r.Rawdata.Payload), &payload); err != nil {
+			return err
+		}
 
-		sensorid := payload.Payload.ControlUnitId
-		ts := payload.Payload.DateTimeAcquisition
+		sensorid := payload.ControlUnitId
+		ts := payload.DateTimeAcquisition
 
 		station, err := currentStation(stations, sensorid, ts.Time)
 		if err != nil {
@@ -70,7 +73,7 @@ func main() {
 
 		dm := b.CreateDataMap()
 
-		for _, v := range payload.Payload.Resval {
+		for _, v := range payload.Resval {
 			dt, ok := dtmap[strconv.Itoa(v.Id)]
 			if !ok {
 				return fmt.Errorf("error mapping data type %d for sensor %s", v.Id, sensorid)
@@ -100,19 +103,7 @@ func readDataTypes(path string) bdpDataTypeMap {
 type payload struct {
 	MsgId   int
 	Topic   string
-	Payload mqttPayload
-}
-
-// Unmarshal json inside a json string
-func (p *mqttPayload) UnmarshalJSON(data []byte) error {
-	var s string
-	if err := json.Unmarshal(data, &s); err != nil {
-		return err
-	}
-	// wrap type to prevent infinite recursion
-	type P mqttPayload
-
-	return json.Unmarshal([]byte(s), (*P)(p))
+	Payload string
 }
 
 type mqttPayload struct {

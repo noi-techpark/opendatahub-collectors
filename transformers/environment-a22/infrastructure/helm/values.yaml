@@ -25,13 +25,3 @@ envSecretRef:
   - name: MONGO_URI
     secret: mongodb-collector-svcbind
     key: uri
-
-  - name: ODH_TOKEN_URL
-    secret: oauth-collector
-    key: tokenUri
-  - name: ODH_CLIENT_ID
-    secret: oauth-collector
-    key: clientId
-  - name: ODH_CLIENT_SECRET
-    secret: oauth-collector
-    key: clientSecret
