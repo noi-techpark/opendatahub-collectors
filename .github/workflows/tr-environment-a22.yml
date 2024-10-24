@@ -5,6 +5,7 @@ on:
     paths:
       - "transformers/environment-a22/infrastructure/**"
       - "transformers/environment-a22/src/**"
+      - "transformers/environment-a22/resources/**"
       - ".github/workflows/tr-environment-a22.yml"
 
 env:
