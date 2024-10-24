@@ -36,15 +36,17 @@ type Sensorhistory struct {
 	Sensor_end   time.Time
 }
 
+const dateOnlyFormat = "2006-01-02"
+
 func (h *Sensorhistory) MarshalJSON() ([]byte, error) {
 	var end any
 	end = ""
 	if !h.Sensor_end.IsZero() {
-		end = h.Sensor_end
+		end = h.Sensor_end.Format(dateOnlyFormat)
 	}
 	return json.Marshal(map[string]any{
 		"id":    h.Sensor_id,
-		"start": h.Sensor_start,
+		"start": h.Sensor_start.Format(dateOnlyFormat),
 		"end":   end,
 	})
 }
