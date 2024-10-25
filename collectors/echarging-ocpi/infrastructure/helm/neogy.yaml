@@ -1,0 +1,37 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/dc-echarging-ocpi
+  pullPolicy: IfNotPresent
+  tag: 
+
+service:
+  enabled: true
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+
+  annotations:
+    cert-manager.io/issuer: "letsencrypt-prod"
+
+  className: nginx
+  tls:
+    - hosts:
+      - ocpi-neogy.ex.dev.testingmachine.eu
+      secretName: tls-ocpi-neogy
+  hosts:
+    - host: ocpi-neogy.ex.dev.testingmachine.eu
+      paths: 
+        - path: "/"
+          pathType: Prefix
+            
+env:
+  PORT: 8080
+envSecret:
+  # List of valid tokens, no spaces etc.
+  TOKENS: ExampleToken1,ExampleToken2
+
+envSecretRef:
+  - name: APP_RABBITURL 
+    secret: rabbitmq-svcbind
+    key: uri

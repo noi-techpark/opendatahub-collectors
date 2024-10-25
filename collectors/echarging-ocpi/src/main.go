@@ -4,94 +4,41 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
+	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	sloggin "github.com/samber/slog-gin"
 )
 
-const ver string = "2.2.1"
+const ver string = "2.2"
 
-var baseUrl string = os.Getenv("BASE_URL")
-var provider string = os.Getenv("VERSIONS_ENDPOINT")
-var tokenA string = os.Getenv("TOKEN_A")
-var tokenB string = os.Getenv("TOKEN_B")
-
-var versionUrl string = baseUrl + "/versions"
-
-type VersionsData struct {
-	Version string `json:"version"`
-	Url     string `json:"url"`
+type OCPIResp struct {
+	Data          any          `json:"data,omitempty"`
+	StatusCode    int          `json:"status_code"`
+	Timestamp     OCPIDateTime `json:"timestamp"`
+	StatusMessage *string      `json:"status_message,omitempty"`
 }
 
-type Versions struct {
-	Data       []VersionsData `json:"data"`
-	StatusCode int            `json:"status_code"`
-	Timestamp  string         `json:"timestamp"`
+type OCPIDateTime struct {
+	time.Time
 }
 
-type VersionEndpoint struct {
-	Identifier string `json:"identifier"`
-	Role       string `json:"role"`
-	Url        string `json:"url"`
+func (t OCPIDateTime) MarshalJSON() ([]byte, error) {
+	// OCPI is particular about date formats, only a subset of RFC 3339 is supported, and must be in UTC
+	f := fmt.Sprintf("\"%s\"", t.Time.UTC().Format("2006-01-02T15:04:05Z"))
+	return []byte(f), nil
 }
 
-type VersionData struct {
-	Version   string            `json:"version"`
-	Endpoints []VersionEndpoint `json:"endpoints"`
-}
-
-type Version struct {
-	Data       VersionData `json:"data"`
-	StatusCode int         `json:"status_code"`
-	Timestamp  string      `json:"timestamp"`
-}
-
-type VersionRes struct {
-	Data       []VersionData `json:"data"`
-	StatusCode int           `json:"status_code"`
-	Timestamp  string        `json:"timestamp"`
-}
-
-type Credentials struct {
-	Url   string   `json:"url"`
-	Token string   `json:"token"`
-	Roles []string `json:"roles"`
-}
-
-type Locations struct {
-	Address            string `json:"address"`
-	ChargingWhenClosed bool   `json:"charging_when_closed,omitempty"`
-	City               string `json:"city"`
-	Coordinates        string `json:"coordinates"`
-	Country            string `json:"country"`
-	CountryCode        string `json:"country_code,omitempty"`
-	Directions         string `json:"directions,omitempty"`
-	EnergyMix          string `json:"energy_mix,omitempty"`
-	Evses              string `json:"evses,omitempty"`
-	Facilities         string `json:"facilities,omitempty"`
-	Id                 string `json:"id,omitempty"`
-	Images             string `json:"images,omitempty"`
-	LastUpdated        string `json:"last_updated"`
-	Name               string `json:"name,omitempty"`
-	OpeningTimes       string `json:"opening_times,omitempty"`
-	Operator           string `json:"operator,omitempty"`
-	Owner              string `json:"owner,omitempty"`
-	ParkingType        string `json:"parking_type,omitempty"`
-	PartyId            string `json:"party_id,omitempty"`
-	PostalCode         string `json:"postal_code,omitempty"`
-	Publish            bool   `json:"publish,omitempty"`
-	PublishAllowedTo   string `json:"publish_allowed_to,omitempty"`
-	RelatedLocations   string `json:"related_locations,omitempty"`
-	State              string `json:"state,omitempty"`
-	Suboperator        string `json:"suboperator,omitempty"`
-	TimeZone           string `json:"time_zone"`
+type EVSE struct {
+	Status       string
+	Last_updated time.Time
 }
 
 func initLogger() {
@@ -107,174 +54,78 @@ func main() {
 	initLogger()
 
 	r := gin.New()
+	r.Use(gin.Recovery())
+	r.Use(cors.Default())
 
 	if os.Getenv("GIN_LOG") == "PRETTY" {
 		r.Use(gin.Logger())
 	} else {
-		// Enable slog logging for gin framework
-		// https://github.com/samber/slog-gin
-		r.Use(sloggin.New(slog.Default()))
+		r.Use(sloggin.NewWithFilters(
+			slog.Default(),
+			sloggin.IgnorePath("/health", "/favicon.ico"))) // prevent log spam
+	}
+
+	r.GET("/health", health)
+
+	rEmsp := r.Group("/ocpi/emsp")
+	rEmsp.Use(tokenAuth(validTokens()))
+	{
+		rVer := rEmsp.Group("/" + ver)
+		{
+			rLoc := rVer.Group("/locations")
+			rLoc.PATCH("/:country_code/:party_id/:location_id/:evse_uid", patchEvse)
+		}
 	}
 
 	slog.Info("START GIN")
-
-	r.Use(gin.Recovery())
-
-	r.GET("/versions", versions)
-	r.GET("/"+ver, version)
-	r.GET("/"+ver+"/credentials", credentials)
-	r.GET("/"+ver+"/locations", locations)
-	r.GET("/health", health)
-	r.GET("/driwe", driwe)
 	r.Run()
-
-	slog.Info("GET BLA")
-
 }
 
-// ////////////////////////////
-// GIN functions
-// ////////////////////////////
 func health(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
-func versions(c *gin.Context) {
-	t := time.Now()
-
-	var res Versions
-	res.StatusCode = 1000
-	res.Timestamp = t.Format(time.RFC3339)
-
-	var data VersionsData
-	data.Url = baseUrl + "/" + ver
-	data.Version = ver
-
-	res.Data = append(res.Data, data)
-
-	c.JSON(http.StatusOK, res)
-}
-
-func version(c *gin.Context) {
-	t := time.Now()
-
-	var res Version
-	res.StatusCode = 1000
-	res.Timestamp = t.Format(time.RFC3339)
-
-	var cred VersionEndpoint
-	cred.Role = "HUB"
-	cred.Url = baseUrl + "/" + ver + "/credentials"
-	cred.Identifier = "credentials"
-
-	var loc VersionEndpoint
-	loc.Role = "HUB"
-	loc.Url = baseUrl + "/" + ver + "/locations"
-	loc.Identifier = "locations"
-
-	var data VersionData
-	data.Version = ver
-	data.Endpoints = append(data.Endpoints, cred)
-	data.Endpoints = append(data.Endpoints, loc)
-
-	res.Data = data
-
-	c.JSON(http.StatusOK, res)
-}
-
-func credentials(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"token": tokenB})
-}
-
-func locations(c *gin.Context) {
-	c.Value(http.StatusOK)
-}
-
-func driwe(c *gin.Context) {
-
-	// register to providers
-	credUrl := "https://ocpi.driwe.club/2.2.1/credentials"
-	tokenC := register(credUrl, tokenA)
-
-	// get locations
-	// TODO use url gotten from endpoint instead of hard coded
-	locUrl := "https://ocpi.driwe.club/2.2.1/locations"
-	locations := getLocations(locUrl, tokenC)
-	locStr, err := json.Marshal(locations)
-	if err != nil {
-		panic(err)
-	}
-	slog.Info(string(locStr))
-
-	c.Status(http.StatusOK)
-}
-
-// ////////////////////////////
-// Generic functions
-// ////////////////////////////
-func register(url string, tokenA string) string {
-	tokenB := "1d082cbe-cdc4-4e33-b11b-9001837d65aa"
-	tokenC := postTokenB(url, tokenA, tokenB)
-	slog.Info("TOKEN C: " + tokenC)
-
-	return tokenC
-}
-
-func getLocations(url string, tokenC string) Locations {
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		slog.Error("Get locations: http get error")
-	}
-	req.Header.Set("Authorization", "Token "+tokenC)
-	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		panic(err)
+func patchEvse(c *gin.Context) {
+	evse := EVSE{}
+	if err := c.BindJSON(&evse); err != nil {
+		body, _ := io.ReadAll(c.Request.Body)
+		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("cannot unmarshal evse object: %s", body))
+		return
 	}
 
-	defer resp.Body.Close()
-	body, _ := io.ReadAll(resp.Body)
+	slog.Info("Recieved EVSE PATCH:", "msg", evse)
 
-	var locResp Locations
-	json.Unmarshal(body, &locResp)
-	return locResp
+	resp := OCPIResp{
+		StatusCode: 1000,
+		Timestamp:  OCPIDateTime{time.Now()},
+	}
+
+	c.JSONP(http.StatusOK, resp)
 }
 
-func postTokenB(url string, tokenA string, tokenB string) string {
-	var creds Credentials
-	creds.Token = tokenB
-	creds.Url = versionUrl
-	creds.Roles = append(creds.Roles, "HUB")
-
-	credsJSON, err := json.Marshal(creds)
-	if err != nil {
-		slog.Error("Post Token B: marshal error")
-
+func validTokens() map[string]struct{} {
+	tokens := os.Getenv("TOKENS")
+	ret := map[string]struct{}{}
+	for _, t := range strings.Split(tokens, ",") {
+		ret[t] = struct{}{}
 	}
+	return ret
+}
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(credsJSON))
-	if err != nil {
-		slog.Error("Post Token B: http post error")
+func tokenAuth(ts map[string]struct{}) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		header := c.Request.Header.Get("Authorization")
+
+		var token string
+		if _, err := fmt.Sscanf(header, "Token %s", &token); err != nil {
+			c.AbortWithError(http.StatusBadRequest, fmt.Errorf("invalid authorization header format: %w", err))
+			return
+		}
+		if _, found := ts[token]; !found {
+			c.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
+
+		c.Next()
 	}
-	req.Header.Set("Authorization", "Token "+tokenA)
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
-
-	body, _ := io.ReadAll(resp.Body)
-
-	var credsResp Credentials
-	json.Unmarshal(body, &credsResp)
-
-	slog.Info("Post TokenB status code:" + resp.Status)
-	slog.Info("Post TokenB body:" + string(body))
-	slog.Info("Post TokenB  TokenC:" + credsResp.Token)
-
-	return credsResp.Token
 }

@@ -7,7 +7,7 @@ services:
     build:
       dockerfile: infrastructure/docker/Dockerfile
       context: . 
-      target: debug
+      target: dev
     env_file:
       - .env
     volumes:
