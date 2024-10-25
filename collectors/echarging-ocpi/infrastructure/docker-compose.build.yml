@@ -9,4 +9,3 @@ services:
       context: ../
       dockerfile: infrastructure/docker/Dockerfile
       target: build
-    env_file: ../.env
