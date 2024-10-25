@@ -59,12 +59,12 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /actuator/health
+              path: {{.Value.service.health.path}}
               port: http
             initialDelaySeconds: {{ .Values.service.health.delay }}
           readinessProbe:
             httpGet:
-              path: /actuator/health
+              path: {{.Value.service.health.path}}
               port: http
             initialDelaySeconds: {{ .Values.service.health.delay }}
           readinessProbe:

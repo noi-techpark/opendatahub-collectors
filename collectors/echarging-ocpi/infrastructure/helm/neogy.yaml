@@ -7,6 +7,9 @@ service:
   enabled: true
   type: ClusterIP
   port: 8080
+  health:
+    delay: 10
+    path: /health
 
 ingress:
   enabled: true
@@ -27,6 +30,7 @@ ingress:
             
 env:
   PORT: 8080
+  GIN_MODE: release
 envSecret:
   # List of valid tokens, no spaces etc.
   TOKENS: ExampleToken1,ExampleToken2

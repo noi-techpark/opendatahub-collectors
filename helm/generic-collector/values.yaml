@@ -33,6 +33,7 @@ service:
   port: 80
   health:
     delay: 20
+    path: /health
   
 # A map of environment variables
 env:
