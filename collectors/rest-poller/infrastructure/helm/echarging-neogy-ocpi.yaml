@@ -7,7 +7,7 @@ env:
   RABBITMQ_CLIENTNAME: dc-echarging-neogy-ocpi
   PROVIDER: echarging/neogy-ocpi
 
-  CRON: "0 */5 * * * *"
+  CRON: "0 0 */12 * * *"
   HTTP_URL: https://uuapp-dev.plus4u.net/uu-chargeupcpo-ocpirg01/0a143bb49c3f9b3ce17f53970b77594d/ocpi/cpo/locations/2.2
 
 envSecret:
