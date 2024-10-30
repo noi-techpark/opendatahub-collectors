@@ -31,11 +31,15 @@ ingress:
 env:
   PORT: 8080
   GIN_MODE: release
+  LOGLEVEL: DEBUG
+  RABBITMQ_EXCHANGE: ingress
+  PROVIDER: echarging-ocpi/neogy
+
 envSecret:
   # List of valid tokens, no spaces etc.
-  TOKENS: ExampleToken1,ExampleToken2
+  OCPI_TOKENS: ExampleToken1,ExampleToken2
 
 envSecretRef:
-  - name: APP_RABBITURL 
+  - name: RABBITMQ_URI 
     secret: rabbitmq-svcbind
     key: uri

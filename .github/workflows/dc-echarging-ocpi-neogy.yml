@@ -49,10 +49,11 @@ jobs:
             tag:  ${{ env.DOCKER_TAG }}
             pullPolicy: "IfNotPresent"
           env:
-            LOG_LEVEL: "INFO"
+            LOGLEVEL: "INFO"
           envSecret:
-            TOKENS: ${{ secrets.ECHARGING_OCPI_NEOGY_TOKENS }}
+            OCPI_TOKENS: ${{ secrets.ECHARGING_OCPI_NEOGY_TOKENS }}
           EOF
+
 
           # Merge yaml files https://mikefarah.gitbook.io/yq/operators/multiply-merge
           yq -i '. *= load("override.yml")' ${{env.VALUES_YAML}}
