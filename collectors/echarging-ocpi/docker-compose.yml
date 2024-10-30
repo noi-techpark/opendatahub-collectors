@@ -4,6 +4,9 @@
 
 services:
   app:
+    depends_on: 
+      rabbitmq:
+        condition: service_healthy
     build:
       dockerfile: infrastructure/docker/Dockerfile
       context: . 
@@ -17,6 +20,12 @@ services:
     tty: true
     ports:
       - ${SERVER_PORT}:8080
+
+  rabbitmq:
+    extends:
+      file: ../lib/docker-compose/docker-compose.rabbitmq.yml
+      service: rabbitmq
+    attach: false
         
 volumes:
   pkg:

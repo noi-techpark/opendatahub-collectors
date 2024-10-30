@@ -5,6 +5,7 @@ SPDX-License-Identifier: CC0-1.0
 -->
 
 @host=http://localhost:{{$dotenv SERVER_PORT}}
+# @host=https://ocpi-neogy.ex.dev.testingmachine.eu
 
 ### EVSE status update
 PATCH {{host}}/ocpi/emsp/2.2/locations/IT/ABC/LOC1/EVSE1
@@ -17,7 +18,7 @@ Authorization: Token TestToken1
 
 ### Should get a 400 due to invalid body
 PATCH {{host}}/ocpi/emsp/2.2/locations/IT/ABC/LOC1/EVSE1
-Authorization: Token TestToken2
+Authorization: Token TestToken1
 
 ### Should get a 401
 PATCH {{host}}/ocpi/emsp/2.2/locations/IT/ABC/LOC1/EVSE1

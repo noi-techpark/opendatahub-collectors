@@ -9,13 +9,24 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/kelseyhightower/envconfig"
+	"github.com/rabbitmq/amqp091-go"
 	sloggin "github.com/samber/slog-gin"
 )
+
+var cfg struct {
+	RABBITMQ_URI      string
+	RABBITMQ_EXCHANGE string
+
+	OCPI_TOKENS []string
+
+	PROVIDER string
+	LOGLEVEL string `default:"INFO"`
+}
 
 const ver string = "2.2"
 
@@ -36,44 +47,48 @@ func (t OCPIDateTime) MarshalJSON() ([]byte, error) {
 	return []byte(f), nil
 }
 
-type EVSE struct {
-	Status       string
-	Last_updated time.Time
-}
-
 func initLogger() {
-	logLevel := os.Getenv("LOG_LEVEL")
 	level := &slog.LevelVar{}
-	level.UnmarshalText([]byte(logLevel))
+	level.UnmarshalText([]byte(cfg.LOGLEVEL))
 	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 		Level: level,
 	})))
 }
 
 func main() {
+	envconfig.MustProcess("", &cfg)
 	initLogger()
+	slog.Info("dumping config", "cfg", cfg)
+
+	rabbit, err := RabbitConnect(cfg.RABBITMQ_URI)
+	if err != nil {
+		slog.Error("cannot open rabbitmq connection. aborting")
+		panic(err)
+	}
+	defer rabbit.Close()
+
+	rabbit.OnClose(func(err amqp091.Error) {
+		slog.Error("rabbit connection closed unexpectedly", "err", err)
+		panic(err)
+	})
 
 	r := gin.New()
 	r.Use(gin.Recovery())
 	r.Use(cors.Default())
 
-	if os.Getenv("GIN_LOG") == "PRETTY" {
-		r.Use(gin.Logger())
-	} else {
-		r.Use(sloggin.NewWithFilters(
-			slog.Default(),
-			sloggin.IgnorePath("/health", "/favicon.ico"))) // prevent log spam
-	}
+	r.Use(sloggin.NewWithFilters(
+		slog.Default(),
+		sloggin.IgnorePath("/health", "/favicon.ico"))) // prevent log spam
 
 	r.GET("/health", health)
 
 	rEmsp := r.Group("/ocpi/emsp")
-	rEmsp.Use(tokenAuth(validTokens()))
+	rEmsp.Use(tokenAuth(validTokens(cfg.OCPI_TOKENS)))
 	{
 		rVer := rEmsp.Group("/" + ver)
 		{
 			rLoc := rVer.Group("/locations")
-			rLoc.PATCH("/:country_code/:party_id/:location_id/:evse_uid", patchEvse)
+			rLoc.PATCH("/:country_code/:party_id/:location_id/:evse_uid", handlePush(rabbit))
 		}
 	}
 
@@ -85,28 +100,48 @@ func health(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
-func patchEvse(c *gin.Context) {
-	evse := EVSE{}
-	if err := c.BindJSON(&evse); err != nil {
-		body, _ := io.ReadAll(c.Request.Body)
-		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("cannot unmarshal evse object: %s", body))
-		return
+func handlePush(rabbit RabbitC) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var body map[string]any
+		if err := c.BindJSON(&body); err != nil {
+			body, _ := io.ReadAll(c.Request.Body)
+			c.AbortWithError(http.StatusBadRequest, fmt.Errorf("cannot unmarshal json: %s", body))
+			return
+		}
+
+		params := map[string]string{}
+		for _, p := range c.Params {
+			params[p.Key] = p.Value
+		}
+
+		slog.Debug("Received message", "params", params, "body", body, "path", c.FullPath())
+
+		err := rabbit.Publish(mqMsg{
+			Provider:  cfg.PROVIDER,
+			Timestamp: time.Now(),
+			Rawdata: map[string]any{
+				"params": params,
+				"body":   body,
+			},
+		}, cfg.RABBITMQ_EXCHANGE)
+
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, fmt.Errorf("cannot publish to rabbitmq: %w", err))
+			return
+		}
+
+		resp := OCPIResp{
+			StatusCode: 1000,
+			Timestamp:  OCPIDateTime{time.Now()},
+		}
+
+		c.JSONP(http.StatusOK, resp)
 	}
-
-	slog.Info("Recieved EVSE PATCH:", "msg", evse)
-
-	resp := OCPIResp{
-		StatusCode: 1000,
-		Timestamp:  OCPIDateTime{time.Now()},
-	}
-
-	c.JSONP(http.StatusOK, resp)
 }
 
-func validTokens() map[string]struct{} {
-	tokens := os.Getenv("TOKENS")
+func validTokens(tokens []string) map[string]struct{} {
 	ret := map[string]struct{}{}
-	for _, t := range strings.Split(tokens, ",") {
+	for _, t := range tokens {
 		ret[t] = struct{}{}
 	}
 	return ret
