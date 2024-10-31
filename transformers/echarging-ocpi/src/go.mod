@@ -16,6 +16,7 @@ require (
 
 require (
 	github.com/golang/snappy v0.0.4 // indirect
+	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/montanaflynn/stats v0.7.1 // indirect
 	github.com/stretchr/testify v1.9.0

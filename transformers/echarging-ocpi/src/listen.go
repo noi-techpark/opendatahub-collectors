@@ -79,10 +79,10 @@ func Listen[Rawtype any](handler func(*raw[Rawtype]) error) {
 	if err != nil {
 		panic(err)
 	}
-	HandleRawQueue(mq, handler)
+	HandleQueue(mq, handler)
 }
 
-func HandleRawQueue[Rawtype any](mq <-chan amqp091.Delivery, handler func(*raw[Rawtype]) error) {
+func HandleQueue[Rawtype any](mq <-chan amqp091.Delivery, handler func(*raw[Rawtype]) error) {
 	for msg := range mq {
 		slog.Debug("Received a message", "body", msg.Body)
 

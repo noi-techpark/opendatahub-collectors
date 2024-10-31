@@ -9,13 +9,16 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"sync"
 
+	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-bdp-client/bdplib"
+	"github.com/rabbitmq/amqp091-go"
 )
 
 const stationTypeLocation = "EChargingStation"
 const stationTypePlug = "EChargingPlug"
-const period = 600
+const period = 1
 
 var dtNumberAvailable = bdplib.DataType{
 	Name:        "number-available",
@@ -33,15 +36,82 @@ func syncDataTypes(b *bdplib.Bdp) {
 	failOnError(b.SyncDataTypes(stationTypePlug, []bdplib.DataType{dtPlugStatus}), "could not sync data types. aborting...")
 }
 
+var cfg struct {
+	MQ_URI      string
+	MQ_CONSUMER string
+	MQ_EXCHANGE string
+
+	// for data incoming from echarging-ocpi pushes
+	MQ_PUSH_QUEUE string
+	MQ_PUSH_KEY   string
+
+	// for data coming from rest-poller
+	MQ_POLL_QUEUE string
+	MQ_POLL_KEY   string
+
+	LOG_LEVEL string
+}
+
+type EVSERaw struct {
+	Params struct {
+		Country_code string
+		Evse_uid     string
+		Location_id  string
+		Party_id     string
+	}
+	Body OCPIEvse
+}
+
+var locDataMu = sync.Mutex{}
+
 func main() {
-	initLogging()
+	envconfig.MustProcess("", &cfg)
+	initLogging(cfg.LOG_LEVEL)
 
 	b := bdplib.FromEnv()
 
 	syncDataTypes(b)
 
-	Listen(func(r *raw[string]) error {
-		locations, err := unmarshalRaw(r.Rawdata)
+	rabbit, err := RabbitConnect(cfg.MQ_URI)
+	failOnError(err, "failed connecting to rabbitmq")
+	defer rabbit.Close()
+
+	rabbit.OnClose(func(err amqp091.Error) {
+		slog.Error("rabbitmq connection closed unexpectedly")
+		panic(err)
+	})
+
+	pushMQ, err := rabbit.Consume(cfg.MQ_EXCHANGE, cfg.MQ_PUSH_QUEUE, cfg.MQ_PUSH_KEY, cfg.MQ_CONSUMER)
+	failOnError(err, "failed creating push queue")
+
+	// Handle push updates, coming via OCPI endpoint
+	go HandleQueue(pushMQ, func(r *raw[EVSERaw]) error {
+		plugData := b.CreateDataMap()
+
+		plugData.AddRecord(r.Rawdata.Params.Evse_uid, dtPlugStatus.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), r.Rawdata.Body.Status, period))
+		if err := b.PushData(stationTypePlug, plugData); err != nil {
+			return fmt.Errorf("error pushing plug data: %w", err)
+		}
+
+		// Update parent station "number available data type"
+		go func() {
+			locDataMu.Lock()
+			defer locDataMu.Unlock()
+			// Ninja: get latest state of all plugs where parent = our parent, active = true
+			// sum up status = "AVAILABLE"
+			// write measurement with this timestamp
+
+		}()
+
+		return nil
+	})
+
+	pullMQ, err := rabbit.Consume(cfg.MQ_EXCHANGE, cfg.MQ_POLL_QUEUE, cfg.MQ_POLL_KEY, cfg.MQ_CONSUMER)
+	failOnError(err, "failed creating poll queue")
+
+	// Handle full station details, coming a few times a day via REST poller
+	go HandleQueue(pullMQ, func(r *raw[string]) error {
+		locations, err := unmarshalLocations(r.Rawdata)
 		if err != nil {
 			return fmt.Errorf("error unmarshalling raw payload to locations struct: %w", err)
 		}
@@ -119,11 +189,11 @@ func main() {
 		// push all
 		return nil
 	})
+
+	select {}
 }
 
-func initLogging() {
-	logLevel := os.Getenv("LOG_LEVEL")
-
+func initLogging(logLevel string) {
 	level := new(slog.LevelVar)
 	level.UnmarshalText([]byte(logLevel))
 
@@ -141,7 +211,7 @@ func failOnError(err error, msg string) {
 	}
 }
 
-func unmarshalRaw(s string) (OCPILocations, error) {
+func unmarshalLocations(s string) (OCPILocations, error) {
 	var p OCPILocations
 	if err := json.Unmarshal([]byte(s), &p); err != nil {
 		return p, fmt.Errorf("error unmarshalling payload json: %w", err)

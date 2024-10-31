@@ -12,6 +12,25 @@ type OCPILocationsOperator struct {
 	Logo    string `json:"logo"`
 }
 
+type OCPIEvse struct {
+	UID          string    `json:"uid"`
+	EvseID       string    `json:"evse_id"`
+	Status       string    `json:"status"`
+	Capabilities *[]string `json:"capabilities,omitempty"`
+	Connectors   *[]struct {
+		ID               string    `json:"id,omitempty"`
+		Standard         string    `json:"standard,omitempty"`
+		Format           string    `json:"format,omitempty"`
+		PowerType        string    `json:"power_type,omitempty"`
+		LastUpdated      time.Time `json:"last_updated,omitempty"`
+		MaxVoltage       int       `json:"max_voltage,omitempty"`
+		MaxAmperage      int       `json:"max_amperage,omitempty"`
+		MaxElectricPower int       `json:"max_electric_power,omitempty"`
+		TariffIds        *[]string `json:"tariff_ids,omitempty"`
+	} `json:"connectors,omitempty"`
+	LastUpdated time.Time `json:"last_updated"`
+}
+
 type OCPILocations struct {
 	Data []struct {
 		CountryCode string `json:"country_code"`
@@ -27,24 +46,7 @@ type OCPILocations struct {
 			Latitude  float64 `json:"latitude,string"`
 			Longitude float64 `json:"longitude,string"`
 		} `json:"coordinates"`
-		Evses []struct {
-			UID          string    `json:"uid"`
-			EvseID       string    `json:"evse_id"`
-			Status       string    `json:"status"`
-			Capabilities *[]string `json:"capabilities,omitempty"`
-			Connectors   *[]struct {
-				ID               string    `json:"id,omitempty"`
-				Standard         string    `json:"standard,omitempty"`
-				Format           string    `json:"format,omitempty"`
-				PowerType        string    `json:"power_type,omitempty"`
-				LastUpdated      time.Time `json:"last_updated,omitempty"`
-				MaxVoltage       int       `json:"max_voltage,omitempty"`
-				MaxAmperage      int       `json:"max_amperage,omitempty"`
-				MaxElectricPower int       `json:"max_electric_power,omitempty"`
-				TariffIds        *[]string `json:"tariff_ids,omitempty"`
-			} `json:"connectors,omitempty"`
-			LastUpdated time.Time `json:"last_updated"`
-		} `json:"evses"`
+		Evses        []OCPIEvse            `json:"evses"`
 		ParkingType  string                `json:"parking_type"`
 		Operator     OCPILocationsOperator `json:"operator"`
 		Suboperator  OCPILocationsOperator `json:"suboperator"`
