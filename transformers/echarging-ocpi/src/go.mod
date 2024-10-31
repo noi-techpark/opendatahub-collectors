@@ -1,6 +1,6 @@
 module opendatahub.com/tr-echarging-ocpi
 
-go 1.22.0
+go 1.22.7
 
 require (
 	github.com/noi-techpark/go-bdp-client v1.0.0
@@ -10,6 +10,7 @@ require (
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/noi-techpark/go-timeseries-client v0.0.0-20241031132739-c45d758598b3 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

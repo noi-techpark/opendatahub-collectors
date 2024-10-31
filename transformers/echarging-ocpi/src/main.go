@@ -13,6 +13,7 @@ import (
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-bdp-client/bdplib"
+	"github.com/noi-techpark/go-timeseries-client/odhts"
 	"github.com/rabbitmq/amqp091-go"
 )
 
@@ -49,6 +50,8 @@ var cfg struct {
 	MQ_POLL_QUEUE string
 	MQ_POLL_KEY   string
 
+	NINJA_URL string
+
 	LOG_LEVEL string
 }
 
@@ -62,6 +65,11 @@ type EVSERaw struct {
 	Body OCPIEvse
 }
 
+func setupNinja() {
+	odhts.C.BaseUrl = cfg.NINJA_URL
+	odhts.C.Referer = cfg.MQ_CONSUMER
+}
+
 var locDataMu = sync.Mutex{}
 
 func main() {
@@ -69,6 +77,7 @@ func main() {
 	initLogging(cfg.LOG_LEVEL)
 
 	b := bdplib.FromEnv()
+	setupNinja()
 
 	syncDataTypes(b)
 
@@ -95,12 +104,31 @@ func main() {
 
 		// Update parent station "number available data type"
 		go func() {
+			// Mutex this to avoid race conditions with ourselves
 			locDataMu.Lock()
 			defer locDataMu.Unlock()
-			// Ninja: get latest state of all plugs where parent = our parent, active = true
-			// sum up status = "AVAILABLE"
-			// write measurement with this timestamp
 
+			req := odhts.DefaultRequest()
+			req.StationTypes = append(req.StationTypes, stationTypePlug)
+			req.Repr = odhts.FlatNode
+			req.DataTypes = append(req.DataTypes, dtPlugStatus.Name)
+			// count available plugs under same parent
+			req.Where = fmt.Sprintf("sactive.eq.true,pcode.eq.\"%s\",mvalue.eq.AVAILABLE", r.Rawdata.Params.Location_id)
+			req.Select = "scode"
+
+			res := odhts.Response[[]struct{ Mvalue string }]{}
+
+			if err := odhts.Latest(req, &res); err != nil {
+				slog.Error("failed requesting sibling plug states", "err", err)
+				return
+			}
+
+			numAvailable := len(res.Data)
+			recs := b.CreateDataMap()
+			recs.AddRecord(r.Rawdata.Params.Location_id, dtNumberAvailable.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), numAvailable, period))
+			if err := b.PushData(stationTypePlug, plugData); err != nil {
+				slog.Error("error pushing location data", "err", err)
+			}
 		}()
 
 		return nil
