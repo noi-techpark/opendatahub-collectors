@@ -40,7 +40,7 @@ func main() {
 
 	syncDataTypes(b)
 
-	listen(func(r *raw) error {
+	Listen(func(r *raw[string]) error {
 		locations, err := unmarshalRaw(r.Rawdata)
 		if err != nil {
 			return fmt.Errorf("error unmarshalling raw payload to locations struct: %w", err)
@@ -103,10 +103,10 @@ func main() {
 		}
 
 		// TODO: once the paging data collector is implemented, figure out some way to sync the total set of stations, and identify inactive ones
-		if err := b.SyncStations(stationTypeLocation, stations, true, false); err != nil {
+		if err := b.SyncStations(stationTypeLocation, stations, true, true); err != nil {
 			return fmt.Errorf("error syncing %s: %w", stationTypeLocation, err)
 		}
-		if err := b.SyncStations(stationTypePlug, plugs, true, false); err != nil {
+		if err := b.SyncStations(stationTypePlug, plugs, true, true); err != nil {
 			return fmt.Errorf("error syncing %s: %w", stationTypePlug, err)
 		}
 		if err := b.PushData(stationTypeLocation, locationData); err != nil {

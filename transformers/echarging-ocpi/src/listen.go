@@ -19,11 +19,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type raw struct {
+type raw[Rawtype any] struct {
 	Provider  string
 	Timestamp time.Time
-	Rawdata   string
-	ID        string
+	Rawdata   Rawtype
 }
 type incoming struct {
 	Id         string
@@ -31,7 +30,7 @@ type incoming struct {
 	Collection string
 }
 
-func getMongo(m incoming) (*raw, error) {
+func getMongo[Rawtype any](m incoming) (*raw[Rawtype], error) {
 	c, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(os.Getenv("MONGO_URI")))
 	if err != nil {
 		return nil, err
@@ -41,15 +40,15 @@ func getMongo(m incoming) (*raw, error) {
 	if err != nil {
 		return nil, err
 	}
-	r := &raw{}
+	r := &raw[Rawtype]{}
 	if err := c.Database(m.Db).Collection(m.Collection).FindOne(context.TODO(), bson.M{"_id": id}).Decode(r); err != nil {
 		return nil, err
 	}
 	return r, nil
 }
 
-func getRawFrame(m incoming) (*raw, error) {
-	raw, err := getMongo(m)
+func getRawFrame[Rawtype any](m incoming) (*raw[Rawtype], error) {
+	raw, err := getMongo[Rawtype](m)
 	if err != nil {
 		return nil, fmt.Errorf("error getting raw from mongo: %w", err)
 	}
@@ -65,22 +64,25 @@ func msgReject(d *amqp091.Delivery) {
 	}
 }
 
-func listen(handler func(*raw) error) {
-	conn, err := amqp091.Dial(os.Getenv("MQ_LISTEN_URI"))
-	failOnError(err, "Failed to connect to RabbitMQ")
-	defer conn.Close()
+// Default Listen function for typical transformer with one queue
+func Listen[Rawtype any](handler func(*raw[Rawtype]) error) {
+	r, err := RabbitConnect(os.Getenv("MQ_LISTEN_URI"))
+	if err != nil {
+		panic(err)
+	}
+	mq, err := r.Consume(
+		os.Getenv("MQ_LISTEN_EXCHANGE"),
+		os.Getenv("MQ_LISTEN_QUEUE"),
+		os.Getenv("MQ_LISTEN_KEY"),
+		os.Getenv("MQ_LISTEN_CONSUMER"),
+	)
+	if err != nil {
+		panic(err)
+	}
+	HandleRawQueue(mq, handler)
+}
 
-	ch, err := conn.Channel()
-	failOnError(err, "Failed to open a channel")
-	defer ch.Close()
-
-	q, err := ch.QueueDeclare(os.Getenv("MQ_LISTEN_QUEUE"), true, false, false, false, nil)
-	failOnError(err, "Failed to declare a queue")
-	err = ch.QueueBind(q.Name, os.Getenv("MQ_LISTEN_KEY"), os.Getenv("MQ_LISTEN_EXCHANGE"), false, nil)
-	failOnError(err, "Failed binding queue to exchange")
-	mq, err := ch.Consume(q.Name, os.Getenv("MQ_LISTEN_CONSUMER"), false, false, false, false, nil)
-	failOnError(err, "Failed to register a consumer")
-
+func HandleRawQueue[Rawtype any](mq <-chan amqp091.Delivery, handler func(*raw[Rawtype]) error) {
 	for msg := range mq {
 		slog.Debug("Received a message", "body", msg.Body)
 
@@ -91,7 +93,7 @@ func listen(handler func(*raw) error) {
 			continue
 		}
 
-		rawFrame, err := getRawFrame(msgBody)
+		rawFrame, err := getRawFrame[Rawtype](msgBody)
 		if err != nil {
 			slog.Error("Cannot get mongo raw data", "err", err, "msg", msgBody)
 			msgReject(&msg)
