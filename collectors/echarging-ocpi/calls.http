@@ -4,12 +4,12 @@ SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
 SPDX-License-Identifier: CC0-1.0
 -->
 
-@host=http://localhost:{{$dotenv SERVER_PORT}}
-# @host=https://ocpi-neogy.ex.dev.testingmachine.eu
+# @host=http://localhost:{{$dotenv SERVER_PORT}}
+@host=https://ocpi-neogy.ex.dev.testingmachine.eu
 
 ### EVSE status update
 PATCH {{host}}/ocpi/emsp/2.2/locations/IT/ABC/LOC1/EVSE1
-Authorization: Token TestToken1
+Authorization: Token {{ $dotenv OCPI_TOKENS }}
 
 {
 	"status": "CHARGING",
@@ -23,7 +23,6 @@ Authorization: Token TestToken1
 ### Should get a 401
 PATCH {{host}}/ocpi/emsp/2.2/locations/IT/ABC/LOC1/EVSE1
 Authorization: Token InvalidToken
-
 
 ### 
 GET {{host}}/health
