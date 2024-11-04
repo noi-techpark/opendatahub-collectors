@@ -52,6 +52,8 @@ jobs:
             LOGLEVEL: "INFO"
           envSecret:
             OCPI_TOKENS: ${{ secrets.ECHARGING_OCPI_NEOGY_TOKENS }}
+            PULL_LOCATIONS_ENDPOINT: ${{ secrets.ECHARGING_NEOGY_OCPI_URL}}?limit=200
+            PULL_TOKEN: "${{ secrets.ECHARGING_NEOGY_OCPI_TOKEN_C }}"
           EOF
 
 

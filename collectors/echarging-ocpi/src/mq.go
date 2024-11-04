@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/rabbitmq/amqp091-go"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -34,8 +33,8 @@ func (r *RabbitC) Close() {
 }
 
 func (r *RabbitC) OnClose(handler func(amqp.Error)) {
-	r.Con.NotifyClose(func() chan *amqp091.Error {
-		notifyClose := make(chan *amqp091.Error)
+	r.Con.NotifyClose(func() chan *amqp.Error {
+		notifyClose := make(chan *amqp.Error)
 		go func() {
 			err := <-notifyClose
 			handler(*err)

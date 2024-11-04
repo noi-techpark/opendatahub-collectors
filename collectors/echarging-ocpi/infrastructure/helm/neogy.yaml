@@ -34,10 +34,13 @@ env:
   LOGLEVEL: DEBUG
   RABBITMQ_EXCHANGE: ingress
   PROVIDER: echarging-ocpi/neogy
+  PULL_LOCATIONS_CRON: "0 0,4,8,16 * * *"
 
 envSecret:
   # List of valid tokens, no spaces etc.
   OCPI_TOKENS: ExampleToken1,ExampleToken2
+  PULL_LOCATIONS_ENDPOINT: https://testurl.com
+  PULL_TOKEN: "***"
 
 envSecretRef:
   - name: RABBITMQ_URI 
