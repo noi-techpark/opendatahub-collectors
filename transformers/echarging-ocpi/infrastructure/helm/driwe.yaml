@@ -22,8 +22,12 @@ env:
   MQ_PUSH_KEY: echarging-ocpi.driwe
   MQ_POLL_QUEUE: echarging.driwe-ocpi
   MQ_POLL_KEY: echarging.driwe-ocpi
-  MQ_CONSUMER: tr-echarging-ocpi-driwe
-  
+
+envFrom:
+  MQ_CONSUMER: 
+    fieldRef:
+      fieldPath: metadata.name
+    
 envSecretRef:
   - name: MQ_URI 
     secret: rabbitmq-svcbind

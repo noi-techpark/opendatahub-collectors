@@ -35,12 +35,16 @@ service:
     delay: 20
     path: /health
   
-# A map of environment variables
+# A map of key:value environment variables
 env:
 # A map of sensitive environment variables, they are created as a secret
 envSecret:
 # A list of (name | secret | key ) tuples that map env variable "name = secret.key"
 envSecretRef:
+# A map of env entries, where value is a k8s ref type structure, e.g. fieldRef, resourceFieldRef
+envFrom:
+
+  
 
 serviceAccount:
   # Specifies whether a service account should be created

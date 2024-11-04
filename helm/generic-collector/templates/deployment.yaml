@@ -52,6 +52,11 @@ spec:
                   name: {{ $secret.secret | quote }}
                   key: {{ $secret.key | quote }}
           {{- end }}
+          {{- range $k, $v := .Values.envFrom }}
+            - name: {{ $k | quote }}
+              valueFrom:
+                {{- toYaml $v | nindent 16 }}
+          {{- end }}
           {{- if .Values.service.enabled }}
           ports:
             - name: http
