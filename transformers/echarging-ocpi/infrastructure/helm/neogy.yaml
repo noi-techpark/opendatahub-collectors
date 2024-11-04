@@ -22,7 +22,6 @@ env:
   MQ_PUSH_KEY: echarging-ocpi.neogy
   MQ_POLL_QUEUE: echarging.neogy-ocpi
   MQ_POLL_KEY: echarging.neogy-ocpi
-  MQ_CONSUMER: tr-echarging-ocpi-neogy
   
 envSecretRef:
   - name: MQ_URI 

@@ -76,9 +76,6 @@ func main() {
 	envconfig.MustProcess("", &cfg)
 	initLogging(cfg.LOG_LEVEL)
 
-	host, err := os.Hostname()
-	failOnError(err, "cannot get hostname")
-
 	b := bdplib.FromEnv()
 	setupNinja()
 
