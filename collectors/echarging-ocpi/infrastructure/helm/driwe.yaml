@@ -1,0 +1,49 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/dc-echarging-ocpi
+  pullPolicy: IfNotPresent
+  tag: 
+
+service:
+  enabled: true
+  type: ClusterIP
+  port: 8080
+  health:
+    delay: 10
+    path: /health
+
+ingress:
+  enabled: true
+
+  annotations:
+    cert-manager.io/issuer: "letsencrypt-prod"
+
+  className: nginx
+  tls:
+    - hosts:
+      - ocpi-driwe.ex.dev.testingmachine.eu
+      secretName: tls-ocpi-driwe
+  hosts:
+    - host: ocpi-driwe.ex.dev.testingmachine.eu
+      paths: 
+        - path: "/"
+          pathType: Prefix
+            
+env:
+  PORT: 8080
+  GIN_MODE: release
+  LOGLEVEL: DEBUG
+  RABBITMQ_EXCHANGE: ingress
+  # postfix is added to provides depending on the data source (push path, pull etc.)
+  PROVIDER: echarging-ocpi/driwe
+  PULL_LOCATIONS_CRON: "0 0,4,8,16 * * *"
+
+envSecret:
+  # List of valid tokens, no spaces etc.
+  OCPI_TOKENS: ExampleToken1,ExampleToken2
+  PULL_LOCATIONS_ENDPOINT: https://testurl.com
+  PULL_TOKEN: "***"
+
+envSecretRef:
+  - name: RABBITMQ_URI 
+    secret: rabbitmq-svcbind
+    key: uri
