@@ -18,10 +18,10 @@ env:
   NINJA_URL: https://mobility.api.opendatahub.testingmachine.eu
 
   MQ_EXCHANGE: routed
-  MQ_PUSH_QUEUE: echarging-ocpi.neogy
-  MQ_PUSH_KEY: echarging-ocpi.neogy
-  MQ_POLL_QUEUE: echarging.neogy-ocpi
-  MQ_POLL_KEY: echarging.neogy-ocpi
+  MQ_PUSH_QUEUE: echarging-ocpi.neogy-push-evse
+  MQ_PUSH_KEY: echarging-ocpi.neogy-push-evse
+  MQ_POLL_QUEUE: echarging-ocpi.neogy-pull-locations
+  MQ_POLL_KEY: echarging-ocpi.neogy-pull-locations
 
 envFrom:
   MQ_CONSUMER: 
