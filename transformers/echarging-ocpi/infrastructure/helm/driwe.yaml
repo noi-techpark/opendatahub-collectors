@@ -13,15 +13,19 @@ env:
   BDP_PROVENANCE_VERSION: 
   BDP_ORIGIN: DRIWE-OCPI
   
+  NINJA_URL: https://mobility.api.opendatahub.testingmachine.eu
+  
   LOG_LEVEL: INFO
 
-  MQ_LISTEN_QUEUE: echarging.driwe-ocpi
-  MQ_LISTEN_EXCHANGE: routed
-  MQ_LISTEN_KEY: echarging.driwe-ocpi
-  MQ_LISTEN_CONSUMER: tr-echarging-ocpi-driwe
+  MQ_EXCHANGE: routed
+  MQ_PUSH_QUEUE: echarging-ocpi.driwe
+  MQ_PUSH_KEY: echarging-ocpi.driwe
+  MQ_POLL_QUEUE: echarging.driwe-ocpi
+  MQ_POLL_KEY: echarging.driwe-ocpi
+  MQ_CONSUMER: tr-echarging-ocpi-driwe
   
 envSecretRef:
-  - name: MQ_LISTEN_URI 
+  - name: MQ_URI 
     secret: rabbitmq-svcbind
     key: uri
   - name: MONGO_URI
