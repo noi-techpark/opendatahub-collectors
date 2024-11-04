@@ -76,6 +76,9 @@ func main() {
 	envconfig.MustProcess("", &cfg)
 	initLogging(cfg.LOG_LEVEL)
 
+	host, err := os.Hostname()
+	failOnError(err, "cannot get hostname")
+
 	b := bdplib.FromEnv()
 	setupNinja()
 
@@ -90,7 +93,7 @@ func main() {
 		panic(err)
 	})
 
-	pushMQ, err := rabbit.Consume(cfg.MQ_EXCHANGE, cfg.MQ_PUSH_QUEUE, cfg.MQ_PUSH_KEY, cfg.MQ_CONSUMER)
+	pushMQ, err := rabbit.Consume(cfg.MQ_EXCHANGE, cfg.MQ_PUSH_QUEUE, cfg.MQ_PUSH_KEY, cfg.MQ_CONSUMER+"-push")
 	failOnError(err, "failed creating push queue")
 
 	// Handle push updates, coming via OCPI endpoint
@@ -134,7 +137,7 @@ func main() {
 		return nil
 	})
 
-	pullMQ, err := rabbit.Consume(cfg.MQ_EXCHANGE, cfg.MQ_POLL_QUEUE, cfg.MQ_POLL_KEY, cfg.MQ_CONSUMER)
+	pullMQ, err := rabbit.Consume(cfg.MQ_EXCHANGE, cfg.MQ_POLL_QUEUE, cfg.MQ_POLL_KEY, cfg.MQ_CONSUMER+"-pull")
 	failOnError(err, "failed creating poll queue")
 
 	// Handle full station details, coming a few times a day via REST poller
