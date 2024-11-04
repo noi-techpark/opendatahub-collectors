@@ -5,7 +5,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log/slog"
 	"os"
@@ -138,18 +137,13 @@ func main() {
 	failOnError(err, "failed creating poll queue")
 
 	// Handle full station details, coming a few times a day via REST poller
-	go HandleQueue(pullMQ, func(r *raw[string]) error {
-		locations, err := unmarshalLocations(r.Rawdata)
-		if err != nil {
-			return fmt.Errorf("error unmarshalling raw payload to locations struct: %w", err)
-		}
-
+	go HandleQueue(pullMQ, func(r *raw[[]OCPILocations]) error {
 		stations := []bdplib.Station{}
 		locationData := b.CreateDataMap()
 		plugs := []bdplib.Station{}
 		plugData := b.CreateDataMap()
 
-		for _, loc := range locations.Data {
+		for _, loc := range r.Rawdata {
 			station := bdplib.CreateStation(
 				loc.ID,
 				loc.Name,
@@ -237,13 +231,4 @@ func failOnError(err error, msg string) {
 		slog.Error(msg, "err", err)
 		panic(err)
 	}
-}
-
-func unmarshalLocations(s string) (OCPILocations, error) {
-	var p OCPILocations
-	if err := json.Unmarshal([]byte(s), &p); err != nil {
-		return p, fmt.Errorf("error unmarshalling payload json: %w", err)
-	}
-
-	return p, nil
 }
