@@ -9,60 +9,60 @@ import (
 )
 
 type OCPILocationsOperator struct {
-	Name    string `json:"name"`
-	Website string `json:"website"`
-	Logo    string `json:"logo"`
+	Name    string
+	Website string
+	Logo    string
 }
 
 type OCPIEvse struct {
-	UID          string    `json:"uid"`
-	EvseID       string    `json:"evse_id"`
-	Status       string    `json:"status"`
-	Capabilities *[]string `json:"capabilities,omitempty"`
+	UID          string `bson:"uid"`
+	EvseID       string `bson:"evse_id"`
+	Status       string
+	Capabilities *[]string
 	Connectors   *[]struct {
-		ID               string    `json:"id,omitempty"`
-		Standard         string    `json:"standard,omitempty"`
-		Format           string    `json:"format,omitempty"`
-		PowerType        string    `json:"power_type,omitempty"`
-		LastUpdated      time.Time `json:"last_updated,omitempty"`
-		MaxVoltage       int       `json:"max_voltage,omitempty"`
-		MaxAmperage      int       `json:"max_amperage,omitempty"`
-		MaxElectricPower int       `json:"max_electric_power,omitempty"`
-		TariffIds        *[]string `json:"tariff_ids,omitempty"`
-	} `json:"connectors,omitempty"`
-	LastUpdated time.Time `json:"last_updated"`
+		ID               string
+		Standard         string
+		Format           string
+		PowerType        string    `bson:"power_type"`
+		LastUpdated      time.Time `bson:"last_updated"`
+		MaxVoltage       int       `bson:"max_voltage"`
+		MaxAmperage      int       `bson:"max_amperage"`
+		MaxElectricPower int       `bson:"max_electric_power"`
+		TariffIds        *[]string `bson:"tariff_ids"`
+	}
+	LastUpdated time.Time `bson:"last_updated"`
 }
 
 type OCPILocations struct {
-	CountryCode string
-	PartyID     string
-	ID          string
+	CountryCode string `bson:"country_code"`
+	PartyID     string `bson:"party_id"`
+	ID          string `bson:"id"`
 	Publish     *bool
 	Name        string
 	Address     string
 	City        string
-	PostalCode  string
+	PostalCode  string `bson:"postal_code"`
 	Country     string
 	Coordinates struct {
 		Latitude  string
 		Longitude string
 	}
 	Evses        []OCPIEvse
-	ParkingType  string
+	ParkingType  string `bson:"parking_type"`
 	Operator     OCPILocationsOperator
 	Suboperator  OCPILocationsOperator
 	Owner        OCPILocationsOperator
 	Facilities   []string
-	TimeZone     string
+	TimeZone     string `bson:"time_zone"`
 	OpeningTimes *struct {
 		Twentyfourseven     bool
-		RegularHours        []interface{}
-		ExceptionalOpenings []interface{}
-		ExceptionalClosings []interface{}
-	}
-	LastUpdated      time.Time
-	PublishAllowedTo []interface{}
-	RelatedLocations []interface{}
+		RegularHours        []interface{} `bson:"regular_hours"`
+		ExceptionalOpenings []interface{} `bson:"exceptional_openings"`
+		ExceptionalClosings []interface{} `bson:"exceptional_closings"`
+	} `bson:"opening_times"`
+	LastUpdated      time.Time     `bson:"last_updated"`
+	PublishAllowedTo []interface{} `bson:"publish_allowed_to"`
+	RelatedLocations []interface{} `bson:"related_locations"`
 	Images           []interface{}
 	Directions       *[]interface{}
 }
