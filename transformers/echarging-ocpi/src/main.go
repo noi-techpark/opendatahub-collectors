@@ -182,9 +182,13 @@ func main() {
 
 				plug.ParentStation = station.Id
 
-				plug.MetaData = map[string]any{
-					"capabilities": evse.Capabilities,
-					"connectors":   evse.Connectors,
+				plug.MetaData = map[string]any{}
+
+				if len(evse.Capabilities) > 0 {
+					plug.MetaData["capabilities"] = evse.Capabilities
+				}
+				if len(evse.Capabilities) > 0 {
+					plug.MetaData["connectors"] = evse.Connectors
 				}
 
 				plugs = append(plugs, plug)

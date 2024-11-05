@@ -18,8 +18,8 @@ type OCPIEvse struct {
 	UID          string `bson:"uid"`
 	EvseID       string `bson:"evse_id"`
 	Status       string
-	Capabilities *[]string
-	Connectors   *[]struct {
+	Capabilities []string
+	Connectors   []struct {
 		ID               string
 		Standard         string
 		Format           string
@@ -47,22 +47,37 @@ type OCPILocations struct {
 		Latitude  string
 		Longitude string
 	}
-	Evses        []OCPIEvse
-	ParkingType  string `bson:"parking_type"`
-	Operator     OCPILocationsOperator
-	Suboperator  OCPILocationsOperator
-	Owner        OCPILocationsOperator
-	Facilities   []string
-	TimeZone     string `bson:"time_zone"`
-	OpeningTimes *struct {
-		Twentyfourseven     bool
-		RegularHours        []interface{} `bson:"regular_hours"`
-		ExceptionalOpenings []interface{} `bson:"exceptional_openings"`
-		ExceptionalClosings []interface{} `bson:"exceptional_closings"`
-	} `bson:"opening_times"`
+	Evses            []OCPIEvse
+	ParkingType      string `bson:"parking_type"`
+	Operator         OCPILocationsOperator
+	Suboperator      OCPILocationsOperator
+	Owner            OCPILocationsOperator
+	Facilities       []string
+	TimeZone         string        `bson:"time_zone"`
+	OpeningTimes     *OpeningTimes `bson:"opening_times"`
 	LastUpdated      time.Time     `bson:"last_updated"`
 	PublishAllowedTo []interface{} `bson:"publish_allowed_to"`
 	RelatedLocations []interface{} `bson:"related_locations"`
 	Images           []interface{}
-	Directions       *[]interface{}
+	Directions       []DisplayText
+}
+
+type DisplayText struct {
+	Language string `json:"language"`
+	Text     string `json:"text"`
+}
+
+type OpeningTimes struct {
+	Twentyfourseven *bool `json:"twentyfourseven,omitempty"`
+	RegularHours    []struct {
+		Weekday int `json:"weekday"`
+		OpeningHoursPeriod
+	} `bson:"regular_hours" json:"regular_hours,omitempty"`
+	ExceptionalOpenings []OpeningHoursPeriod `bson:"exceptional_openings" json:"exceptional_openings,omitempty"`
+	ExceptionalClosings []OpeningHoursPeriod `bson:"exceptional_closings" json:"exceptional_closings,omitempty"`
+}
+
+type OpeningHoursPeriod struct {
+	PeriodBegin string `bson:"period_begin" json:"period_begin"`
+	PeriodEnd   string `bson:"period_end" json:"period_end"`
 }
