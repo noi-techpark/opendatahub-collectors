@@ -51,9 +51,9 @@ jobs:
           env:
             LOGLEVEL: "INFO"
           envSecret:
-            OCPI_TOKENS: ${{ secrets.ECHARGING_OCPI_NEOGY_TOKENS }}
+            OCPI_TOKENS: ${{ secrets.ECHARGING_OCPI_DRIWE_TOKENS }}
             PULL_LOCATIONS_ENDPOINT: "https://ocpi.driwe.club/2.2.1/locations?limit=200"
-            PULL_TOKEN: "${{ secrets.ECHARGING_NEOGY_OCPI_TOKEN_C }}"
+            PULL_TOKEN: "${{ secrets.ECHARGING_DRIWE_OCPI_TOKEN_C }}"
           EOF
 
 

@@ -23,7 +23,7 @@ ingress:
       - ocpi-driwe.ex.dev.testingmachine.eu
       secretName: tls-ocpi-driwe
   hosts:
-    - host: ocpi-driwe.ex.dev.testingmachine.eu
+    - host: driwe.ocpi.ex.dev.testingmachine.eu
       paths: 
         - path: "/"
           pathType: Prefix

@@ -23,7 +23,12 @@ ingress:
       - ocpi-neogy.ex.dev.testingmachine.eu
       secretName: tls-ocpi-neogy
   hosts:
+    # Remove this as soon we get into production, and move to the <provider>.ocpi type subdomain
     - host: ocpi-neogy.ex.dev.testingmachine.eu
+      paths: 
+        - path: "/"
+          pathType: Prefix
+    - host: neogy.ocpi.ex.dev.testingmachine.eu
       paths: 
         - path: "/"
           pathType: Prefix
