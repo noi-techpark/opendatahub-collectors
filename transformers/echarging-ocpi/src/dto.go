@@ -24,7 +24,7 @@ type OCPIEvse struct {
 		Standard         string    `json:"standard"`
 		Format           string    `json:"format"`
 		PowerType        string    `bson:"power_type" json:"power_type"`
-		LastUpdated      time.Time `bson:"last_updated" json:"last_updated"`
+		LastUpdated      time.Time `bson:"last_updated" json:"-"`
 		MaxVoltage       int       `bson:"max_voltage" json:"max_voltage"`
 		MaxAmperage      int       `bson:"max_amperage" json:"max_ampere"`
 		MaxElectricPower int       `bson:"max_electric_power" json:"max_electric_power"`
