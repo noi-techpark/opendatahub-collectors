@@ -70,8 +70,8 @@ type DisplayText struct {
 type OpeningTimes struct {
 	Twentyfourseven *bool `json:"twentyfourseven,omitempty"`
 	RegularHours    []struct {
-		Weekday int `json:"weekday"`
-		OpeningHoursPeriod
+		Weekday            int `json:"weekday"`
+		OpeningHoursPeriod `bson:",inline"`
 	} `bson:"regular_hours" json:"regular_hours,omitempty"`
 	ExceptionalOpenings []OpeningHoursPeriod `bson:"exceptional_openings" json:"exceptional_openings,omitempty"`
 	ExceptionalClosings []OpeningHoursPeriod `bson:"exceptional_closings" json:"exceptional_closings,omitempty"`
