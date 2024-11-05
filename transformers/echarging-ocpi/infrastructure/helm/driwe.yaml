@@ -18,10 +18,10 @@ env:
   LOG_LEVEL: INFO
 
   MQ_EXCHANGE: routed
-  MQ_PUSH_QUEUE: echarging-ocpi.driwe
-  MQ_PUSH_KEY: echarging-ocpi.driwe
-  MQ_POLL_QUEUE: echarging.driwe-ocpi
-  MQ_POLL_KEY: echarging.driwe-ocpi
+  MQ_PUSH_QUEUE: echarging-ocpi.driwe-push-evse
+  MQ_PUSH_KEY: echarging-ocpi.driwe-push-evse
+  MQ_POLL_QUEUE: echarging-ocpi.driwe-pull-locations
+  MQ_POLL_KEY: echarging-ocpi.driwe-pull-locations
 
 envFrom:
   MQ_CONSUMER: 
