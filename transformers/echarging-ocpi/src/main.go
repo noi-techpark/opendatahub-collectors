@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"strconv"
 	"sync"
 
 	"github.com/kelseyhightower/envconfig"
@@ -144,12 +145,14 @@ func main() {
 		plugData := b.CreateDataMap()
 
 		for _, loc := range r.Rawdata {
+			lat, _ := strconv.ParseFloat(loc.Coordinates.Latitude, 64)
+			lon, _ := strconv.ParseFloat(loc.Coordinates.Longitude, 64)
 			station := bdplib.CreateStation(
 				loc.ID,
 				loc.Name,
 				stationTypeLocation,
-				loc.Coordinates.Latitude,
-				loc.Coordinates.Longitude,
+				lat,
+				lon,
 				b.Origin)
 
 			station.MetaData = map[string]any{
@@ -173,8 +176,8 @@ func main() {
 					evse.UID,
 					evse.EvseID,
 					stationTypePlug,
-					loc.Coordinates.Latitude,
-					loc.Coordinates.Longitude,
+					station.Latitude,
+					station.Longitude,
 					b.Origin)
 
 				plug.ParentStation = station.Id

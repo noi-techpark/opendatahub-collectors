@@ -4,7 +4,9 @@
 
 package main
 
-import "time"
+import (
+	"time"
+)
 
 type OCPILocationsOperator struct {
 	Name    string `json:"name"`
@@ -32,35 +34,35 @@ type OCPIEvse struct {
 }
 
 type OCPILocations struct {
-	CountryCode string `json:"country_code"`
-	PartyID     string `json:"party_id"`
-	ID          string `json:"id"`
-	Publish     *bool  `json:"publish"`
-	Name        string `json:"name"`
-	Address     string `json:"address"`
-	City        string `json:"city"`
-	PostalCode  string `json:"postal_code"`
-	Country     string `json:"country"`
+	CountryCode string
+	PartyID     string
+	ID          string
+	Publish     *bool
+	Name        string
+	Address     string
+	City        string
+	PostalCode  string
+	Country     string
 	Coordinates struct {
-		Latitude  float64 `json:"latitude,string"`
-		Longitude float64 `json:"longitude,string"`
-	} `json:"coordinates"`
-	Evses        []OCPIEvse            `json:"evses"`
-	ParkingType  string                `json:"parking_type"`
-	Operator     OCPILocationsOperator `json:"operator"`
-	Suboperator  OCPILocationsOperator `json:"suboperator"`
-	Owner        OCPILocationsOperator `json:"owner"`
-	Facilities   []string              `json:"facilities"`
-	TimeZone     string                `json:"time_zone"`
+		Latitude  string
+		Longitude string
+	}
+	Evses        []OCPIEvse
+	ParkingType  string
+	Operator     OCPILocationsOperator
+	Suboperator  OCPILocationsOperator
+	Owner        OCPILocationsOperator
+	Facilities   []string
+	TimeZone     string
 	OpeningTimes *struct {
-		Twentyfourseven     bool          `json:"twentyfourseven,omitempty"`
-		RegularHours        []interface{} `json:"regular_hours,omitempty"`
-		ExceptionalOpenings []interface{} `json:"exceptional_openings,omitempty"`
-		ExceptionalClosings []interface{} `json:"exceptional_closings,omitempty"`
-	} `json:"opening_times,omitempty"`
-	LastUpdated      time.Time      `json:"last_updated"`
-	PublishAllowedTo []interface{}  `json:"publish_allowed_to"`
-	RelatedLocations []interface{}  `json:"related_locations"`
-	Images           []interface{}  `json:"images"`
-	Directions       *[]interface{} `json:"directions,omitempty"`
+		Twentyfourseven     bool
+		RegularHours        []interface{}
+		ExceptionalOpenings []interface{}
+		ExceptionalClosings []interface{}
+	}
+	LastUpdated      time.Time
+	PublishAllowedTo []interface{}
+	RelatedLocations []interface{}
+	Images           []interface{}
+	Directions       *[]interface{}
 }
