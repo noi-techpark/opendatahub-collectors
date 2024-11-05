@@ -164,7 +164,9 @@ func main() {
 				"postal_code":   loc.PostalCode,
 				"time_zone":     loc.TimeZone,
 				"opening_times": loc.OpeningTimes,
-				"directions":    loc.Directions,
+			}
+			if len(loc.Directions) > 0 {
+				station.MetaData["directions"] = loc.Directions
 			}
 
 			stations = append(stations, station)
