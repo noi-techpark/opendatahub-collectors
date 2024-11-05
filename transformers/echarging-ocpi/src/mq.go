@@ -54,6 +54,8 @@ func RabbitConnect(url string) (RabbitC, error) {
 	if err != nil {
 		return r, err
 	}
+	// Default prefetch of 10 messages
+	ch.Qos(10, 0, false)
 
 	r.Ch = ch
 	r.Con = con
