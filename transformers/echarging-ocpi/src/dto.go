@@ -20,15 +20,15 @@ type OCPIEvse struct {
 	Status       string
 	Capabilities []string
 	Connectors   []struct {
-		ID               string
-		Standard         string
-		Format           string
-		PowerType        string    `bson:"power_type"`
-		LastUpdated      time.Time `bson:"last_updated"`
-		MaxVoltage       int       `bson:"max_voltage"`
-		MaxAmperage      int       `bson:"max_amperage"`
-		MaxElectricPower int       `bson:"max_electric_power"`
-		TariffIds        *[]string `bson:"tariff_ids"`
+		ID               string    `json:"id"`
+		Standard         string    `json:"standard"`
+		Format           string    `json:"format"`
+		PowerType        string    `bson:"power_type" json:"power_type"`
+		LastUpdated      time.Time `bson:"last_updated" json:"last_updated"`
+		MaxVoltage       int       `bson:"max_voltage" json:"max_voltage"`
+		MaxAmperage      int       `bson:"max_amperage" json:"max_ampere"`
+		MaxElectricPower int       `bson:"max_electric_power" json:"max_electric_power"`
+		TariffIds        []string  `bson:"tariff_ids" json:"tarrif_ids,omitempty"`
 	}
 	LastUpdated time.Time `bson:"last_updated"`
 }
