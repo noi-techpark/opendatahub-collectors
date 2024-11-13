@@ -52,7 +52,7 @@ jobs:
             APP_PROVIDER: parking-onstreet/bz-axians
             APP_MQTT_URI: mqtts://xsona-broker.axians.it:8883
             APP_MQTT_CLIENTID: NOI-testing
-            APP_MQTT_TOPIC: "/6f599389-c6b0-4a76-843d-8d493192c4c0/device/+/event/up"
+            APP_MQTT_TOPIC: "application/6f599389-c6b0-4a76-843d-8d493192c4c0/device/+/event/up"
           envSecret:
             APP_MQTT_USER: '${{ secrets.MQTT_PARKING_ON_BZ_USER }}'
             APP_MQTT_PASS: '${{ secrets.MQTT_PARKING_ON_BZ_PASS }}'
