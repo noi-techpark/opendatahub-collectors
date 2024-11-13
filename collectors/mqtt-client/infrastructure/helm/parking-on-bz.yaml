@@ -1,0 +1,20 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/dc-mqtt-client
+  pullPolicy: IfNotPresent
+  tag: "latest" # Set this when upgrading chart with --set-value
+
+env:
+  APP_RABBITMQ_EXCHANGE: ingress
+  APP_RABBITMQ_CLIENTNAME: dc-mqtt-client-env-a22
+  APP_LOGLEVEL: INFO
+  APP_PROVIDER: parking-onstreet/bz-axians
+  APP_MQTT_URI: xsona-broker.axians.it:8883
+  APP_MQTT_CLIENTID: NOI-testing
+  APP_MQTT_TOPIC: 
+envSecret:
+  APP_MQTT_PASS:
+  APP_MQTT_USER:
+envSecretRef:
+  - name: APP_RABBITMQ_URI 
+    secret: rabbitmq-svcbind
+    key: uri

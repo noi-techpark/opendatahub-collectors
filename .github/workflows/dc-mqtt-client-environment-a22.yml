@@ -1,11 +1,10 @@
-name: CI/CD dc-mqtt-client
+name: CI/CD dc-mqtt-client environment a22
 
 on: 
   push:
     paths:
       - "collectors/mqtt-client/**"
-      - ".github/workflows/dc-mqtt-client.yml"
-
+      - ".github/workflows/dc-mqtt-client-environment-a22.yml"
 
 env:
   WORKING_DIRECTORY: collectors/mqtt-client

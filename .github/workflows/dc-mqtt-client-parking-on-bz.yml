@@ -1,0 +1,74 @@
+name: CI/CD dc-mqtt-client parking onstreet bolzano
+
+on: 
+  push:
+    paths:
+      - "collectors/mqtt-client/**"
+      - ".github/workflows/dc-mqtt-client-parking-on-bz.yml"
+
+env:
+  WORKING_DIRECTORY: collectors/mqtt-client
+  DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/dc-mqtt-client
+  DOCKER_TAG: ${{ github.sha }}
+  K8S_NAME: dc-mqtt-client-parking-on-bz
+  
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    concurrency: dc-mqtt-client-parking-on-build
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    - name: Build and push images
+      uses: noi-techpark/github-actions/docker-build-and-push@v2
+      with:
+        working-directory: ${{ env.WORKING_DIRECTORY }}/infrastructure
+        docker-username: ${{ github.actor }}
+        docker-password: ${{ secrets.GITHUB_TOKEN }}
+          
+  deploy-test:
+    if: github.ref == 'refs/heads/main'
+    needs: 
+      - build
+    runs-on: ubuntu-22.04
+    concurrency: dc-mqtt-client-parking-on-deploy-test
+    environment: test
+    env:
+      VALUES_YAML: collectors/mqtt-client/infrastructure/helm/parking-on-bz.yaml
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Write environment-specific Helm values
+        run: |
+          cat <<EOF > override.yml
+          image:
+            repository:  ${{ env.DOCKER_IMAGE }}
+            tag:  ${{ env.DOCKER_TAG }}
+            pullPolicy: "IfNotPresent"
+          env:
+            APP_LOGLEVEL: INFO
+            APP_PROVIDER: parking-onstreet/bz-axians
+            APP_MQTT_URI: xsona-broker.axians.it:8883
+            APP_MQTT_CLIENTID: NOI-testing
+            APP_MQTT_TOPIC: "/6f599389-c6b0-4a76-843d-8d493192c4c0/device/+/event/up"
+          envSecret:
+            APP_MQTT_USER: ${{ secrets.MQTT_PARKING_ON_BZ_USER}}
+            APP_MQTT_PASS: ${{ secrets.MQTT_PARKING_ON_BZ_PASS}}
+          EOF
+
+          # Merge yaml files https://mikefarah.gitbook.io/yq/operators/multiply-merge
+          yq -i '. *= load("override.yml")' ${{env.VALUES_YAML}}
+
+      - name: Deploy on cluster  
+        uses: noi-techpark/github-actions/helm-deploy@v2
+        with:
+          k8s-name: ${{ env.K8S_NAME }}
+          k8s-namespace: collector
+          chart-path: helm/generic-collector
+          values-file: ${{ env.VALUES_YAML }}
+          aws-access-key-id: ${{ secrets.AWS_DEV_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_DEV_ACCESS_KEY_SECRET }}
+          aws-eks-cluster-name: aws-main-eu-01
+          aws-region: eu-west-1
