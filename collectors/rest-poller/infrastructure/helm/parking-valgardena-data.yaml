@@ -1,0 +1,18 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/rest-poller
+  pullPolicy: IfNotPresent
+  tag: "0.2.0" # Set this when upgrading chart with --set-value
+
+env:
+  RABBITMQ_CLIENTNAME: dc-parking-valgardena-data
+  PROVIDER: parking-valgardena/data
+
+  CRON: "0 */2 * * * *"
+  HTTP_URL: "https://parking.valgardena.it/get_station_data"
+  HTTP_HEADER_ACCEPT: "Accept: application/json"
+  HTTP_HEADER_AUTHORIZATION: "Authorization: Basic bm9pOiVwIXh+RlNleV1Bc2p1"
+
+envSecretRef:
+  - name: RABBITMQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
