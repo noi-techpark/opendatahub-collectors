@@ -42,7 +42,7 @@ jobs:
 
       - name: Write environment-specific Helm values
         run: |
-          cat <<EOF > override.yml
+          cat << "EOF" > override.yml
           image:
             repository:  ${{ env.DOCKER_IMAGE }}
             tag:  ${{ env.DOCKER_TAG }}
