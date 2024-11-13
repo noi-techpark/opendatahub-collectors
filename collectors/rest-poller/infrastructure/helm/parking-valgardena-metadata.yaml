@@ -5,7 +5,7 @@ image:
 
 env:
   RABBITMQ_CLIENTNAME: dc-parking-valgardena-metadata
-  PROVIDER: parking/valgardena-metadata
+  PROVIDER: parking-valgardena/metadata
 
   CRON: "0 */2 * * * *"
   HTTP_URL: "https://parking.valgardena.it/get_station_metadata"
