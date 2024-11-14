@@ -158,7 +158,6 @@ func main() {
 			station.MetaData = map[string]any{
 				"country_code":  loc.CountryCode,
 				"party_id":      loc.PartyID,
-				"publish":       loc.Publish,
 				"address":       loc.Address,
 				"city":          loc.City,
 				"postal_code":   loc.PostalCode,

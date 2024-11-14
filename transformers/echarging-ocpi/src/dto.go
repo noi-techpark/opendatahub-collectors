@@ -28,7 +28,7 @@ type OCPIEvse struct {
 		MaxVoltage       int       `bson:"max_voltage" json:"max_voltage"`
 		MaxAmperage      int       `bson:"max_amperage" json:"max_ampere"`
 		MaxElectricPower int       `bson:"max_electric_power" json:"max_electric_power"`
-		TariffIds        []string  `bson:"tariff_ids" json:"tarrif_ids,omitempty"`
+		TariffIds        []string  `bson:"tariff_ids" json:"-"`
 	}
 	LastUpdated time.Time `bson:"last_updated"`
 }
