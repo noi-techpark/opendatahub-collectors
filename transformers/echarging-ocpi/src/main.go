@@ -97,7 +97,7 @@ func main() {
 	go HandleQueue(pushMQ, func(r *raw[EVSERaw]) error {
 		plugData := b.CreateDataMap()
 
-		plugData.AddRecord(r.Rawdata.Params.Evse_uid, dtPlugStatus.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), r.Rawdata.Body.Status, period))
+		plugData.AddRecord(stationId(r.Rawdata.Params.Evse_uid, b.Origin), dtPlugStatus.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), r.Rawdata.Body.Status, period))
 		if err := b.PushData(stationTypePlug, plugData); err != nil {
 			return fmt.Errorf("error pushing plug data: %w", err)
 		}
@@ -125,7 +125,7 @@ func main() {
 
 			numAvailable := len(res.Data)
 			recs := b.CreateDataMap()
-			recs.AddRecord(r.Rawdata.Params.Location_id, dtNumberAvailable.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), numAvailable, period))
+			recs.AddRecord(stationId(r.Rawdata.Params.Location_id, b.Origin), dtNumberAvailable.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), numAvailable, period))
 			if err := b.PushData(stationTypePlug, plugData); err != nil {
 				slog.Error("error pushing location data", "err", err)
 			}
@@ -148,7 +148,7 @@ func main() {
 			lat, _ := strconv.ParseFloat(loc.Coordinates.Latitude, 64)
 			lon, _ := strconv.ParseFloat(loc.Coordinates.Longitude, 64)
 			station := bdplib.CreateStation(
-				loc.ID,
+				stationId(loc.ID, b.Origin),
 				loc.Name,
 				stationTypeLocation,
 				lat,
@@ -174,7 +174,7 @@ func main() {
 
 			for _, evse := range loc.Evses {
 				plug := bdplib.CreateStation(
-					evse.UID,
+					stationId(evse.UID, b.Origin),
 					evse.EvseID,
 					stationTypePlug,
 					station.Latitude,
@@ -240,4 +240,8 @@ func failOnError(err error, msg string) {
 		slog.Error(msg, "err", err)
 		panic(err)
 	}
+}
+
+func stationId(id string, origin string) string {
+	return fmt.Sprintf("%s:%s", origin, id)
 }
