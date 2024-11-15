@@ -7,7 +7,7 @@ env:
   RABBITMQ_CLIENTNAME: dc-airquality-appa-open
   PROVIDER: airquality/appa-open
 
-  CRON: "0 0 0 * * *"
+  CRON: "0 0 * * * *"
   HTTP_URL: "https://dati.retecivica.bz.it/services/airquality/timeseries?station_code=ML5&meas_code=NO2"
 
 envSecretRef:
