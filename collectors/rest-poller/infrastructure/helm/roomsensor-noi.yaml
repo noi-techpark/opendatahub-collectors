@@ -4,11 +4,16 @@ image:
   tag: "0.2.0" 
 
 env:
-  MQ_CLIENT: dc-roomsensor-noi
+  RABBITMQ_CLIENTNAME: dc-roomsensor-noi
+<<<<<<< HEAD
+<<<<<<< HEAD
   PROVIDER: roomsensor/noi
 =======
   PROVIDER: airquality/noi
 >>>>>>> adc8fbf (Add NOI roomsensor data collector)
+=======
+  PROVIDER: roomsensor/noi
+>>>>>>> 285922c (change provider to roomsensor/noi)
 
 <<<<<<< HEAD
   CRON: "0 */2 * * * *"
