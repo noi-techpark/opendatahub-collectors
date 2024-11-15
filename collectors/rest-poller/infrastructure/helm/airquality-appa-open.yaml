@@ -1,0 +1,16 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/rest-poller
+  pullPolicy: IfNotPresent
+  tag: "0.2.0" # Set this when upgrading chart with --set-value
+
+env:
+  RABBITMQ_CLIENTNAME: dc-airquality-appa-open
+  PROVIDER: airquality/appa-open
+
+  CRON: "0 0 0 * * *"
+  HTTP_URL: "https://dati.retecivica.bz.it/services/airquality/timeseries?station_code=ML5&meas_code=NO2"
+
+envSecretRef:
+  - name: RABBITMQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
