@@ -39,7 +39,7 @@ env:
   LOGLEVEL: DEBUG
   RABBITMQ_EXCHANGE: ingress
   PROVIDER: echarging-ocpi/neogy
-  PULL_LOCATIONS_CRON: "0 0,4,8,16 * * *"
+  PULL_LOCATIONS_CRON: "0 0,4,8,12,16 * * *"
 
 envSecret:
   # List of valid tokens, no spaces etc.
