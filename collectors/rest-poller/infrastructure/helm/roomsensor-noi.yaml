@@ -6,6 +6,9 @@ image:
 env:
   MQ_CLIENT: dc-roomsensor-noi
   PROVIDER: roomsensor/noi
+=======
+  PROVIDER: airquality/noi
+>>>>>>> adc8fbf (Add NOI roomsensor data collector)
 
 <<<<<<< HEAD
   CRON: "0 */2 * * * *"
