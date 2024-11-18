@@ -13,6 +13,10 @@ import (
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-bdp-client/bdplib"
+	"github.com/noi-techpark/go-odh-ingest/dto"
+	"github.com/noi-techpark/go-odh-ingest/mq"
+	"github.com/noi-techpark/go-odh-ingest/ms"
+	"github.com/noi-techpark/go-odh-ingest/tr"
 	"github.com/noi-techpark/go-timeseries-client/odhts"
 	"github.com/rabbitmq/amqp091-go"
 )
@@ -38,9 +42,12 @@ func syncDataTypes(b *bdplib.Bdp) {
 }
 
 var cfg struct {
+	ms.Env
+
 	MQ_URI      string
 	MQ_CONSUMER string
 	MQ_EXCHANGE string
+	MONGO_URI   string
 
 	// for data incoming from echarging-ocpi pushes
 	MQ_PUSH_QUEUE string
@@ -51,8 +58,6 @@ var cfg struct {
 	MQ_POLL_KEY   string
 
 	NINJA_URL string
-
-	LOG_LEVEL string
 }
 
 type EVSERaw struct {
@@ -74,27 +79,27 @@ var locDataMu = sync.Mutex{}
 
 func main() {
 	envconfig.MustProcess("", &cfg)
-	initLogging(cfg.LOG_LEVEL)
+	ms.InitLog(cfg.LOGLEVEL)
 
 	b := bdplib.FromEnv()
 	setupNinja()
 
 	syncDataTypes(b)
 
-	rabbit, err := RabbitConnect(cfg.MQ_URI)
+	rabbit, err := mq.Connect(cfg.MQ_URI, cfg.MQ_CONSUMER)
 	failOnError(err, "failed connecting to rabbitmq")
 	defer rabbit.Close()
 
-	rabbit.OnClose(func(err amqp091.Error) {
+	rabbit.OnClose(func(err *amqp091.Error) {
 		slog.Error("rabbitmq connection closed unexpectedly")
 		panic(err)
 	})
 
-	pushMQ, err := rabbit.Consume(cfg.MQ_EXCHANGE, cfg.MQ_PUSH_QUEUE, cfg.MQ_PUSH_KEY, cfg.MQ_CONSUMER+"-push")
+	pushMQ, err := rabbit.Consume(cfg.MQ_EXCHANGE, cfg.MQ_PUSH_QUEUE, cfg.MQ_PUSH_KEY)
 	failOnError(err, "failed creating push queue")
 
 	// Handle push updates, coming via OCPI endpoint
-	go HandleQueue(pushMQ, func(r *raw[EVSERaw]) error {
+	go tr.HandleQueue(pushMQ, cfg.MONGO_URI, func(r *dto.Raw[EVSERaw]) error {
 		plugData := b.CreateDataMap()
 
 		plugData.AddRecord(stationId(r.Rawdata.Params.Evse_uid, b.Origin), dtPlugStatus.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), r.Rawdata.Body.Status, period))
@@ -134,11 +139,11 @@ func main() {
 		return nil
 	})
 
-	pullMQ, err := rabbit.Consume(cfg.MQ_EXCHANGE, cfg.MQ_POLL_QUEUE, cfg.MQ_POLL_KEY, cfg.MQ_CONSUMER+"-pull")
+	pullMQ, err := rabbit.Consume(cfg.MQ_EXCHANGE, cfg.MQ_POLL_QUEUE, cfg.MQ_POLL_KEY)
 	failOnError(err, "failed creating poll queue")
 
 	// Handle full station details, coming a few times a day via REST poller
-	go HandleQueue(pullMQ, func(r *raw[[]OCPILocations]) error {
+	go tr.HandleQueue(pullMQ, cfg.MONGO_URI, func(r *dto.Raw[[]OCPILocations]) error {
 		stations := []bdplib.Station{}
 		locationData := b.CreateDataMap()
 		plugs := []bdplib.Station{}
