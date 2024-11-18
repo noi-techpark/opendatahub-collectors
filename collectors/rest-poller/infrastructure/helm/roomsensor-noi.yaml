@@ -5,12 +5,21 @@ image:
 
 env:
   RABBITMQ_CLIENTNAME: dc-roomsensor-noi
+<<<<<<< HEAD
   PROVIDER: roomsensor/noi
 
   CRON: "0 * * * * *"
 
 envSecret:
   HTTP_URL: http://saocompute.eurac.edu/sensordb/query?db={{your-dm-name}}&u={{your-username}}&p={{your-passqord}}&q=select%20*%20from%20device_frmpayload_data_message%20order%20by%20time%20desc%20limit%201
+=======
+  PROVIDER: airquality/noi
+
+  CRON: "0 */10 * * * *"
+
+envSecret:
+  HTTP_URL: http://saocompute.eurac.edu/sensordb/query?db={{your-dm-name}}&u={{your-username}}&p={{your-passqord}}&q=select%20*%20from%20device_frmpayload_data_message%20order%20by%20time%20limit%2030
+>>>>>>> adc8fbf (Add NOI roomsensor data collector)
 
 envSecretRef:
   - name: RABBITMQ_URI
