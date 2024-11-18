@@ -5,7 +5,11 @@ image:
 
 env:
   RABBITMQ_CLIENTNAME: dc-roomsensor-noi
+<<<<<<< HEAD
   PROVIDER: roomsensor/noi
+=======
+  PROVIDER: airquality/noi
+>>>>>>> adc8fbf (Add NOI roomsensor data collector)
 
   CRON: "0 * * * * *"
 
