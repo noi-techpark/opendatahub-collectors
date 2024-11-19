@@ -13,8 +13,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/kelseyhightower/envconfig"
+	"github.com/noi-techpark/go-opendatahub-ingest/dc"
+	"github.com/noi-techpark/go-opendatahub-ingest/dto"
+	"github.com/noi-techpark/go-opendatahub-ingest/ms"
 	"github.com/robfig/cron/v3"
-	"opendatahub.com/rest-poller/dc"
 )
 
 var env struct {
@@ -36,14 +39,15 @@ const ENV_HEADER_PREFIX = "HTTP_HEADER_"
 
 func main() {
 	slog.Info("Starting data collector...")
-	dc.LoadEnv(&env)
-	dc.InitLog(env.LogLevel)
+	envconfig.MustProcess("", &env)
+	ms.InitLog(env.LOG_LEVEL)
 
 	headers := customHeaders()
 	u, err := url.Parse(env.HTTP_URL)
-	dc.FailOnError(err, "failed parsing poll URL")
+	ms.FailOnError(err, "failed parsing poll URL")
 
-	mq := dc.PubFromEnv(env.Env)
+	mq, err := dc.PubFromEnv(env.Env)
+	ms.FailOnError(err, "failed creating mq publisher")
 
 	c := cron.New(cron.WithSeconds())
 	c.AddFunc(env.CRON, func() {
@@ -51,7 +55,7 @@ func main() {
 		jobstart := time.Now()
 
 		req, err := http.NewRequest(env.HTTP_METHOD, u.String(), http.NoBody)
-		dc.FailOnError(err, "could not create http request")
+		ms.FailOnError(err, "could not create http request")
 
 		req.Header = headers
 
@@ -79,8 +83,8 @@ func main() {
 			raw = string(body)
 		}
 
-		mq <- dc.MqMsg{
-			Provider:  env.Env.Provider,
+		mq <- dto.RawAny{
+			Provider:  env.PROVIDER,
 			Timestamp: time.Now(),
 			Rawdata:   raw,
 		}
