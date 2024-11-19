@@ -4,42 +4,25 @@ SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
 SPDX-License-Identifier: CC0-1.0
 -->
 
-# 
-@versions_enpoint={{$dotenv VERSIONS_ENDPOINT}}
-@token_a={{$dotenv TOKEN_A}}
-@token_b={{$dotenv TOKEN_B}}
-@token_c={{$dotenv TOKEN_C}}
+# @host=http://localhost:{{$dotenv SERVER_PORT}}
+@host=https://ocpi-neogy.ex.dev.testingmachine.eu
 
-
-### token a
-# @name login
-GET {{versions_enpoint}}
-Authorization: Token {{ token_a }} 
-
-###
-
-@versions_url = {{$dotenv VERSIONS_ENDPOINT}}
-
-### versions
-GET {{versions_url}}
-Authorization: Token {{ token_a }} 
-
-
-### token b
-POST https://ocpi.driwe.club/2.2.1/credentials
-Authorization: Token {{ token_a }}
+### EVSE status update
+PATCH {{host}}/ocpi/emsp/2.2/locations/IT/ABC/LOC1/EVSE1
+Authorization: Token {{ $dotenv OCPI_TOKENS }}
 
 {
-	"url": "plapla",
-	"token": "{{token_b}}"
+	"status": "CHARGING",
+	"last_updated": "2019-06-24T12:39:09Z"
 }
 
+### Should get a 400 due to invalid body
+PATCH {{host}}/ocpi/emsp/2.2/locations/IT/ABC/LOC1/EVSE1
+Authorization: Token TestToken1
 
-### credentials
-GET {{versions_url}}/credentials
-Authorization: Token {{ token_a }} 
+### Should get a 401
+PATCH {{host}}/ocpi/emsp/2.2/locations/IT/ABC/LOC1/EVSE1
+Authorization: Token InvalidToken
 
-
-### locations
-GET {{versions_url}}/locations/
-Authorization: Token {{ token_c }} 
+### 
+GET {{host}}/health

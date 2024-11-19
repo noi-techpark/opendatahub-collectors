@@ -30,6 +30,8 @@ func InitLog(lv string) {
 	})))
 }
 
+// questa è la parte di env utili per SCRIVERE nella coda
+// sarà necessario avere le env anche come nel trnasformer per leggere dalla rabbitmq
 type Env struct {
 	RABBITMQ_URI        string
 	RABBITMQ_Exchange   string `default:"ingress"`

@@ -12,6 +12,7 @@ service:
   port: 8082
   health:
     delay: 30
+    path: /actuator/health
 
 ingress:
   enabled: true
@@ -63,3 +64,4 @@ envSecret:
   SHEETS_REFRESH_TOKEN: 
 
   SPREADSHEET_ID: 
+

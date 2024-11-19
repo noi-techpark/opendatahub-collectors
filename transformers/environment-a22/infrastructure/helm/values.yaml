@@ -13,13 +13,13 @@ env:
   
   LOG_LEVEL: INFO
 
-  MQ_LISTEN_QUEUE: a22.environment
-  MQ_LISTEN_EXCHANGE: routed
-  MQ_LISTEN_KEY: a22.environment
-  MQ_LISTEN_CONSUMER: tr-environment-a22
+  MQ_QUEUE: a22.environment
+  MQ_EXCHANGE: routed
+  MQ_KEY: a22.environment
+  MQ_CONSUMER: tr-environment-a22
   
 envSecretRef:
-  - name: MQ_LISTEN_URI 
+  - name: MQ_URI 
     secret: rabbitmq-svcbind
     key: uri
   - name: MONGO_URI

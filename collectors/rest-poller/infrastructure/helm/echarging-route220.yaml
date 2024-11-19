@@ -4,7 +4,7 @@ image:
   tag: "0.2.0" # Set this when upgrading chart with --set-value
 
 env:
-  RABBITMQ_CLIENTNAME: dc-echarging-route220
+  MQ_CLIENT: dc-echarging-route220
   PROVIDER: echarging/route220
 
   CRON: "0 */5 * * * *"
@@ -12,6 +12,6 @@ env:
   HTTP_HEADER_CALLER: "X-Caller-ID: NOI-Techpark"
 
 envSecretRef:
-  - name: RABBITMQ_URI
+  - name: MQ_URI
     secret: rabbitmq-svcbind
     key: uri

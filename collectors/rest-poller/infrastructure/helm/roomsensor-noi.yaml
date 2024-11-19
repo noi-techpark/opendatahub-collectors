@@ -1,0 +1,18 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/rest-poller
+  pullPolicy: IfNotPresent
+  tag: "0.2.0" 
+
+env:
+  MQ_CLIENT: dc-roomsensor-noi
+  PROVIDER: roomsensor/noi
+
+  CRON: "0 */2 * * * *"
+
+envSecret:
+  HTTP_URL: http://saocompute.eurac.edu/sensordb/query?db={{your-dm-name}}&u={{your-username}}&p={{your-passqord}}&q=select%20*%20from%20device_frmpayload_data_message%20order%20by%20time%20desc%20limit%201
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
