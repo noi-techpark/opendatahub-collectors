@@ -21,6 +21,9 @@ ingress:
   tls:
     - hosts:
       - ocpi-neogy.ex.dev.testingmachine.eu
+      secretName: tls-ocpi-neogy-old
+    - hosts:
+      - neogy.ocpi.io.dev.testingmachine.eu
       secretName: tls-ocpi-neogy
   hosts:
     # Remove this as soon we get into production, and move to the <provider>.ocpi type subdomain
@@ -28,19 +31,19 @@ ingress:
       paths: 
         - path: "/"
           pathType: Prefix
-    - host: neogy.ocpi.ex.dev.testingmachine.eu
+    - host: neogy.ocpi.io.dev.testingmachine.eu
       paths: 
         - path: "/"
           pathType: Prefix
             
 env:
-  PORT: 8080
   GIN_MODE: release
   LOG_LEVEL: DEBUG
+  MQ_CLIENT: dc-echarging-ocpi-driwe
   MQ_EXCHANGE: ingress
+  PORT: 8080
   PROVIDER: echarging-ocpi/neogy
   PULL_LOCATIONS_CRON: "0 0,4,8,12,16 * * *"
-  MQ_CLIENT: dc-echarging-ocpi-driwe
 
 envSecret:
   # List of valid tokens, no spaces etc.
