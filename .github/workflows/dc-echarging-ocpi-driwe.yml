@@ -49,7 +49,7 @@ jobs:
             tag:  ${{ env.DOCKER_TAG }}
             pullPolicy: "IfNotPresent"
           env:
-            LOGLEVEL: "INFO"
+            LOG_LEVEL: "INFO"
           envSecret:
             OCPI_TOKENS: ${{ secrets.ECHARGING_OCPI_DRIWE_TOKENS }}
             PULL_LOCATIONS_ENDPOINT: "https://ocpi.driwe.club/2.2.1/locations"
