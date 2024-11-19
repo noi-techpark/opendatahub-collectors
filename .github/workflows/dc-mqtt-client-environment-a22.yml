@@ -49,13 +49,13 @@ jobs:
             tag:  ${{ env.DOCKER_TAG }}
             pullPolicy: "IfNotPresent"
           env:
-            APP_MQTT_CLIENTID: airQuinoRawTestv2
-            APP_MQTT_TOPIC: AirQuino/RawData
-            APP_LOGLEVEL: INFO
-            APP_PROVIDER: a22/environment
+            MQTT_CLIENTID: airQuinoRawTestv2
+            MQTT_TOPIC: AirQuino/RawData
+            LOG_LEVEL: INFO
+            PROVIDER: a22/environment
           envSecret:
-            APP_MQTT_PASS: ${{ secrets.MQTT_ENV_A22_PASS}}
-            APP_MQTT_URI: ${{ secrets.MQTT_ENV_A22_URI}}
+            MQTT_PASS: ${{ secrets.MQTT_ENV_A22_PASS}}
+            MQTT_URI: ${{ secrets.MQTT_ENV_A22_URI}}
           EOF
 
           # Merge yaml files https://mikefarah.gitbook.io/yq/operators/multiply-merge

@@ -4,17 +4,17 @@ image:
   tag: "latest" # Set this when upgrading chart with --set-value
 
 env:
-  APP_RABBITMQ_EXCHANGE: ingress
-  APP_RABBITMQ_CLIENTNAME: dc-mqtt-client-env-a22
-  APP_LOGLEVEL: INFO
-  APP_PROVIDER: parking-onstreet/bz-axians
-  APP_MQTT_URI: xsona-broker.axians.it:8883
-  APP_MQTT_CLIENTID: NOI-testing
-  APP_MQTT_TOPIC: 
+  LOG_LEVEL: INFO
+  MQTT_CLIENTID: NOI-testing
+  MQTT_TOPIC: 
+  MQTT_URI: xsona-broker.axians.it:8883
+  MQ_CLIENT: dc-mqtt-client-env-a22
+  MQ_EXCHANGE: ingress
+  PROVIDER: parking-onstreet/bz-axians
 envSecret:
-  APP_MQTT_PASS:
-  APP_MQTT_USER:
+  MQTT_PASS:
+  MQTT_USER:
 envSecretRef:
-  - name: APP_RABBITMQ_URI 
+  - name: MQ_URI 
     secret: rabbitmq-svcbind
     key: uri

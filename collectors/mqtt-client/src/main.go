@@ -7,7 +7,6 @@ package main
 import (
 	"encoding/json"
 	"log/slog"
-	"os"
 	"time"
 
 	"github.com/ThreeDotsLabs/watermill"
@@ -15,50 +14,34 @@ import (
 	"github.com/ThreeDotsLabs/watermill/message"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/kelseyhightower/envconfig"
+	"github.com/noi-techpark/go-opendatahub-ingest/dc"
+	"github.com/noi-techpark/go-opendatahub-ingest/dto"
+	"github.com/noi-techpark/go-opendatahub-ingest/ms"
 	"github.com/rabbitmq/amqp091-go"
 )
 
-type mqMsg struct {
-	Provider  string    `json:"provider"`
-	Timestamp time.Time `json:"timestamp"`
-	Rawdata   struct {
-		MsgId   uint16
-		Topic   string
-		Payload string
-	} `json:"rawdata"`
+type Rawdata struct {
+	MsgId   uint16
+	Topic   string
+	Payload string
 }
 
 var cfg struct {
-	RABBITMQ_URI        string
-	RABBITMQ_Exchange   string
-	RABBITMQ_Clientname string
-
+	dc.Env
 	MQTT_user     string
 	MQTT_pass     string
 	MQTT_uri      string
 	MQTT_clientid string
 	MQTT_topic    string
-
-	Provider string
-
-	LogLevel string `default:"INFO"`
-}
-
-func initLog(lv string) {
-	level := &slog.LevelVar{}
-	level.UnmarshalText([]byte(lv))
-	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-		Level: level,
-	})))
 }
 
 func main() {
-	envconfig.MustProcess("APP", &cfg)
-	initLog(cfg.LogLevel)
+	envconfig.MustProcess("", &cfg)
+	ms.InitLog(cfg.LOG_LEVEL)
 
 	slog.Info("Started with config", "cfg", cfg)
 
-	rabbit := NewRabbitPublisher(cfg.RABBITMQ_URI, cfg.RABBITMQ_Exchange, cfg.RABBITMQ_Clientname, cfg.Provider)
+	rabbit := NewRabbitPublisher(cfg.MQ_URI, cfg.MQ_EXCHANGE, cfg.MQ_CLIENT, cfg.PROVIDER)
 
 	opts := mqtt.NewClientOptions()
 	opts.AddBroker(cfg.MQTT_uri)
@@ -71,14 +54,10 @@ func main() {
 		c.Subscribe(cfg.MQTT_topic, 1, func(c mqtt.Client, m mqtt.Message) {
 			// We assume the payload is a string (json probably)
 			slog.Debug("got MQTT message", "id", m.MessageID(), "topic", m.Topic(), "payload", string(m.Payload()))
-			msg := mqMsg{
-				Provider:  cfg.Provider,
+			msg := dto.RawAny{
+				Provider:  cfg.PROVIDER,
 				Timestamp: time.Now(),
-				Rawdata: struct {
-					MsgId   uint16
-					Topic   string
-					Payload string
-				}{
+				Rawdata: Rawdata{
 					MsgId:   m.MessageID(),
 					Topic:   m.Topic(),
 					Payload: string(m.Payload()),
@@ -96,7 +75,7 @@ func main() {
 	select {}
 }
 
-func NewRabbitPublisher(uri string, exchange string, client string, routingkey string) chan<- mqMsg {
+func NewRabbitPublisher(uri string, exchange string, client string, routingkey string) chan<- dto.RawAny {
 	pubConfig := amqp.NewDurablePubSubConfig(uri, nil)
 	pubConfig.Connection.AmqpConfig = &amqp091.Config{}
 	pubConfig.Connection.AmqpConfig.Properties = amqp091.Table{}
@@ -108,7 +87,7 @@ func NewRabbitPublisher(uri string, exchange string, client string, routingkey s
 		panic(err)
 	}
 
-	ch := make(chan mqMsg)
+	ch := make(chan dto.RawAny)
 
 	go func() {
 		for msg := range ch {
