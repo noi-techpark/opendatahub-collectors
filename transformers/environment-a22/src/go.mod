@@ -20,7 +20,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/klauspost/compress v1.17.11 // indirect
 	github.com/montanaflynn/stats v0.7.1 // indirect
-	github.com/noi-techpark/go-odh-ingest v0.0.0-20241118151250-6c21a2dd14aa
+	github.com/noi-techpark/go-odh-ingest v0.0.0-20241119064656-0c5399f7c39a
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.2 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
