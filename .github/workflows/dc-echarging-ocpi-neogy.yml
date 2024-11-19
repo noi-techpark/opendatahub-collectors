@@ -49,7 +49,7 @@ jobs:
             tag:  ${{ env.DOCKER_TAG }}
             pullPolicy: "IfNotPresent"
           env:
-            LOGLEVEL: "INFO"
+            LOG_LEVEL: "INFO"
           envSecret:
             OCPI_TOKENS: ${{ secrets.ECHARGING_OCPI_NEOGY_TOKENS }}
             PULL_LOCATIONS_ENDPOINT: ${{ secrets.ECHARGING_NEOGY_OCPI_URL}}?limit=200
