@@ -102,10 +102,12 @@ func main() {
 	go tr.HandleQueue(pushMQ, cfg.MONGO_URI, func(r *dto.Raw[EVSERaw]) error {
 		plugData := b.CreateDataMap()
 
-		plugData.AddRecord(stationId(r.Rawdata.Params.Evse_uid, b.Origin), dtPlugStatus.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), r.Rawdata.Body.Status, period))
+		plugid := stationId(r.Rawdata.Params.Evse_uid, b.Origin)
+		plugData.AddRecord(plugid, dtPlugStatus.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), r.Rawdata.Body.Status, period))
 		if err := b.PushData(stationTypePlug, plugData); err != nil {
 			return fmt.Errorf("error pushing plug data: %w", err)
 		}
+		slog.Info("Updated plug state", "plugid", plugid)
 
 		// Update parent station "number available data type"
 		go func() {
@@ -130,10 +132,12 @@ func main() {
 
 			numAvailable := len(res.Data)
 			recs := b.CreateDataMap()
-			recs.AddRecord(stationId(r.Rawdata.Params.Location_id, b.Origin), dtNumberAvailable.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), numAvailable, period))
+			locationId := stationId(r.Rawdata.Params.Location_id, b.Origin)
+			recs.AddRecord(locationId, dtNumberAvailable.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), numAvailable, period))
 			if err := b.PushData(stationTypePlug, plugData); err != nil {
 				slog.Error("error pushing location data", "err", err)
 			}
+			slog.Info("Updated location state", "locationid", locationId)
 		}()
 
 		return nil
