@@ -4,17 +4,17 @@ image:
   tag: "latest" # Set this when upgrading chart with --set-value
 
 env:
-  APP_RABBITMQ_EXCHANGE: ingress
-  APP_RABBITMQ_CLIENTNAME: dc-mqtt-client-env-a22
-  APP_MQTT_USER: airQuino
-  APP_MQTT_CLIENTID: airQuinoRaw
-  APP_MQTT_TOPIC: AirQuino/RawData
-  APP_LOGLEVEL: INFO
-  APP_PROVIDER: a22/environment
+  LOG_LEVEL: INFO
+  MQTT_CLIENTID: airQuinoRaw
+  MQTT_TOPIC: AirQuino/RawData
+  MQTT_USER: airQuino
+  MQ_CLIENT: dc-mqtt-client-env-a22
+  MQ_EXCHANGE: ingress
+  PROVIDER: a22/environment
 envSecret:
-  APP_MQTT_PASS:
-  APP_MQTT_URI:
+  MQTT_PASS:
+  MQTT_URI:
 envSecretRef:
-  - name: APP_RABBITMQ_URI 
+  - name: MQ_URI 
     secret: rabbitmq-svcbind
     key: uri
