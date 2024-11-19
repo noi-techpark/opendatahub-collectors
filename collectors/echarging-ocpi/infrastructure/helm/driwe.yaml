@@ -31,9 +31,9 @@ ingress:
 env:
   PORT: 8080
   GIN_MODE: release
-  LOGLEVEL: DEBUG
-  RABBITMQ_EXCHANGE: ingress
-  RABBITMQ_CLIENT: dc-echarging-ocpi-driwe
+  LOG_LEVEL: DEBUG
+  MQ_EXCHANGE: ingress
+  MQ_CLIENT: dc-echarging-ocpi-driwe
   # postfix is added to provides depending on the data source (push path, pull etc.)
   PROVIDER: echarging-ocpi/driwe
   PULL_LOCATIONS_CRON: "*/10 * * * *"
@@ -45,6 +45,6 @@ envSecret:
   PULL_TOKEN: "***"
 
 envSecretRef:
-  - name: RABBITMQ_URI 
+  - name: MQ_URI 
     secret: rabbitmq-svcbind
     key: uri
