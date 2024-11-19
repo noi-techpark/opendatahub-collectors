@@ -4,13 +4,13 @@ image:
   tag: "0.2.0" 
 
 env:
-  RABBITMQ_CLIENTNAME: dc-smarttaxi-merano
+  MQ_CLIENT: dc-smarttaxi-merano
   PROVIDER: smarttaxi/merano
 
   CRON: "0 */1 * * * *"
   HTTP_URL: https://appclient.smarttaxi.it/terzeparti/elencotassisti/ThrPartMrn2024/91/
 
 envSecretRef:
-  - name: RABBITMQ_URI
+  - name: MQ_URI
     secret: rabbitmq-svcbind
     key: uri
