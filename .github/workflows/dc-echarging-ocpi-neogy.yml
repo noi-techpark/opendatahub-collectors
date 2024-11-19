@@ -93,15 +93,6 @@ jobs:
             repository:  ${{ env.DOCKER_IMAGE }}
             tag:  ${{ env.DOCKER_TAG }}
             pullPolicy: "IfNotPresent"
-          tls:
-            - hosts:
-              - neogy.ocpi.io.opendatahub.com
-              secretName: tls-ocpi-neogy
-          hosts:
-            - host: neogy.ocpi.io.opendatahub.com
-              paths: 
-                - path: "/"
-                  pathType: Prefix
           env:
             LOG_LEVEL: "INFO"
           envSecret:
@@ -112,6 +103,23 @@ jobs:
 
           # Merge yaml files https://mikefarah.gitbook.io/yq/operators/multiply-merge
           yq -i '. *= load("override.yml")' ${{env.VALUES_YAML}}
+
+      - name: Write environment-specific Helm values (hosts)
+        run: |
+          cat <<EOF > override.yml
+          ingress:
+            tls:
+              - hosts:
+                - neogy.ocpi.io.opendatahub.com
+                secretName: tls-ocpi-neogy
+            hosts:
+              - host: neogy.ocpi.io.opendatahub.com
+                paths: 
+                  - path: "/"
+                    pathType: Prefix
+            EOF
+          # Different from above, we only do a shallow merge, so that original hosts are replaced, not appended
+          yq -i '. += load("override.yml")' ${{env.VALUES_YAML}}
 
       - name: Deploy on cluster  
         uses: noi-techpark/github-actions/helm-deploy@v2
