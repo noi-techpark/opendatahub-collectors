@@ -11,9 +11,9 @@ import (
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-bdp-client/bdplib"
-	"github.com/noi-techpark/go-odh-ingest/dto"
-	"github.com/noi-techpark/go-odh-ingest/ms"
-	"github.com/noi-techpark/go-odh-ingest/tr"
+	"github.com/noi-techpark/go-opendatahub-ingest/dto"
+	"github.com/noi-techpark/go-opendatahub-ingest/ms"
+	"github.com/noi-techpark/go-opendatahub-ingest/tr"
 	"github.com/relvacode/iso8601"
 	"golang.org/x/exp/maps"
 )
