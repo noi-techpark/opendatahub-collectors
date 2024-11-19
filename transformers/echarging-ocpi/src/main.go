@@ -79,7 +79,7 @@ var locDataMu = sync.Mutex{}
 
 func main() {
 	envconfig.MustProcess("", &cfg)
-	ms.InitLog(cfg.LOGLEVEL)
+	ms.InitLog(cfg.LOG_LEVEL)
 
 	b := bdplib.FromEnv()
 	setupNinja()
