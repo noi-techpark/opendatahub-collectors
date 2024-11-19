@@ -12,10 +12,10 @@ github.com/montanaflynn/stats v0.7.1 h1:etflOAAHORrCC44V+aR6Ftzort912ZU+YLiSTuV8
 github.com/montanaflynn/stats v0.7.1/go.mod h1:etXPPgVO6n31NxCd9KQUMvCM+ve0ruNzt6R8Bnaayow=
 github.com/noi-techpark/go-bdp-client v1.0.0 h1:mXRGzGehKaFVLl7gKhbXQyzL7SkvFRgGJs265mVxO5o=
 github.com/noi-techpark/go-bdp-client v1.0.0/go.mod h1:aooKwED49M7Au+9Y/o8wW/4yggIvaVRHc0JJvPnS10c=
-github.com/noi-techpark/go-odh-ingest v0.0.0-20241118150519-e059257d6fbb h1:Y/FbZ2DwpbE4va6xyA87CuTCG1sumT1TfwVbX9Ll9uI=
-github.com/noi-techpark/go-odh-ingest v0.0.0-20241118150519-e059257d6fbb/go.mod h1:xLK95jcd59jN70ld9ROLOd+GL5eB32OX8KAHSvxKSFw=
-github.com/noi-techpark/go-odh-ingest v0.0.0-20241118150711-064a68bb7637 h1:ySjsTPQEBGFwHeZoUpV5/Va0mX0+t8+8SLzn4wIGANU=
-github.com/noi-techpark/go-odh-ingest v0.0.0-20241118150711-064a68bb7637/go.mod h1:sXfAQqXO2vzJwO/E41V6iReVpD9Uy+NNdZm9Md71n/8=
+github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20241118150519-e059257d6fbb h1:Y/FbZ2DwpbE4va6xyA87CuTCG1sumT1TfwVbX9Ll9uI=
+github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20241118150519-e059257d6fbb/go.mod h1:xLK95jcd59jN70ld9ROLOd+GL5eB32OX8KAHSvxKSFw=
+github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20241118150711-064a68bb7637 h1:ySjsTPQEBGFwHeZoUpV5/Va0mX0+t8+8SLzn4wIGANU=
+github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20241118150711-064a68bb7637/go.mod h1:sXfAQqXO2vzJwO/E41V6iReVpD9Uy+NNdZm9Md71n/8=
 github.com/noi-techpark/go-timeseries-client v0.0.0-20241031132739-c45d758598b3 h1:991izyA4IYAgOMZzBKc917V9m138vo6ZnkSNcxjzneA=
 github.com/noi-techpark/go-timeseries-client v0.0.0-20241031132739-c45d758598b3/go.mod h1:HzbXTeKGUegflWeRfgwfQFduX7P7YrZydBfVzeW0D4s=
 github.com/rabbitmq/amqp091-go v1.10.0 h1:STpn5XsHlHGcecLmMFCtg7mqq0RnD+zFr4uzukfVhBw=

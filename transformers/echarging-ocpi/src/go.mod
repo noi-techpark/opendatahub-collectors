@@ -24,5 +24,5 @@ require (
 
 require (
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/noi-techpark/go-odh-ingest v0.0.0-20241118150711-064a68bb7637
+	github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20241118150711-064a68bb7637
 )

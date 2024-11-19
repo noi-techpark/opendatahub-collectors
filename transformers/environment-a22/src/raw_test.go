@@ -9,7 +9,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/noi-techpark/go-odh-ingest/dto"
+	"github.com/noi-techpark/go-opendatahub-ingest/dto"
 	"gotest.tools/v3/assert"
 )
 
