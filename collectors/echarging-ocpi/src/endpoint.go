@@ -12,13 +12,15 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/noi-techpark/go-opendatahub-ingest/dto"
+	"github.com/noi-techpark/go-opendatahub-ingest/mq"
 )
 
 func health(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
-func handlePush(rabbit RabbitC, provider string) gin.HandlerFunc {
+func handlePush(rabbit mq.R, provider string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var body map[string]any
 		if err := c.BindJSON(&body); err != nil {
@@ -34,7 +36,7 @@ func handlePush(rabbit RabbitC, provider string) gin.HandlerFunc {
 
 		slog.Debug("Received message", "params", params, "body", body, "path", c.FullPath())
 
-		err := rabbit.Publish(mqMsg{
+		err := rabbit.Publish(dto.RawAny{
 			Provider:  provider,
 			Timestamp: time.Now(),
 			Rawdata: map[string]any{
@@ -42,7 +44,7 @@ func handlePush(rabbit RabbitC, provider string) gin.HandlerFunc {
 				"body":   body,
 				// TODO: once more than one endpoint are implemented, send some details about which endpoint this belongs to. or put it into the routing key
 			},
-		}, cfg.RABBITMQ_EXCHANGE)
+		}, cfg.MQ_EXCHANGE)
 
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, fmt.Errorf("cannot publish to rabbitmq: %w", err))

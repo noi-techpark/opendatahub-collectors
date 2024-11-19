@@ -11,9 +11,12 @@ import (
 	"log/slog"
 	"net/http"
 	"time"
+
+	"github.com/noi-techpark/go-opendatahub-ingest/dto"
+	"github.com/noi-techpark/go-opendatahub-ingest/mq"
 )
 
-func getAllLocations(rabbit RabbitC, provider string) error {
+func getAllLocations(rabbit mq.R, provider string) error {
 	slog.Debug("Pulling all locations")
 	url := cfg.PULL_LOCATIONS_ENDPOINT
 	for url != "" {
@@ -24,11 +27,11 @@ func getAllLocations(rabbit RabbitC, provider string) error {
 			return err
 		}
 
-		err = rabbit.Publish(mqMsg{
+		err = rabbit.Publish(dto.RawAny{
 			Provider:  provider,
 			Timestamp: time.Now(),
 			Rawdata:   locations,
-		}, cfg.RABBITMQ_EXCHANGE)
+		}, cfg.MQ_EXCHANGE)
 		if err != nil {
 			slog.Error("error getting locations")
 			return err
