@@ -4,7 +4,7 @@ image:
   tag: "0.2.0" # Set this when upgrading chart with --set-value
 
 env:
-  RABBITMQ_CLIENTNAME: dc-echarging-driwe
+  MQ_CLIENT: dc-echarging-driwe
   PROVIDER: echarging/driwe
 
   CRON: "0 */5 * * * *"
@@ -14,7 +14,7 @@ envSecret:
   HTTP_URL: https://www.driwe.club/api/stations/metadata?auth-token=******
 
 envSecretRef:
-  - name: RABBITMQ_URI
+  - name: MQ_URI
     secret: rabbitmq-svcbind
     key: uri
 
