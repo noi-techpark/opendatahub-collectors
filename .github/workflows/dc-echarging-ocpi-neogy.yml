@@ -104,8 +104,6 @@ jobs:
           # Merge yaml files https://mikefarah.gitbook.io/yq/operators/multiply-merge
           yq -i '. *= load("override.yml")' ${{env.VALUES_YAML}}
 
-      - name: Write environment-specific Helm values (hosts)
-        run: |
           cat <<EOF > override.yml
           ingress:
             tls:
@@ -117,7 +115,8 @@ jobs:
                 paths: 
                   - path: "/"
                     pathType: Prefix
-            EOF
+          EOF
+
           # Different from above, we only do a shallow merge, so that original hosts are replaced, not appended
           yq -i '. += load("override.yml")' ${{env.VALUES_YAML}}
 
