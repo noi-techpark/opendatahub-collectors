@@ -6,6 +6,7 @@ on:
       - "collectors/google-spreadsheet/**"
       - "collectors/lib/ingress-mq/**"
       - ".github/workflows/dc-google-spreadsheet-build.yml"
+      - ".github/workflows/dc-google-spreadsheet-deploy.yml"
       - ".github/workflows/dc-google-spreadsheet-creative-industries.yml"
       - "!collectors/google-spreadsheet/infrastructure/helm/*.yaml"
       - "collectors/google-spreadsheet/infrastructure/helm/creative-industries.yaml"
