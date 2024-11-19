@@ -3,11 +3,11 @@
 # SPDX-License-Identifier: CC0-1.0
 
 @host = http://localhost:8082/trigger
-@host=https://spreadsheets.opendatahub.com
+@host=https://google.spreadsheets.io.opendatahub.com
 @path=/centro-trevi
 @trigger = {{host}}{{path}}/trigger
 # The token is generated on application start, you can find it in the log
-@token = caeb6c2e-8220-41f2-b9a0-b716fd840188
+@token = 2e80718d-e053-4ac6-b947-719148b04557
 
 POST {{trigger}}
 X-Goog-Channel-Token: {{token}}
