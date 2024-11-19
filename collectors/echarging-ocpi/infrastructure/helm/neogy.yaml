@@ -40,6 +40,7 @@ env:
   RABBITMQ_EXCHANGE: ingress
   PROVIDER: echarging-ocpi/neogy
   PULL_LOCATIONS_CRON: "0 0,4,8,12,16 * * *"
+  RABBITMQ_CLIENT: dc-echarging-ocpi-driwe
 
 envSecret:
   # List of valid tokens, no spaces etc.

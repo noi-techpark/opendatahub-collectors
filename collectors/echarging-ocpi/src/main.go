@@ -5,43 +5,33 @@ package main
 
 import (
 	"log/slog"
-	"os"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/kelseyhightower/envconfig"
+	"github.com/noi-techpark/go-opendatahub-ingest/dc"
+	"github.com/noi-techpark/go-opendatahub-ingest/mq"
+	"github.com/noi-techpark/go-opendatahub-ingest/ms"
 	"github.com/rabbitmq/amqp091-go"
 	"github.com/robfig/cron/v3"
 	sloggin "github.com/samber/slog-gin"
 )
 
 var cfg struct {
-	RABBITMQ_URI      string
-	RABBITMQ_EXCHANGE string
+	dc.Env
 
 	PULL_TOKEN              string
 	PULL_LOCATIONS_ENDPOINT string
 	PULL_LOCATIONS_CRON     string
 
 	OCPI_TOKENS []string
-
-	PROVIDER string
-	LOGLEVEL string `default:"INFO"`
 }
 
 const ver string = "2.2"
 
-func initLogger() {
-	level := &slog.LevelVar{}
-	level.UnmarshalText([]byte(cfg.LOGLEVEL))
-	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-		Level: level,
-	})))
-}
-
 func main() {
 	envconfig.MustProcess("", &cfg)
-	initLogger()
+	ms.InitLog(cfg.LOG_LEVEL)
 
 	mq := connectMq()
 	defer mq.Close()
@@ -55,20 +45,20 @@ func main() {
 	select {}
 }
 
-func connectMq() RabbitC {
-	rabbit, err := RabbitConnect(cfg.RABBITMQ_URI)
+func connectMq() mq.R {
+	rabbit, err := mq.Connect(cfg.MQ_URI, cfg.MQ_CLIENT)
 	if err != nil {
 		slog.Error("cannot open rabbitmq connection. aborting")
 		panic(err)
 	}
-	rabbit.OnClose(func(err amqp091.Error) {
+	rabbit.OnClose(func(err *amqp091.Error) {
 		slog.Error("rabbit connection closed unexpectedly", "err", err)
 		panic(err)
 	})
 	return rabbit
 }
 
-func startCron(rabbit RabbitC) {
+func startCron(rabbit mq.R) {
 	c := cron.New()
 
 	// Poll locations endpoint to get all charging stations and their plugs
@@ -82,7 +72,7 @@ func startCron(rabbit RabbitC) {
 	c.Start()
 }
 
-func startEndpoint(rabbit RabbitC) {
+func startEndpoint(rabbit mq.R) {
 	r := gin.New()
 	r.Use(gin.Recovery())
 	r.Use(cors.Default())
