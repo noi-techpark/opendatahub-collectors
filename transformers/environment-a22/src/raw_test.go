@@ -9,13 +9,14 @@ import (
 	"os"
 	"testing"
 
+	"github.com/noi-techpark/go-odh-ingest/dto"
 	"gotest.tools/v3/assert"
 )
 
 func TestRawUnmarshal(t *testing.T) {
 	f, err := os.ReadFile("../test/raw_example.json")
 	assert.NilError(t, err)
-	raw := raw{}
+	raw := dto.Raw[payload]{}
 	err = json.Unmarshal(f, &raw)
 	assert.NilError(t, err)
 }

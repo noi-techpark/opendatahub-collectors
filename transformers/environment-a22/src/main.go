@@ -7,57 +7,42 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log/slog"
-	"os"
 	"strconv"
 
+	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-bdp-client/bdplib"
+	"github.com/noi-techpark/go-odh-ingest/dto"
+	"github.com/noi-techpark/go-odh-ingest/ms"
+	"github.com/noi-techpark/go-odh-ingest/tr"
 	"github.com/relvacode/iso8601"
 	"golang.org/x/exp/maps"
 )
 
-func initLogging() {
-	logLevel := os.Getenv("LOG_LEVEL")
-
-	level := new(slog.LevelVar)
-	level.UnmarshalText([]byte(logLevel))
-
-	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-		Level: level,
-	})))
-
-	slog.Info("Start logger with level: " + logLevel)
-}
-
-func failOnError(err error, msg string) {
-	if err != nil {
-		slog.Error(msg, "err", err)
-		panic(err)
-	}
-}
-
 const period = 60
 const stationtype = "EnvironmentStation"
 
+var env tr.Env
+
 func main() {
-	initLogging()
+	envconfig.MustProcess("", &env)
+	ms.InitLog(env.LOG_LEVEL)
 
 	b := bdplib.FromEnv()
 
 	dtmap := readDataTypes("datatypes.csv")
-	failOnError(b.SyncDataTypes("", maps.Values(dtmap)), "error pushing datatypes")
+	ms.FailOnError(b.SyncDataTypes("", maps.Values(dtmap)), "error pushing datatypes")
 
 	scfg, err := readStationCSV("stations.csv")
-	failOnError(err, "error loading station csv")
+	ms.FailOnError(err, "error loading station csv")
 	stations, err := compileHistory(scfg)
-	failOnError(err, "error compiling station history")
+	ms.FailOnError(err, "error compiling station history")
 	bdpStations := []bdplib.Station{}
 	for _, s := range stations {
 		bdpStations = append(bdpStations, map2Bdp(s, b.Origin))
 	}
-	failOnError(b.SyncStations(stationtype, bdpStations, true, false), "error syncing stations")
+	ms.FailOnError(b.SyncStations(stationtype, bdpStations, true, false), "error syncing stations")
 
-	listen(func(r *raw) error {
+	tr.ListenFromEnv(env, func(r *dto.Raw[payload]) error {
 		payload := mqttPayload{}
 		if err := json.Unmarshal([]byte(r.Rawdata.Payload), &payload); err != nil {
 			return err
