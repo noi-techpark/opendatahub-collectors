@@ -16,8 +16,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/kelseyhightower/envconfig"
+	"github.com/noi-techpark/go-opendatahub-ingest/dc"
+	"github.com/noi-techpark/go-opendatahub-ingest/dto"
+	"github.com/noi-techpark/go-opendatahub-ingest/ms"
 	"github.com/robfig/cron/v3"
-	"opendatahub.com/rest-poller/dc"
 )
 
 var env struct {
@@ -81,7 +84,7 @@ func httpRequest(url *url.URL, httpHeaders http.Header, httpMethod string) []byt
 	headers := httpHeaders
 	u := url
 	req, err := http.NewRequest(httpMethod, u.String(), http.NoBody)
-	dc.FailOnError(err, "could not create http request")
+	ms.FailOnError(err, "could not create http request")
 
 	req.Header = headers
 
@@ -107,16 +110,17 @@ func httpRequest(url *url.URL, httpHeaders http.Header, httpMethod string) []byt
 
 func main() {
 	slog.Info("Starting data collector...")
-	dc.LoadEnv(&env)
-	dc.InitLog(env.LogLevel)
+	envconfig.MustProcess("", &env)
+	ms.InitLog(env.LOG_LEVEL)
 
 	headers := customHeaders()
 	u, err := url.Parse(env.HTTP_URL)
-	dc.FailOnError(err, "failed parsing poll URL")
+	ms.FailOnError(err, "failed parsing poll URL")
 
 	httpMethod := env.HTTP_METHOD
 
-	mq := dc.PubFromEnv(env.Env)
+	mq, err := dc.PubFromEnv(env.Env)
+	ms.FailOnError(err, "failed creating mq publisher")
 
 	c := cron.New(cron.WithSeconds())
 	c.AddFunc(env.CRON, func() {
@@ -138,7 +142,7 @@ func main() {
 		for _, parking := range parkingMetaDataSlice {
 			url2 := fmt.Sprintf("https://parking.valgardena.it/get_station_data?id=%s", parking.ID)
 			u2, err := url.Parse(url2)
-			dc.FailOnError(err, "failed parsing poll URL")
+			ms.FailOnError(err, "failed parsing poll URL")
 			body = httpRequest(u2, headers, httpMethod)
 			if err := json.Unmarshal(body, &parkingDataSingle); err != nil {
 				log.Fatalf("failed: %v", err)
@@ -152,10 +156,10 @@ func main() {
 				raw = string(body)
 			}
 
-			fmt.Println(body)
+			fmt.Println(raw)
 
-			mq <- dc.MqMsg{
-				Provider:  env.Env.Provider,
+			mq <- dto.RawAny{
+				Provider:  env.PROVIDER,
 				Timestamp: time.Now(),
 				Rawdata:   raw,
 			}
