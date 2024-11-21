@@ -14,6 +14,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o main
 FROM alpine:latest as build
 WORKDIR /app
 COPY --from=build-env /app/main .
+COPY --from=build-env /app/stations.csv .
 ENTRYPOINT [ "./main"]
 
 # LOCAL DEVELOPMENT

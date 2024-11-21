@@ -1,32 +1,32 @@
-DevEUI,Id,Group,Longitude,Latitude,Description
-001bc506701005c2,C-S1,area viale Druso,11.33998888888889,46.494825,Piazza Adriano 1
-001bc50670100539,C-S2,area viale Druso,11.340041666666668,46.4948111,Piazza Adriano 2
-001bc50670100594,C-S3,area viale Druso,11.342111111111112,46.4946972,incrocio viale Druso - via Vicenza 1
-001bc506701005e0,C-S4,area viale Druso,11.342219444444446,46.4946861,incrocio viale Druso - via Vicenza 2
-001bc506701005cd,C-S6,area viale Druso,11.343347222222222,46.4942917,incrocio via Firenze - viale Druso
-001bc506701005fb,C-S7,area viale Druso,11.34365,46.4945944,incrocio viale Druso - via Firenze
-001bc506701005ae,C-S8,area viale Druso,11.344633333333334,46.4946028,viale Druso caserma carabinieri
-001bc506701005d5,C-S9,area viale Druso,11.345608333333335,46.4950611,incrocio viale Venezia - viale Druso
-001bc50670100544,C-S10,area viale Druso,11.347066666666667,46.4950028,piazzetta Mazzoni 1
-001bc50670100533,C-S11,area viale Druso,11.347075,46.4949806,piazzetta Mazzoni 2
-001bc50670100603,C-S5,area viale Druso,11.341866666666668,46.4943528,"incrocio via Vicenza - viale Druso"
-001bc50670100557,C-S12,area viale Druso,11.347069444444445,46.495025,piazzetta Mazzoni 3
-001bc5067010064d,C-S12,area viale Druso,11.347055555555556,46.4950556,piazzetta Mazzoni 4
-001bc50670100556,C-S5,area viale Druso,11.34186388888889,46.4943056,"incrocio via Vicenza - viale Druso 2"
-001bc50670100519,815,"Via Holfer, 18",11.358288888888888,46.5010222,"Via Holfer, 18"
-001bc506701005ce,816,"Via Holfer, 18",11.358347222222221,46.5010056,"Via Holfer, 18"
-001bc50670100518,817,"Leonardo da vinci, 17",11.34955277777778,46.4989722,"Leonardo da vinci, 17"
-001bc50670100507,818,"Leonardo da vinci, 17",11.349494444444446,46.4989778,"Leonardo da vinci, 17"
-001bc50670100541,819,Via A. Rosmini 22-26,11.348030555555557,46.4982917,Via A. Rosmini 22-26
-001bc5067011297c,901,Viale Druso 237,11.328697222222223,46.4950333,Viale Druso 237
-001bc50670112976,902,Viale Druso 237,11.328702777777778,46.495,Viale Druso 237
-001bc50670112b22,903,Viale Druso 237,11.328691666666666,46.4949694,Viale Druso 237
-001bc50670112901,904,Via Amalfi,11.332463888888888,46.4953389,Via Amalfi angolo Via Druso
-001bc50670112a6b,905,Via Amalfi,11.332472222222222,46.4952833,Via Amalfi angolo Via Druso
-001bc50670112a10,906,Viale Druso 91,11.33575,46.495225,Viale Druso 91
-001bc5067011298b,907,Viale Druso 91,11.335816666666668,46.495225,Viale Druso 92
-001bc506701128e3,908,Via A. Rosmini 22-26,11.348041666666667,46.4982306,Via A. Rosmini 22-26
-001bc50670112ad2,909,Via Michael Gaismar,11.335780555555557,46.4957972,Via Michael Gaismar
-001bc50670112b84,910,Via Michael Gaismar,11.335780555555557,46.4957389,Via Michael Gaismar
-001bc506701128af,911,Via Cavour 1,11.357391666666667,46.5019972,Via Cavour 1
-001bc50670112b3c,912,Via Cavour 1,11.357322222222221,46.5020222,Via Cavour 1
+Stationcode,Id2,Group,Longitude,Latitude,Description,Municipality
+001bc506701005c2,C-S1,area viale Druso,11.33998888888889,46.494825,Piazza Adriano 1,Bolzano - Bozen
+001bc50670100539,C-S2,area viale Druso,11.340041666666668,46.4948111,Piazza Adriano 2,Bolzano - Bozen
+001bc50670100594,C-S3,area viale Druso,11.342111111111112,46.4946972,incrocio viale Druso - via Vicenza 1,Bolzano - Bozen
+001bc506701005e0,C-S4,area viale Druso,11.342219444444446,46.4946861,incrocio viale Druso - via Vicenza 2,Bolzano - Bozen
+001bc506701005cd,C-S6,area viale Druso,11.343347222222222,46.4942917,incrocio via Firenze - viale Druso,Bolzano - Bozen
+001bc506701005fb,C-S7,area viale Druso,11.34365,46.4945944,incrocio viale Druso - via Firenze,Bolzano - Bozen
+001bc506701005ae,C-S8,area viale Druso,11.344633333333334,46.4946028,viale Druso caserma carabinieri,Bolzano - Bozen
+001bc506701005d5,C-S9,area viale Druso,11.345608333333335,46.4950611,incrocio viale Venezia - viale Druso,Bolzano - Bozen
+001bc50670100544,C-S10,area viale Druso,11.347066666666667,46.4950028,piazzetta Mazzoni 1,Bolzano - Bozen
+001bc50670100533,C-S11,area viale Druso,11.347075,46.4949806,piazzetta Mazzoni 2,Bolzano - Bozen
+001bc50670100603,C-S5,area viale Druso,11.341866666666668,46.4943528,incrocio via Vicenza - viale Druso,Bolzano - Bozen
+001bc50670100557,C-S12,area viale Druso,11.347069444444445,46.495025,piazzetta Mazzoni 3,Bolzano - Bozen
+001bc5067010064d,C-S12,area viale Druso,11.347055555555556,46.4950556,piazzetta Mazzoni 4,Bolzano - Bozen
+001bc50670100556,C-S5,area viale Druso,11.34186388888889,46.4943056,incrocio via Vicenza - viale Druso 2,Bolzano - Bozen
+001bc50670100519,815,"Via Holfer, 18",11.358288888888888,46.5010222,"Via Holfer, 18",Bolzano - Bozen
+001bc506701005ce,816,"Via Holfer, 18",11.358347222222221,46.5010056,"Via Holfer, 18",Bolzano - Bozen
+001bc50670100518,817,"Leonardo da vinci, 17",11.34955277777778,46.4989722,"Leonardo da vinci, 17",Bolzano - Bozen
+001bc50670100507,818,"Leonardo da vinci, 17",11.349494444444446,46.4989778,"Leonardo da vinci, 17",Bolzano - Bozen
+001bc50670100541,819,Via A. Rosmini 22-26,11.348030555555557,46.4982917,Via A. Rosmini 22-26,Bolzano - Bozen
+001bc5067011297c,901,Viale Druso 237,11.328697222222223,46.4950333,Viale Druso 237,Bolzano - Bozen
+001bc50670112976,902,Viale Druso 237,11.328702777777778,46.495,Viale Druso 237,Bolzano - Bozen
+001bc50670112b22,903,Viale Druso 237,11.328691666666666,46.4949694,Viale Druso 237,Bolzano - Bozen
+001bc50670112901,904,Via Amalfi,11.332463888888888,46.4953389,Via Amalfi angolo Via Druso,Bolzano - Bozen
+001bc50670112a6b,905,Via Amalfi,11.332472222222222,46.4952833,Via Amalfi angolo Via Druso,Bolzano - Bozen
+001bc50670112a10,906,Viale Druso 91,11.33575,46.495225,Viale Druso 91,Bolzano - Bozen
+001bc5067011298b,907,Viale Druso 91,11.335816666666668,46.495225,Viale Druso 92,Bolzano - Bozen
+001bc506701128e3,908,Via A. Rosmini 22-26,11.348041666666667,46.4982306,Via A. Rosmini 22-26,Bolzano - Bozen
+001bc50670112ad2,909,Via Michael Gaismar,11.335780555555557,46.4957972,Via Michael Gaismar,Bolzano - Bozen
+001bc50670112b84,910,Via Michael Gaismar,11.335780555555557,46.4957389,Via Michael Gaismar,Bolzano - Bozen
+001bc506701128af,911,Via Cavour 1,11.357391666666667,46.5019972,Via Cavour 1,Bolzano - Bozen
+001bc50670112b3c,912,Via Cavour 1,11.357322222222221,46.5020222,Via Cavour 1,Bolzano - Bozen
