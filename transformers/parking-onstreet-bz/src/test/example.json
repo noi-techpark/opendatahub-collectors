@@ -1,0 +1,115 @@
+{
+    "deduplicationId": "99e9bafa-e0a7-4907-ad4b-f055cb843bf3",
+    "time": "2024-11-13T13:59:23.407020+00:00",
+    "deviceInfo": {
+        "tenantId": "b74ae308-29c2-40c2-8036-46e422b7da4d",
+        "tenantName": "Comune di Bolzano",
+        "applicationId": "6f599389-c6b0-4a76-843d-8d493192c4c0",
+        "applicationName": "parking",
+        "deviceProfileId": "d3c3cb95-d41d-4af1-8ec0-56fe8005d24c",
+        "deviceProfileName": "Intercom-RSPS-WSM-SREVH-R56",
+        "deviceName": "815",
+        "devEui": "001bc50670100519",
+        "deviceClassEnabled": "CLASS_A",
+        "tags": {}
+    },
+    "devAddr": "01c6fbe6",
+    "adr": true,
+    "dr": 0,
+    "fCnt": 18,
+    "fPort": 1,
+    "confirmed": true,
+    "data": "gAAAAy8S9AABZm8jSQE6AAARzAAi3BsA2CE=",
+    "rxInfo": [
+        {
+            "gatewayId": "00800000a0005ca9",
+            "uplinkId": 4207971581,
+            "gwTime": "2024-11-13T13:59:23.407020+00:00",
+            "nsTime": "2024-11-13T13:59:23.463122268+00:00",
+            "timeSinceGpsEpoch": "1415541581.407020s",
+            "rssi": -97,
+            "snr": 3.75,
+            "location": {
+                "latitude": 46.49902,
+                "longitude": 11.35597,
+                "altitude": 294.0
+            },
+            "context": "AAAAAAAAAAAAAgAOL3CcpA==",
+            "metadata": {
+                "region_config_id": "eu868",
+                "region_common_name": "EU868"
+            },
+            "crcStatus": "CRC_OK"
+        },
+        {
+            "gatewayId": "00800000a0007015",
+            "uplinkId": 2635900006,
+            "gwTime": "2024-11-13T13:59:23.407026+00:00",
+            "nsTime": "2024-11-13T13:59:23.459245894+00:00",
+            "timeSinceGpsEpoch": "1415541581.407026s",
+            "rssi": -115,
+            "snr": -12.0,
+            "location": {
+                "latitude": 46.50968,
+                "longitude": 11.34755,
+                "altitude": 307.0
+            },
+            "context": "AAAAAAAAAAAALwA527x5zA==",
+            "metadata": {
+                "region_config_id": "eu868",
+                "region_common_name": "EU868"
+            },
+            "crcStatus": "CRC_OK"
+        },
+        {
+            "gatewayId": "00800000a0007014",
+            "uplinkId": 2109035083,
+            "gwTime": "2024-11-13T13:59:23.407037+00:00",
+            "nsTime": "2024-11-13T13:59:23.444080159+00:00",
+            "timeSinceGpsEpoch": "1415541581.407037s",
+            "rssi": -114,
+            "snr": -14.5,
+            "location": {
+                "latitude": 46.49294,
+                "longitude": 11.35965,
+                "altitude": 278.0
+            },
+            "context": "AAAAAAAAAAAAnwEDs8ByhA==",
+            "metadata": {
+                "region_common_name": "EU868",
+                "region_config_id": "eu868"
+            },
+            "crcStatus": "CRC_OK"
+        },
+        {
+            "gatewayId": "00800000a0007013",
+            "uplinkId": 3986261775,
+            "gwTime": "2024-11-13T13:59:23.407029+00:00",
+            "nsTime": "2024-11-13T13:59:23.524889093+00:00",
+            "timeSinceGpsEpoch": "1415541581.407029s",
+            "rssi": -116,
+            "snr": -9.5,
+            "location": {
+                "latitude": 46.49858,
+                "longitude": 11.37291,
+                "altitude": 313.0
+            },
+            "context": "AAAAAAAAAAAARAA1Z6ZCvA==",
+            "metadata": {
+                "region_config_id": "eu868",
+                "region_common_name": "EU868"
+            },
+            "crcStatus": "CRC_OK"
+        }
+    ],
+    "txInfo": {
+        "frequency": 867300000,
+        "modulation": {
+            "lora": {
+                "bandwidth": 125000,
+                "spreadingFactor": 12,
+                "codeRate": "CR_4_5"
+            }
+        }
+    }
+}
