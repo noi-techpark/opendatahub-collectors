@@ -7,3 +7,5 @@ require (
 	github.com/rabbitmq/amqp091-go v1.10.0
 	github.com/robfig/cron/v3 v3.0.1
 )
+
+require github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20241121092514-13f81a2c1241 // indirect
