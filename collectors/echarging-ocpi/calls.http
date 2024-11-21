@@ -5,7 +5,7 @@ SPDX-License-Identifier: CC0-1.0
 -->
 
 # @host=http://localhost:{{$dotenv SERVER_PORT}}
-@host=https://ocpi-neogy.ex.dev.testingmachine.eu
+@host=https://neogy.ocpi.io.opendatahub.com
 
 ### EVSE status update
 PATCH {{host}}/ocpi/emsp/2.2/locations/IT/ABC/LOC1/EVSE1
