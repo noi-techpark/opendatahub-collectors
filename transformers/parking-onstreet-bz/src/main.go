@@ -139,6 +139,9 @@ func parseTime(s string) (time.Time, error) {
 func isMeasurePacket(b []byte) bool {
 	return b[0] == 0x80 && b[6] == 0xF4
 }
+func isKeepalivePacket(b []byte) bool {
+	return b[0] == 0x80 && b[6] == 0xF3
+}
 
 func decodeStatus(s string) (int, error) {
 	b, err := base64.StdEncoding.DecodeString(s)
@@ -150,6 +153,8 @@ func decodeStatus(s string) (int, error) {
 	// This is the actual 1 byte long status field. It's 1 when free, and 2 when busy
 	if isMeasurePacket(b) {
 		return int(b[13]), nil
+	} else if isKeepalivePacket(b) {
+		return int(b[8]), nil
 	} else {
 		return -1, nil
 	}
