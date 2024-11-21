@@ -8,4 +8,4 @@ require (
 	github.com/robfig/cron/v3 v3.0.1
 )
 
-require github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20241119065535-d68a9695ad44 // indirect
+require github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20241121092514-13f81a2c1241 // indirect
