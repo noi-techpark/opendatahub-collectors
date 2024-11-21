@@ -95,7 +95,7 @@ func main() {
 			occupied := 1
 			// 1 means it's free
 			if s == 1 {
-				occupied = 2
+				occupied = 0
 			}
 
 			m.AddRecord(p.DeviceInfo.DevEui, dtOccupied.Name, bdplib.CreateRecord(t.UnixMilli(), occupied, 1))
