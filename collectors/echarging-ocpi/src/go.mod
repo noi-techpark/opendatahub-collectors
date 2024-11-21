@@ -8,7 +8,7 @@ require (
 	github.com/samber/slog-gin v1.13.6
 )
 
-require github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20241119065535-d68a9695ad44
+require github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20241121092514-13f81a2c1241
 
 require (
 	github.com/bytedance/sonic v1.12.4 // indirect
