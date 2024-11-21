@@ -43,7 +43,7 @@ func Test_exampleJson(t *testing.T) {
 	_, err = parseTime(p.Time)
 	assert.NilError(t, err, "wrong time format: %s", p.Time)
 
-	s, err := decodeBinary(p.Data)
+	s, err := decodeStatus(p.Data)
 	assert.NilError(t, err, "error decoding binary data: %s", p.Data)
 
 	assert.Equal(t, s, 1)
