@@ -7,7 +7,6 @@ package main
 import (
 	"fmt"
 	"log/slog"
-	"os"
 	"strconv"
 	"sync"
 
@@ -37,8 +36,8 @@ var dtPlugStatus = bdplib.DataType{
 }
 
 func syncDataTypes(b *bdplib.Bdp) {
-	failOnError(b.SyncDataTypes(stationTypeLocation, []bdplib.DataType{dtNumberAvailable}), "could not sync data types. aborting...")
-	failOnError(b.SyncDataTypes(stationTypePlug, []bdplib.DataType{dtPlugStatus}), "could not sync data types. aborting...")
+	ms.FailOnError(b.SyncDataTypes(stationTypeLocation, []bdplib.DataType{dtNumberAvailable}), "could not sync data types. aborting...")
+	ms.FailOnError(b.SyncDataTypes(stationTypePlug, []bdplib.DataType{dtPlugStatus}), "could not sync data types. aborting...")
 }
 
 var cfg struct {
@@ -87,7 +86,7 @@ func main() {
 	syncDataTypes(b)
 
 	rabbit, err := mq.Connect(cfg.MQ_URI, cfg.MQ_CONSUMER)
-	failOnError(err, "failed connecting to rabbitmq")
+	ms.FailOnError(err, "failed connecting to rabbitmq")
 	defer rabbit.Close()
 
 	rabbit.OnClose(func(err *amqp091.Error) {
@@ -96,7 +95,7 @@ func main() {
 	})
 
 	pushMQ, err := rabbit.Consume(cfg.MQ_EXCHANGE, cfg.MQ_PUSH_QUEUE, cfg.MQ_PUSH_KEY)
-	failOnError(err, "failed creating push queue")
+	ms.FailOnError(err, "failed creating push queue")
 
 	// Handle push updates, coming via OCPI endpoint
 	go tr.HandleQueue(pushMQ, cfg.MONGO_URI, func(r *dto.Raw[EVSERaw]) error {
@@ -144,7 +143,7 @@ func main() {
 	})
 
 	pullMQ, err := rabbit.Consume(cfg.MQ_EXCHANGE, cfg.MQ_POLL_QUEUE, cfg.MQ_POLL_KEY)
-	failOnError(err, "failed creating poll queue")
+	ms.FailOnError(err, "failed creating poll queue")
 
 	// Handle full station details, coming a few times a day via REST poller
 	go tr.HandleQueue(pullMQ, cfg.MONGO_URI, func(r *dto.Raw[[]OCPILocations]) error {
@@ -231,24 +230,6 @@ func main() {
 	})
 
 	select {}
-}
-
-func initLogging(logLevel string) {
-	level := new(slog.LevelVar)
-	level.UnmarshalText([]byte(logLevel))
-
-	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-		Level: level,
-	})))
-
-	slog.Info("Start logger with level: " + logLevel)
-}
-
-func failOnError(err error, msg string) {
-	if err != nil {
-		slog.Error(msg, "err", err)
-		panic(err)
-	}
 }
 
 func stationId(id string, origin string) string {
