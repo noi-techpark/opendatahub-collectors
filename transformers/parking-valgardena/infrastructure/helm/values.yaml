@@ -10,18 +10,22 @@ imagePullSecrets:
 
 env:
   # ODH Core Writer Connection
-  BDP_BASE_URL: https://share.opendatahub.testingmachine.eu
-  BDP_PROVENANCE_NAME: 
+  LOG_LEVEL: "DEBUG"
+  MQ_QUEUE: parking-valgardena.data  
+  MQ_EXCHANGE: routed  
+  MQ_KEY: parking-valgardena.data 
+  MQ_CLIENT: parking-datacollector-valgardena-data-consumer 
+
+
+  MQ_META_QUEUE: parking-valgardena.metadata  
+  MQ_META_EXCHANGE: routed  
+  MQ_META_KEY: parking-valgardena.metadata 
+  MQ_META_CLIENT: parking-datacollector-valgardena-metadata-consumer 
+
+  BDP_BASE_URL: https: //share.opendatahub.testingmachine.eu
   BDP_PROVENANCE_VERSION: 
-  BDP_ORIGIN: Gardena.Net
-
-  LOG_LEVEL: INFO
-
-  # RabbitMQ Connection
-  MQ_LISTEN_QUEUE: parking.valgardena-metadata  
-  MQ_LISTEN_EXCHANGE: routed  
-  MQ_LISTEN_KEY: parking-valgardena.metadata 
-  MQ_LISTEN_CONSUMER: parking-datacollector-valgardena-metadata-consumer  
+  BDP_PROVENANCE_NAME: 
+  BDP_ORIGIN: GARDENA
 
 envSecretRef:
   - name: MQ_URI 
