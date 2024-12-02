@@ -22,7 +22,7 @@ env:
   MQ_META_KEY: parking-valgardena.metadata 
   MQ_META_CLIENT: parking-datacollector-valgardena-metadata-consumer 
 
-  BDP_BASE_URL: https: //share.opendatahub.testingmachine.eu
+  BDP_BASE_URL: https://share.opendatahub.testingmachine.eu
   BDP_PROVENANCE_VERSION: 
   BDP_PROVENANCE_NAME: 
   BDP_ORIGIN: GARDENA
