@@ -52,7 +52,8 @@ jobs:
             .image.pullPolicy="IfNotPresent" |
 
             .env.BDP_PROVENANCE_NAME="${{ env.PROJECT_NAME }}" |
-            .env.BDP_PROVENANCE_VERSION="${{ github.sha}}" 
+            .env.BDP_PROVENANCE_VERSION="${{ github.sha}}" |
+            .env.HTTP_HEADER_AUTHORIZATION = "Authorization: Basic ${{ secrets.HTTP_HEADER_AUTHORIZATION_VALGARDENA }}"
 
           ' ${{ env.VALUES_YAML }}
 
