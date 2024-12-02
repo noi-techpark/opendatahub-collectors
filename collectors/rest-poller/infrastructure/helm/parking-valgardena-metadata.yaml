@@ -7,7 +7,7 @@ env:
   MQ_CLIENT: dc-parking-valgardena-metadata
   PROVIDER: parking-valgardena/metadata
 
-  CRON: "* * */2 * * *"
+  CRON: "* */2 * * * *"
   HTTP_URL: "https://parking.valgardena.it/get_station_metadata"
   HTTP_HEADER_ACCEPT: "Accept: application/json"
   HTTP_HEADER_AUTHORIZATION: "Authorization: Basic bm9pOiVwIXh+RlNleV1Bc2p1"
