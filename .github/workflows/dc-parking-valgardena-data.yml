@@ -6,7 +6,7 @@ on:
       - "collectors/valgardena-parking-data/**"
       - "!collectors/valgardena-parking-data/infrastructure/helm/*"
       - "collectors/valgardena-parking-data/infrastructure/helm/values.yaml"
-      - ".github/workflows/dc-valgardena-parking-data.yml"
+      - ".github/workflows/dc-parking-valgardena-data.yml"
 
 env:
   WORKING_DIRECTORY: collectors/valgardena-parking-data
