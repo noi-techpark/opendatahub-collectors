@@ -1,0 +1,41 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-parking-valgardena-metadata
+  pullPolicy: IfNotPresent
+  tag: sometaghere
+
+imagePullSecrets:
+  - name: container-registry-r
+
+env:
+  # ODH Core Writer Connection
+  BDP_BASE_URL: https://share.opendatahub.testingmachine.eu
+  BDP_PROVENANCE_NAME: 
+  BDP_PROVENANCE_VERSION: 
+  BDP_ORIGIN: Gardena.Net
+
+  LOG_LEVEL: INFO
+
+  # RabbitMQ Connection
+  MQ_LISTEN_QUEUE: parking.valgardena-metadata  
+  MQ_LISTEN_EXCHANGE: routed  
+  MQ_LISTEN_KEY: parking-valgardena.metadata 
+  MQ_LISTEN_CONSUMER: parking-datacollector-valgardena-metadata-consumer  
+
+envSecretRef:
+  - name: MQ_URI 
+    secret: rabbitmq-svcbind
+    key: uri
+  - name: MONGO_URI
+    secret: mongodb-collector-svcbind
+    key: uri
+  - name: ODH_TOKEN_URL
+    secret: oauth-collector
+    key: tokenUri
+  - name: ODH_CLIENT_ID
+    secret: oauth-collector
+    key: clientId
+  - name: ODH_CLIENT_SECRET
+    secret: oauth-collector
+    key: clientSecret
