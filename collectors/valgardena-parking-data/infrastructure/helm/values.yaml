@@ -12,7 +12,7 @@ env:
   HTTP_HEADER_ACCEPT: "Accept: application/json"
 
 envSecret:
-  HTTP_HEADER_AUTHORIZATION:
+  HTTP_HEADER_AUTHORIZATION: ""
 
 envSecretRef:
   - name: MQ_URI
