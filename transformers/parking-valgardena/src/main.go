@@ -149,11 +149,3 @@ func unmarshalRawdata[T any](s string) (*T, error) {
 	}
 	return &p, nil
 }
-
-// if err := b.PushData(Vehicle, dm); err != nil {
-// 	slog.Error("Error pushing data to bdp", "err", err, "msg", msgBody)
-// 	msgReject(&msg)
-// }
-
-// failOnError(msg.Ack(false), "Could not ACK elaborated msg")
-// log.Fatal("Message channel closed!")
