@@ -19,7 +19,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    concurrency: dc-rest-poller-lorawan-build
+    concurrency: dc-lorawan-build
     steps:
     - name: Checkout source code
       uses: actions/checkout@v4
@@ -35,7 +35,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-22.04
-    concurrency: dc-rest-poller-lorawan-test
+    concurrency: dc-lorawan-test
     environment: test
     steps:
       - name: Checkout source code
