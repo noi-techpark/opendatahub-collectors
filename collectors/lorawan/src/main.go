@@ -32,28 +32,35 @@ var env struct {
 	HTTP_URL    string
 	HTTP_METHOD string `default:"GET"`
 
+	LORAWAN_PASSWORD string
+
 	PAGING_PARAM_TYPE  string // query, header, path...
 	PAGING_SIZE        int
 	PAGING_LIMIT_NAME  string
 	PAGING_OFFSET_NAME string
 }
 
-type ParkingMetadata struct {
-	ID        string `json:"id"`
-	NameDE    string `json:"name_DE"`
-	NameIT    string `json:"name_IT"`
-	Latitude  string `json:"latitude"`
-	Longitude string `json:"longitude"`
-	Capacity  int    `json:"capacity"`
+type SensorData struct {
+	ApplicationName string       `json:"application_name"`
+	Timestamp       string       `json:"time"`
+	DevEui          string       `json:"dev_eui"`
+	DeviceName      string       `json:"device_name"`
+	FPort           int          `json:"f_port"`
+	Value           ValueReading `json:"value"`
 }
 
-type ParkingData struct {
-	ID        string `json:"id"`
-	Timestamp string `json:"timestamp"`
-	Occupancy int    `json:"occupancy"`
+type ValueReading struct {
+	Battery     int `json:"battery"`
+	Temperature int `json:"temperature"`
+	Humidity    int `json:"hunidity"`
+	Co2         int `json:"co2"`
 }
 
 const ENV_HEADER_PREFIX = "HTTP_HEADER_"
+
+const URL = "http://saocompute.eurac.edu/sensordb/query?db=db_opendatahub&u=opendatahub&p=H84o0VpLqqnZ0Drm&q=select%%20*%%20from%%20device_frmpayload_data_message%%20WHERE%%20%%22device_name%%22%%3D%%27%s%%27%%20limit%%2010"
+
+var deviceNames = []string{"NOI-Brunico-Temperature", "FreeSoftwareLab-Temperature", "NOI-A1-Floor1-CO2"}
 
 func httpRequest(url *url.URL, httpHeaders http.Header, httpMethod string) []byte {
 
@@ -84,14 +91,34 @@ func httpRequest(url *url.URL, httpHeaders http.Header, httpMethod string) []byt
 
 }
 
+// function to build a slice of url starting from a slice of device names
+func buildLorawanUrls(devicenames []string, password string, url string) (urls []string) {
+
+	var urlsLorawanDevices []string
+
+	for _, device := range devicenames {
+
+		deviceurl := fmt.Sprintf(url, password, device)
+		urlsLorawanDevices = append(urlsLorawanDevices, deviceurl)
+	}
+
+	return urlsLorawanDevices
+
+}
+
 func main() {
 	slog.Info("Starting data collector...")
 	envconfig.MustProcess("", &env)
 	ms.InitLog(env.LOG_LEVEL)
 
 	headers := customHeaders()
-	u, err := url.Parse(env.HTTP_URL)
-	ms.FailOnError(err, "failed parsing poll URL")
+	urls := buildLorawanUrls(deviceNames, env.LORAWAN_PASSWORD, env.HTTP_URL)
+	var urlsSlice []*url.URL
+	for _, singleUrl := range urls {
+		u, err := url.Parse(singleUrl)
+		ms.FailOnError(err, "failed parsing poll URL")
+		urlsSlice = append(urlsSlice, u)
+	}
 
 	httpMethod := env.HTTP_METHOD
 
@@ -102,28 +129,12 @@ func main() {
 	c.AddFunc(env.CRON, func() {
 		slog.Info("Starting poll job")
 		jobstart := time.Now()
-
-		body := httpRequest(u, headers, httpMethod)
-
-		var parkingMetaDataSlice []ParkingMetadata
-
-
-		var parkingDataSingle ParkingData
-
-		if err := json.Unmarshal(body, &parkingMetaDataSlice); err != nil {
-			log.Fatalf("failed: %v", err)
-		}
-
-		for _, parking := range parkingMetaDataSlice {
-			url2 := fmt.Sprintf("https://parking.valgardena.it/get_station_data?id=%s", parking.ID)
-			u2, err := url.Parse(url2)
-			ms.FailOnError(err, "failed parsing poll URL")
-			body = httpRequest(u2, headers, httpMethod)
-			if err := json.Unmarshal(body, &parkingDataSingle); err != nil {
+		for _, singleHttp := range urlsSlice {
+			body := httpRequest(singleHttp, headers, httpMethod)
+			var newSensorData SensorData
+			if err := json.Unmarshal(body, &newSensorData); err != nil {
 				log.Fatalf("failed: %v", err)
 			}
-			//parkingDataSlice = append(parkingDataSlice, parkingDataSingle)
-
 			var raw any
 			if env.RAW_BINARY {
 				raw = body

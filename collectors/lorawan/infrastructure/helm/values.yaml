@@ -1,0 +1,20 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/rest-poller
+  pullPolicy: IfNotPresent
+  tag: "0.2.0" # Set this when upgrading chart with --set-value
+
+env:
+  MQ_CLIENTNAME: dc-lorawan
+  PROVIDER: lorawan/data
+
+  CRON: "0 */2 * * * *"
+  HTTP_URL: "http://saocompute.eurac.edu/sensordb/query?db=db_opendatahub&u=opendatahub&p=%s&q=select%%20*%%20from%%20device_frmpayload_data_message%%20WHERE%%20%%22device_name%%22%%3D%%27%s%%27%%20limit%%201"
+  HTTP_HEADER_ACCEPT: "Accept: application/json"
+
+envSecret:
+  HTTP_HEADER_AUTHORIZATION: ""
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
