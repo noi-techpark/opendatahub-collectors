@@ -12,7 +12,7 @@ env:
   HTTP_HEADER_ACCEPT: "Accept: application/json"
 
 envSecret:
-  HTTP_HEADER_AUTHORIZATION: ""
+  LORAWAN_PASSWORD: ""
 
 envSecretRef:
   - name: MQ_URI
