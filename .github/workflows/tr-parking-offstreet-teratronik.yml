@@ -14,10 +14,11 @@ env:
   DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/tr-parking-offstreet-teratronik
   DOCKER_TAG: ${{ github.sha }}
   KUBERNETES_NAMESPACE: collector
+  VALUES_YAML: infrastructure/helm/sta-marlengo.yaml
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     concurrency: tr-parking-offstreet-teratronik-build
     steps:
     - name: Checkout source code
@@ -37,8 +38,6 @@ jobs:
     runs-on: ubuntu-22.04
     concurrency: tr-parking-offstreet-teratronik-deploy-test
     environment: test
-    env:
-      VALUES_YAML: infrastructure/helm/values.yaml
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -63,46 +62,44 @@ jobs:
           k8s-namespace: collector
           chart-path: helm/generic-collector
           values-file: ${{ env.WORKING_DIRECTORY }}/${{ env.VALUES_YAML }}
-          aws-access-key-id: ${{ secrets.AWS_DEV_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_DEV_ACCESS_KEY_SECRET }}
+          aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
+          aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
           aws-eks-cluster-name: aws-main-eu-01
           aws-region: eu-west-1
 
-  # deploy-prod:
-  #   if: github.ref == 'refs/heads/prod'
-  #   needs: 
-  #     - build
-  #   runs-on: ubuntu-22.04
-  #   concurrency: tr-parking-offstreet-teratronik-deploy-prod
-  #   environment: prod
-  #   env:
-  #     VALUES_YAML: infrastructure/helm/values.yaml
-  #   steps:
-  #     - name: Checkout source code
-  #       uses: actions/checkout@v4
+  deploy-prod:
+    if: github.ref == 'refs/heads/prod'
+    needs: 
+      - build
+    runs-on: ubuntu-24.04
+    concurrency: tr-parking-offstreet-teratronik-deploy-prod
+    environment: prod
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
 
-  #     - name: Customize values.yaml
-  #       working-directory: ${{ env.WORKING_DIRECTORY }}
-  #       run: |
-  #         yq -i '
-  #           .image.repository="${{ env.DOCKER_IMAGE }}" |
-  #           .image.tag="${{ env.DOCKER_TAG }}" |
-  #           .image.pullPolicy="IfNotPresent" |
+      - name: Customize values.yaml
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          yq -i '
+            .image.repository="${{ env.DOCKER_IMAGE }}" |
+            .image.tag="${{ env.DOCKER_TAG }}" |
+            .image.pullPolicy="IfNotPresent" |
 
-  #           .env.BDP_PROVENANCE_NAME="${{ env.PROJECT_NAME }}" |
-  #           .env.BDP_PROVENANCE_VERSION="${{ github.sha}}" |
-  #           .env.BDP_BASE_URL="https://mobility.share.opendatahub.com"
+            .env.BDP_PROVENANCE_NAME="${{ env.PROJECT_NAME }}" |
+            .env.BDP_PROVENANCE_VERSION="${{ github.sha}}" 
+            .env.BDP_BASE_URL="https://mobility.share.opendatahub.com"
 
-  #         ' ${{ env.VALUES_YAML }}
+          ' ${{ env.VALUES_YAML }}
 
-  #     - name: Deploy on cluster  
-  #       uses: noi-techpark/github-actions/helm-deploy@v2
-  #       with:
-  #         k8s-name: ${{ env.PROJECT_NAME }}
-  #         k8s-namespace: collector
-  #         chart-path: helm/generic-collector
-  #         values-file: ${{ env.WORKING_DIRECTORY }}/${{ env.VALUES_YAML }}
-  #         aws-access-key-id: ${{ secrets.AWS_PROD_ACCESS_KEY_ID }}
-  #         aws-secret-access-key: ${{ secrets.AWS_PROD_ACCESS_KEY_SECRET }}
-  #         aws-eks-cluster-name: aws-main-eu-01
-  #         aws-region: eu-west-1
+      - name: Deploy on cluster  
+        uses: noi-techpark/github-actions/helm-deploy@v2
+        with:
+          k8s-name: ${{ env.PROJECT_NAME }}
+          k8s-namespace: collector
+          chart-path: helm/generic-collector
+          values-file: ${{ env.WORKING_DIRECTORY }}/${{ env.VALUES_YAML }}
+          aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
+          aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
+          aws-eks-cluster-name: aws-main-eu-01
+          aws-region: eu-west-1
