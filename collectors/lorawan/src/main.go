@@ -5,10 +5,8 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"log/slog"
 	"net/http"
 	"net/url"
@@ -38,22 +36,6 @@ var env struct {
 	PAGING_SIZE        int
 	PAGING_LIMIT_NAME  string
 	PAGING_OFFSET_NAME string
-}
-
-type SensorData struct {
-	ApplicationName string       `json:"application_name"`
-	Timestamp       string       `json:"time"`
-	DevEui          string       `json:"dev_eui"`
-	DeviceName      string       `json:"device_name"`
-	FPort           int          `json:"f_port"`
-	Value           ValueReading `json:"value"`
-}
-
-type ValueReading struct {
-	Battery     int `json:"battery"`
-	Temperature int `json:"temperature"`
-	Humidity    int `json:"hunidity"`
-	Co2         int `json:"co2"`
 }
 
 const ENV_HEADER_PREFIX = "HTTP_HEADER_"
@@ -131,10 +113,6 @@ func main() {
 		jobstart := time.Now()
 		for _, singleHttp := range urlsSlice {
 			body := httpRequest(singleHttp, headers, httpMethod)
-			var newSensorData SensorData
-			if err := json.Unmarshal(body, &newSensorData); err != nil {
-				log.Fatalf("failed: %v", err)
-			}
 			var raw any
 			if env.RAW_BINARY {
 				raw = body
