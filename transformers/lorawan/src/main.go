@@ -56,14 +56,14 @@ type Serie struct {
 type SensorBasicMessage struct {
 	Battery     int     `json:"battery"`
 	Temperature float64 `json:"temperature"`
-	Humidity    int     `json:"humidity"`
+	Humidity    int     `json:"humidity,hunidity"`
 }
 
 type SensorCo2Message struct {
 	Battery     int     `json:"battery"`
 	Temperature float64 `json:"temperature"`
-	Humidity    int     `json:"humidity"`
-	Co2         int     `json:co2`
+	Humidity    int     `json:"humidity,hunidity"`
+	Co2         int     `json:"co2"`
 }
 
 type SensorGenericMessage struct {
@@ -114,60 +114,61 @@ func main() {
 		fmt.Println("DATA FLOWING")
 		fmt.Println(r.Rawdata)
 		sensorDataMap := b.CreateDataMap()
-		response, err := unmarshalGeneric[ResponseArray](r.Rawdata)
+		payload, err := unmarshalGeneric[Response](r.Rawdata)
 		if err != nil {
 			slog.Error("cannot unmarshall raw data", "err", err)
 			return err
 		}
-		for _, payload := range *response {
 
-			applicationName := payload.Results[0].Series[0].Values[0][1]
-			sensorId := stationId(payload.Results[0].Series[0].Values[0][3], Origin)
+		applicationName := payload.Results[0].Series[0].Values[0][1]
+		sensorId := stationId(payload.Results[0].Series[0].Values[0][3], Origin)
 
-			position := processSensorPosition(payload.Results[0].Series[0].Values[0][3])
+		position := processSensorPosition(payload.Results[0].Series[0].Values[0][3])
 
-			switch position {
-			case "BZ":
-				s := bdplib.CreateStation(sensorId, sensorId, Station, bzLatLong.Lat, bzLatLong.Long, Origin)
-				if err := b.SyncStations(Station, []bdplib.Station{s}, false, false); err != nil {
-					slog.Error("Error syncing stations", "err", err)
-					continue
-				}
-			case "BK":
-				s := bdplib.CreateStation(sensorId, sensorId, Station, brkLatLong.Lat, brkLatLong.Long, Origin)
-				if err := b.SyncStations(Station, []bdplib.Station{s}, false, false); err != nil {
-					slog.Error("Error syncing stations", "err", err)
-					continue
-				}
+		switch position {
+		case "BZ":
+			s := bdplib.CreateStation(sensorId, sensorId, Station, bzLatLong.Lat, bzLatLong.Long, Origin)
+			if err := b.SyncStations(Station, []bdplib.Station{s}, false, false); err != nil {
+				slog.Error("Error syncing stations", "err", err)
+
 			}
+			fmt.Println("station pushed")
+		case "BK":
+			s := bdplib.CreateStation(sensorId, sensorId, Station, brkLatLong.Lat, brkLatLong.Long, Origin)
+			if err := b.SyncStations(Station, []bdplib.Station{s}, false, false); err != nil {
+				slog.Error("Error syncing stations", "err", err)
 
-			sensorData, err := processSensorData(applicationName, payload.Results[0].Series[0].Values[0][5])
-			if err != nil {
-				return err
 			}
-
-			switch data := sensorData.(type) {
-			case *SensorBasicMessage:
-				sensorDataMap.AddRecord(sensorId, dtSensorBattery, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Battery, Period))
-				sensorDataMap.AddRecord(sensorId, dtSensorTemperature, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Temperature, Period))
-				sensorDataMap.AddRecord(sensorId, dtSensorHumidity, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Humidity, Period))
-
-			case *SensorCo2Message:
-				sensorDataMap.AddRecord(sensorId, dtSensorBattery, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Battery, Period))
-				sensorDataMap.AddRecord(sensorId, dtSensorTemperature, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Temperature, Period))
-				sensorDataMap.AddRecord(sensorId, dtSensorHumidity, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Humidity, Period))
-				sensorDataMap.AddRecord(sensorId, dtSensorCo2, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Co2, Period))
-
-			case *SensorGenericMessage:
-				sensorDataMap.AddRecord(sensorId, dtSensorGenericValues.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.RawValue, Period))
-
-			default:
-				return fmt.Errorf("unknown sensor type: %T", data)
-			}
-			if err := b.PushData(Station, sensorDataMap); err != nil {
-				return fmt.Errorf("error pushing  data: %w", err)
-			}
+			fmt.Println("station pushed")
 		}
+
+		sensorData, err := processSensorData(applicationName, payload.Results[0].Series[0].Values[0][5])
+		if err != nil {
+			return err
+		}
+
+		switch data := sensorData.(type) {
+		case *SensorBasicMessage:
+			sensorDataMap.AddRecord(sensorId, dtSensorBattery, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Battery, Period))
+			sensorDataMap.AddRecord(sensorId, dtSensorTemperature, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Temperature, Period))
+			sensorDataMap.AddRecord(sensorId, dtSensorHumidity, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Humidity, Period))
+
+		case *SensorCo2Message:
+			sensorDataMap.AddRecord(sensorId, dtSensorBattery, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Battery, Period))
+			sensorDataMap.AddRecord(sensorId, dtSensorTemperature, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Temperature, Period))
+			sensorDataMap.AddRecord(sensorId, dtSensorHumidity, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Humidity, Period))
+			sensorDataMap.AddRecord(sensorId, dtSensorCo2, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Co2, Period))
+
+		case *SensorGenericMessage:
+			sensorDataMap.AddRecord(sensorId, dtSensorGenericValues.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.RawValue, Period))
+
+		default:
+			return fmt.Errorf("unknown sensor type: %T", data)
+		}
+		if err := b.PushData(Station, sensorDataMap); err != nil {
+			return fmt.Errorf("error pushing  data: %w", err)
+		}
+
 		slog.Info("Updated sensors data")
 		return nil
 
@@ -209,8 +210,10 @@ func processSensorData(applicationName string, values string) (interface{}, erro
 
 func processSensorPosition(deviceName string) string {
 	if slices.Contains(sensorsNOIBZ, deviceName) {
+		fmt.Println("assigned")
 		return "BZ"
 	} else if slices.Contains(sensorsNOIBRK, deviceName) {
+		fmt.Println("assigned")
 		return "BK"
 	} else {
 		return ""
