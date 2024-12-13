@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-parking-valgardena-metadata
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-lorawan
   pullPolicy: IfNotPresent
   tag: sometaghere
 
@@ -11,21 +11,15 @@ imagePullSecrets:
 env:
   # ODH Core Writer Connection
   LOG_LEVEL: "DEBUG"
-  MQ_QUEUE: parking-valgardena.data  
+  MQ_QUEUE: lorawan.data  
   MQ_EXCHANGE: routed  
-  MQ_KEY: parking-valgardena.data 
-  MQ_CLIENT: parking-datacollector-valgardena-data-consumer 
-
-
-  MQ_META_QUEUE: parking-valgardena.metadata  
-  MQ_META_EXCHANGE: routed  
-  MQ_META_KEY: parking-valgardena.metadata 
-  MQ_META_CLIENT: parking-datacollector-valgardena-metadata-consumer 
+  MQ_KEY: lorawan.data 
+  MQ_CLIENT: lorawan-data-consumer 
 
   BDP_BASE_URL: https://share.opendatahub.testingmachine.eu
   BDP_PROVENANCE_VERSION: 
   BDP_PROVENANCE_NAME: 
-  BDP_ORIGIN: GARDENA
+  BDP_ORIGIN: NOI
 
 envSecretRef:
   - name: MQ_URI 

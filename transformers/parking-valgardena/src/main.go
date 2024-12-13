@@ -71,12 +71,6 @@ func main() {
 	failOnError(err, "failed connecting to rabbitmq")
 	defer rabbit.Close()
 
-	fmt.Println("ARRIVES HERE?")
-	// rabbit.OnClose(func(err *amqp091.Error) {
-	// 	slog.Error("rabbitmq connection closed unexpectedly")
-	// 	panic(err)
-	// })
-
 	dataMQ, err := rabbit.Consume(env.Env.MQ_EXCHANGE, env.Env.MQ_QUEUE, env.Env.MQ_KEY)
 	failOnError(err, "failed creating data queue")
 
