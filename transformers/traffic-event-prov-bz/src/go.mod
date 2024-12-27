@@ -7,6 +7,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/noi-techpark/go-bdp-client v1.0.1-0.20241223144230-9cf8308a0358
 	github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20241217152708-001fb6f116e0
+	github.com/twpayne/go-geom v1.5.7
 	gotest.tools/v3 v3.5.1
 )
 

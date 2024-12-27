@@ -8,6 +8,7 @@ import (
 	"crypto/sha1"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -17,6 +18,8 @@ import (
 	"github.com/noi-techpark/go-opendatahub-ingest/dto"
 	"github.com/noi-techpark/go-opendatahub-ingest/ms"
 	"github.com/noi-techpark/go-opendatahub-ingest/tr"
+	"github.com/twpayne/go-geom"
+	"github.com/twpayne/go-geom/encoding/wkt"
 )
 
 var env tr.Env
@@ -33,14 +36,119 @@ func main() {
 			return fmt.Errorf("could not unmarshal the raw payload json: %w", err)
 		}
 		events := []bdplib.Event{}
-		for d, _ := range dtos {
-			fmt.Print(d)
+		for _, d := range dtos {
+			j, err := makeUUIDJson(d)
+			if err != nil {
+				return err
+			}
+			uuid := makeUUID(j)
+			e := bdplib.Event{}
+			e.Uuid = uuid
+			e.EventSeriesUuid = uuid
+			e.Category = fmt.Sprintf("%s_%s | %s_%s", d.TycodeIt, d.SubTycodeIt, d.TycodeDe, d.SubTycodeDe)
+			e.Origin = b.Origin
+			e.Name = strconv.Itoa(d.MessageID)
+			e.Description = fmt.Sprintf("%s | %s", d.DescriptionIt, d.DescriptionDe)
+
+			if d.X != nil && d.Y != nil {
+				wkt, err := point2WKT(*d.X, *d.Y)
+				if err != nil {
+					return fmt.Errorf("error creating point wkt: %w", err)
+				}
+				e.WktGeometry = wkt
+			}
+
+			beginDate, err := time.Parse(dayDateFormat, d.BeginDate)
+			if err != nil {
+				return fmt.Errorf("error parsing BeginDate (%s): %w", d.BeginDate, err)
+			}
+			e.EventStart = beginDate.UTC().UnixMilli()
+
+			if d.EndDate != nil {
+				endDate, err := time.Parse(dayDateFormat, *d.EndDate)
+				if err != nil {
+					return fmt.Errorf("error parsing EndDate (%s): %w", *d.EndDate, err)
+				}
+				e.EventEnd = endDate.UTC().UnixMilli() + 1 // +1 because we exclude the upper bound.
+			}
+			e.MetaData = map[string]any{}
+			e.MetaData["json_featuretype"] = d.JSONFeaturetype
+			e.MetaData["publisherDateTime"] = d.PublishDateTime
+			e.MetaData["tycodeValue"] = d.TycodeValue
+			e.MetaData["tycodeDe"] = d.TycodeDe
+			e.MetaData["tycodeIt"] = d.TycodeIt
+			e.MetaData["subTycodeValue"] = d.SubTycodeValue
+			e.MetaData["subTycodeDe"] = d.SubTycodeDe
+			e.MetaData["subTycodeIt"] = d.SubTycodeIt
+			e.MetaData["placeDe"] = d.PlaceDe
+			e.MetaData["placeIt"] = d.PlaceIt
+			e.MetaData["actualMail"] = d.ActualMail
+			e.MetaData["messageId"] = d.MessageID
+			e.MetaData["messageStatus"] = d.MessageStatus
+			e.MetaData["messageZoneId"] = d.MessageZoneID
+			e.MetaData["messageZoneDescDe"] = d.MessageZoneDescDe
+			e.MetaData["messageZoneDescIt"] = d.MessageZoneDescIt
+			e.MetaData["messageGradId"] = d.MessageGradID
+			e.MetaData["messageGradDescDe"] = d.MessageGradDescDe
+			e.MetaData["messageGradDescIt"] = d.MessageGradDescIt
+			e.MetaData["messageStreetId"] = d.MessageStreetID
+			e.MetaData["messageStreetWapDescDe"] = d.MessageStreetWapDescDe
+			e.MetaData["messageStreetWapDescIt"] = d.MessageStreetWapDescIt
+			e.MetaData["messageStreetInternetDescDe"] = d.MessageStreetInternetDescDe
+			e.MetaData["messageStreetInternetDescIt"] = d.MessageStreetInternetDescIt
+			e.MetaData["messageStreetNr"] = d.MessageStreetNr
+			e.MetaData["messageStreetHierarchie"] = d.MessageStreetHierarchie
+
+			events = append(events, e)
 		}
 
 		b.SyncEvents(events)
 		return nil
 	})
+}
 
+type trafficEvent struct {
+	JSONFeaturetype             string   `json:"json_featuretype"`
+	PublishDateTime             string   `json:"publishDateTime"`
+	BeginDate                   string   `json:"beginDate"`
+	EndDate                     *string  `json:"endDate"`
+	DescriptionDe               string   `json:"descriptionDe"`
+	DescriptionIt               string   `json:"descriptionIt"`
+	TycodeValue                 string   `json:"tycodeValue"`
+	TycodeDe                    string   `json:"tycodeDe"`
+	TycodeIt                    string   `json:"tycodeIt"`
+	SubTycodeValue              string   `json:"subTycodeValue"`
+	SubTycodeDe                 string   `json:"subTycodeDe"`
+	SubTycodeIt                 string   `json:"subTycodeIt"`
+	PlaceDe                     string   `json:"placeDe"`
+	PlaceIt                     string   `json:"placeIt"`
+	ActualMail                  int      `json:"actualMail"`
+	MessageID                   int      `json:"messageId"`
+	MessageStatus               int      `json:"messageStatus"`
+	MessageZoneID               int      `json:"messageZoneId"`
+	MessageZoneDescDe           string   `json:"messageZoneDescDe"`
+	MessageZoneDescIt           string   `json:"messageZoneDescIt"`
+	MessageGradID               int      `json:"messageGradId"`
+	MessageGradDescDe           string   `json:"messageGradDescDe"`
+	MessageGradDescIt           string   `json:"messageGradDescIt"`
+	MessageStreetID             int      `json:"messageStreetId"`
+	MessageStreetWapDescDe      string   `json:"messageStreetWapDescDe"`
+	MessageStreetWapDescIt      string   `json:"messageStreetWapDescIt"`
+	MessageStreetInternetDescDe string   `json:"messageStreetInternetDescDe"`
+	MessageStreetInternetDescIt string   `json:"messageStreetInternetDescIt"`
+	MessageStreetNr             string   `json:"messageStreetNr"`
+	MessageStreetHierarchie     int      `json:"messageStreetHierarchie"`
+	MessageTypeID               int      `json:"messageTypeId"`
+	MessageTypeDescDe           string   `json:"messageTypeDescDe"`
+	MessageTypeDescIt           string   `json:"messageTypeDescIt"`
+	X                           *float64 `json:"X"`
+	Y                           *float64 `json:"Y"`
+}
+
+func point2WKT(x float64, y float64) (string, error) {
+	p := geom.NewPointFlat(geom.XY, []float64{x, y})
+	p.SetSRID(4326)
+	return wkt.Marshal(p)
 }
 
 // All this strange UUID stuff is just there to replicate the UUID generation originally done in Java, and thus maintain primary key compatibility.
@@ -52,8 +160,8 @@ func main() {
 type UUIDMap struct {
 	BeginDate *UUIDDate `json:"beginDate"`
 	EndDate   *UUIDDate `json:"endDate"`
-	X         float64   `json:"X"`
-	Y         float64   `json:"Y"`
+	X         *float64  `json:"X"`
+	Y         *float64  `json:"Y"`
 }
 type UUIDDate struct {
 	Year       int    `json:"year"`
@@ -70,8 +178,10 @@ type UUIDDate struct {
 	} `json:"chronology"`
 }
 
+const dayDateFormat = "2006-01-02"
+
 func toDate(s string) (UUIDDate, error) {
-	d, err := time.Parse("2006-01-02", s)
+	d, err := time.Parse(dayDateFormat, s)
 	if err != nil {
 		return UUIDDate{}, err
 	}
@@ -108,8 +218,8 @@ func makeUUIDJson(e trafficEvent) (string, error) {
 		return "", fmt.Errorf("cannot parse beginDate: %w", err)
 	}
 	u.BeginDate = &begin
-	if e.EndDate != "" {
-		end, err := toDate(e.EndDate)
+	if e.EndDate != nil {
+		end, err := toDate(*e.EndDate)
 		if err != nil {
 			return "", fmt.Errorf("cannot parse endDate: %w", err)
 		}
@@ -123,42 +233,4 @@ func makeUUIDJson(e trafficEvent) (string, error) {
 	}
 	jsonString := string(jsonBytes[:])
 	return jsonString, nil
-}
-
-type trafficEvent struct {
-	JSONFeaturetype             string  `json:"json_featuretype"`
-	PublishDateTime             string  `json:"publishDateTime"`
-	BeginDate                   string  `json:"beginDate"`
-	EndDate                     string  `json:"endDate"`
-	DescriptionDe               string  `json:"descriptionDe"`
-	DescriptionIt               string  `json:"descriptionIt"`
-	TycodeValue                 string  `json:"tycodeValue"`
-	TycodeDe                    string  `json:"tycodeDe"`
-	TycodeIt                    string  `json:"tycodeIt"`
-	SubTycodeValue              string  `json:"subTycodeValue"`
-	SubTycodeDe                 string  `json:"subTycodeDe"`
-	SubTycodeIt                 string  `json:"subTycodeIt"`
-	PlaceDe                     string  `json:"placeDe"`
-	PlaceIt                     string  `json:"placeIt"`
-	ActualMail                  int     `json:"actualMail"`
-	MessageID                   int     `json:"messageId"`
-	MessageStatus               int     `json:"messageStatus"`
-	MessageZoneID               int     `json:"messageZoneId"`
-	MessageZoneDescDe           string  `json:"messageZoneDescDe"`
-	MessageZoneDescIt           string  `json:"messageZoneDescIt"`
-	MessageGradID               int     `json:"messageGradId"`
-	MessageGradDescDe           string  `json:"messageGradDescDe"`
-	MessageGradDescIt           string  `json:"messageGradDescIt"`
-	MessageStreetID             int     `json:"messageStreetId"`
-	MessageStreetWapDescDe      string  `json:"messageStreetWapDescDe"`
-	MessageStreetWapDescIt      string  `json:"messageStreetWapDescIt"`
-	MessageStreetInternetDescDe string  `json:"messageStreetInternetDescDe"`
-	MessageStreetInternetDescIt string  `json:"messageStreetInternetDescIt"`
-	MessageStreetNr             string  `json:"messageStreetNr"`
-	MessageStreetHierarchie     int     `json:"messageStreetHierarchie"`
-	MessageTypeID               int     `json:"messageTypeId"`
-	MessageTypeDescDe           string  `json:"messageTypeDescDe"`
-	MessageTypeDescIt           string  `json:"messageTypeDescIt"`
-	X                           float64 `json:"X"`
-	Y                           float64 `json:"Y"`
 }
