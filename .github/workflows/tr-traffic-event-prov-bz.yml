@@ -22,7 +22,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Run tests
-      run: docker run -it --rm $(docker build -q . -f infrastructure/docker/Dockerfile --target test)
+      run: docker run --rm $(docker build -q . -f infrastructure/docker/Dockerfile --target test)
       working-directory: ${{ env.WORKING_DIRECTORY }}
 
   build:
