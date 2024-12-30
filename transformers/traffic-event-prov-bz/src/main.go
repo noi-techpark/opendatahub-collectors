@@ -5,14 +5,12 @@
 package main
 
 import (
-	"crypto/sha1"
 	"encoding/json"
 	"fmt"
 	"strconv"
-	"strings"
 	"time"
 
-	"github.com/gofrs/uuid/v5"
+	"github.com/google/uuid"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"github.com/noi-techpark/go-opendatahub-ingest/dto"
@@ -23,6 +21,8 @@ import (
 )
 
 var env tr.Env
+
+const UUID_NS = "traffic-events-prov-bz"
 
 func main() {
 	envconfig.MustProcess("", &env)
@@ -58,11 +58,10 @@ func unmarshalRawJson(s string) ([]trafficEvent, error) {
 
 func mapEvent(d trafficEvent) (bdplib.Event, error) {
 	e := bdplib.Event{}
-	j, err := makeUUIDJson(d)
+	uuid, err := makeUUID(d)
 	if err != nil {
 		return e, err
 	}
-	uuid := makeUUID(j)
 	e.Uuid = uuid
 	e.EventSeriesUuid = uuid
 	e.Category = fmt.Sprintf("%s_%s | %s_%s", d.TycodeIt, d.SubTycodeIt, d.TycodeDe, d.SubTycodeDe)
@@ -83,10 +82,10 @@ func mapEvent(d trafficEvent) (bdplib.Event, error) {
 	}
 	e.EventStart = beginDate.UTC().UnixMilli()
 
-	if d.EndDate != nil && *d.EndDate != "" {
-		endDate, err := time.Parse(dayDateFormat, *d.EndDate)
+	if d.EndDate != "" {
+		endDate, err := time.Parse(dayDateFormat, d.EndDate)
 		if err != nil {
-			return e, fmt.Errorf("error parsing EndDate (%s): %w", *d.EndDate, err)
+			return e, fmt.Errorf("error parsing EndDate (%s): %w", d.EndDate, err)
 		}
 		e.EventEnd = endDate.UTC().UnixMilli() + 1 // +1 because we exclude the upper bound.
 	}
@@ -126,7 +125,7 @@ type trafficEvent struct {
 	JSONFeaturetype             string   `json:"json_featuretype"`
 	PublishDateTime             string   `json:"publishDateTime"`
 	BeginDate                   string   `json:"beginDate"`
-	EndDate                     *string  `json:"endDate"`
+	EndDate                     string   `json:"endDate"`
 	DescriptionDe               string   `json:"descriptionDe"`
 	DescriptionIt               string   `json:"descriptionIt"`
 	TycodeValue                 string   `json:"tycodeValue"`
@@ -166,86 +165,21 @@ func point2WKT(x float64, y float64) (string, error) {
 	return wkt.Marshal(p)
 }
 
-// All this strange UUID stuff is just there to replicate the UUID generation originally done in Java, and thus maintain primary key compatibility.
-// Unfortunately, it uses quite particular behavior that is elaborate to replicate.
-// In essence, it generates a JSON from a few fields, and then calculates a v5 UUID (with namespace = null)
-
-// TODO: make UUID generation more sane, but make sure to migrate all existing events in DB, an clear up if changing the UUIDs could lead to problems
-
 type UUIDMap struct {
-	BeginDate *UUIDDate `json:"beginDate"`
-	EndDate   *UUIDDate `json:"endDate"`
-	X         *float64  `json:"X"`
-	Y         *float64  `json:"Y"`
-}
-type UUIDDate struct {
-	Year       int    `json:"year"`
-	Month      string `json:"month"`
-	DayOfWeek  string `json:"dayOfWeek"`
-	LeapYear   bool   `json:"leapYear"`
-	DayOfMonth int    `json:"dayOfMonth"`
-	MonthValue int    `json:"monthValue"`
-	Era        string `json:"era"`
-	DayOfYear  int    `json:"dayOfYear"`
-	Chronology struct {
-		CalendarType string `json:"calendarType"`
-		ID           string `json:"id"`
-	} `json:"chronology"`
+	BeginDate string  `json:"beginDate"`
+	EndDate   string  `json:"endDate"`
+	X         float64 `json:"X"`
+	Y         float64 `json:"Y"`
 }
 
 const dayDateFormat = "2006-01-02"
 
-func toDate(s string) (UUIDDate, error) {
-	d, err := time.Parse(dayDateFormat, s)
-	if err != nil {
-		return UUIDDate{}, err
-	}
-	ret := UUIDDate{}
-	ret.Year = d.Year()
-	ret.Month = strings.ToUpper(d.Month().String())
-	ret.DayOfWeek = strings.ToUpper(d.Weekday().String())
-	ret.LeapYear = ret.Year%4 == 0 && ret.Year%100 != 0 || ret.Year%400 == 0
-	ret.DayOfMonth = d.Day()
-	ret.MonthValue = int(d.Month())
-	ret.Era = "CE"
-	ret.DayOfYear = d.YearDay()
-	ret.Chronology.CalendarType = "iso8601"
-	ret.Chronology.ID = "ISO"
-
-	return ret, nil
-}
-
-func makeUUID(name string) string {
-	// Have to do the v5 UUID ourselves, because the one from library does not support a nil namespace. The code is copied from there, sans the namespace part
-	hash := sha1.New()
-	hash.Write([]byte(name))
-	u := uuid.UUID{}
-	copy(u[:], hash.Sum(nil))
-	u.SetVersion(uuid.V5)
-	u.SetVariant(uuid.VariantRFC9562)
-	return u.String()
-}
-
-func makeUUIDJson(e trafficEvent) (string, error) {
-	u := UUIDMap{}
-	begin, err := toDate(e.BeginDate)
-	if err != nil {
-		return "", fmt.Errorf("cannot parse beginDate: %w", err)
-	}
-	u.BeginDate = &begin
-	if e.EndDate != nil && *e.EndDate != "" {
-		end, err := toDate(*e.EndDate)
-		if err != nil {
-			return "", fmt.Errorf("cannot parse endDate: %w", err)
-		}
-		u.EndDate = &end
-	}
-	u.X = e.X
-	u.Y = e.Y
-	jsonBytes, err := json.Marshal(u)
+func makeUUID(e trafficEvent) (string, error) {
+	u := UUIDMap{BeginDate: e.BeginDate, EndDate: e.EndDate}
+	json, err := json.Marshal(u)
 	if err != nil {
 		return "", fmt.Errorf("cannot marshal uuid json: %w", err)
 	}
-	jsonString := string(jsonBytes[:])
-	return jsonString, nil
+	uuid := uuid.NewSHA1(uuid.Nil, []byte(json)).String()
+	return uuid, nil
 }

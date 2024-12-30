@@ -24,4 +24,5 @@ CMD ["go", "run", "main.go"]
 # TESTS
 FROM base as test
 WORKDIR /code
+COPY src/. .
 CMD ["go", "test", "."]
