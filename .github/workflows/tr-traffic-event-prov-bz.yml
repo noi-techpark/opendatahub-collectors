@@ -21,12 +21,9 @@ jobs:
     - name: Checkout source code
       uses: actions/checkout@v4
 
-    - name: Build and push images
-      uses: noi-techpark/github-actions/docker-build-and-push@v2
-      with:
-        working-directory: ${{ env.WORKING_DIRECTORY }}/infrastructure
-        docker-username: ${{ github.actor }}
-        docker-password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Run tests
+      run: docker run -it --rm $(docker build -q . -f infrastructure/docker/Dockerfile --target test)
+      working-directory: ${{ env.WORKING_DIRECTORY }}
 
   build:
     runs-on: ubuntu-24.04
@@ -37,8 +34,12 @@ jobs:
     - name: Checkout source code
       uses: actions/checkout@v4
 
-    - name: Run tests
-      run: docker run -it --rm $(docker build -q . -f infrastructure/docker/Dockerfile --target test)
+    - name: Build and push images
+      uses: noi-techpark/github-actions/docker-build-and-push@v2
+      with:
+        working-directory: ${{ env.WORKING_DIRECTORY }}/infrastructure
+        docker-username: ${{ github.actor }}
+        docker-password: ${{ secrets.GITHUB_TOKEN }}
           
   deploy-test:
     if: github.ref == 'refs/heads/main'
