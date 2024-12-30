@@ -5,7 +5,7 @@ go 1.23.4
 require (
 	github.com/gofrs/uuid/v5 v5.3.0
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/noi-techpark/go-bdp-client v1.0.1-0.20241223144230-9cf8308a0358
+	github.com/noi-techpark/go-bdp-client v1.0.1-0.20241230091831-3fd536c600ac
 	github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20241217152708-001fb6f116e0
 	github.com/twpayne/go-geom v1.5.7
 	gotest.tools/v3 v3.5.1
@@ -17,6 +17,11 @@ require (
 	github.com/klauspost/compress v1.17.11 // indirect
 	github.com/montanaflynn/stats v0.7.1 // indirect
 	github.com/rabbitmq/amqp091-go v1.10.0 // indirect
+	github.com/tidwall/gjson v1.18.0 // indirect
+	github.com/tidwall/match v1.1.1 // indirect
+	github.com/tidwall/pretty v1.2.1 // indirect
+	github.com/tidwall/sjson v1.2.5 // indirect
+	github.com/wI2L/jsondiff v0.6.1 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.2 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect

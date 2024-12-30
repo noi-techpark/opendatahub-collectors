@@ -31,80 +31,95 @@ func main() {
 	b := bdplib.FromEnv()
 
 	tr.ListenFromEnv(env, func(r *dto.Raw[string]) error {
-		dtos := []trafficEvent{}
-		if err := json.Unmarshal([]byte(r.Rawdata), &dtos); err != nil {
+		dtos, err := unmarshalRawJson(r.Rawdata)
+		if err != nil {
 			return fmt.Errorf("could not unmarshal the raw payload json: %w", err)
 		}
 		events := []bdplib.Event{}
 		for _, d := range dtos {
-			j, err := makeUUIDJson(d)
+			e, err := mapEvent(d)
 			if err != nil {
 				return err
 			}
-			uuid := makeUUID(j)
-			e := bdplib.Event{}
-			e.Uuid = uuid
-			e.EventSeriesUuid = uuid
-			e.Category = fmt.Sprintf("%s_%s | %s_%s", d.TycodeIt, d.SubTycodeIt, d.TycodeDe, d.SubTycodeDe)
 			e.Origin = b.Origin
-			e.Name = strconv.Itoa(d.MessageID)
-			e.Description = fmt.Sprintf("%s | %s", d.DescriptionIt, d.DescriptionDe)
-
-			if d.X != nil && d.Y != nil {
-				wkt, err := point2WKT(*d.X, *d.Y)
-				if err != nil {
-					return fmt.Errorf("error creating point wkt: %w", err)
-				}
-				e.WktGeometry = wkt
-			}
-
-			beginDate, err := time.Parse(dayDateFormat, d.BeginDate)
-			if err != nil {
-				return fmt.Errorf("error parsing BeginDate (%s): %w", d.BeginDate, err)
-			}
-			e.EventStart = beginDate.UTC().UnixMilli()
-
-			if d.EndDate != nil {
-				endDate, err := time.Parse(dayDateFormat, *d.EndDate)
-				if err != nil {
-					return fmt.Errorf("error parsing EndDate (%s): %w", *d.EndDate, err)
-				}
-				e.EventEnd = endDate.UTC().UnixMilli() + 1 // +1 because we exclude the upper bound.
-			}
-			e.MetaData = map[string]any{}
-			e.MetaData["json_featuretype"] = d.JSONFeaturetype
-			e.MetaData["publisherDateTime"] = d.PublishDateTime
-			e.MetaData["tycodeValue"] = d.TycodeValue
-			e.MetaData["tycodeDe"] = d.TycodeDe
-			e.MetaData["tycodeIt"] = d.TycodeIt
-			e.MetaData["subTycodeValue"] = d.SubTycodeValue
-			e.MetaData["subTycodeDe"] = d.SubTycodeDe
-			e.MetaData["subTycodeIt"] = d.SubTycodeIt
-			e.MetaData["placeDe"] = d.PlaceDe
-			e.MetaData["placeIt"] = d.PlaceIt
-			e.MetaData["actualMail"] = d.ActualMail
-			e.MetaData["messageId"] = d.MessageID
-			e.MetaData["messageStatus"] = d.MessageStatus
-			e.MetaData["messageZoneId"] = d.MessageZoneID
-			e.MetaData["messageZoneDescDe"] = d.MessageZoneDescDe
-			e.MetaData["messageZoneDescIt"] = d.MessageZoneDescIt
-			e.MetaData["messageGradId"] = d.MessageGradID
-			e.MetaData["messageGradDescDe"] = d.MessageGradDescDe
-			e.MetaData["messageGradDescIt"] = d.MessageGradDescIt
-			e.MetaData["messageStreetId"] = d.MessageStreetID
-			e.MetaData["messageStreetWapDescDe"] = d.MessageStreetWapDescDe
-			e.MetaData["messageStreetWapDescIt"] = d.MessageStreetWapDescIt
-			e.MetaData["messageStreetInternetDescDe"] = d.MessageStreetInternetDescDe
-			e.MetaData["messageStreetInternetDescIt"] = d.MessageStreetInternetDescIt
-			e.MetaData["messageStreetNr"] = d.MessageStreetNr
-			e.MetaData["messageStreetHierarchie"] = d.MessageStreetHierarchie
-
 			events = append(events, e)
 		}
 
 		b.SyncEvents(events)
 		return nil
 	})
+}
+
+func unmarshalRawJson(s string) ([]trafficEvent, error) {
+	dtos := []trafficEvent{}
+	err := json.Unmarshal([]byte(s), &dtos)
+	return dtos, err
+}
+
+func mapEvent(d trafficEvent) (bdplib.Event, error) {
+	e := bdplib.Event{}
+	j, err := makeUUIDJson(d)
+	if err != nil {
+		return e, err
+	}
+	uuid := makeUUID(j)
+	e.Uuid = uuid
+	e.EventSeriesUuid = uuid
+	e.Category = fmt.Sprintf("%s_%s | %s_%s", d.TycodeIt, d.SubTycodeIt, d.TycodeDe, d.SubTycodeDe)
+	e.Name = strconv.Itoa(d.MessageID)
+	e.Description = fmt.Sprintf("%s | %s", d.DescriptionIt, d.DescriptionDe)
+
+	if d.X != nil && d.Y != nil {
+		wkt, err := point2WKT(*d.X, *d.Y)
+		if err != nil {
+			return e, fmt.Errorf("error creating point wkt: %w", err)
+		}
+		e.WktGeometry = wkt
+	}
+
+	beginDate, err := time.Parse(dayDateFormat, d.BeginDate)
+	if err != nil {
+		return e, fmt.Errorf("error parsing BeginDate (%s): %w", d.BeginDate, err)
+	}
+	e.EventStart = beginDate.UTC().UnixMilli()
+
+	if d.EndDate != nil && *d.EndDate != "" {
+		endDate, err := time.Parse(dayDateFormat, *d.EndDate)
+		if err != nil {
+			return e, fmt.Errorf("error parsing EndDate (%s): %w", *d.EndDate, err)
+		}
+		e.EventEnd = endDate.UTC().UnixMilli() + 1 // +1 because we exclude the upper bound.
+	}
+
+	e.MetaData = map[string]any{}
+	e.MetaData["json_featuretype"] = d.JSONFeaturetype
+	e.MetaData["publisherDateTime"] = d.PublishDateTime
+	e.MetaData["tycodeValue"] = d.TycodeValue
+	e.MetaData["tycodeDe"] = d.TycodeDe
+	e.MetaData["tycodeIt"] = d.TycodeIt
+	e.MetaData["subTycodeValue"] = d.SubTycodeValue
+	e.MetaData["subTycodeDe"] = d.SubTycodeDe
+	e.MetaData["subTycodeIt"] = d.SubTycodeIt
+	e.MetaData["placeDe"] = d.PlaceDe
+	e.MetaData["placeIt"] = d.PlaceIt
+	e.MetaData["actualMail"] = d.ActualMail
+	e.MetaData["messageId"] = d.MessageID
+	e.MetaData["messageStatus"] = d.MessageStatus
+	e.MetaData["messageZoneId"] = d.MessageZoneID
+	e.MetaData["messageZoneDescDe"] = d.MessageZoneDescDe
+	e.MetaData["messageZoneDescIt"] = d.MessageZoneDescIt
+	e.MetaData["messageGradId"] = d.MessageGradID
+	e.MetaData["messageGradDescDe"] = d.MessageGradDescDe
+	e.MetaData["messageGradDescIt"] = d.MessageGradDescIt
+	e.MetaData["messageStreetId"] = d.MessageStreetID
+	e.MetaData["messageStreetWapDescDe"] = d.MessageStreetWapDescDe
+	e.MetaData["messageStreetWapDescIt"] = d.MessageStreetWapDescIt
+	e.MetaData["messageStreetInternetDescDe"] = d.MessageStreetInternetDescDe
+	e.MetaData["messageStreetInternetDescIt"] = d.MessageStreetInternetDescIt
+	e.MetaData["messageStreetNr"] = d.MessageStreetNr
+	e.MetaData["messageStreetHierarchie"] = d.MessageStreetHierarchie
+
+	return e, nil
 }
 
 type trafficEvent struct {
@@ -218,7 +233,7 @@ func makeUUIDJson(e trafficEvent) (string, error) {
 		return "", fmt.Errorf("cannot parse beginDate: %w", err)
 	}
 	u.BeginDate = &begin
-	if e.EndDate != nil {
+	if e.EndDate != nil && *e.EndDate != "" {
 		end, err := toDate(*e.EndDate)
 		if err != nil {
 			return "", fmt.Errorf("cannot parse endDate: %w", err)
