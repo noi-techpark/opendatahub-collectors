@@ -12,13 +12,13 @@ env:
   
   LOG_LEVEL: INFO
 
-  MQ_LISTEN_QUEUE: traffic-event.prov-bz
-  MQ_LISTEN_EXCHANGE: routed
-  MQ_LISTEN_KEY: traffic-event.prov-bz
-  MQ_LISTEN_CONSUMER: tr-traffic-event-prov-bz
+  MQ_QUEUE: traffic-event.prov-bz
+  MQ_EXCHANGE: routed
+  MQ_KEY: traffic-event.prov-bz
+  MQ_CLIENT: tr-traffic-event-prov-bz
   
 envSecretRef:
-  - name: MQ_LISTEN_URI 
+  - name: MQ_URI 
     secret: rabbitmq-svcbind
     key: uri
   - name: MONGO_URI

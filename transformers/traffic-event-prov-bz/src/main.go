@@ -7,6 +7,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"strconv"
 	"time"
 
@@ -25,12 +26,14 @@ var env tr.Env
 const UUID_NS = "traffic-events-prov-bz"
 
 func main() {
+	slog.Info("Traffic data collector starting up...")
 	envconfig.MustProcess("", &env)
 	ms.InitLog(env.LOG_LEVEL)
 
 	b := bdplib.FromEnv()
 
-	tr.ListenFromEnv(env, func(r *dto.Raw[string]) error {
+	err := tr.ListenFromEnv(env, func(r *dto.Raw[string]) error {
+		slog.Info("New message received")
 		dtos, err := unmarshalRawJson(r.Rawdata)
 		if err != nil {
 			return fmt.Errorf("could not unmarshal the raw payload json: %w", err)
@@ -48,6 +51,7 @@ func main() {
 		b.SyncEvents(events)
 		return nil
 	})
+	ms.FailOnError(err, "transformer handler failed")
 }
 
 func unmarshalRawJson(s string) ([]trafficEvent, error) {
