@@ -91,7 +91,8 @@ func mapEvent(d trafficEvent) (bdplib.Event, error) {
 		if err != nil {
 			return e, fmt.Errorf("error parsing EndDate (%s): %w", d.EndDate, err)
 		}
-		e.EventEnd = endDate.UTC().UnixMilli() + 1 // +1 because we exclude the upper bound.
+		end := endDate.UTC().UnixMilli() + 1 // +1 because we exclude the upper bound.
+		e.EventEnd = &end
 	}
 
 	e.MetaData = map[string]any{}

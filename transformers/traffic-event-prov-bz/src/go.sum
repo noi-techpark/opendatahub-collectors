@@ -22,6 +22,8 @@ github.com/noi-techpark/go-bdp-client v1.0.1-0.20241230091831-3fd536c600ac h1:1f
 github.com/noi-techpark/go-bdp-client v1.0.1-0.20241230091831-3fd536c600ac/go.mod h1:aooKwED49M7Au+9Y/o8wW/4yggIvaVRHc0JJvPnS10c=
 github.com/noi-techpark/go-bdp-client v1.0.1-0.20250102125324-86dce4375872 h1:bQ1heZUAytQDI7uyQYFy+U4DWHyrYFc9UwGbJYfNQVc=
 github.com/noi-techpark/go-bdp-client v1.0.1-0.20250102125324-86dce4375872/go.mod h1:aooKwED49M7Au+9Y/o8wW/4yggIvaVRHc0JJvPnS10c=
+github.com/noi-techpark/go-bdp-client v1.0.1-0.20250102130145-ed07a83e9ac3 h1:dDPSoMrEBtc4zLDnmfJNGOK47G+Kf7VccgOjM87SsGI=
+github.com/noi-techpark/go-bdp-client v1.0.1-0.20250102130145-ed07a83e9ac3/go.mod h1:aooKwED49M7Au+9Y/o8wW/4yggIvaVRHc0JJvPnS10c=
 github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20241217152708-001fb6f116e0 h1:+jstfT0wGjInqpaimKTcQofYio83PJxM6CyqjK920zs=
 github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20241217152708-001fb6f116e0/go.mod h1:x/eTKLIBpI0ITcXvfBYxPVc6PHAQN237Uvv0afM0bOg=
 github.com/rabbitmq/amqp091-go v1.10.0 h1:STpn5XsHlHGcecLmMFCtg7mqq0RnD+zFr4uzukfVhBw=
