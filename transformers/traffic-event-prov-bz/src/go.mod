@@ -5,7 +5,7 @@ go 1.23.4
 require (
 	github.com/google/uuid v1.6.0
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/noi-techpark/go-bdp-client v1.0.1-0.20241230091831-3fd536c600ac
+	github.com/noi-techpark/go-bdp-client v1.0.1-0.20250102125324-86dce4375872
 	github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20241217152708-001fb6f116e0
 	github.com/twpayne/go-geom v1.5.7
 	github.com/wI2L/jsondiff v0.6.1
