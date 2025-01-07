@@ -36,7 +36,7 @@ env:
   MQ_CLIENT: dc-echarging-ocpi-driwe
   # postfix is added to provides depending on the data source (push path, pull etc.)
   PROVIDER: echarging-ocpi/driwe
-  PULL_LOCATIONS_CRON: "*/10 * * * *"
+  PULL_LOCATIONS_CRON: "*/5 * * * *"
 
 envSecret:
   # List of valid tokens, no spaces etc.

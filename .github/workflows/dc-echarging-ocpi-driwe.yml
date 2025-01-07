@@ -31,7 +31,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     needs: 
       - build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     concurrency: dc-echarging-ocpi-driwe-deploy-test
     environment: test
     env:
@@ -56,6 +56,69 @@ jobs:
             PULL_TOKEN: "${{ secrets.ECHARGING_DRIWE_OCPI_TOKEN_C }}"
           EOF
 
+          # Merge yaml files https://mikefarah.gitbook.io/yq/operators/multiply-merge
+          yq -i '. *= load("override.yml")' ${{env.VALUES_YAML}}
+
+          cat <<EOF > override.yml
+          ingress:
+            enabled: true
+            annotations:
+              cert-manager.io/issuer: "letsencrypt-prod"
+            className: nginx
+            tls:
+              - hosts:
+                - driwe.ocpi.io.opendatahub.com
+                secretName: tls-ocpi-driwe
+            hosts:
+              - host: driwe.ocpi.io.opendatahub.com
+                paths: 
+                  - path: "/"
+                    pathType: Prefix
+          EOF
+
+          # Different from above, we only do a shallow merge, so that original hosts are replaced, not appended
+          yq -i '. += load("override.yml")' ${{env.VALUES_YAML}}
+
+      - name: Deploy on cluster  
+        uses: noi-techpark/github-actions/helm-deploy@v2
+        with:
+          k8s-name: ${{ env.K8S_NAME }}
+          k8s-namespace: collector
+          chart-path: helm/generic-collector
+          values-file: ${{ env.VALUES_YAML }}
+          aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
+          aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
+          aws-eks-cluster-name: aws-main-eu-01
+          aws-region: eu-west-1
+
+  deploy-prod:
+    if: github.ref == 'refs/heads/prod'
+    needs: 
+      - build
+    runs-on: ubuntu-24.04
+    concurrency: dc-echarging-ocpi-driwe-deploy-prod
+    environment: prod
+    env:
+      VALUES_YAML: collectors/echarging-ocpi/infrastructure/helm/driwe.yaml
+      K8S_NAME: dc-echarging-ocpi-driwe
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Write environment-specific Helm values
+        run: |
+          cat <<EOF > override.yml
+          image:
+            repository:  ${{ env.DOCKER_IMAGE }}
+            tag:  ${{ env.DOCKER_TAG }}
+            pullPolicy: "IfNotPresent"
+          env:
+            LOG_LEVEL: "INFO"
+          envSecret:
+            OCPI_TOKENS: ${{ secrets.ECHARGING_OCPI_DRIWE_TOKENS }}
+            PULL_LOCATIONS_ENDPOINT: "https://ocpi.driwe.club/2.2.1/locations"
+            PULL_TOKEN: "${{ secrets.ECHARGING_DRIWE_OCPI_TOKEN_C }}"
+          EOF
 
           # Merge yaml files https://mikefarah.gitbook.io/yq/operators/multiply-merge
           yq -i '. *= load("override.yml")' ${{env.VALUES_YAML}}
@@ -67,7 +130,7 @@ jobs:
           k8s-namespace: collector
           chart-path: helm/generic-collector
           values-file: ${{ env.VALUES_YAML }}
-          aws-access-key-id: ${{ secrets.AWS_DEV_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_DEV_ACCESS_KEY_SECRET }}
+          aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
+          aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
           aws-eks-cluster-name: aws-main-eu-01
           aws-region: eu-west-1
