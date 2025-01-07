@@ -1,0 +1,39 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-lorawan
+  pullPolicy: IfNotPresent
+  tag: sometaghere
+
+imagePullSecrets:
+  - name: container-registry-r
+
+env:
+  # ODH Core Writer Connection
+  LOG_LEVEL: "DEBUG"
+  MQ_QUEUE: lorawan.data  
+  MQ_EXCHANGE: routed  
+  MQ_KEY: lorawan.data 
+  MQ_CLIENT: lorawan-data-consumer 
+
+  BDP_BASE_URL: https://share.opendatahub.testingmachine.eu
+  BDP_PROVENANCE_VERSION: 
+  BDP_PROVENANCE_NAME: 
+  BDP_ORIGIN: NOI
+
+envSecretRef:
+  - name: MQ_URI 
+    secret: rabbitmq-svcbind
+    key: uri
+  - name: MONGO_URI
+    secret: mongodb-collector-svcbind
+    key: uri
+  - name: ODH_TOKEN_URL
+    secret: oauth-collector
+    key: tokenUri
+  - name: ODH_CLIENT_ID
+    secret: oauth-collector
+    key: clientId
+  - name: ODH_CLIENT_SECRET
+    secret: oauth-collector
+    key: clientSecret

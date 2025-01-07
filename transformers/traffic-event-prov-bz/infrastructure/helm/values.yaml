@@ -1,0 +1,36 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-traffic-event-prov-bz
+  pullPolicy: IfNotPresent
+
+env:
+  # ODH Core Writer Connection
+  BDP_BASE_URL: https://mobility.share.opendatahub.testingmachine.eu
+  # BDP_BASE_URL: http://bdp-core.core.svc.cluster.local:8080
+  BDP_PROVENANCE_NAME: 
+  BDP_PROVENANCE_VERSION: 
+  BDP_ORIGIN: PROVINCE_BZ
+  
+  LOG_LEVEL: INFO
+
+  MQ_QUEUE: traffic-event.prov-bz
+  MQ_EXCHANGE: routed
+  MQ_KEY: traffic-event.prov-bz
+  MQ_CLIENT: tr-traffic-event-prov-bz
+  
+envSecretRef:
+  - name: MQ_URI 
+    secret: rabbitmq-svcbind
+    key: uri
+  - name: MONGO_URI
+    secret: mongodb-collector-svcbind
+    key: uri
+
+  - name: ODH_TOKEN_URL
+    secret: oauth-collector
+    key: tokenUri
+  - name: ODH_CLIENT_ID
+    secret: oauth-collector
+    key: clientId
+  - name: ODH_CLIENT_SECRET
+    secret: oauth-collector
+    key: clientSecret

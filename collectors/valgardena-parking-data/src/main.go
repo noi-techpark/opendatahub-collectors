@@ -55,30 +55,6 @@ type ParkingData struct {
 
 const ENV_HEADER_PREFIX = "HTTP_HEADER_"
 
-// const auth string = "Basic bm9pOiVwIXh+RlNleV1Bc2p1"
-
-// func callHttp(url string, auth string) []byte {
-// 	req, err := http.NewRequest("GET", url, nil)
-// 	if err != nil {
-// 		log.Fatalf("An Error Occured %v", err)
-// 	}
-
-// 	req.Header.Add("Authorization", auth)
-
-// 	resp, err := http.DefaultClient.Do(req)
-// 	if err != nil {
-// 		log.Fatalf("An Error Occured %v", err)
-// 	}
-
-// 	defer resp.Body.Close()
-
-// 	body, err := io.ReadAll(resp.Body)
-// 	if err != nil {
-// 		log.Fatalf("An Error Occured %v", err)
-// 	}
-
-//		return body
-//	}
 func httpRequest(url *url.URL, httpHeaders http.Header, httpMethod string) []byte {
 
 	headers := httpHeaders
@@ -131,7 +107,6 @@ func main() {
 
 		var parkingMetaDataSlice []ParkingMetadata
 
-		//var parkingDataSlice []ParkingData
 
 		var parkingDataSingle ParkingData
 
