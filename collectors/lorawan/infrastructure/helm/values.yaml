@@ -8,7 +8,7 @@ env:
   PROVIDER: lorawan/data
 
   CRON: "0 */2 * * * *"
-  HTTP_URL: "http://saocompute.eurac.edu/sensordb/query?db=db_opendatahub&u=opendatahub&p=%s&q=select%%20*%%20from%%20device_frmpayload_data_message%%20WHERE%%20%%22device_name%%22%%3D%%27%s%%27%%20limit%%201"
+  HTTP_URL: "https://edp-portal.eurac.edu/sensordb/query?db=db_opendatahub&u=opendatahub&p=%s&q=select%%20*%%20from%%20device_frmpayload_data_message%%20WHERE%%20%%22device_name%%22%%3D%%27%s%%27%%20limit%%201"
   HTTP_HEADER_ACCEPT: "Accept: application/json"
 
 envSecret:

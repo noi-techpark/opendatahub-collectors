@@ -8,10 +8,10 @@ image:
 
 env:
   # ODH Core Writer Connection
-  BDP_BASE_URL: https://share.opendatahub.testingmachine.eu
+  BDP_BASE_URL: https://mobility.share.opendatahub.testingmachine.eu
   BDP_PROVENANCE_NAME: 
   BDP_PROVENANCE_VERSION: 
-  BDP_ORIGIN: DRIWE
+  BDP_ORIGIN: DRIWE-OCPI
   
   NINJA_URL: https://mobility.api.opendatahub.testingmachine.eu
   

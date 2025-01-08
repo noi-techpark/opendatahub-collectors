@@ -25,7 +25,7 @@ import (
 	//"go.starlark.net/lib/time"
 )
 
-const Station = "internal-sensors"
+const Station = "IndoorStation"
 const Period = 120
 const Origin = "NOI"
 
