@@ -56,13 +56,13 @@ type Serie struct {
 type SensorBasicMessage struct {
 	Battery     int     `json:"battery"`
 	Temperature float64 `json:"temperature"`
-	Humidity    int     `json:"humidity,hunidity"`
+	Humidity    float64     `json:"humidity,hunidity"`
 }
 
 type SensorCo2Message struct {
 	Battery     int     `json:"battery"`
 	Temperature float64 `json:"temperature"`
-	Humidity    int     `json:"humidity,hunidity"`
+	Humidity    float64     `json:"humidity,hunidity"`
 	Co2         int     `json:"co2"`
 }
 
