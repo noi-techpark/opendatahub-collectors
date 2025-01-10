@@ -40,7 +40,7 @@ var env struct {
 
 const ENV_HEADER_PREFIX = "HTTP_HEADER_"
 
-const URL = "http://saocompute.eurac.edu/sensordb/query?db=db_opendatahub&u=opendatahub&p=H84o0VpLqqnZ0Drm&q=select%%20*%%20from%%20device_frmpayload_data_message%%20WHERE%%20%%22device_name%%22%%3D%%27%s%%27%%20limit%%2010"
+const URL = "https://edp-portal.eurac.edu/sensordb/query?db=db_opendatahub&u=opendatahub&p=H84o0VpLqqnZ0Drm&q=select%%20*%%20from%%20device_frmpayload_data_message%%20WHERE%%20%%22device_name%%22%%3D%%27%s%%27%%20ORDER%%20BY%%20time%%20DESC%%20limit%%201"
 
 var deviceNames = []string{"NOI-Brunico-Temperature", "FreeSoftwareLab-Temperature", "NOI-A1-Floor1-CO2"}
 
