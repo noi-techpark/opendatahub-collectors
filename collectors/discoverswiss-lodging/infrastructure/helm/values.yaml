@@ -1,0 +1,22 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/rest-poller
+  pullPolicy: IfNotPresent
+  tag: "0.2.0" # Set this when upgrading chart with --set-value
+
+env:
+  MQ_CLIENTNAME: dc-discoverswiss-lodging
+  PROVIDER: discoverswiss/lodging
+
+  CRON: "0 0 */1 * * *"
+  HTTP_URL: "https://api.discover.swiss/info/v2/lodgingbusinesses"
+  HTTP_HEADER_ACCEPT: "Accept: application/json"
+  HTTP_HEADER_SUBSCRIPTION: "Ocp-Apim-Subscription-Key: "
+
+
+envSecret:
+  HTTP_HEADER_SUBSCRIPTION: ""
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
