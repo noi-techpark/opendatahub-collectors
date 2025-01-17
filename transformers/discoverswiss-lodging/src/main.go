@@ -244,22 +244,16 @@ func main() {
 	dataMQ, err := rabbit.Consume(env.Env.MQ_EXCHANGE, env.Env.MQ_QUEUE, env.Env.MQ_KEY)
 	ms.FailOnError(err, "failed creating data queue")
 
-	for msg := range dataMQ {
-		fmt.Println("DATA FLOWING")
-		fmt.Println(msg)
-	}
 	fmt.Println("Waiting for messages. To exit press CTRL+C")
 	go tr.HandleQueue(dataMQ, env.Env.MONGO_URI, func(r *dto.Raw[string]) error {
 		fmt.Println("DATA FLOWING")
-		fmt.Println(r.Rawdata)
-		fmt.Printf("RAWDATA type: %T\n", r.Rawdata)
-		payload, err := unmarshalGeneric[LodgingBusiness](r.Rawdata)
-		if err != nil {
-			slog.Error("cannot unmarshall raw data", "err", err)
-			return err
-		}
+		//payload, err := unmarshalGeneric[LodgingBusiness](r.Rawdata)
+		// if err != nil {
+		// 	slog.Error("cannot unmarshall raw data", "err", err)
+		// 	return err
+		// }
 
-		fmt.Println("PAYLOAD: ",payload)
+		fmt.Println("PAYLOAD: ",r.Rawdata)
 		return nil
 
 	})

@@ -235,14 +235,19 @@ func main() {
 		fmt.Println("UP TO HERE")
 		for _, lodging := range response.Data {
 
-
+			jsonLodging, err := json.Marshal(lodging)
+			if err != nil {
+				slog.Error("failed marshalling lodging object", "err", err)
+				continue
+			}
 			
-			fmt.Println(lodging)
+			fmt.Println(string(jsonLodging))
+
 
 			mq <- dto.RawAny{
 				Provider:  env.PROVIDER,
 				Timestamp: time.Now(),
-				Rawdata:   lodging,
+				Rawdata:   string(jsonLodging),
 			}
 			
 		}

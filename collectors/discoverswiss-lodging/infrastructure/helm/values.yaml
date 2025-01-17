@@ -7,7 +7,7 @@ env:
   MQ_CLIENTNAME: dc-discoverswiss-lodging
   PROVIDER: discoverswiss/lodging
 
-  CRON: "0 0 9 * * 1"
+  CRON: "0 40 * * * *" # "0 0 9 * * 1"
   HTTP_URL: "https://api.discover.swiss/info/v2/lodgingbusinesses"
   HTTP_HEADER_ACCEPT: "Accept: application/json"
   HTTP_HEADER_SUBSCRIPTION: "Ocp-Apim-Subscription-Key: "
