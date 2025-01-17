@@ -7,11 +7,14 @@ package main
 import (
 	//"fmt"
 
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"log/slog"
 	"net/http"
 	"net/url"
+	"strconv"
+	"strings"
 	"time"
 
 	//"strconv"
@@ -225,6 +228,121 @@ func rawFilterHttpRequest(id string) (string, error) {
 
 }
 
+func getAccessToken(tokenURL, username, password,clientID, clientSecret string) (*TokenResponse, error) {
+	data := url.Values{}
+	data.Set("grant_type", "password")
+	data.Set("username", username)
+	data.Set("password", password)
+	data.Set("client_id", clientID)
+	data.Set("client_secret", clientSecret)
+
+	req, err := http.NewRequest("POST", tokenURL, strings.NewReader(data.Encode()))
+	if err != nil {
+		return nil, fmt.Errorf("could not create http request: %w", err)
+	}
+
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("error during http request: %w", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("http request returned non-Ok status: %d for url %s", resp.StatusCode, tokenURL)
+	}
+
+	defer resp.Body.Close()
+
+	var tokenResponse TokenResponse
+
+	err = json.NewDecoder(resp.Body).Decode(&tokenResponse)
+	if err != nil {
+		return nil, fmt.Errorf("error decoding token response: %w", err)
+	}
+
+	return &tokenResponse, nil
+
+}
+
+func makeAuthorizedRequest(url *url.URL, token string, payload interface{}, httpMethod string, id string) (string,error) {
+
+    jsonData, err := json.Marshal(payload)
+    if err != nil {
+		return "", fmt.Errorf("could not marshal payload: %w", err)
+	}	
+
+    u := url
+    if httpMethod == "POST" {
+        req, err := http.NewRequest("POST", u.String(), bytes.NewBuffer(jsonData))
+        if err != nil {
+			return "", fmt.Errorf("could not create http request: %w", err)
+		}
+
+        req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
+        req.Header.Set("Content-Type", "application/json")
+
+        client := &http.Client{}
+        resp, err := client.Do(req)
+        if err != nil {
+			return "", fmt.Errorf("error during http request: %w", err)
+		}
+
+        if resp.StatusCode != http.StatusOK {
+            return "", fmt.Errorf("http request returned non-Ok status: %d for url %s", resp.StatusCode, u.String())
+        }
+
+        defer resp.Body.Close()
+
+        return strconv.Itoa(resp.StatusCode), nil
+
+    } else if httpMethod == "PUT" {
+ 
+            u := fmt.Sprintf("%s/%s", url.String(), id)
+			fmt.Println("RAWPATH: ",u)
+			newurl, err := url.Parse(u)
+			if err != nil {
+				return "", fmt.Errorf("could not parse url: %w", err)
+			}
+
+        req, err := http.NewRequest("PUT", newurl.String(), bytes.NewBuffer(jsonData))
+        if err != nil {
+			return "", fmt.Errorf("could not create http request: %w", err)
+		}
+
+        req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
+        req.Header.Set("Content-Type", "application/json")
+
+        client := &http.Client{}
+        resp, err := client.Do(req)
+        if err != nil {
+			return "", fmt.Errorf("error during http request: %w", err)
+		}
+
+        if resp.StatusCode != http.StatusOK {
+            
+			if resp.StatusCode == http.StatusTooManyRequests {
+				retryFunc := func() (string, error) {
+					return makeAuthorizedRequest(url, token, payload, httpMethod, id)
+				}
+				
+				return retryOnError(retryFunc, *resp)
+		}else{
+		return string(resp.StatusCode),fmt.Errorf("http request returned non-Ok status: %d for url %s", resp.StatusCode, newurl.String())
+		}
+	}
+		
+        defer resp.Body.Close()
+
+        return fmt.Sprint("RESPCODE: ",string(resp.StatusCode)), nil
+    }
+	
+
+    return "",fmt.Errorf("unsupported HTTP method: %s", httpMethod)
+}
+
+
 func main() {
 	err := godotenv.Load("../.env")
 	if err != nil {
@@ -247,13 +365,13 @@ func main() {
 	fmt.Println("Waiting for messages. To exit press CTRL+C")
 	go tr.HandleQueue(dataMQ, env.Env.MONGO_URI, func(r *dto.Raw[string]) error {
 		fmt.Println("DATA FLOWING")
-		//payload, err := unmarshalGeneric[LodgingBusiness](r.Rawdata)
-		// if err != nil {
-		// 	slog.Error("cannot unmarshall raw data", "err", err)
-		// 	return err
-		// }
+		payload, err := unmarshalGeneric[LodgingBusiness](r.Rawdata)
+		if err != nil {
+			slog.Error("cannot unmarshall raw data", "err", err)
+			return err
+		}
 
-		fmt.Println("PAYLOAD: ",r.Rawdata)
+		fmt.Println("PAYLOAD: ",*payload)
 		return nil
 
 	})
