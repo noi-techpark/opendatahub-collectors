@@ -150,14 +150,16 @@ var env struct {
 	HTTP_METHOD string `default:"GET"`
 
 	TOKEN_URL string
-	TOKEN_USERNAME string
-	TOKEN_PASSWORD string
-	TOKEN_CLIENT_ID string
-	TOKEN_CLIENT_SECRET string
+	ODH_CORE_TOKEN_USERNAME string
+	ODH_CORE_TOKEN_PASSWORD string
+	ODH_CORE_TOKEN_CLIENT_ID string
+	ODH_CORE_TOKEN_CLIENT_SECRET string
 
 	ODH_API_CORE_URL string
 
 	SUBSCRIPTION_KEY string
+
+	RAW_FILTER_URL_TEMPLATE string
 }
 
 const ENV_HEADER_PREFIX = "HTTP_HEADER_"
@@ -181,16 +183,19 @@ func retryOnError(httpreq func() (string, error), resp http.Response) (string, e
 		time.Sleep(retryAfterDuration)
 		return httpreq()
 	}else{
-		return "", fmt.Errorf("http request returned non-Ok status: %d for url %s", resp.StatusCode)}
+		return "", fmt.Errorf("http request returned non-Ok status: %d for url", resp.StatusCode)}
 }
 
 func rawFilterHttpRequest(id string) (string, error) {
-	url,err := url.Parse(fmt.Sprintf(RAW_FILTER_URL_TEMPLATE, id))
+	url,err := url.Parse(fmt.Sprintf(env.RAW_FILTER_URL_TEMPLATE, id))
 	if err != nil {
 		return "", fmt.Errorf("could not parse url: %w", err)
 	}
 
 	req,err := http.NewRequest("GET", url.String(), nil)
+	if err != nil {
+		return "", fmt.Errorf("could not create http request: %w", err)
+	}
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -329,7 +334,7 @@ func makeAuthorizedRequest(url *url.URL, token string, payload interface{}, http
 				
 				return retryOnError(retryFunc, *resp)
 		}else{
-		return string(resp.StatusCode),fmt.Errorf("http request returned non-Ok status: %d for url %s", resp.StatusCode, newurl.String())
+		return strconv.Itoa(resp.StatusCode),fmt.Errorf("http request returned non-Ok status: %d for url %s", resp.StatusCode, newurl.String())
 		}
 	}
 		
@@ -342,6 +347,89 @@ func makeAuthorizedRequest(url *url.URL, token string, payload interface{}, http
     return "",fmt.Errorf("unsupported HTTP method: %s", httpMethod)
 }
 
+func mapAdditionalTypeToAccoTypeId(additionalType string) string {
+	if strings.EqualFold(additionalType, "Hotel") {
+		return "HotelPension"
+	}
+	return additionalType
+}
+
+func mapLodgingBusinessToAccommodation(lb LodgingBusiness) Accommodation {
+	acco := Accommodation{
+		Source:    "discoverswiss",
+		Active:    true,
+		Shortname: lb.Name,
+	}
+
+	acco.Mapping.DiscoverSwiss.Id = lb.Identifier
+	acco.LicenseInfo.Author = ""
+	acco.LicenseInfo.License = "TEST" //lb.License	
+	acco.LicenseInfo.ClosedData = false
+	acco.LicenseInfo.LicenseHolder = "www.discover.swiss"
+
+	acco.GpsInfo = []struct {
+		Gpstype              string  `json:"Gpstype"`
+		Latitude             float64 `json:"Latitude"`
+		Longitude            float64 `json:"Longitude"`
+		Altitude             float64 `json:"Altitude"`
+		AltitudeUnitofMeasure string `json:"AltitudeUnitofMeasure"`
+	}{
+		{
+			Gpstype:              "position",
+			Latitude:             lb.Geo.Latitude,
+			Longitude:            lb.Geo.Longitude,
+			Altitude:             0,
+			AltitudeUnitofMeasure: "m",
+		},
+	}
+
+	acco.AccoDetail.Language = AccoDetailLanguage{
+		Name:        lb.Name,
+		Street:      lb.Address.StreetAddress,
+		Zip:         lb.Address.PostalCode,
+		City:        lb.Address.AddressLocality,
+		CountryCode: lb.Address.AddressCountry,
+		Email:       lb.Address.Email,
+		Phone:       lb.Address.Telephone,
+	}
+
+	var totalRooms, singleRooms, doubleRooms int
+	for _, room := range lb.NumberOfRooms {
+		value := 0
+		fmt.Sscanf(room.Value, "%d", &value)
+
+		switch room.PropertyID {
+		case "total":
+			totalRooms = value
+		case "single":
+			singleRooms = value
+		case "double":
+			doubleRooms = value
+		}
+	}
+
+	acco.AccoOverview.TotalRooms = totalRooms
+	acco.AccoOverview.SingleRooms = singleRooms
+	acco.AccoOverview.DoubleRooms = doubleRooms
+	acco.AccoOverview.CheckInFrom = lb.CheckinTime
+	acco.AccoOverview.CheckInTo = lb.CheckinTimeTo
+	acco.AccoOverview.CheckOutFrom = lb.CheckoutTimeFrom
+	acco.AccoOverview.CheckOutTo = lb.CheckoutTime
+	acco.AccoOverview.MaxPersons = lb.NumberOfBeds
+	
+	acco.AccoType = struct {
+		Id string `json:"Id"`
+	}{
+		Id: mapAdditionalTypeToAccoTypeId(lb.StarRating.AdditionalType),
+	}
+
+	return acco
+}
+
+type idplusaccomodation struct{
+	Id string
+	Accommodation Accommodation
+}
 
 func main() {
 	err := godotenv.Load("../.env")
@@ -355,14 +443,12 @@ func main() {
 	ms.FailOnError(err, "failed connecting to rabbitmq")
 	defer rabbit.Close()
 
-	fmt.Println("MQ_URI: ",env.Env.MQ_URI)
-	fmt.Println("MQ_CLIENT: ",env.Env.MQ_CLIENT)
-	fmt.Println("MQ_EXCHANGE: ",env.Env.MQ_EXCHANGE)
-	fmt.Println("MQ_QUEUE: ",env.Env.MQ_QUEUE)
 	dataMQ, err := rabbit.Consume(env.Env.MQ_EXCHANGE, env.Env.MQ_QUEUE, env.Env.MQ_KEY)
 	ms.FailOnError(err, "failed creating data queue")
 
+
 	fmt.Println("Waiting for messages. To exit press CTRL+C")
+	lbChannel := make(chan LodgingBusiness,400)
 	go tr.HandleQueue(dataMQ, env.Env.MONGO_URI, func(r *dto.Raw[string]) error {
 		fmt.Println("DATA FLOWING")
 		payload, err := unmarshalGeneric[LodgingBusiness](r.Rawdata)
@@ -372,11 +458,103 @@ func main() {
 		}
 
 		fmt.Println("PAYLOAD: ",payload)
+		lbChannel <- *payload
 		return nil
 
 	})
+
+
+	accoChannel := make(chan Accommodation,400)
+	go func(){
+		fmt.Println("STARTED THE MAPPING OF THE CHANNEL!")
+		for lb := range lbChannel {
+			acco := mapLodgingBusinessToAccommodation(lb)
+			accoChannel <- acco
+		}
+	}()
 	
-	select {}
+	
+
+	var putChannel = make(chan idplusaccomodation,1000)
+	var postChannel = make(chan Accommodation,1000)
+
+	go func(){		
+		fmt.Println("STARTED THE PUT AND POST CHANNELS!")
+		for acco := range accoChannel {
+			fmt.Println("ACCOMODATING")
+			
+			rawfilter,err := rawFilterHttpRequest(acco.Mapping.DiscoverSwiss.Id)
+			if err != nil {
+				slog.Error("cannot get rawfilter", "err", err)
+				return
+			}
+			if len(rawfilter)>0 && rawfilter != "" {
+				fmt.Println("INSERTING IN PUT CHANNEL")
+				idplusaccomodation := idplusaccomodation{Id: rawfilter, Accommodation: acco}
+				putChannel <- idplusaccomodation
+			}else{
+				postChannel <- acco
+			}
+		}}()
+	
+		go func(){			
+			fmt.Println("PUSHING DATA TO OPENDATAHUB!")
+			token,err := getAccessToken(env.TOKEN_URL, env.ODH_CORE_TOKEN_USERNAME, env.ODH_CORE_TOKEN_PASSWORD, env.ODH_CORE_TOKEN_CLIENT_ID, env.ODH_CORE_TOKEN_CLIENT_SECRET)
+			if err != nil {
+				slog.Error("cannot get token", "err", err)
+				return
+			}
+
+			for acco := range putChannel {
+				fmt.Println("PUTTING")
+				u, err := url.Parse(env.ODH_API_CORE_URL)
+				fmt.Println("URL: ",u)
+				if err != nil {
+					slog.Error("cannot parse url", "err", err)
+					return
+				}
+				respStatus,err := makeAuthorizedRequest(u, token.AccessToken, acco.Accommodation, "PUT", acco.Id)
+				if err != nil {
+					slog.Error("cannot make authorized request", "err", err)
+					return
+				}
+				fmt.Println("RESPONSE STATUS: ",respStatus)
+				// if respStatus != "200" {
+				// 	slog.Error("response status not 200", "err", err)
+				// 	return
+				// }
+			}}()
+
+	
+		go func(){
+				
+				fmt.Println("PUSHING DATA TO OPENDATAHUB!")
+				u,err := url.Parse(env.ODH_API_CORE_URL)
+				if err != nil {
+					slog.Error("cannot parse url", "err", err)
+					return
+				}
+				token,err := getAccessToken(env.TOKEN_URL, env.ODH_CORE_TOKEN_USERNAME, env.ODH_CORE_TOKEN_PASSWORD, env.ODH_CORE_TOKEN_CLIENT_ID, env.ODH_CORE_TOKEN_CLIENT_SECRET)
+				if err != nil {
+					slog.Error("cannot get token", "err", err)
+					return
+				}
+				for acco := range postChannel {
+					fmt.Println("POSTING")
+					respStatus,err := makeAuthorizedRequest(u, token.AccessToken, acco, "POST", "")
+					if err != nil {
+						slog.Error("cannot make authorized request", "err", err)
+						return
+					}
+					 fmt.Println("RESPONSE STATUS: ",respStatus)
+					// if respStatus != "200" {
+					// 	slog.Error("response status not 200", "err", err)
+					// 	return
+					// }
+				}
+			}()
+
+		select{}
 }
 
 func unmarshalGeneric[T any](values string) (*T, error) {
