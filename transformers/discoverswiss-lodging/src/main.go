@@ -19,7 +19,6 @@ import (
 
 	//"strconv"
 
-	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-opendatahub-ingest/dto"
 	"github.com/noi-techpark/go-opendatahub-ingest/mq"
@@ -432,10 +431,6 @@ type idplusaccomodation struct{
 }
 
 func main() {
-	err := godotenv.Load("../.env")
-	if err != nil {
-		slog.Error("Error loading .env file")
-	}
 	envconfig.MustProcess("", &env)
 	ms.InitLog(env.Env.LOG_LEVEL)
 

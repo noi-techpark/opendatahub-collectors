@@ -101,7 +101,7 @@ func main() {
 		fmt.Println(r.Rawdata)
 		//parkingMetaData := b.CreateDataMap()
 		payloadArray, _ := unmarshalRawdata[payloadMetaArray](r.Rawdata)
-
+		var stations []bdplib.Station
 		for _, payload := range *payloadArray {
 			parkingid := stationId(payload.Uid, b.Origin)
 			lat, _ := strconv.ParseFloat(payload.Lat, 64)
@@ -113,10 +113,12 @@ func main() {
 			MetaData["capacity"] = payload.Capacity
 
 			s.MetaData = MetaData
-			if err := b.SyncStations(Station, []bdplib.Station{s}, false, false); err != nil {
-				slog.Error("Error syncing stations", "err", err)
-			}
+			stations = append(stations, s)
 
+
+		}
+		if err := b.SyncStations(Station, stations, true, false); err != nil {
+			slog.Error("Error syncing stations", "err", err)
 		}
 		slog.Info("Updated parking station occupancy")
 		return nil
