@@ -371,7 +371,7 @@ func main() {
 			return err
 		}
 
-		fmt.Println("PAYLOAD: ",*payload)
+		fmt.Println("PAYLOAD: ",payload)
 		return nil
 
 	})
