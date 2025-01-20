@@ -554,7 +554,7 @@ func main() {
 				}
 			}()
 
-		select{}
+		 select{}
 }
 
 func unmarshalGeneric[T any](values string) (*T, error) {

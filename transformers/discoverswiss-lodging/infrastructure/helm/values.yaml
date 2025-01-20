@@ -11,15 +11,19 @@ imagePullSecrets:
 env:
   # ODH Core Writer Connection
   LOG_LEVEL: "DEBUG"
-  MQ_QUEUE: lorawan.data  
+  MQ_QUEUE: dsicoverswiss.lodging  
   MQ_EXCHANGE: routed  
-  MQ_KEY: lorawan.data 
-  MQ_CLIENT: lorawan-data-consumer 
+  MQ_KEY: dsicoverswiss.lodging 
+  MQ_CLIENT: discoverswiss-lodging-consumer 
+  RAW_FILTER_URL_TEMPLATE: "https://api.tourism.testingmachine.eu/v1/Accommodation?rawfilter=eq(Mapping.discoverswiss.id,%%22%s%%22)&fields=Id"
+  TOKEN_URL: "https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token"
+  ODH_CORE_TOKEN_CLIENT_ID: "odh-api-core"
+  ODH_CORE_TOKEN_USERNAME: "l.pasquarelli@noi.bz.it"
 
-  BDP_BASE_URL: https://share.opendatahub.testingmachine.eu
-  BDP_PROVENANCE_VERSION: 
-  BDP_PROVENANCE_NAME: 
-  BDP_ORIGIN: NOI
+
+envSecret:
+  ODH_CORE_TOKEN_CLIENT_SECRET: ""
+  ODH_CORE_TOKEN_PASSWORD: ""
 
 envSecretRef:
   - name: MQ_URI 
@@ -28,12 +32,4 @@ envSecretRef:
   - name: MONGO_URI
     secret: mongodb-collector-svcbind
     key: uri
-  - name: ODH_TOKEN_URL
-    secret: oauth-collector
-    key: tokenUri
-  - name: ODH_CLIENT_ID
-    secret: oauth-collector
-    key: clientId
-  - name: ODH_CLIENT_SECRET
-    secret: oauth-collector
-    key: clientSecret
+
