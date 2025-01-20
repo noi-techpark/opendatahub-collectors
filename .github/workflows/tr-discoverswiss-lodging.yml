@@ -6,6 +6,7 @@ on:
       - "transformers/discoverswiss-lodging/infrastructure/**"
       - "transformers/discoverswiss-lodging/src/**"
       - ".github/workflows/tr-discoverswiss-lodging.yml"
+      - ".github/workflows/tr-discoverswiss-lodging-deploy-test.yml"
       
 
 env:
