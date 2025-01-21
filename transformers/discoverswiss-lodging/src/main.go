@@ -17,124 +17,15 @@ import (
 	"strings"
 	"time"
 
-	//"strconv"
-
 	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-opendatahub-ingest/dto"
 	"github.com/noi-techpark/go-opendatahub-ingest/mq"
 	"github.com/noi-techpark/go-opendatahub-ingest/ms"
 	"github.com/noi-techpark/go-opendatahub-ingest/tr"
-	//"go.starlark.net/lib/time"
+
+	"github.com/noi-techpark/go-opendatahub-discoverswiss/mappers"
+	"github.com/noi-techpark/go-opendatahub-discoverswiss/models"
 )
-
-type dsid struct{
-	Id string	`json:"id"`
-}
-
-type Accommodation struct {
-	Source     string `default:"discoverswiss"`
-	Active     bool   `default:"true"`
-	Shortname  string
-
-	Mapping struct {
-		DiscoverSwiss dsid `json:"discoverswiss"`
-	} `json:"Mapping"`
-
-	AccoDetail struct {
-		Language AccoDetailLanguage `json:"de"`
-	} `json:"AccoDetail"`
-
-	GpsInfo []struct {
-		Gpstype   string  `json:"Gpstype"`
-		Latitude  float64 `json:"Latitude"`
-		Longitude float64 `json:"Longitude"`
-		Altitude  float64 `json:"Altitude"`
-		AltitudeUnitofMeasure string `json:"AltitudeUnitofMeasure"`
-	} `json:"GpsInfo"`
-
-	AccoType struct {
-		Id string `json:"Id"`
-	} `json:"AccoType"`
-
-	AccoOverview struct {
-		TotalRooms   int    `json:"TotalRooms"`
-		SingleRooms  int    `json:"SingleRooms"`
-		DoubleRooms  int    `json:"DoubleRooms"`
-		CheckInFrom  string `json:"CheckInFrom"`
-		CheckInTo    string `json:"CheckInTo"`
-		CheckOutFrom string `json:"CheckOutFrom"`
-		CheckOutTo   string `json:"CheckOutTo"`
-		MaxPersons   int    `json:"MaxPersons"`
-	} `json:"AccoOverview"`
-
-	LicenseInfo struct {
-		Author string `json:"Author"`
-		License string `json:"License"`
-		ClosedData bool `json:"ClosedData"`
-		LicenseHolder string `json:"LicenseHolder"`
-	} `json:"LicenseInfo"`
-}
-
-type AccoDetailLanguage struct {
-	Name        string `json:"Name"`
-	Street      string `json:"Street"`
-	Zip         string `json:"Zip"`
-	City        string `json:"City"`
-	CountryCode string `json:"CountryCode"`
-	Email       string `json:"Email"`
-	Phone       string `json:"Phone"`
-}
-
-
-type DiscoverSwissResponse struct {
-	Count         int               `json:"count"`
-	HasNextPage   bool              `json:"hasNextPage"`
-	NextPageToken string            `json:"nextPageToken"`
-	Data          []LodgingBusiness `json:"data"`
-}
-type LodgingBusiness struct {
-	Name string `json:"name"`
-
-	Address struct {
-		AddressCountry  string `json:"addressCountry"`
-		AddressLocality string `json:"addressLocality"`
-		PostalCode      string `json:"postalCode"`
-		StreetAddress   string `json:"streetAddress"`
-		Email           string `json:"email"`
-		Telephone       string `json:"telephone"`
-	} `json:"address"`
-
-	Geo struct {
-		Latitude  float64 `json:"latitude"`
-		Longitude float64 `json:"longitude"`
-	} `json:"geo"`
-
-	NumberOfRooms []struct {
-		PropertyID string `json:"propertyId"`
-		Value      string `json:"value"`
-	} `json:"numberOfRooms"`
-
-	StarRating StarRating `json:"starRating"`
-
-	NumberOfBeds int `json:"numberOfBeds"`
-
-	Identifier string `json:"identifier"`
-
-	CheckinTime      string `json:"checkinTime"`
-	CheckinTimeTo    string `json:"checkinTimeTo"`
-	CheckoutTimeFrom string `json:"checkoutTimeFrom"`
-	CheckoutTime     string `json:"checkoutTime"`
-
-	License string `json:"license"`
-}
-
-	
-
-type StarRating struct {
-	RatingValue    float64 `json:"ratingValue"`
-	AdditionalType string  `json:"additionalType"`
-	Name           string  `json:"name"`
-}
 
 type TokenResponse struct {
 	AccessToken string `json:"access_token"`
@@ -154,7 +45,7 @@ var env struct {
 	ODH_CORE_TOKEN_CLIENT_ID string
 	ODH_CORE_TOKEN_CLIENT_SECRET string
 
-	ODH_API_CORE_URL string
+	ODH_API_CORE_URL string 
 
 	SUBSCRIPTION_KEY string
 
@@ -346,88 +237,9 @@ func makeAuthorizedRequest(url *url.URL, token string, payload interface{}, http
     return "",fmt.Errorf("unsupported HTTP method: %s", httpMethod)
 }
 
-func mapAdditionalTypeToAccoTypeId(additionalType string) string {
-	if strings.EqualFold(additionalType, "Hotel") {
-		return "HotelPension"
-	}
-	return additionalType
-}
-
-func mapLodgingBusinessToAccommodation(lb LodgingBusiness) Accommodation {
-	acco := Accommodation{
-		Source:    "discoverswiss",
-		Active:    true,
-		Shortname: lb.Name,
-	}
-
-	acco.Mapping.DiscoverSwiss.Id = lb.Identifier
-	acco.LicenseInfo.Author = ""
-	acco.LicenseInfo.License = "TEST" //lb.License	
-	acco.LicenseInfo.ClosedData = false
-	acco.LicenseInfo.LicenseHolder = "www.discover.swiss"
-
-	acco.GpsInfo = []struct {
-		Gpstype              string  `json:"Gpstype"`
-		Latitude             float64 `json:"Latitude"`
-		Longitude            float64 `json:"Longitude"`
-		Altitude             float64 `json:"Altitude"`
-		AltitudeUnitofMeasure string `json:"AltitudeUnitofMeasure"`
-	}{
-		{
-			Gpstype:              "position",
-			Latitude:             lb.Geo.Latitude,
-			Longitude:            lb.Geo.Longitude,
-			Altitude:             0,
-			AltitudeUnitofMeasure: "m",
-		},
-	}
-
-	acco.AccoDetail.Language = AccoDetailLanguage{
-		Name:        lb.Name,
-		Street:      lb.Address.StreetAddress,
-		Zip:         lb.Address.PostalCode,
-		City:        lb.Address.AddressLocality,
-		CountryCode: lb.Address.AddressCountry,
-		Email:       lb.Address.Email,
-		Phone:       lb.Address.Telephone,
-	}
-
-	var totalRooms, singleRooms, doubleRooms int
-	for _, room := range lb.NumberOfRooms {
-		value := 0
-		fmt.Sscanf(room.Value, "%d", &value)
-
-		switch room.PropertyID {
-		case "total":
-			totalRooms = value
-		case "single":
-			singleRooms = value
-		case "double":
-			doubleRooms = value
-		}
-	}
-
-	acco.AccoOverview.TotalRooms = totalRooms
-	acco.AccoOverview.SingleRooms = singleRooms
-	acco.AccoOverview.DoubleRooms = doubleRooms
-	acco.AccoOverview.CheckInFrom = lb.CheckinTime
-	acco.AccoOverview.CheckInTo = lb.CheckinTimeTo
-	acco.AccoOverview.CheckOutFrom = lb.CheckoutTimeFrom
-	acco.AccoOverview.CheckOutTo = lb.CheckoutTime
-	acco.AccoOverview.MaxPersons = lb.NumberOfBeds
-	
-	acco.AccoType = struct {
-		Id string `json:"Id"`
-	}{
-		Id: mapAdditionalTypeToAccoTypeId(lb.StarRating.AdditionalType),
-	}
-
-	return acco
-}
-
 type idplusaccomodation struct{
 	Id string
-	Accommodation Accommodation
+	Accommodation models.Accommodation
 }
 
 func main() {
@@ -447,10 +259,10 @@ func main() {
 
 
 	fmt.Println("Waiting for messages. To exit press CTRL+C")
-	lbChannel := make(chan LodgingBusiness,400)
+	lbChannel := make(chan models.LodgingBusiness,400)
 	go tr.HandleQueue(dataMQ, env.Env.MONGO_URI, func(r *dto.Raw[string]) error {
 		fmt.Println("DATA FLOWING")
-		payload, err := unmarshalGeneric[LodgingBusiness](r.Rawdata)
+		payload, err := unmarshalGeneric[models.LodgingBusiness](r.Rawdata)
 		if err != nil {
 			slog.Error("cannot unmarshall raw data", "err", err)
 			return err
@@ -463,11 +275,11 @@ func main() {
 	})
 
 
-	accoChannel := make(chan Accommodation,400)
+	accoChannel := make(chan models.Accommodation,400)
 	go func(){
 		fmt.Println("STARTED THE MAPPING OF THE CHANNEL!")
 		for lb := range lbChannel {
-			acco := mapLodgingBusinessToAccommodation(lb)
+			acco := mappers.MapLodgingBusinessToAccommodation(lb)
 			accoChannel <- acco
 			fmt.Println("ACCOMODATION: ",acco)
 		}
@@ -476,7 +288,7 @@ func main() {
 	
 
 	var putChannel = make(chan idplusaccomodation,1000)
-	var postChannel = make(chan Accommodation,1000)
+	var postChannel = make(chan models.Accommodation,1000)
 
 	go func(){		
 		fmt.Println("STARTED THE PUT AND POST CHANNELS!")

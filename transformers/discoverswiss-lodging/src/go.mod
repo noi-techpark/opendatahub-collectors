@@ -1,16 +1,15 @@
 module opendatahub.com/tr-smart-taxi-merano
 
-go 1.22.2
+go 1.23.1
 
 require (
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/noi-techpark/go-bdp-client v1.0.0
+	github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250121153429-4b78c5a9a39a
 	github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20241125091038-f2e05d353e7d
 )
 
 require (
 	github.com/golang/snappy v0.0.4 // indirect
-	github.com/joho/godotenv v1.5.1
 	github.com/klauspost/compress v1.17.11 // indirect
 	github.com/montanaflynn/stats v0.7.1 // indirect
 	github.com/rabbitmq/amqp091-go v1.10.0 // indirect
