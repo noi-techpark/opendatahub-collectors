@@ -5,9 +5,7 @@ on:
     paths:
       - "transformers/discoverswiss-lodging/infrastructure/**"
       - "transformers/discoverswiss-lodging/src/**"
-      - ".github/workflows/tr-discoverswiss-lodging.yml"
-      - ".github/workflows/tr-discoverswiss-lodging-deploy-test.yml"
-      
+      - ".github/workflows/tr-discoverswiss-lodging.yml"     
 
 env:
   PROJECT_NAME: tr-discoverswiss-lodging

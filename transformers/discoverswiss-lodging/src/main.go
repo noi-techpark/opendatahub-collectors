@@ -19,6 +19,7 @@ import (
 
 	//"strconv"
 
+	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-opendatahub-ingest/dto"
 	"github.com/noi-techpark/go-opendatahub-ingest/mq"
@@ -148,7 +149,7 @@ var env struct {
 	HTTP_URL    string
 	HTTP_METHOD string `default:"GET"`
 
-	TOKEN_URL string
+	ODH_CORE_TOKEN_URL string
 	ODH_CORE_TOKEN_USERNAME string
 	ODH_CORE_TOKEN_PASSWORD string
 	ODH_CORE_TOKEN_CLIENT_ID string
@@ -339,7 +340,7 @@ func makeAuthorizedRequest(url *url.URL, token string, payload interface{}, http
 		
         defer resp.Body.Close()
 
-        return fmt.Sprint("RESPCODE: ",string(resp.StatusCode)), nil
+        return fmt.Sprint("RESPCODE: ",strconv.Itoa(resp.StatusCode)), nil
     }
 	
 
@@ -431,6 +432,10 @@ type idplusaccomodation struct{
 }
 
 func main() {
+	err := godotenv.Load("../.env")
+	if err != nil {
+		slog.Error("Error loading .env file")
+	}
 	envconfig.MustProcess("", &env)
 	ms.InitLog(env.Env.LOG_LEVEL)
 
@@ -495,7 +500,7 @@ func main() {
 	
 		go func(){			
 			fmt.Println("PUSHING DATA TO OPENDATAHUB!")
-			token,err := getAccessToken(env.TOKEN_URL, env.ODH_CORE_TOKEN_USERNAME, env.ODH_CORE_TOKEN_PASSWORD, env.ODH_CORE_TOKEN_CLIENT_ID, env.ODH_CORE_TOKEN_CLIENT_SECRET)
+			token,err := getAccessToken(env.ODH_CORE_TOKEN_URL, env.ODH_CORE_TOKEN_USERNAME, env.ODH_CORE_TOKEN_PASSWORD, env.ODH_CORE_TOKEN_CLIENT_ID, env.ODH_CORE_TOKEN_CLIENT_SECRET)
 			if err != nil {
 				slog.Error("cannot get token", "err", err)
 				return
@@ -530,11 +535,8 @@ func main() {
 					slog.Error("cannot parse url", "err", err)
 					return
 				}
-				token,err := getAccessToken(env.TOKEN_URL, env.ODH_CORE_TOKEN_USERNAME, env.ODH_CORE_TOKEN_PASSWORD, env.ODH_CORE_TOKEN_CLIENT_ID, env.ODH_CORE_TOKEN_CLIENT_SECRET)
-				if err != nil {
-					slog.Error("cannot get token", "err", err)
-					return
-				}
+				token,err := getAccessToken(env.ODH_CORE_TOKEN_URL, env.ODH_CORE_TOKEN_USERNAME, env.ODH_CORE_TOKEN_PASSWORD, env.ODH_CORE_TOKEN_CLIENT_ID, env.ODH_CORE_TOKEN_CLIENT_SECRET)
+				ms.FailOnError(err, "cannot get token")
 				for acco := range postChannel {
 					fmt.Println("POSTING")
 					respStatus,err := makeAuthorizedRequest(u, token.AccessToken, acco, "POST", "")
