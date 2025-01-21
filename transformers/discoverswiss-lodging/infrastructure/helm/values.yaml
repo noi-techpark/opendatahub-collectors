@@ -16,7 +16,7 @@ env:
   MQ_KEY: discoverswiss.lodging 
   MQ_CLIENT: discoverswiss-lodging-consumer 
   RAW_FILTER_URL_TEMPLATE: "https://api.tourism.testingmachine.eu/v1/Accommodation?rawfilter=eq(Mapping.discoverswiss.id,%%22%s%%22)&fields=Id"
-  TOKEN_URL: "https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token"
+  ODH_CORE_TOKEN_URL: "https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token"
   ODH_CORE_TOKEN_CLIENT_ID: "odh-api-core"
   ODH_CORE_TOKEN_USERNAME: "l.pasquarelli@noi.bz.it"
 
