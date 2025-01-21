@@ -19,6 +19,7 @@ env:
   ODH_CORE_TOKEN_URL: "https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token"
   ODH_CORE_TOKEN_CLIENT_ID: "odh-api-core"
   ODH_CORE_TOKEN_USERNAME: "l.pasquarelli@noi.bz.it"
+  ODH_API_CORE_URL: "https://api.tourism.testingmachine.eu/v1/Accommodation"
 
 
 envSecret:
