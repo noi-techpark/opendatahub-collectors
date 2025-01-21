@@ -222,7 +222,7 @@ func rawFilterHttpRequest(id string) (string, error) {
 		return "", fmt.Errorf("could not decode response: %w", err)
 	}
 
-	fmt.Println("RAWFILTERID: ",rawFilterId)
+	//fmt.Println("RAWFILTERID: ",rawFilterId)
 
 	if len(rawFilterId.Items) > 0 {
 		return rawFilterId.Items[0].Id, nil
@@ -452,7 +452,7 @@ func main() {
 			return err
 		}
 
-		fmt.Println("PAYLOAD: ",payload)
+		//fmt.Println("PAYLOAD: ",payload)
 		lbChannel <- *payload
 		return nil
 
@@ -465,6 +465,7 @@ func main() {
 		for lb := range lbChannel {
 			acco := mapLodgingBusinessToAccommodation(lb)
 			accoChannel <- acco
+			fmt.Println("ACCOMODATION: ",acco)
 		}
 	}()
 	
@@ -542,10 +543,6 @@ func main() {
 						return
 					}
 					 fmt.Println("RESPONSE STATUS: ",respStatus)
-					// if respStatus != "200" {
-					// 	slog.Error("response status not 200", "err", err)
-					// 	return
-					// }
 				}
 			}()
 
