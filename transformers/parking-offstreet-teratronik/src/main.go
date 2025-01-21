@@ -66,8 +66,9 @@ func main() {
 		b := bdplib.FromEnv()
 
 		dtFree := bdplib.CreateDataType("free", "", "free", "Instantaneous")
+		dtOccupied := bdplib.CreateDataType("occupied", "", "occupied", "Instantaneous")
 
-		ds := []bdplib.DataType{dtFree}
+		ds := []bdplib.DataType{dtFree, dtOccupied}
 		failOnError(b.SyncDataTypes(ParkingStation, ds), "Error pushing datatypes")
 
 		for msg := range mq {
@@ -109,6 +110,7 @@ func main() {
 
 			dm := b.CreateDataMap()
 			dm.AddRecord(s.Id, dtFree.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), raw.Measurements[0].Availability, 300))
+			dm.AddRecord(s.Id, dtOccupied.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), raw.Capacity-raw.Measurements[0].Availability, 300))
 
 			if err := b.PushData(ParkingStation, dm); err != nil {
 				slog.Error("Error pushing data to bdp", "err", err, "msg", msgBody)
