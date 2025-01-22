@@ -1,11 +1,11 @@
-module opendatahub.com/tr-smart-taxi-merano
+module opendatahub.com/tr-discoverswiss-lodging
 
 go 1.23.1
 
 require (
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250121153429-4b78c5a9a39a
-	github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20241125091038-f2e05d353e7d
+	github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250122091111-494520b69dee
+	github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20241217152708-001fb6f116e0
 )
 
 require (
@@ -17,8 +17,8 @@ require (
 	github.com/xdg-go/scram v1.1.2 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
-	go.mongodb.org/mongo-driver v1.17.1 // indirect
-	golang.org/x/crypto v0.31.0 // indirect
+	go.mongodb.org/mongo-driver v1.17.2 // indirect
+	golang.org/x/crypto v0.32.0 // indirect
 	golang.org/x/sync v0.10.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 )
