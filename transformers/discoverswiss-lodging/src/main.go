@@ -5,16 +5,15 @@
 package main
 
 import (
-	//"fmt"
-
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"log/slog"
-	"net/http"
 	"net/url"
 	"strconv"
-	"strings"
+
+	"golang.org/x/oauth2"
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-opendatahub-ingest/dto"
@@ -62,7 +61,7 @@ type RawFilterId struct {
 	} `json:"Items"`
 }
 
-func rawFilterHttpRequest(id string) (string, error) {
+func getAccomodationIdByRawFilter(id string) (string, error) {
 	url,err := url.Parse(fmt.Sprintf(env.RAW_FILTER_URL_TEMPLATE, id))
 	if err != nil {
 		return "", fmt.Errorf("could not parse url: %w", err)
@@ -95,42 +94,23 @@ func rawFilterHttpRequest(id string) (string, error) {
 
 }
 
-func getAccessToken(tokenURL, username, password,clientID, clientSecret string) (*TokenResponse, error) {
-	data := url.Values{}
-	data.Set("grant_type", "password")
-	data.Set("username", username)
-	data.Set("password", password)
-	data.Set("client_id", clientID)
-	data.Set("client_secret", clientSecret)
+func getAccessToken(tokenURL, username, password, clientID, clientSecret string) (*oauth2.Token, error) {
+    ctx := context.Background()
 
-	req, err := http.NewRequest("POST", tokenURL, strings.NewReader(data.Encode()))
-	if err != nil {
-		return nil, fmt.Errorf("could not create http request: %w", err)
-	}
+    config := &oauth2.Config{
+        ClientID:     clientID,
+        ClientSecret: clientSecret,
+        Endpoint: oauth2.Endpoint{
+            TokenURL: tokenURL,
+        },
+    }
 
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+    token, err := config.PasswordCredentialsToken(ctx, username, password)
+    if err != nil {
+        return nil, fmt.Errorf("failed to get token: %w", err)
+    }
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("error during http request: %w", err)
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("http request returned non-Ok status: %d for url %s", resp.StatusCode, tokenURL)
-	}
-
-	defer resp.Body.Close()
-
-	var tokenResponse TokenResponse
-
-	err = json.NewDecoder(resp.Body).Decode(&tokenResponse)
-	if err != nil {
-		return nil, fmt.Errorf("error decoding token response: %w", err)
-	}
-
-	return &tokenResponse, nil
-
+    return token, nil
 }
 
 func putContentApi(url *url.URL, token string, payload interface{}, id string) (string,error) {
@@ -162,7 +142,6 @@ func putContentApi(url *url.URL, token string, payload interface{}, id string) (
 	return strconv.Itoa(resp.StatusCode), nil   
 }
 	
-
 func postContentApi(url *url.URL, token string, payload interface{}) (string,error) {
 
     jsonData, err := json.Marshal(payload)
@@ -186,6 +165,14 @@ func postContentApi(url *url.URL, token string, payload interface{}) (string,err
 	}
 
 	return strconv.Itoa(resp.StatusCode), nil
+}
+
+func unmarshalGeneric[T any](values string) (*T, error) {
+	var result T
+	if err := json.Unmarshal([]byte(values), &result); err != nil {
+		return nil, fmt.Errorf("error unmarshalling payload json: %w", err)
+	}
+	return &result, nil
 }
 
 type idplusaccomodation struct{
@@ -219,12 +206,10 @@ func main() {
 			return err
 		}
 
-		//fmt.Println("PAYLOAD: ",payload)
 		lbChannel <- *payload
 		return nil
 
 	})
-
 
 	accoChannel := make(chan models.Accommodation,400)
 	go func(){
@@ -236,17 +221,14 @@ func main() {
 		}
 	}()
 	
-	
-
 	var putChannel = make(chan idplusaccomodation,1000)
 	var postChannel = make(chan models.Accommodation,1000)
-
 	go func(){		
 		fmt.Println("STARTED THE PUT AND POST CHANNELS!")
 		for acco := range accoChannel {
 			fmt.Println("ACCOMODATING")
 			
-			rawfilter,err := rawFilterHttpRequest(acco.Mapping.DiscoverSwiss.Id)
+			rawfilter,err := getAccomodationIdByRawFilter(acco.Mapping.DiscoverSwiss.Id)
 			if err != nil {
 				slog.Error("cannot get rawfilter", "err", err)
 				return
@@ -283,7 +265,6 @@ func main() {
 				}
 				fmt.Println("RESPONSE STATUS: ",respStatus)
 			}}()
-
 	
 		go func(){				
 				fmt.Println("PUSHING DATA TO OPENDATAHUB!")
@@ -308,10 +289,4 @@ func main() {
 		 select{}
 }
 
-func unmarshalGeneric[T any](values string) (*T, error) {
-	var result T
-	if err := json.Unmarshal([]byte(values), &result); err != nil {
-		return nil, fmt.Errorf("error unmarshalling payload json: %w", err)
-	}
-	return &result, nil
-}
+
