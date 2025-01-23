@@ -181,6 +181,7 @@ type idplusaccomodation struct{
 }
 
 func main() {
+	// FOR LOCAL TESTING UNCOMMENT THIS LINES
 	// err := godotenv.Load("../.env")
 	// if err != nil {
 	// 	slog.Error("Error loading .env file")
