@@ -15,7 +15,6 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-opendatahub-ingest/dto"
@@ -23,6 +22,7 @@ import (
 	"github.com/noi-techpark/go-opendatahub-ingest/ms"
 	"github.com/noi-techpark/go-opendatahub-ingest/tr"
 
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/noi-techpark/go-opendatahub-discoverswiss/mappers"
 	"github.com/noi-techpark/go-opendatahub-discoverswiss/models"
 )
@@ -62,49 +62,23 @@ type RawFilterId struct {
 	} `json:"Items"`
 }
 
-func retryOnError(httpreq func() (string, error), resp http.Response) (string, error) {
-	retryAfter := resp.Header.Get("Retry-After")
-	if retryAfter != "" {
-		retryAfterDuration, err := time.ParseDuration(retryAfter + "s")
-		if err != nil {
-			return "", err
-		}
-		fmt.Println("Retrying after", retryAfterDuration)
-		time.Sleep(retryAfterDuration)
-		return httpreq()
-	}else{
-		return "", fmt.Errorf("http request returned non-Ok status: %d for url", resp.StatusCode)}
-}
-
 func rawFilterHttpRequest(id string) (string, error) {
 	url,err := url.Parse(fmt.Sprintf(env.RAW_FILTER_URL_TEMPLATE, id))
 	if err != nil {
 		return "", fmt.Errorf("could not parse url: %w", err)
 	}
 
-	req,err := http.NewRequest("GET", url.String(), nil)
+	client := retryablehttp.NewClient()
+	req,err := retryablehttp.NewRequest("GET", url.String(), nil)
 	if err != nil {
 		return "", fmt.Errorf("could not create http request: %w", err)
 	}
-	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return "", fmt.Errorf("error during http request: %w", err)
 	}
 
 	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusTooManyRequests {			
-			retryfunc := func() (string, error) {
-				return rawFilterHttpRequest(id)
-			}
-			return retryOnError(retryfunc, *resp)
-
-		}else{
-		return "", fmt.Errorf("http request returned non-Ok status: %d for url %s", resp.StatusCode, url.String())
-		}
-	}
 	
 	var rawFilterId RawFilterId
 
@@ -112,8 +86,6 @@ func rawFilterHttpRequest(id string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("could not decode response: %w", err)
 	}
-
-	//fmt.Println("RAWFILTERID: ",rawFilterId)
 
 	if len(rawFilterId.Items) > 0 {
 		return rawFilterId.Items[0].Id, nil
@@ -161,80 +133,59 @@ func getAccessToken(tokenURL, username, password,clientID, clientSecret string) 
 
 }
 
-func makeAuthorizedRequest(url *url.URL, token string, payload interface{}, httpMethod string, id string) (string,error) {
-
+func putContentApi(url *url.URL, token string, payload interface{}, id string) (string,error) {
     jsonData, err := json.Marshal(payload)
     if err != nil {
 		return "", fmt.Errorf("could not marshal payload: %w", err)
 	}	
 
-    u := url
-    if httpMethod == "POST" {
-        req, err := http.NewRequest("POST", u.String(), bytes.NewBuffer(jsonData))
-        if err != nil {
-			return "", fmt.Errorf("could not create http request: %w", err)
-		}
-
-        req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
-        req.Header.Set("Content-Type", "application/json")
-
-        client := &http.Client{}
-        resp, err := client.Do(req)
-        if err != nil {
-			return "", fmt.Errorf("error during http request: %w", err)
-		}
-
-        if resp.StatusCode != http.StatusOK {
-            return "", fmt.Errorf("http request returned non-Ok status: %d for url %s", resp.StatusCode, u.String())
-        }
-
-        defer resp.Body.Close()
-
-        return strconv.Itoa(resp.StatusCode), nil
-
-    } else if httpMethod == "PUT" {
- 
-            u := fmt.Sprintf("%s/%s", url.String(), id)
-			fmt.Println("RAWPATH: ",u)
-			newurl, err := url.Parse(u)
-			if err != nil {
-				return "", fmt.Errorf("could not parse url: %w", err)
-			}
-
-        req, err := http.NewRequest("PUT", newurl.String(), bytes.NewBuffer(jsonData))
-        if err != nil {
-			return "", fmt.Errorf("could not create http request: %w", err)
-		}
-
-        req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
-        req.Header.Set("Content-Type", "application/json")
-
-        client := &http.Client{}
-        resp, err := client.Do(req)
-        if err != nil {
-			return "", fmt.Errorf("error during http request: %w", err)
-		}
-
-        if resp.StatusCode != http.StatusOK {
-            
-			if resp.StatusCode == http.StatusTooManyRequests {
-				retryFunc := func() (string, error) {
-					return makeAuthorizedRequest(url, token, payload, httpMethod, id)
-				}
-				
-				return retryOnError(retryFunc, *resp)
-		}else{
-		return strconv.Itoa(resp.StatusCode),fmt.Errorf("http request returned non-Ok status: %d for url %s", resp.StatusCode, newurl.String())
-		}
+	u := fmt.Sprintf("%s/%s", url.String(), id)
+	slog.Info("PUT URL", "url", u)
+	newurl, err := url.Parse(u)
+	if err != nil {
+		return "", fmt.Errorf("could not parse url: %w", err)
 	}
-		
-        defer resp.Body.Close()
 
-        return fmt.Sprint("RESPCODE: ",strconv.Itoa(resp.StatusCode)), nil
-    }
+	req, err := retryablehttp.NewRequest("PUT", newurl.String(), bytes.NewBuffer(jsonData))
+	if err != nil {
+		return "", fmt.Errorf("could not create http request: %w", err)
+	}
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
+	req.Header.Set("Content-Type", "application/json")
+
+	client := retryablehttp.NewClient()
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("error during http request: %w", err)
+	}
+
+	return strconv.Itoa(resp.StatusCode), nil   
+}
 	
 
-    return "",fmt.Errorf("unsupported HTTP method: %s", httpMethod)
+func postContentApi(url *url.URL, token string, payload interface{}) (string,error) {
+
+    jsonData, err := json.Marshal(payload)
+    if err != nil {
+		return "", fmt.Errorf("could not marshal payload: %w", err)
+	}	
+    u := url
+
+	req, err := retryablehttp.NewRequest("POST", u.String(), bytes.NewBuffer(jsonData))
+	if err != nil {
+		return "", fmt.Errorf("could not create http request: %w", err)
+	}
+
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
+	req.Header.Set("Content-Type", "application/json")
+
+	client := retryablehttp.NewClient()
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("error during http request: %w", err)
+	}
+
+	return strconv.Itoa(resp.StatusCode), nil
 }
 
 type idplusaccomodation struct{
@@ -325,21 +276,16 @@ func main() {
 					slog.Error("cannot parse url", "err", err)
 					return
 				}
-				respStatus,err := makeAuthorizedRequest(u, token.AccessToken, acco.Accommodation, "PUT", acco.Id)
+				respStatus,err := putContentApi(u, token.AccessToken, acco.Accommodation, acco.Id)
 				if err != nil {
 					slog.Error("cannot make authorized request", "err", err)
 					return
 				}
 				fmt.Println("RESPONSE STATUS: ",respStatus)
-				// if respStatus != "200" {
-				// 	slog.Error("response status not 200", "err", err)
-				// 	return
-				// }
 			}}()
 
 	
-		go func(){
-				
+		go func(){				
 				fmt.Println("PUSHING DATA TO OPENDATAHUB!")
 				u,err := url.Parse(env.ODH_API_CORE_URL)
 				if err != nil {
@@ -350,7 +296,7 @@ func main() {
 				ms.FailOnError(err, "cannot get token")
 				for acco := range postChannel {
 					fmt.Println("POSTING")
-					respStatus,err := makeAuthorizedRequest(u, token.AccessToken, acco, "POST", "")
+					respStatus,err := postContentApi(u, token.AccessToken, acco)
 					if err != nil {
 						slog.Error("cannot make authorized request", "err", err)
 						return
