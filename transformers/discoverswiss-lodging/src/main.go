@@ -5,15 +5,10 @@
 package main
 
 import (
-	"bytes"
-	"context"
 	"encoding/json"
 	"fmt"
 	"log/slog"
 	"net/url"
-	"strconv"
-
-	"golang.org/x/oauth2"
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-opendatahub-ingest/dto"
@@ -21,9 +16,9 @@ import (
 	"github.com/noi-techpark/go-opendatahub-ingest/ms"
 	"github.com/noi-techpark/go-opendatahub-ingest/tr"
 
-	"github.com/hashicorp/go-retryablehttp"
 	"github.com/noi-techpark/go-opendatahub-discoverswiss/mappers"
 	"github.com/noi-techpark/go-opendatahub-discoverswiss/models"
+	"github.com/noi-techpark/go-opendatahub-discoverswiss/utilities"
 )
 
 type TokenResponse struct {
@@ -54,118 +49,6 @@ var env struct {
 const ENV_HEADER_PREFIX = "HTTP_HEADER_"
 
 const RAW_FILTER_URL_TEMPLATE = "https://api.tourism.testingmachine.eu/v1/Accommodation?rawfilter=eq(Mapping.discoverswiss.id,%%22%s%%22)&fields=Id"
-
-type RawFilterId struct {
-	Items []struct {
-		Id string `json:"Id"`
-	} `json:"Items"`
-}
-
-func getAccomodationIdByRawFilter(id string) (string, error) {
-	url,err := url.Parse(fmt.Sprintf(env.RAW_FILTER_URL_TEMPLATE, id))
-	if err != nil {
-		return "", fmt.Errorf("could not parse url: %w", err)
-	}
-
-	client := retryablehttp.NewClient()
-	req,err := retryablehttp.NewRequest("GET", url.String(), nil)
-	if err != nil {
-		return "", fmt.Errorf("could not create http request: %w", err)
-	}
-	resp, err := client.Do(req)
-	if err != nil {
-		return "", fmt.Errorf("error during http request: %w", err)
-	}
-
-	defer resp.Body.Close()
-	
-	var rawFilterId RawFilterId
-
-	err = json.NewDecoder(resp.Body).Decode(&rawFilterId)
-	if err != nil {
-		return "", fmt.Errorf("could not decode response: %w", err)
-	}
-
-	if len(rawFilterId.Items) > 0 {
-		return rawFilterId.Items[0].Id, nil
-	}else{
-		return "",nil
-	}
-
-}
-
-func getAccessToken(tokenURL, username, password, clientID, clientSecret string) (*oauth2.Token, error) {
-    ctx := context.Background()
-
-    config := &oauth2.Config{
-        ClientID:     clientID,
-        ClientSecret: clientSecret,
-        Endpoint: oauth2.Endpoint{
-            TokenURL: tokenURL,
-        },
-    }
-
-    token, err := config.PasswordCredentialsToken(ctx, username, password)
-    if err != nil {
-        return nil, fmt.Errorf("failed to get token: %w", err)
-    }
-
-    return token, nil
-}
-
-func putContentApi(url *url.URL, token string, payload interface{}, id string) (string,error) {
-    jsonData, err := json.Marshal(payload)
-    if err != nil {
-		return "", fmt.Errorf("could not marshal payload: %w", err)
-	}	
-
-	u := fmt.Sprintf("%s/%s", url.String(), id)
-	slog.Info("PUT URL", "url", u)
-	newurl, err := url.Parse(u)
-	if err != nil {
-		return "", fmt.Errorf("could not parse url: %w", err)
-	}
-
-	req, err := retryablehttp.NewRequest("PUT", newurl.String(), bytes.NewBuffer(jsonData))
-	if err != nil {
-		return "", fmt.Errorf("could not create http request: %w", err)
-	}
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
-	req.Header.Set("Content-Type", "application/json")
-
-	client := retryablehttp.NewClient()
-	resp, err := client.Do(req)
-	if err != nil {
-		return "", fmt.Errorf("error during http request: %w", err)
-	}
-
-	return strconv.Itoa(resp.StatusCode), nil   
-}
-	
-func postContentApi(url *url.URL, token string, payload interface{}) (string,error) {
-
-    jsonData, err := json.Marshal(payload)
-    if err != nil {
-		return "", fmt.Errorf("could not marshal payload: %w", err)
-	}	
-    u := url
-
-	req, err := retryablehttp.NewRequest("POST", u.String(), bytes.NewBuffer(jsonData))
-	if err != nil {
-		return "", fmt.Errorf("could not create http request: %w", err)
-	}
-
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
-	req.Header.Set("Content-Type", "application/json")
-
-	client := retryablehttp.NewClient()
-	resp, err := client.Do(req)
-	if err != nil {
-		return "", fmt.Errorf("error during http request: %w", err)
-	}
-
-	return strconv.Itoa(resp.StatusCode), nil
-}
 
 func unmarshalGeneric[T any](values string) (*T, error) {
 	var result T
@@ -229,7 +112,7 @@ func main() {
 		for acco := range accoChannel {
 			fmt.Println("ACCOMODATING")
 			
-			rawfilter,err := getAccomodationIdByRawFilter(acco.Mapping.DiscoverSwiss.Id)
+			rawfilter,err := utilities.GetAccomodationIdByRawFilter(acco.Mapping.DiscoverSwiss.Id,env.RAW_FILTER_URL_TEMPLATE)
 			if err != nil {
 				slog.Error("cannot get rawfilter", "err", err)
 				return
@@ -245,7 +128,7 @@ func main() {
 	
 		go func(){			
 			fmt.Println("PUSHING DATA TO OPENDATAHUB!")
-			token,err := getAccessToken(env.ODH_CORE_TOKEN_URL, env.ODH_CORE_TOKEN_USERNAME, env.ODH_CORE_TOKEN_PASSWORD, env.ODH_CORE_TOKEN_CLIENT_ID, env.ODH_CORE_TOKEN_CLIENT_SECRET)
+			token,err := utilities.GetAccessToken(env.ODH_CORE_TOKEN_URL, env.ODH_CORE_TOKEN_USERNAME, env.ODH_CORE_TOKEN_PASSWORD, env.ODH_CORE_TOKEN_CLIENT_ID, env.ODH_CORE_TOKEN_CLIENT_SECRET)
 			if err != nil {
 				slog.Error("cannot get token", "err", err)
 				return
@@ -259,7 +142,7 @@ func main() {
 					slog.Error("cannot parse url", "err", err)
 					return
 				}
-				respStatus,err := putContentApi(u, token.AccessToken, acco.Accommodation, acco.Id)
+				respStatus,err := utilities.PutContentApi(u, token.AccessToken, acco.Accommodation, acco.Id)
 				if err != nil {
 					slog.Error("cannot make authorized request", "err", err)
 					return
@@ -274,11 +157,11 @@ func main() {
 					slog.Error("cannot parse url", "err", err)
 					return
 				}
-				token,err := getAccessToken(env.ODH_CORE_TOKEN_URL, env.ODH_CORE_TOKEN_USERNAME, env.ODH_CORE_TOKEN_PASSWORD, env.ODH_CORE_TOKEN_CLIENT_ID, env.ODH_CORE_TOKEN_CLIENT_SECRET)
+				token,err := utilities.GetAccessToken(env.ODH_CORE_TOKEN_URL, env.ODH_CORE_TOKEN_USERNAME, env.ODH_CORE_TOKEN_PASSWORD, env.ODH_CORE_TOKEN_CLIENT_ID, env.ODH_CORE_TOKEN_CLIENT_SECRET)
 				ms.FailOnError(err, "cannot get token")
 				for acco := range postChannel {
 					fmt.Println("POSTING")
-					respStatus,err := postContentApi(u, token.AccessToken, acco)
+					respStatus,err := utilities.PostContentApi(u, token.AccessToken, acco)
 					if err != nil {
 						slog.Error("cannot make authorized request", "err", err)
 						return
