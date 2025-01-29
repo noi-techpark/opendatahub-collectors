@@ -97,28 +97,22 @@ func main() {
 
 	accoChannel := make(chan models.Accommodation,400)
 	go func(){
-		fmt.Println("STARTED THE MAPPING OF THE CHANNEL!")
 		for lb := range lbChannel {
 			acco := mappers.MapLodgingBusinessToAccommodation(lb)
 			accoChannel <- acco
-			fmt.Println("ACCOMODATION: ",acco)
 		}
 	}()
 	
 	var putChannel = make(chan idplusaccomodation,1000)
 	var postChannel = make(chan models.Accommodation,1000)
 	go func(){		
-		fmt.Println("STARTED THE PUT AND POST CHANNELS!")
-		for acco := range accoChannel {
-			fmt.Println("ACCOMODATING")
-			
+		for acco := range accoChannel {			
 			rawfilter,err := utilities.GetAccomodationIdByRawFilter(acco.Mapping.DiscoverSwiss.Id,env.RAW_FILTER_URL_TEMPLATE)
 			if err != nil {
 				slog.Error("cannot get rawfilter", "err", err)
 				return
 			}
 			if len(rawfilter)>0 && rawfilter != "" {
-				fmt.Println("INSERTING IN PUT CHANNEL")
 				idplusaccomodation := idplusaccomodation{Id: rawfilter, Accommodation: acco}
 				putChannel <- idplusaccomodation
 			}else{
@@ -127,7 +121,6 @@ func main() {
 		}}()
 	
 		go func(){			
-			fmt.Println("PUSHING DATA TO OPENDATAHUB!")
 			token,err := utilities.GetAccessToken(env.ODH_CORE_TOKEN_URL, env.ODH_CORE_TOKEN_USERNAME, env.ODH_CORE_TOKEN_PASSWORD, env.ODH_CORE_TOKEN_CLIENT_ID, env.ODH_CORE_TOKEN_CLIENT_SECRET)
 			if err != nil {
 				slog.Error("cannot get token", "err", err)
@@ -135,7 +128,6 @@ func main() {
 			}
 
 			for acco := range putChannel {
-				fmt.Println("PUTTING")
 				u, err := url.Parse(env.ODH_API_CORE_URL)
 				fmt.Println("URL: ",u)
 				if err != nil {
@@ -151,7 +143,6 @@ func main() {
 			}}()
 	
 		go func(){				
-				fmt.Println("PUSHING DATA TO OPENDATAHUB!")
 				u,err := url.Parse(env.ODH_API_CORE_URL)
 				if err != nil {
 					slog.Error("cannot parse url", "err", err)
