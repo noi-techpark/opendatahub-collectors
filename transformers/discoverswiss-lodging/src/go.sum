@@ -24,6 +24,8 @@ github.com/montanaflynn/stats v0.7.1 h1:etflOAAHORrCC44V+aR6Ftzort912ZU+YLiSTuV8
 github.com/montanaflynn/stats v0.7.1/go.mod h1:etXPPgVO6n31NxCd9KQUMvCM+ve0ruNzt6R8Bnaayow=
 github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250128103840-724c024fed14 h1:PNb0VGCsSmJ0RqPSd0s9iedYKTbOcuvaj6BfBxJaPdE=
 github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250128103840-724c024fed14/go.mod h1:5WamTY7eAAHj6B3jHwAbudv6rnUY5f5OqGyY3UWothg=
+github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250129105458-e666b9c71e5e h1:JoNXzVoEyZPeBWLlToxnODAPP5mv55MogP0MrTa1fHk=
+github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250129105458-e666b9c71e5e/go.mod h1:5WamTY7eAAHj6B3jHwAbudv6rnUY5f5OqGyY3UWothg=
 github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20241217152708-001fb6f116e0 h1:+jstfT0wGjInqpaimKTcQofYio83PJxM6CyqjK920zs=
 github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20241217152708-001fb6f116e0/go.mod h1:x/eTKLIBpI0ITcXvfBYxPVc6PHAQN237Uvv0afM0bOg=
 github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20250127084305-71be9a08639a h1:cmntXRjN/lCskoocnKXZ4gtzbyRZh4E4dF2i24Av/nc=
