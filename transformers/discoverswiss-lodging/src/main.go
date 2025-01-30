@@ -137,12 +137,15 @@ func main() {
 				puttoken,err := token.Token()
 				if err != nil {
 					slog.Error("cannot get token", "err", err)
+					fmt.Println("ERROR TOKEN: ",err)
 					return
 				}
 				respStatus,err := utilities.PutContentApi(u, puttoken.AccessToken, acco.Accommodation, acco.Id)
 				if err != nil {
 					slog.Error("cannot make authorized request", "err", err)
+					fmt.Println("ERROR PUT: ",err)
 					return
+					
 				}
 				fmt.Println("RESPONSE STATUS: ",respStatus)
 			}}()
