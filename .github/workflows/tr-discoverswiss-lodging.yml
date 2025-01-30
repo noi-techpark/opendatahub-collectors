@@ -48,7 +48,6 @@ jobs:
             yq -i '.image.repository = "${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML }}
             yq -i '.image.tag = "${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
             yq -i '.image.pullPolicy = "IfNotPresent"' ${{ env.VALUES_YAML }}
-            yq -i '.envSecret.ODH_CORE_TOKEN_PASSWORD = "${{ secrets.ODH_CORE_TOKEN_PASSWORD_DISCOVERSWISS }}"' ${{ env.VALUES_YAML }}
             yq -i '.envSecret.ODH_CORE_TOKEN_CLIENT_SECRET = "${{ secrets.ODH_CORE_TOKEN_CLIENT_SECRET_DISCOVERSWISS }}"' ${{ env.VALUES_YAML }}
       
 

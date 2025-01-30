@@ -4,7 +4,7 @@ go 1.23.1
 
 require (
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250129105458-e666b9c71e5e
+	github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250130140729-46308a82c12b
 	github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20250127084305-71be9a08639a
 )
 

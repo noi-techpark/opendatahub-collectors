@@ -121,7 +121,7 @@ func main() {
 		}}()
 	
 		go func(){			
-			token,err := utilities.GetAccessToken(env.ODH_CORE_TOKEN_URL, env.ODH_CORE_TOKEN_USERNAME, env.ODH_CORE_TOKEN_PASSWORD, env.ODH_CORE_TOKEN_CLIENT_ID, env.ODH_CORE_TOKEN_CLIENT_SECRET)
+			token,err := utilities.GetAccessToken(env.ODH_CORE_TOKEN_URL,env.ODH_CORE_TOKEN_CLIENT_ID, env.ODH_CORE_TOKEN_CLIENT_SECRET)
 			if err != nil {
 				slog.Error("cannot get token", "err", err)
 				return
@@ -129,12 +129,17 @@ func main() {
 
 			for acco := range putChannel {
 				u, err := url.Parse(env.ODH_API_CORE_URL)
-				fmt.Println("URL: ",u)
+				slog.Info("URL", "value", u.String())
 				if err != nil {
 					slog.Error("cannot parse url", "err", err)
 					return
 				}
-				respStatus,err := utilities.PutContentApi(u, token.AccessToken, acco.Accommodation, acco.Id)
+				puttoken,err := token.Token()
+				if err != nil {
+					slog.Error("cannot get token", "err", err)
+					return
+				}
+				respStatus,err := utilities.PutContentApi(u, puttoken.AccessToken, acco.Accommodation, acco.Id)
 				if err != nil {
 					slog.Error("cannot make authorized request", "err", err)
 					return
@@ -148,16 +153,25 @@ func main() {
 					slog.Error("cannot parse url", "err", err)
 					return
 				}
-				token,err := utilities.GetAccessToken(env.ODH_CORE_TOKEN_URL, env.ODH_CORE_TOKEN_USERNAME, env.ODH_CORE_TOKEN_PASSWORD, env.ODH_CORE_TOKEN_CLIENT_ID, env.ODH_CORE_TOKEN_CLIENT_SECRET)
-				ms.FailOnError(err, "cannot get token")
+				token,err := utilities.GetAccessToken(env.ODH_CORE_TOKEN_URL, env.ODH_CORE_TOKEN_CLIENT_ID, env.ODH_CORE_TOKEN_CLIENT_SECRET)
+				if err != nil {
+					slog.Error("cannot get token", "err", err)
+					return
+				}
+
 				for acco := range postChannel {
 					fmt.Println("POSTING")
-					respStatus,err := utilities.PostContentApi(u, token.AccessToken, acco)
+					posttoken,err := token.Token()
+					if err != nil {
+						slog.Error("cannot get token", "err", err)
+						return
+					}
+					respStatus,err := utilities.PostContentApi(u, posttoken.AccessToken, acco)
 					if err != nil {
 						slog.Error("cannot make authorized request", "err", err)
 						return
 					}
-					 fmt.Println("RESPONSE STATUS: ",respStatus)
+					 slog.Info("RESPONSE STATUS", "status", respStatus)
 				}
 			}()
 
