@@ -1,0 +1,126 @@
+[
+    {
+        "name": "forecast-air-temperature-max",
+        "unit": "Celcius",
+        "description": "Forecast of max air temperature",
+        "rType": "Forecast",
+        "period": 0,
+        "metaData": {
+            "nameDe": "Maximumtemperatur",
+            "nameEn": "maximum temperature",
+            "nameIt": "temperatura massima"
+        }
+    },
+    {
+        "name": "forecast-air-temperature-min",
+        "unit": "Celcius",
+        "description": "Forecast of min air temperature",
+        "rType": "Forecast",
+        "period": 0,
+        "metaData": {
+            "nameDe": "Minimumtemperatur",
+            "nameEn": "minimum temperature",
+            "nameIt": "temperatura minima"
+        }
+    },
+    {
+        "name": "forecast-precipitation-max",
+        "unit": "mm",
+        "description": "Forecast of max precipitation",
+        "rType": "Forecast",
+        "period": 0,
+        "metaData": null
+    },
+    {
+        "name": "forecast-precipitation-min",
+        "unit": "mm",
+        "description": "Forecast of min precipitation",
+        "rType": "Forecast",
+        "period": 0,
+        "metaData": null
+    },
+    {
+        "name": "forecast-air-temperature",
+        "unit": "Celcius",
+        "description": "Forecast of air temperature",
+        "rType": "Forecast",
+        "period": 0,
+        "metaData": {
+            "nameDe": "Temperatur",
+            "nameEn": "temperature",
+            "nameIt": "temperatura"
+        }
+    },
+    {
+        "name": "forecast-wind-direction",
+        "unit": "°",
+        "description": "Forecast of wind direction",
+        "rType": "Forecast",
+        "period": 0,
+        "metaData": {
+            "nameDe": "Windrichtung",
+            "nameEn": "wind direction",
+            "nameIt": "direzione vento"
+        }
+    },
+    {
+        "name": "forecast-wind-speed",
+        "unit": "m/s",
+        "description": "Forecast of wind speed",
+        "rType": "Forecast",
+        "period": 0,
+        "metaData": {
+            "nameDe": "Windgeschwindigkeit",
+            "nameEn": "wind speed",
+            "nameIt": "velocità vento"
+        }
+    },
+    {
+        "name": "forecast-sunshine-duration",
+        "unit": "h",
+        "description": "Forecast of sunshine duration",
+        "rType": "Forecast",
+        "period": 0,
+        "metaData": {
+            "nameDe": "Sonnenscheindauer",
+            "nameEn": "sunshine duration",
+            "nameIt": "durata soleggiamento"
+        }
+    },
+    {
+        "name": "forecast-precipitation-probability",
+        "unit": "%",
+        "description": "Forecast of precipitation probability",
+        "rType": "Forecast",
+        "period": 0,
+        "metaData": {
+            "nameDe": "Niederschlagswahrscheinlichkeit",
+            "nameEn": "precipitation probability",
+            "nameIt": "probabilità di precipitazione"
+        }
+    },
+    {
+        "name": "qualitative-forecast",
+        "unit": "",
+        "description": "Forecast of overall weather condition. Example: sunny",
+        "rType": "Forecast",
+        "period": 0,
+        "metaData": {
+            "nameDe": "Wettersymbole",
+            "nameEn": "weather icons",
+            "nameIt": "icone meteo"
+        }
+    },
+    {
+        "name": "forecast-precipitation-sum",
+        "unit": "mm",
+        "description": "Forecast of cumulated precipitation",
+        "rType": "Forecast",
+        "period": 0,
+        "metaData": {
+            "nameDe": "Niederschlagsmenge",
+            "nameEn": "precipitation",
+            "nameIt": "precipitazione"
+        }
+    }
+]
