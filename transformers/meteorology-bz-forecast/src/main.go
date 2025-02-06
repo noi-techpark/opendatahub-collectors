@@ -85,15 +85,6 @@ func TransformWithBdp(bdp bdplib.Bdp) tr.Handler[Forecast] {
 }
 
 func Transform(ctx context.Context, bdp bdplib.Bdp, payload *dto.Raw[Forecast]) error {
-	// The old data collector was trying to enrich the type with the localization of each type in the Metadata.
-	// Unfortunately the received JSON has different localizations for the same DataType but different period:
-	// precProb24: maximum precipitation probability
-	// precProb3: precipitation probability
-	// Therefore we aribtrary chose one
-	dataTypeList := bdplib.NewDataTypeList(nil)
-	err := dataTypeList.Load("datatypes.json")
-	ms.FailOnError(err, "could not load datatypes")
-
 	forecast := payload.Rawdata
 
 	municipalities := NewMunicipalityMap()
@@ -178,8 +169,6 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *dto.Raw[Forecast]) 
 	}
 
 	// -------
-	bdp.SyncDataTypes(OriginStationType, dataTypeList.All())
-
 	bdp.SyncStations(OriginStationType, []bdplib.Station{modelMetadata}, true, false)
 	bdp.PushData(OriginStationType, dm)
 
@@ -260,7 +249,20 @@ func main() {
 	envconfig.MustProcess("", &env)
 	b := bdplib.FromEnv()
 
+	// The old data collector was trying to enrich the type with the localization of each type in the Metadata.
+	// Unfortunately the received JSON has different localizations for the same DataType but different period:
+	// precProb24: maximum precipitation probability
+	// precProb3: precipitation probability
+	// Therefore we aribtrary chose one
+	dataTypeList := bdplib.NewDataTypeList(nil)
+	err := dataTypeList.Load("datatypes.json")
+	ms.FailOnError(err, "could not load datatypes")
+
+	slog.Info("pushing datatypes on startup")
+	b.SyncDataTypes(OriginStationType, dataTypeList.All())
+
+	slog.Info("listening")
 	listener := tr.NewTrStack[Forecast](&env)
-	err := listener.Start(context.Background(), TransformWithBdp(b))
+	err = listener.Start(context.Background(), TransformWithBdp(b))
 	ms.FailOnError(err, "error while listening to queue")
 }
