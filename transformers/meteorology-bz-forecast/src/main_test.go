@@ -8,9 +8,9 @@ import (
 	"context"
 	"testing"
 
+	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"github.com/noi-techpark/go-bdp-client/bdpmock"
 	"github.com/noi-techpark/go-opendatahub-ingest/dto"
-	"github.com/noi-techpark/go-opendatahub-ingest/ms"
 	"github.com/stretchr/testify/require"
 	"gotest.tools/v3/assert"
 )
@@ -31,7 +31,24 @@ func TestTransformation(t *testing.T) {
 	}
 
 	err = Transform(context.TODO(), b, &raw)
-	ms.FailOnError(err, "failed to preocess")
+	require.Nil(t, err)
+
+	mock := b.(*bdpmock.BdpMock)
+
+	assert.DeepEqual(t, mock.Requests(), out)
+}
+func TestDatatypes(t *testing.T) {
+	var out = bdpmock.BdpMockCalls{}
+	err := bdpmock.LoadOutput(&out, "../testdata/output/DATATYPES--out.json")
+	require.Nil(t, err)
+
+	b := bdpmock.MockFromEnv()
+
+	dataTypeList := bdplib.NewDataTypeList(nil)
+	err = dataTypeList.Load("datatypes.json")
+	require.Nil(t, err)
+
+	b.SyncDataTypes(OriginStationType, dataTypeList.All())
 
 	mock := b.(*bdpmock.BdpMock)
 
