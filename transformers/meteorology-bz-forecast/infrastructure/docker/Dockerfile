@@ -6,10 +6,9 @@ FROM golang:1.23.4-bookworm as base
 
 FROM base as build-env
 WORKDIR /app
-COPY ./src/ ./src/
-COPY ./testdata/ ./testdata
+COPY src/. .
 RUN go mod download
-RUN CGO_ENABLED=0 GOOS=linux go build ./src -o main
+RUN CGO_ENABLED=0 GOOS=linux go build -o main
 
 # BUILD published image
 FROM alpine:latest as build
