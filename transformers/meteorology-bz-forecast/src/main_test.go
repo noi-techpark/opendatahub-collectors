@@ -53,5 +53,4 @@ func TestDatatypes(t *testing.T) {
 	mock := b.(*bdpmock.BdpMock)
 
 	assert.DeepEqual(t, mock.Requests(), out)
-	assert.Equal(t, true, false)
 }
