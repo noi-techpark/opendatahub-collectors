@@ -5,9 +5,9 @@ image:
 
 env:
   MQ_CLIENT: dc-meteorology-bz-forecast
-  PROVIDER: as3-poller/meteorology-bz-forecast
+  PROVIDER: s3-poller/meteorology-bz-forecast
 
-  CRON: "0 0/1 * * * *"
+  CRON: "0 0 0/1 * * *"
 
   AWS_REGION: "eu-west-1"
   AWS_S3_FILE_NAME: "SMOS_MCPL-WX_EXP_SIAG.JSON"
