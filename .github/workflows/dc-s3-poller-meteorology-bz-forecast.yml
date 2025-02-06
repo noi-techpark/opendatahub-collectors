@@ -1,0 +1,61 @@
+name: CI/CD dc-s3-poller meteorology-bz-forecast
+
+on: 
+  push:
+    paths:
+      - "collectors/s3-poller/**"
+      - "!collectors/s3-poller/infrastructure/helm/*"
+      - "collectors/s3-poller/infrastructure/helm/meteorology-bz-forecast.*.yaml"
+      - ".github/workflows/dc-s3-poller-meteorology-bz-forecast.yml"
+
+env:
+  WORKING_DIRECTORY: collectors/s3-poller
+  DOCKER_TAG: ${{ github.sha }}
+  KUBERNETES_NAMESPACE: collector
+  K8S_NAME: dc-s3-poller-meteorology-bz-forecast
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    concurrency: dc-s3-poller-meteorology-bz-forecast-build
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    - name: Build and push images
+      uses: noi-techpark/github-actions/docker-build-and-push@v2
+      with:
+        working-directory: ${{ env.WORKING_DIRECTORY }}/infrastructure
+        docker-username: ${{ github.actor }}
+        docker-password: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy-meteorology-bz-forecast-test:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-22.04
+    concurrency: dc-s3-poller-meteorology-bz-forecast-test
+    environment: test
+    env:
+      VALUES_YAML: infrastructure/helm/meteorology-bz-forecast.test.yaml
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Customize values.yaml
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          yq -i '.image.tag="${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
+          yq -i '.env.AWS_ACCESS_KEY_ID="${{ secrets.METEOROLOGY_BZ_FORECAST_AWS_ACCESS_KEY_ID }}"' ${{ env.VALUES_YAML }}
+          yq -i '.env.AWS_ACCESS_SECRET_KEY="${{ secrets.METEOROLOGY_BZ_FORECAST_AWS_S3_ACCESS_SECRET_KEY }}"' ${{ env.VALUES_YAML }}
+
+      - name: Deploy on cluster  
+        uses: noi-techpark/github-actions/helm-deploy@v2
+        with:
+          k8s-name: dc-s3-poller-meteorology-bz-forecast
+          k8s-namespace: collector
+          chart-path: helm/generic-collector
+          values-file: ${{ env.WORKING_DIRECTORY}}/${{ env.VALUES_YAML }}
+          aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
+          aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
+          aws-eks-cluster-name: aws-main-eu-01
+          aws-region: eu-west-1
