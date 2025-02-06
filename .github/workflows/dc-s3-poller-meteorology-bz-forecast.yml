@@ -10,6 +10,7 @@ on:
 
 env:
   WORKING_DIRECTORY: collectors/s3-poller
+  DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/dc-s3-poller
   DOCKER_TAG: ${{ github.sha }}
   KUBERNETES_NAMESPACE: collector
   K8S_NAME: dc-s3-poller-meteorology-bz-forecast
