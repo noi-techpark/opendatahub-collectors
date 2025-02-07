@@ -64,7 +64,7 @@ type idplusaccomodation struct{
 }
 
 func main() {
-	// FOR LOCAL TESTING UNCOMMENT THIS LINES
+	//FOR LOCAL TESTING UNCOMMENT THIS LINES
 	// err := godotenv.Load("../.env")
 	// if err != nil {
 	// 	slog.Error("Error loading .env file")
@@ -122,12 +122,12 @@ func main() {
 		}}()
 	
 		go func(){			
-			token,err := utilities.GetAccessToken(env.ODH_CORE_TOKEN_URL,env.ODH_CORE_TOKEN_CLIENT_ID, env.ODH_CORE_TOKEN_CLIENT_SECRET)
+			tokenSource,err := utilities.GetAccessToken(env.ODH_CORE_TOKEN_URL,env.ODH_CORE_TOKEN_CLIENT_ID, env.ODH_CORE_TOKEN_CLIENT_SECRET)
 			if err != nil {
 				slog.Error("cannot get token", "err", err)
+				fmt.Println("ERROR GETTING TOKEN: ",err)
 				return
 			}
-			fmt.Println("GOT TOKEN: ")
 			for acco := range putChannel {
 				u, err := url.Parse(env.ODH_API_CORE_URL)
 				slog.Info("URL", "value", u.String())
@@ -135,8 +135,8 @@ func main() {
 					slog.Error("cannot parse url", "err", err)
 					return
 				}
-				puttoken,err := token.Token()
-				fmt.Println("TOKEN: ",puttoken.AccessToken)
+				puttoken,err := tokenSource.Token()
+				fmt.Println("PRINT PUTTOKEN: ",puttoken)
 				if err != nil {
 					slog.Error("cannot get token", "err", err)
 					fmt.Println("ERROR TOKEN: ",err)
