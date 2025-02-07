@@ -106,6 +106,7 @@ func main() {
 	var putChannel = make(chan idplusaccomodation,1000)
 	var postChannel = make(chan models.Accommodation,1000)
 	go func(){		
+		fmt.Println("GET RAW FILTER")
 		for acco := range accoChannel {			
 			rawfilter,err := utilities.GetAccomodationIdByRawFilter(acco.Mapping.DiscoverSwiss.Id,env.RAW_FILTER_URL_TEMPLATE)
 			if err != nil {
@@ -126,7 +127,7 @@ func main() {
 				slog.Error("cannot get token", "err", err)
 				return
 			}
-
+			fmt.Println("GOT TOKEN: ")
 			for acco := range putChannel {
 				u, err := url.Parse(env.ODH_API_CORE_URL)
 				slog.Info("URL", "value", u.String())
@@ -135,6 +136,7 @@ func main() {
 					return
 				}
 				puttoken,err := token.Token()
+				fmt.Println("TOKEN: ",puttoken.AccessToken)
 				if err != nil {
 					slog.Error("cannot get token", "err", err)
 					fmt.Println("ERROR TOKEN: ",err)
