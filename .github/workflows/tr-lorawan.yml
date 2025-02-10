@@ -74,7 +74,7 @@ jobs:
       - build
     runs-on: ubuntu-22.04
     concurrency: tr-lorawan-deploy-prod
-    environment: test
+    environment: prod
     env:
       VALUES_YAML: infrastructure/helm/values.yaml
     steps:
