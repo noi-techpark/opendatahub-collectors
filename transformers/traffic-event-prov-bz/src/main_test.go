@@ -9,6 +9,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"github.com/wI2L/jsondiff"
 	"gotest.tools/v3/assert"
@@ -70,4 +71,20 @@ func Test_integration(t *testing.T) {
 			t.Log(string(s))
 		}
 	}
+}
+
+func Test_UUIDJson(t *testing.T) {
+	u := UUIDMap{BeginDate: "2024-01-01", EndDate: "2024-05-01", X: 12, Y: 13}
+	su := "{\"beginDate\":\"2024-01-01\",\"endDate\":\"2024-05-01\",\"x\":12,\"y\":13}"
+
+	// e := trafficEvent{BeginDate: u.BeginDate, EndDate: u.EndDate, X: &u.X, Y: &u.Y}
+
+	json, err := json.Marshal(u)
+	assert.NilError(t, err, "could not marshal u")
+	assert.Equal(t, string(json), su, "Json creation not deterministic")
+}
+
+// validate hardcoded namespace UUID
+func Test_namespace(t *testing.T) {
+	assert.Equal(t, UUID_NAMESPACE, uuid.NewSHA1(uuid.Nil, []byte("traffic-event-prov-bz")).String())
 }

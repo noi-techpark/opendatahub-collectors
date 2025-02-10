@@ -173,18 +173,25 @@ func point2WKT(x float64, y float64) (string, error) {
 type UUIDMap struct {
 	BeginDate string  `json:"beginDate"`
 	EndDate   string  `json:"endDate"`
-	X         float64 `json:"X"`
-	Y         float64 `json:"Y"`
+	X         float64 `json:"x"`
+	Y         float64 `json:"y"`
 }
 
 const dayDateFormat = "2006-01-02"
 
+// UUID_NAMESPACE := uuid.NewSHA1(uuid.Nil, []byte("traffic-event-prov-bz"))
+// where uuid.Nil is an array[16] full of zeroes, not a zero length array
+// see corresponding main_test.go/Test_namespace
+const UUID_NAMESPACE = "c168cf4d-7fc7-5608-acad-c167f498f096"
+
 func makeUUID(e trafficEvent) (string, error) {
-	u := UUIDMap{BeginDate: e.BeginDate, EndDate: e.EndDate}
+	u := UUIDMap{BeginDate: e.BeginDate, EndDate: e.EndDate, X: *e.X, Y: *e.Y}
+	// golang Json creation is deterministic: Always in order and no whitespaces
 	json, err := json.Marshal(u)
 	if err != nil {
 		return "", fmt.Errorf("cannot marshal uuid json: %w", err)
 	}
-	uuid := uuid.NewSHA1(uuid.Nil, []byte(json)).String()
+	namespace := uuid.MustParse(UUID_NAMESPACE)
+	uuid := uuid.NewSHA1(namespace, []byte(json)).String()
 	return uuid, nil
 }
