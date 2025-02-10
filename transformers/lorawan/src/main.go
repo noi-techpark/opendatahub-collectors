@@ -166,7 +166,7 @@ func main() {
 	select {}
 }
 
-	//The payload structure could be better optimized since accessing sensor name this way is not the most elegant solution
+//The payload structure could be better optimized since accessing sensor name this way is not the most elegant solution
 // 	go tr.HandleQueue(dataMQ, env.Env.MONGO_URI, func(r *dto.Raw[string]) error {
 // 		fmt.Println("DATA FLOWING")
 // 		fmt.Println(r.Rawdata)
