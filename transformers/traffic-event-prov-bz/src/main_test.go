@@ -77,11 +77,13 @@ func Test_UUIDJson(t *testing.T) {
 	u := UUIDMap{BeginDate: "2024-01-01", EndDate: "2024-05-01", X: 12, Y: 13}
 	su := "{\"beginDate\":\"2024-01-01\",\"endDate\":\"2024-05-01\",\"x\":12,\"y\":13}"
 
-	// e := trafficEvent{BeginDate: u.BeginDate, EndDate: u.EndDate, X: &u.X, Y: &u.Y}
+	id, _ := makeUUID(trafficEvent{BeginDate: u.BeginDate, EndDate: u.EndDate, X: &u.X, Y: &u.Y})
 
 	json, err := json.Marshal(u)
 	assert.NilError(t, err, "could not marshal u")
 	assert.Equal(t, string(json), su, "Json creation not deterministic")
+
+	assert.Equal(t, id, uuid.NewSHA1(uuid.MustParse(UUID_NAMESPACE), []byte(su)).String())
 }
 
 // validate hardcoded namespace UUID
