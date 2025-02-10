@@ -14,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-opendatahub-ingest/dc"
 	"github.com/noi-techpark/go-opendatahub-ingest/dto"
@@ -24,14 +25,10 @@ import (
 var env struct {
 	dc.Env
 	CRON string
-
 	RAW_BINARY bool
-
 	HTTP_URL    string
 	HTTP_METHOD string `default:"GET"`
-
 	LORAWAN_PASSWORD string
-
 	PAGING_PARAM_TYPE  string // query, header, path...
 	PAGING_SIZE        int
 	PAGING_LIMIT_NAME  string
@@ -44,65 +41,55 @@ const URL = "https://edp-portal.eurac.edu/sensordb/query?db=db_opendatahub&u=ope
 
 var deviceNames = []string{"NOI-Brunico-Temperature", "FreeSoftwareLab-Temperature", "NOI-A1-Floor1-CO2"}
 
-func httpRequest(url *url.URL, httpHeaders http.Header, httpMethod string) []byte {
-
+func httpRequest(url *url.URL, httpHeaders http.Header, httpMethod string) (string,error) {
 	headers := httpHeaders
 	u := url
-	req, err := http.NewRequest(httpMethod, u.String(), http.NoBody)
-	ms.FailOnError(err, "could not create http request")
-
+	client := retryablehttp.NewClient()
+	req, err := retryablehttp.NewRequest(httpMethod, u.String(), http.NoBody)
+	if err != nil {
+		slog.Error("error creating http request:", "err", err)
+		return "", err
+	}
 	req.Header = headers
-
-	client := &http.Client{}
+	
 	resp, err := client.Do(req)
 	if err != nil {
 		slog.Error("error during http request:", "err", err)
-		return nil
-	}
-	if resp.StatusCode != http.StatusOK {
-		slog.Error("http request returned non-OK status", "statusCode", resp.StatusCode)
-		return nil
+		return "", err
 	}
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		slog.Error("error reading response body:", "err", err)
-		return nil
-	}
-	return body
-
+		return "", err
+	}	
+	return string(body), nil
 }
 
-// function to build a slice of url starting from a slice of device names
 func buildLorawanUrls(devicenames []string, password string, url string) (urls []string) {
-
 	var urlsLorawanDevices []string
-
 	for _, device := range devicenames {
-
 		deviceurl := fmt.Sprintf(url, password, device)
 		urlsLorawanDevices = append(urlsLorawanDevices, deviceurl)
 	}
-
 	return urlsLorawanDevices
-
 }
 
 func main() {
-	slog.Info("Starting data collector...")
 	envconfig.MustProcess("", &env)
 	ms.InitLog(env.LOG_LEVEL)
-
+	httpMethod := env.HTTP_METHOD
 	headers := customHeaders()
 	urls := buildLorawanUrls(deviceNames, env.LORAWAN_PASSWORD, env.HTTP_URL)
 	var urlsSlice []*url.URL
 	for _, singleUrl := range urls {
 		u, err := url.Parse(singleUrl)
-		ms.FailOnError(err, "failed parsing poll URL")
+		if err != nil {	
+			slog.Error("error parsing url", "url", singleUrl, "err", err)
+			continue
+		}
 		urlsSlice = append(urlsSlice, u)
 	}
-
-	httpMethod := env.HTTP_METHOD
 
 	mq, err := dc.PubFromEnv(env.Env)
 	ms.FailOnError(err, "failed creating mq publisher")
@@ -112,20 +99,16 @@ func main() {
 		slog.Info("Starting poll job")
 		jobstart := time.Now()
 		for _, singleHttp := range urlsSlice {
-			body := httpRequest(singleHttp, headers, httpMethod)
-			var raw any
-			if env.RAW_BINARY {
-				raw = body
-			} else {
-				raw = string(body)
+			body,err := httpRequest(singleHttp, headers, httpMethod)
+			if err != nil {
+				slog.Error("error during http request")
+				continue
 			}
-
-			fmt.Println(raw)
-
+			slog.Info("received raw data", "data", body)
 			mq <- dto.RawAny{
 				Provider:  env.PROVIDER,
 				Timestamp: time.Now(),
-				Rawdata:   raw,
+				Rawdata:   body,
 			}
 		}
 		slog.Info("Polling job completed", "runtime_ms", time.Since(jobstart).Milliseconds())
@@ -134,11 +117,10 @@ func main() {
 	c.Run()
 }
 
+// custom headers can be specified in format: HTTP_HEADER_XYZ='Accept: application/json'
+// so we look at env variables with that prefix and parse out the header name and value
 func customHeaders() http.Header {
 	headers := http.Header{}
-
-	// custom headers can be specified in format: HTTP_HEADER_XYZ='Accept: application/json'
-	// so we look at env variables with that prefix and parse out the header name and value
 	for _, env := range os.Environ() {
 		for i := 1; i < len(env); i++ {
 			if env[i] == '=' {
