@@ -5,8 +5,6 @@
 package main
 
 import (
-	//"fmt"
-
 	"encoding/json"
 	"fmt"
 	"log"
@@ -14,15 +12,12 @@ import (
 	"os"
 	"slices"
 
-	//"strconv"
-
 	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"github.com/noi-techpark/go-opendatahub-ingest/dto"
 	"github.com/noi-techpark/go-opendatahub-ingest/mq"
 	"github.com/noi-techpark/go-opendatahub-ingest/ms"
 	"github.com/noi-techpark/go-opendatahub-ingest/tr"
-	//"go.starlark.net/lib/time"
 )
 
 const Station = "IndoorStation"
@@ -33,7 +28,7 @@ var env struct {
 	tr.Env
 }
 
-type latlong struct {
+type Coordinates struct {
 	Lat  float64
 	Long float64
 }
@@ -56,13 +51,13 @@ type Serie struct {
 type SensorBasicMessage struct {
 	Battery     int     `json:"battery"`
 	Temperature float64 `json:"temperature"`
-	Humidity    float64     `json:"humidity,hunidity"`
+	Humidity    float64 `json:"humidity,hunidity"`
 }
 
 type SensorCo2Message struct {
 	Battery     int     `json:"battery"`
 	Temperature float64 `json:"temperature"`
-	Humidity    float64     `json:"humidity,hunidity"`
+	Humidity    float64 `json:"humidity,hunidity"`
 	Co2         int     `json:"co2"`
 }
 
@@ -80,9 +75,9 @@ var sensorsNOIBZ = []string{"NOI-A1-Floor1-CO2", "FreeSoftwareLab-Temperature"}
 
 var sensorsNOIBRK = []string{"NOI-Brunico-Temperature"}
 
-var brkLatLong = latlong{Lat: 46.796691423886045, Long: 11.934995358540007}
+var brkCoordinates = Coordinates{Lat: 46.796691423886045, Long: 11.934995358540007}
 
-var bzLatLong = latlong{Lat: 46.478686716987994, Long: 11.332795944869483}
+var bzCoordinates = Coordinates{Lat: 46.478686716987994, Long: 11.332795944869483}
 
 func main() {
 	envconfig.MustProcess("", &env)
@@ -127,14 +122,14 @@ func main() {
 
 		switch position {
 		case "BZ":
-			s := bdplib.CreateStation(sensorId, sensorId, Station, bzLatLong.Lat, bzLatLong.Long, Origin)
+			s := bdplib.CreateStation(sensorId, sensorId, Station, bzCoordinates.Lat, bzCoordinates.Long, Origin)
 			if err := b.SyncStations(Station, []bdplib.Station{s}, false, false); err != nil {
 				slog.Error("Error syncing stations", "err", err)
 
 			}
 			fmt.Println("station pushed")
 		case "BK":
-			s := bdplib.CreateStation(sensorId, sensorId, Station, brkLatLong.Lat, brkLatLong.Long, Origin)
+			s := bdplib.CreateStation(sensorId, sensorId, Station, brkCoordinates.Lat, brkCoordinates.Long, Origin)
 			if err := b.SyncStations(Station, []bdplib.Station{s}, false, false); err != nil {
 				slog.Error("Error syncing stations", "err", err)
 
