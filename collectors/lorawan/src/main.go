@@ -25,11 +25,11 @@ import (
 
 var env struct {
 	dc.Env
-	CRON string
-	RAW_BINARY bool
-	HTTP_URL    string
-	HTTP_METHOD string `default:"GET"`
-	LORAWAN_PASSWORD string
+	CRON               string
+	RAW_BINARY         bool
+	HTTP_URL           string
+	HTTP_METHOD        string `default:"GET"`
+	LORAWAN_PASSWORD   string
 	PAGING_PARAM_TYPE  string // query, header, path...
 	PAGING_SIZE        int
 	PAGING_LIMIT_NAME  string
@@ -39,10 +39,10 @@ var env struct {
 const ENV_HEADER_PREFIX = "HTTP_HEADER_"
 
 type Config struct {
-	Sensors []string `json:"sensors"`	
+	Sensors []string `json:"sensors"`
 }
 
-func httpRequest(url *url.URL, httpHeaders http.Header, httpMethod string) (string,error) {
+func httpRequest(url *url.URL, httpHeaders http.Header, httpMethod string) (string, error) {
 	headers := httpHeaders
 	u := url
 	client := retryablehttp.NewClient()
@@ -52,7 +52,7 @@ func httpRequest(url *url.URL, httpHeaders http.Header, httpMethod string) (stri
 		return "", err
 	}
 	req.Header = headers
-	
+
 	resp, err := client.Do(req)
 	if err != nil {
 		slog.Error("error during http request:", "err", err)
@@ -63,7 +63,7 @@ func httpRequest(url *url.URL, httpHeaders http.Header, httpMethod string) (stri
 	if err != nil {
 		slog.Error("error reading response body:", "err", err)
 		return "", err
-	}	
+	}
 	return string(body), nil
 }
 
@@ -81,7 +81,7 @@ func main() {
 	ms.InitLog(env.LOG_LEVEL)
 	httpMethod := env.HTTP_METHOD
 	headers := customHeaders()
-	sensorNames,err := os.ReadFile("./sensors.json")
+	sensorNames, err := os.ReadFile("./sensors.json")
 	if err != nil {
 		slog.Error("error reading sensors file", "err", err)
 	}
@@ -95,7 +95,7 @@ func main() {
 	var urlsSlice []*url.URL
 	for _, singleUrl := range urls {
 		u, err := url.Parse(singleUrl)
-		if err != nil {	
+		if err != nil {
 			slog.Error("error parsing url", "url", singleUrl, "err", err)
 			continue
 		}
@@ -110,7 +110,7 @@ func main() {
 		slog.Info("Starting poll job")
 		jobstart := time.Now()
 		for _, singleHttp := range urlsSlice {
-			body,err := httpRequest(singleHttp, headers, httpMethod)
+			body, err := httpRequest(singleHttp, headers, httpMethod)
 			if err != nil {
 				slog.Error("error during http request")
 				continue
