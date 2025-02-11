@@ -62,12 +62,8 @@ func unmarshalRawJson(s string) ([]trafficEvent, error) {
 
 func mapEvent(d trafficEvent) (bdplib.Event, error) {
 	e := bdplib.Event{}
-	uuid, err := makeUUID(d)
-	if err != nil {
-		return e, err
-	}
-	e.Uuid = uuid
-	e.EventSeriesUuid = uuid
+	e.Uuid = makeUUID(d)
+	e.EventSeriesUuid = makeUUID(seriesUUID(d))
 	e.Category = fmt.Sprintf("%s_%s | %s_%s", d.TycodeIt, d.SubTycodeIt, d.TycodeDe, d.SubTycodeDe)
 	e.Name = strconv.Itoa(d.MessageID)
 	e.Description = fmt.Sprintf("%s | %s", d.DescriptionIt, d.DescriptionDe)
@@ -97,7 +93,7 @@ func mapEvent(d trafficEvent) (bdplib.Event, error) {
 
 	e.MetaData = map[string]any{}
 	e.MetaData["json_featuretype"] = d.JSONFeaturetype
-	e.MetaData["publisherDateTime"] = d.PublishDateTime
+	e.MetaData["publishDateTime"] = d.PublishDateTime
 	e.MetaData["tycodeValue"] = d.TycodeValue
 	e.MetaData["tycodeDe"] = d.TycodeDe
 	e.MetaData["tycodeIt"] = d.TycodeIt
@@ -170,7 +166,7 @@ func point2WKT(x float64, y float64) (string, error) {
 	return wkt.Marshal(p)
 }
 
-type UUIDMap struct {
+type SeriesUUIDMap struct {
 	BeginDate string  `json:"beginDate"`
 	EndDate   string  `json:"endDate"`
 	X         float64 `json:"x"`
@@ -184,14 +180,19 @@ const dayDateFormat = "2006-01-02"
 // see corresponding main_test.go/Test_namespace
 const UUID_NAMESPACE = "c168cf4d-7fc7-5608-acad-c167f498f096"
 
-func makeUUID(e trafficEvent) (string, error) {
-	u := UUIDMap{BeginDate: e.BeginDate, EndDate: e.EndDate, X: *e.X, Y: *e.Y}
-	// golang Json creation is deterministic: Always in order and no whitespaces
-	json, err := json.Marshal(u)
+func seriesUUID(e trafficEvent) SeriesUUIDMap {
+	return SeriesUUIDMap{BeginDate: e.BeginDate, EndDate: e.EndDate, X: *e.X, Y: *e.Y}
+}
+
+func makeUUID(obj any) string {
+	// if you ever port this to another language:
+	// golang Json creation is deterministic: Always in order or struct fields and no whitespace
+	// the hash is a UUID V5, with custom namespace (see the constant's comment on how it was created)
+	json, err := json.Marshal(obj)
 	if err != nil {
-		return "", fmt.Errorf("cannot marshal uuid json: %w", err)
+		panic(fmt.Errorf("cannot marshal uuid json: %w", err))
 	}
 	namespace := uuid.MustParse(UUID_NAMESPACE)
 	uuid := uuid.NewSHA1(namespace, []byte(json)).String()
-	return uuid, nil
+	return uuid
 }
