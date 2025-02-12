@@ -5,15 +5,11 @@
 package main
 
 import (
-	//"fmt"
-
 	"encoding/json"
 	"fmt"
 	"log/slog"
 	"os"
 	"strconv"
-
-	//"strconv"
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-bdp-client/bdplib"
@@ -21,13 +17,12 @@ import (
 	"github.com/noi-techpark/go-opendatahub-ingest/mq"
 	"github.com/noi-techpark/go-opendatahub-ingest/ms"
 	"github.com/noi-techpark/go-opendatahub-ingest/tr"
-	//"go.starlark.net/lib/time"
 )
 
 const Station = "ParkingStation"
 const Period = 120
 const Origin = "GARDENA"
-const DataTypeO = "occupied"
+const DataType = "occupied"
 
 var env struct {
 	tr.Env
@@ -36,8 +31,6 @@ var env struct {
 	MQ_META_EXCHANGE string
 	MQ_META_KEY      string
 	MQ_META_CLIENT   string
-
-	//MQ_CONSUMER string
 }
 
 type payloadMetaData struct {
@@ -75,8 +68,6 @@ func main() {
 	failOnError(err, "failed creating data queue")
 
 	go tr.HandleQueue(dataMQ, env.Env.MONGO_URI, func(r *dto.Raw[string]) error {
-		fmt.Println("DATA FLOWING")
-		fmt.Println(r.Rawdata)
 		parkingData := b.CreateDataMap()
 		payload, err := unmarshalRawdata[payloadData](r.Rawdata)
 		if err != nil {
@@ -84,22 +75,19 @@ func main() {
 			return err
 		}
 		parkingid := stationId(payload.Uid, Origin)
-		parkingData.AddRecord(parkingid, DataTypeO, bdplib.CreateRecord(r.Timestamp.UnixMilli(), payload.Occupancy, Period))
+		parkingData.AddRecord(parkingid, DataType, bdplib.CreateRecord(r.Timestamp.UnixMilli(), payload.Occupancy, Period))
 		if err := b.PushData(Station, parkingData); err != nil {
-			return fmt.Errorf("error pushing parking occupancy data: %w", err)
+			slog.Error("error pushing parking occupancy data:","err", err)
+			return err
 		}
 		slog.Info("Updated parking station occupancy")
 		return nil
-
 	})
 
 	metaDataMQ, err := rabbit.Consume(env.MQ_META_EXCHANGE, env.MQ_META_QUEUE, env.MQ_META_KEY)
 	failOnError(err, "failed creating data queue")
 
 	go tr.HandleQueue(metaDataMQ, env.Env.MONGO_URI, func(r *dto.Raw[string]) error {
-		fmt.Println("META DATA FLOWING")
-		fmt.Println(r.Rawdata)
-		//parkingMetaData := b.CreateDataMap()
 		payloadArray, _ := unmarshalRawdata[payloadMetaArray](r.Rawdata)
 		var stations []bdplib.Station
 		for _, payload := range *payloadArray {
