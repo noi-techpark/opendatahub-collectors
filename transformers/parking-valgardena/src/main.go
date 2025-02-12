@@ -61,11 +61,11 @@ func main() {
 	}
 
 	rabbit, err := mq.Connect(env.Env.MQ_URI, env.Env.MQ_CLIENT)
-	failOnError(err, "failed connecting to rabbitmq")
+	ms.FailOnError(err, "failed connecting to rabbitmq")
 	defer rabbit.Close()
 
 	dataMQ, err := rabbit.Consume(env.Env.MQ_EXCHANGE, env.Env.MQ_QUEUE, env.Env.MQ_KEY)
-	failOnError(err, "failed creating data queue")
+	ms.FailOnError(err, "failed creating data queue")
 
 	go tr.HandleQueue(dataMQ, env.Env.MONGO_URI, func(r *dto.Raw[string]) error {
 		parkingData := b.CreateDataMap()
@@ -85,15 +85,26 @@ func main() {
 	})
 
 	metaDataMQ, err := rabbit.Consume(env.MQ_META_EXCHANGE, env.MQ_META_QUEUE, env.MQ_META_KEY)
-	failOnError(err, "failed creating data queue")
+	ms.FailOnError(err, "failed creating data queue")
 
 	go tr.HandleQueue(metaDataMQ, env.Env.MONGO_URI, func(r *dto.Raw[string]) error {
-		payloadArray, _ := unmarshalRawdata[payloadMetaArray](r.Rawdata)
+		payloadArray, err := unmarshalRawdata[payloadMetaArray](r.Rawdata)
+		if err != nil {
+			slog.Error("cannot unmarshall raw data", "err", err)
+		}
 		var stations []bdplib.Station
 		for _, payload := range *payloadArray {
 			parkingid := stationId(payload.Uid, b.Origin)
-			lat, _ := strconv.ParseFloat(payload.Lat, 64)
-			lon, _ := strconv.ParseFloat(payload.Long, 64)
+			lat, err := strconv.ParseFloat(payload.Lat, 64)
+			if err != nil {
+				slog.Error("cannot parse latitude", "err", err)
+				continue
+			}
+			lon, err := strconv.ParseFloat(payload.Long, 64)
+			if err != nil {
+				slog.Error("cannot parse longitude", "err", err)
+				continue
+			}
 			s := bdplib.CreateStation(parkingid, payload.NameIT, Station, lat, lon, Origin)
 
 			MetaData := make(map[string]interface{})
@@ -113,13 +124,6 @@ func main() {
 	})
 
 	select {}
-}
-
-func failOnError(err error, msg string) {
-	if err != nil {
-		slog.Error(msg, "err", err)
-		panic(err)
-	}
 }
 
 func stationId(id string, origin string) string {
