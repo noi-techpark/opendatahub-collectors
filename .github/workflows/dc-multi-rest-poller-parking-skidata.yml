@@ -11,6 +11,7 @@ on:
 env:
   WORKING_DIRECTORY: collectors/multi-rest-poller
   HTTP_CONFIG_PATH: infrastructure/calls_config/parking-skidata.yaml
+  CONFIGMAP_NAME: multi-rest-poller-parking-skidata-config
   DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/dc-multi-rest-poller
   DOCKER_TAG: ${{ github.sha }}
   KUBERNETES_NAMESPACE: collector
@@ -41,6 +42,25 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
+          aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
+          aws-region: eu-west-1
+          
+  
+      - name: Authenticate to AWS EKS
+        shell: bash
+        run: aws eks --region eu-west-1 update-kubeconfig --name aws-main-eu-01
+
+      - name: Create Kubernetes ConfigMap
+        run: |
+          kubectl create configmap ${{ env.CONFIGMAP_NAME }} \
+            --from-file=${{ env.WORKING_DIRECTORY}}/${{ env.HTTP_CONFIG_PATH }} \
+            --namespace=${{ env.KUBERNETES_NAMESPACE }} \
+            --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Customize values.yaml
         working-directory: ${{ env.WORKING_DIRECTORY }}
