@@ -44,8 +44,9 @@ envSecretRef:
 # A map of env entries, where value is a k8s ref type structure, e.g. fieldRef, resourceFieldRef
 envFrom:
 
+# ConfigMap mounts: by default, no ConfigMaps are mounted.
+configMaps: []
   
-
 serviceAccount:
   # Specifies whether a service account should be created
   create: false
