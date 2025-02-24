@@ -49,6 +49,7 @@ jobs:
           aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
           aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
           aws-region: eu-west-1
+          
   
       - name: Authenticate to AWS EKS
         shell: bash
