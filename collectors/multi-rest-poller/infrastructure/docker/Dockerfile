@@ -23,7 +23,7 @@ WORKDIR /app
 RUN mkdir -p "$(dirname /app/${CALLS_CONFIG_FILE})"
 
 COPY --from=build-env /app/main .
-COPY --from=build-env /app/${CALLS_CONFIG_FILE} .
+COPY --from=build-env /app/${CALLS_CONFIG_FILE} ${CALLS_CONFIG_FILE}
 ENTRYPOINT [ "./main"]
 
 # LOCAL DEVELOPMENT
