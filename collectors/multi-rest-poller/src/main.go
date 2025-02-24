@@ -19,7 +19,7 @@ var env struct {
 	dc.Env
 	CRON string
 
-	HTTP_CALL_CONFIG string
+	HTTP_CONFIG_PATH string
 
 	PAGING_PARAM_TYPE  string // query, header, path...
 	PAGING_SIZE        int
@@ -38,9 +38,9 @@ func main() {
 	ms.InitLog(env.LOG_LEVEL)
 
 	mq, err := dc.PubFromEnv(env.Env)
-	// ms.FailOnError(err, "failed creating mq publisher")
+	ms.FailOnError(err, "failed creating mq publisher")
 
-	config, err := LoadConfig(env.HTTP_CALL_CONFIG)
+	config, err := LoadConfig(env.HTTP_CONFIG_PATH)
 	ms.FailOnError(err, "failed to load call config")
 
 	c := cron.New(cron.WithSeconds())

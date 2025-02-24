@@ -7,8 +7,8 @@ env:
   MQ_CLIENT: dc-multi-rest-poller-mybestparking
   PROVIDER: multi-rest-poller/mybestparking
 
-  CRON: "0 */1 * * * *"
-  HTTP_CALL_CONFIG: "infrastructure/calls_config/mybestparking.yaml"
+  CRON: "0 */10 * * * *"
+  HTTP_CONFIG_PATH: "infrastructure/calls_config/mybestparking.yaml"
   AUTH_STRATEGY: oauth2
   OAUTH_METHOD: password
   OAUTH_TOKEN_URL: https://www.mybestinparking.it/oauth/token
