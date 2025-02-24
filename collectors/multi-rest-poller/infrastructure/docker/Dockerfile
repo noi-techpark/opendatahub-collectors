@@ -15,6 +15,8 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o main
 
 # BUILD published image
 FROM alpine:3 AS build
+ARG CALLS_CONFIG_FILE
+
 WORKDIR /app
 COPY --from=build-env /app/main .
 COPY --from=build-env ${CALLS_CONFIG_FILE} .
