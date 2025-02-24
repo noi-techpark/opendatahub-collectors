@@ -10,7 +10,7 @@ on:
 
 env:
   WORKING_DIRECTORY: collectors/multi-rest-poller
-  CALLS_CONFIG_FILE: calls_config/mybestparking.yaml
+  CALLS_CONFIG_FILE: infrastructure/calls_config/mybestparking.yaml
   DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/dc-multi-rest-poller
   DOCKER_TAG: ${{ github.sha }}
   KUBERNETES_NAMESPACE: collector
