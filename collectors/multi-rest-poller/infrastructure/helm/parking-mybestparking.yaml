@@ -20,5 +20,5 @@ envSecretRef:
 
 configMaps:
   - name: multi-rest-poller-parking-mybestparking-config
-    mountPath: infrastructure/calls_config/parking-mybestparking.yaml
+    mountPath: /app/infrastructure/calls_config/parking-mybestparking.yaml
     subPath: parking-mybestparking.yaml
