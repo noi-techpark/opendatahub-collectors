@@ -10,4 +10,4 @@ services:
       dockerfile: infrastructure/docker/Dockerfile
       target: build
       args:
-        CALLS_CONFIG_FILE: ${CALLS_CONFIG_FILE}
+        HTTP_CONFIG_PATH: ${HTTP_CONFIG_PATH}
