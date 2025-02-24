@@ -18,6 +18,10 @@ FROM alpine:3 AS build
 ARG CALLS_CONFIG_FILE
 
 WORKDIR /app
+
+# Dynamically create the directory before copying the file
+RUN mkdir -p "$(dirname ${CALLS_CONFIG_FILE})"
+
 COPY --from=build-env /app/main .
 COPY --from=build-env ${CALLS_CONFIG_FILE} .
 ENTRYPOINT [ "./main"]
