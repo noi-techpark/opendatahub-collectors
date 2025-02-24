@@ -57,7 +57,7 @@ jobs:
       - name: Create Kubernetes ConfigMap
         run: |
           kubectl create configmap ${{ env.CONFIGMAP_NAME }} \
-            --from-file=${{ env.HTTP_CONFIG_PATH }} \
+            --from-file=${{ env.WORKING_DIRECTORY}}/${{ env.HTTP_CONFIG_PATH }} \
             --namespace=${{ env.KUBERNETES_NAMESPACE }} \
             --dry-run=client -o yaml | kubectl apply -f -
 
