@@ -18,11 +18,7 @@ envSecretRef:
     secret: rabbitmq-svcbind
     key: uri
 
-# configMaps:
-#   - name: multi-rest-poller-parking-mybestparking-config
-#     mountPath: /app/infrastructure/calls_config/parking-mybestparking.yaml
-#     subPath: parking-mybestparking.yaml
-
+## Example
 # configMap:
 #   mountPath: "/app/config/parking-mybestinparking.yaml"
 #   subPath: "parking-mybestinparking.yaml"

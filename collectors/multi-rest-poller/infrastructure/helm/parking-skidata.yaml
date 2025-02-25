@@ -8,7 +8,7 @@ env:
   PROVIDER: multi-rest-poller/parking-skidata
 
   CRON: "0 */10 * * * *"
-  HTTP_CONFIG_PATH: "infrastructure/calls_config/parking-skidata.yaml"
+  HTTP_CONFIG_PATH: "/config/http-config.yaml"
   AUTH_STRATEGY: oauth2
   OAUTH_METHOD: password
   OAUTH_TOKEN_URL: https://www.onecenter.info/oauth/token
@@ -18,7 +18,6 @@ envSecretRef:
     secret: rabbitmq-svcbind
     key: uri
 
-configMaps:
-  - name: multi-rest-poller-parking-skidata-config
-    mountPath: /app/infrastructure/calls_config/parking-skidata.yaml
-    subPath: parking-skidata.yaml
+configMap:
+  mountPath: "/config/"
+  files: {}
