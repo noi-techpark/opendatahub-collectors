@@ -1,0 +1,64 @@
+[
+    {
+        "Address": "Via Laurin 1/a",
+        "City": "Bolzano",
+        "Description": "Parcheggio Laurin",
+        "FacilityDetails": [
+            {
+                "Capacity": 90,
+                "CountingCategory": "SostaBreve",
+                "CountingCategoryNo": 1,
+                "CurrentLevel": 48,
+                "FacilityDescription": "PARK LAURIN BZ",
+                "FacilityID": 406983,
+                "FreeLimit": 89,
+                "FreePlaces": 42,
+                "Latitude": 0,
+                "Longitude": 0,
+                "OccupancyLimit": 90,
+                "ParkNo": 0,
+                "Reservation": 0
+            },
+            {
+                "Capacity": 15,
+                "CountingCategory": "Abbonati",
+                "CountingCategoryNo": 2,
+                "CurrentLevel": 3,
+                "FacilityDescription": "PARK LAURIN BZ",
+                "FacilityID": 406983,
+                "FreeLimit": 14,
+                "FreePlaces": 12,
+                "Latitude": 0,
+                "Longitude": 0,
+                "OccupancyLimit": 15,
+                "ParkNo": 0,
+                "Reservation": 0
+            },
+            {
+                "Capacity": 90,
+                "CountingCategory": "Totale",
+                "CountingCategoryNo": 3,
+                "CurrentLevel": 51,
+                "FacilityDescription": "PARK LAURIN BZ",
+                "FacilityID": 406983,
+                "FreeLimit": 89,
+                "FreePlaces": 39,
+                "Latitude": 0,
+                "Longitude": 0,
+                "OccupancyLimit": 90,
+                "ParkNo": 0,
+                "Reservation": 0
+            }
+        ],
+        "FacilityID": 406983,
+        "IdCompany": 255,
+        "Latitude": 0,
+        "Longitude": 0,
+        "PostNumber": 500,
+        "ReceiptMerchant": "Parcheggi Italia S.p.A. Via Calderon de la Barca 2 20121 Milano UID: 01301350219",
+        "Telephone1": null,
+        "Telephone2": null,
+        "Web": null,
+        "ZIPCode": "29100"
+    }
+]
