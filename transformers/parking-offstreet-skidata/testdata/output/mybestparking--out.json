@@ -1,0 +1,241 @@
+{
+    "syncedDataTypes": {},
+    "syncedData": {
+        "ParkingFacility": [
+            {
+                "name": "(default)",
+                "data": null,
+                "branch": {
+                    "406983": {
+                        "name": "(default)",
+                        "data": null,
+                        "branch": {
+                            "free": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 39,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "free_short_stay": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 42,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "free_subscribers": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 12,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "occupied": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 51,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "occupied_short_stay": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 48,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "occupied_subscribers": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 51,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            }
+                        },
+                        "provenance": ""
+                    }
+                },
+                "provenance": ""
+            }
+        ],
+        "ParkingStation": [
+            {
+                "name": "(default)",
+                "data": null,
+                "branch": {
+                    "406983_0": {
+                        "name": "(default)",
+                        "data": null,
+                        "branch": {
+                            "free": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 39,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "free_short_stay": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 42,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "free_subscribers": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 12,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "occupied": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 51,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "occupied_short_stay": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 48,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "occupied_subscribers": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 3,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            }
+                        },
+                        "provenance": ""
+                    }
+                },
+                "provenance": ""
+            }
+        ]
+    },
+    "syncedStations": {
+        "ParkingFacility": [
+            {
+                "Stations": [
+                    {
+                        "id": "406983",
+                        "name": "Parcheggio Laurin",
+                        "stationType": "ParkingFacility",
+                        "latitude": 0,
+                        "longitude": 0,
+                        "origin": "",
+                        "metaData": {
+                            "Address": "Via Laurin 1/a",
+                            "City": "Bolzano",
+                            "IdCompany": 255,
+                            "Telephone1": "",
+                            "Telephone2": "",
+                            "ZIPCode": "29100",
+                            "capacity": 90,
+                            "capacity_short_stay": 90,
+                            "capacity_subscribers": 90,
+                            "municipality": "Bolzano"
+                        }
+                    }
+                ],
+                "SyncState": true,
+                "OnlyActivate": false
+            }
+        ],
+        "ParkingStation": [
+            {
+                "Stations": [
+                    {
+                        "id": "406983_0",
+                        "name": "Parcheggio Laurin PARK LAURIN BZ",
+                        "stationType": "ParkingStation",
+                        "latitude": 0,
+                        "longitude": 0,
+                        "origin": "",
+                        "parentStation": "406983",
+                        "metaData": {
+                            "FacilityDescription": "PARK LAURIN BZ",
+                            "capacity": 90,
+                            "capacity_short_stay": 90,
+                            "capacity_subscribers": 15,
+                            "free_limit": 89,
+                            "free_limit_short_stay": 89,
+                            "free_limit_subscribers": 14,
+                            "municipality": "Bolzano",
+                            "occupancy_limit": 90,
+                            "occupancy_limit_short_stay": 90,
+                            "occupancy_limit_subscribers": 15
+                        }
+                    }
+                ],
+                "SyncState": true,
+                "OnlyActivate": false
+            }
+        ]
+    }
+}
