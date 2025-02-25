@@ -113,12 +113,12 @@ func main() {
 
 			s.MetaData = MetaData
 			stations = append(stations, s)
-
-
 		}
+
 		if err := b.SyncStations(Station, stations, true, false); err != nil {
 			slog.Error("Error syncing stations", "err", err)
 		}
+		
 		slog.Info("Updated parking station occupancy")
 		return nil
 	})

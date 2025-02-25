@@ -4,7 +4,7 @@ go 1.23.1
 
 require (
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250207143348-08c9068db013
+	github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250225133429-d1811388b1aa
 	github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20250206130024-73dceb95cbd8
 )
 
@@ -12,6 +12,7 @@ require (
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.7 // indirect
+	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/klauspost/compress v1.17.11 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/montanaflynn/stats v0.7.1 // indirect
