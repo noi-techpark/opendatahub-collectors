@@ -8,7 +8,7 @@ env:
   PROVIDER: multi-rest-poller/parking-mybestparking
 
   CRON: "0 */10 * * * *"
-  HTTP_CONFIG_PATH: "infrastructure/calls_config/parking-mybestparking.yaml"
+  HTTP_CONFIG_PATH: "/config/http-config.yaml"
   AUTH_STRATEGY: oauth2
   OAUTH_METHOD: password
   OAUTH_TOKEN_URL: https://www.mybestinparking.it/oauth/token
@@ -18,7 +18,19 @@ envSecretRef:
     secret: rabbitmq-svcbind
     key: uri
 
-configMaps:
-  - name: multi-rest-poller-parking-mybestparking-config
-    mountPath: /app/infrastructure/calls_config/parking-mybestparking.yaml
-    subPath: parking-mybestparking.yaml
+# configMaps:
+#   - name: multi-rest-poller-parking-mybestparking-config
+#     mountPath: /app/infrastructure/calls_config/parking-mybestparking.yaml
+#     subPath: parking-mybestparking.yaml
+
+# configMap:
+#   mountPath: "/app/config/parking-mybestinparking.yaml"
+#   subPath: "parking-mybestinparking.yaml"
+#   files:
+#     parking-mybestinparking.yaml: |-
+#       # file content here
+#       someKey: someValue
+      
+configMap:
+  mountPath: "/config/"
+  files: {}

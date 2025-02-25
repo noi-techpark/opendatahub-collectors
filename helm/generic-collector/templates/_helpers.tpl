@@ -62,3 +62,10 @@ Create the name of the env secret to use
 {{- define "generic-collector.envSecretName" -}}
 {{- printf "%s-env" (include "generic-collector.fullname" .) }}
 {{- end }}
+
+{{/*
+Create the name of the configmap to use
+*/}}
+{{- define "generic-collector.configMapName" -}}
+{{- printf "%s-config" (include "generic-collector.fullname" .) }}
+{{- end }}

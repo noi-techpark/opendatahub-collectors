@@ -75,23 +75,19 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- if .Values.configMaps }}
+          {{- if .Values.configMap.files }}
           volumeMounts:
-            {{- range .Values.configMaps }}
-            - name: {{ .name }}
-              mountPath: {{ .mountPath }}
-              {{- if .subPath }}
-              subPath: {{ .subPath }}
+            - name: {{ include "generic-collector.configMapName" $ }}
+              mountPath: {{ .Values.configMap.mountPath }}
+              {{- if .Values.configMap.subPath }}
+              subPath: {{ .Values.configMap.subPath }}
               {{- end }}
-            {{- end }}
           {{- end }}
-      {{- if .Values.configMaps }}
+      {{- if .Values.configMap.files }}
       volumes:
-        {{- range .Values.configMaps }}
-        - name: {{ .name }}
+        - name: {{ include "generic-collector.configMapName" $ }}
           configMap:
-            name: {{ .configMapName | default .name }}
-        {{- end }}
+            name: {{ include "generic-collector.configMapName" $ }}
       {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
