@@ -54,7 +54,7 @@ jobs:
           yq -i '.envSecret.OAUTH_USERNAME = "${{ secrets.SKIDATA_OAUTH_USERNAME }}"' ${{ env.VALUES_YAML }}
           yq -i '.envSecret.OAUTH_PASSWORD = "${{ secrets.SKIDATA_OAUTH_PASSWORD }}"' ${{ env.VALUES_YAML }}
           yq -i '.configMap.OAUTH_PASSWORD = "${{ secrets.SKIDATA_OAUTH_PASSWORD }}"' ${{ env.VALUES_YAML }}
-          yq -i '.configMap.files["http-config.yaml"] = load("${{ env.HTTP_CONFIG_PATH }}")' ${{ env.VALUES_YAML }}
+          yq -i '.configMap.files["http-config.yaml"] = load_str("${{ env.HTTP_CONFIG_PATH }}")' ${{ env.VALUES_YAML }}
 
       - name: Deploy on cluster  
         uses: noi-techpark/github-actions/helm-deploy@v2
