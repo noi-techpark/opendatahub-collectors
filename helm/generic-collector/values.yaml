@@ -45,7 +45,10 @@ envSecretRef:
 envFrom:
 
 # ConfigMap definition and mounts: by default, no ConfigMaps are mounted.
-configMaps: 
+configMap:
+  files: {}
+  mountPath: ""
+  subPath: ""
   
 serviceAccount:
   # Specifies whether a service account should be created
