@@ -206,3 +206,11 @@ func TestStations(t *testing.T) {
 	assert.Equal(t, false, ok)
 	assert.Equal(t, nil, net2)
 }
+
+// func TestMain(t *testing.T) {
+// 	// Load .env file into environment variables.
+// 	if err := godotenv.Load(); err != nil {
+// 		log.Println("No .env file found or error loading it")
+// 	}
+// 	main()
+// }
