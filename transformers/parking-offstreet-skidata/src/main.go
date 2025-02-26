@@ -215,7 +215,8 @@ func SyncDataTypes(bdp bdplib.Bdp) {
 	dataTypes = append(dataTypes, bdplib.CreateDataType(dataTypeOccupiedSubs, "", "Amount of occupied 'subscribed' parking slots", "Instantaneous"))
 	dataTypes = append(dataTypes, bdplib.CreateDataType(dataTypeOccupiedTotal, "", "Amount of occupied parking slots", "Instantaneous"))
 
-	bdp.SyncDataTypes(stationType, dataTypes)
+	err := bdp.SyncDataTypes(stationType, dataTypes)
+	ms.FailOnError(err, "failed to sync types")
 }
 
 var env tr.Env
