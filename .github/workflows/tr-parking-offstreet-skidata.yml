@@ -4,9 +4,11 @@ on:
   push:
     paths:
       - "transformers/parking-offstreet-skidata/infrastructure/**"
+      - "!transformers/parking-offstreet-skidata/infrastructure/helm/**"
+      - "transformers/parking-offstreet-skidata/infrastructure/helm/parking-offstreet-skidata*"
       - "transformers/parking-offstreet-skidata/src/**"
       - ".github/workflows/tr-parking-offstreet-skidata.yml"     
-      
+
 env:
   PROJECT_NAME: tr-parking-offstreet-skidata
   WORKING_DIRECTORY: transformers/parking-offstreet-skidata

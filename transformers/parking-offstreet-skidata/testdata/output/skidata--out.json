@@ -1,1 +1,633 @@
-{"syncedDataTypes":{},"syncedData":{"ParkingFacility":[{"name":"(default)","data":null,"branch":{"607440":{"name":"(default)","data":null,"branch":{"free":{"name":"(default)","data":[{"value":236,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"free_short_stay":{"name":"(default)","data":[{"value":204,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"free_subscribers":{"name":"(default)","data":[{"value":32,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"occupied":{"name":"(default)","data":[{"value":245,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"occupied_short_stay":{"name":"(default)","data":[{"value":200,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"occupied_subscribers":{"name":"(default)","data":[{"value":245,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""}},"provenance":""},"608612":{"name":"(default)","data":null,"branch":{"free":{"name":"(default)","data":[{"value":224,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"free_short_stay":{"name":"(default)","data":[{"value":207,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"free_subscribers":{"name":"(default)","data":[{"value":17,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"occupied":{"name":"(default)","data":[{"value":16,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"occupied_short_stay":{"name":"(default)","data":[{"value":13,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"occupied_subscribers":{"name":"(default)","data":[{"value":16,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""}},"provenance":""}},"provenance":""}],"ParkingStation":[{"name":"(default)","data":null,"branch":{"607440_0":{"name":"(default)","data":null,"branch":{"free":{"name":"(default)","data":[{"value":93,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"free_short_stay":{"name":"(default)","data":[{"value":92,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"free_subscribers":{"name":"(default)","data":[{"value":1,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"occupied":{"name":"(default)","data":[{"value":106,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"occupied_short_stay":{"name":"(default)","data":[{"value":106,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"occupied_subscribers":{"name":"(default)","data":[{"value":0,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""}},"provenance":""},"607440_1":{"name":"(default)","data":null,"branch":{"free":{"name":"(default)","data":[{"value":67,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"free_short_stay":{"name":"(default)","data":[{"value":49,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"free_subscribers":{"name":"(default)","data":[{"value":18,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"occupied":{"name":"(default)","data":[{"value":23,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"occupied_short_stay":{"name":"(default)","data":[{"value":-19,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"occupied_subscribers":{"name":"(default)","data":[{"value":42,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""}},"provenance":""},"607440_2":{"name":"(default)","data":null,"branch":{"free":{"name":"(default)","data":[{"value":76,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"free_short_stay":{"name":"(default)","data":[{"value":63,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"free_subscribers":{"name":"(default)","data":[{"value":13,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"occupied":{"name":"(default)","data":[{"value":116,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"occupied_short_stay":{"name":"(default)","data":[{"value":113,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"occupied_subscribers":{"name":"(default)","data":[{"value":3,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""}},"provenance":""},"608612_0":{"name":"(default)","data":null,"branch":{"free":{"name":"(default)","data":[{"value":224,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"free_short_stay":{"name":"(default)","data":[{"value":207,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"free_subscribers":{"name":"(default)","data":[{"value":17,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"occupied":{"name":"(default)","data":[{"value":16,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"occupied_short_stay":{"name":"(default)","data":[{"value":13,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""},"occupied_subscribers":{"name":"(default)","data":[{"value":3,"period":600,"timestamp":1735689600000}],"branch":null,"provenance":""}},"provenance":""}},"provenance":""}]},"syncedStations":{"ParkingFacility":[{"Stations":[{"id":"608612","name":"Parcheggio Stazione Brunico","stationType":"ParkingFacility","latitude":0,"longitude":0,"origin":"","metaData":{"Address":"Via dei Conciapelli, 60","City":"Brunico","IdCompany":18,"Telephone1":"","Telephone2":"","ZIPCode":"39100","capacity":240,"capacity_short_stay":240,"capacity_subscribers":240,"municipality":"Brunico"}},{"id":"607440","name":"Parcheggio Stazione Bressanone","stationType":"ParkingFacility","latitude":0,"longitude":0,"origin":"","metaData":{"Address":"Via dei Conciapelli, 60","City":"Bressanone","IdCompany":19,"Telephone1":"","Telephone2":"","ZIPCode":"39100","capacity":481,"capacity_short_stay":481,"capacity_subscribers":481,"municipality":"Bressanone"}}],"SyncState":true,"OnlyActivate":false}],"ParkingStation":[{"Stations":[{"id":"608612_0","name":"Parcheggio Stazione Brunico Mobilitätszentrum","stationType":"ParkingStation","latitude":0,"longitude":0,"origin":"","parentStation":"608612","metaData":{"FacilityDescription":"Mobilitätszentrum","capacity":240,"capacity_short_stay":220,"capacity_subscribers":20,"free_limit":240,"free_limit_short_stay":219,"free_limit_subscribers":20,"municipality":"Brunico","occupancy_limit":240,"occupancy_limit_short_stay":219,"occupancy_limit_subscribers":21}},{"id":"607440_0","name":"Parcheggio Stazione Bressanone 01-Priel","stationType":"ParkingStation","latitude":0,"longitude":0,"origin":"","parentStation":"607440","metaData":{"FacilityDescription":"01-Priel","capacity":199,"capacity_short_stay":198,"capacity_subscribers":1,"free_limit":197,"free_limit_short_stay":197,"free_limit_subscribers":0,"municipality":"Bressanone","occupancy_limit":199,"occupancy_limit_short_stay":198,"occupancy_limit_subscribers":1}},{"id":"607440_1","name":"Parcheggio Stazione Bressanone 02-Rosslauf","stationType":"ParkingStation","latitude":0,"longitude":0,"origin":"","parentStation":"607440","metaData":{"FacilityDescription":"02-Rosslauf","capacity":90,"capacity_short_stay":30,"capacity_subscribers":60,"free_limit":89,"free_limit_short_stay":29,"free_limit_subscribers":59,"municipality":"Bressanone","occupancy_limit":90,"occupancy_limit_short_stay":30,"occupancy_limit_subscribers":60}},{"id":"607440_2","name":"Parcheggio Stazione Bressanone 03-C.Mobilità-Mobilitätsz","stationType":"ParkingStation","latitude":0,"longitude":0,"origin":"","parentStation":"607440","metaData":{"FacilityDescription":"03-C.Mobilità-Mobilitätsz","capacity":192,"capacity_short_stay":176,"capacity_subscribers":16,"free_limit":190,"free_limit_short_stay":175,"free_limit_subscribers":16,"municipality":"Bressanone","occupancy_limit":192,"occupancy_limit_short_stay":176,"occupancy_limit_subscribers":16}}],"SyncState":true,"OnlyActivate":false}]}}
+{
+    "syncedDataTypes": {},
+    "syncedData": {
+        "ParkingFacility": [
+            {
+                "name": "(default)",
+                "data": null,
+                "branch": {
+                    "607440": {
+                        "name": "(default)",
+                        "data": null,
+                        "branch": {
+                            "free": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 236,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "free_short_stay": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 204,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "free_subscribers": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 32,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "occupied": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 245,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "occupied_short_stay": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 200,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "occupied_subscribers": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 245,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            }
+                        },
+                        "provenance": ""
+                    },
+                    "608612": {
+                        "name": "(default)",
+                        "data": null,
+                        "branch": {
+                            "free": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 224,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "free_short_stay": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 207,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "free_subscribers": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 17,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "occupied": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 16,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "occupied_short_stay": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 13,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "occupied_subscribers": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 16,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            }
+                        },
+                        "provenance": ""
+                    }
+                },
+                "provenance": ""
+            }
+        ],
+        "ParkingStation": [
+            {
+                "name": "(default)",
+                "data": null,
+                "branch": {
+                    "607440_0": {
+                        "name": "(default)",
+                        "data": null,
+                        "branch": {
+                            "free": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 93,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "free_short_stay": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 92,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "free_subscribers": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 1,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "occupied": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 106,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "occupied_short_stay": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 106,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "occupied_subscribers": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 0,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            }
+                        },
+                        "provenance": ""
+                    },
+                    "607440_1": {
+                        "name": "(default)",
+                        "data": null,
+                        "branch": {
+                            "free": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 67,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "free_short_stay": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 49,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "free_subscribers": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 18,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "occupied": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 23,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "occupied_short_stay": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": -19,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "occupied_subscribers": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 42,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            }
+                        },
+                        "provenance": ""
+                    },
+                    "607440_2": {
+                        "name": "(default)",
+                        "data": null,
+                        "branch": {
+                            "free": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 76,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "free_short_stay": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 63,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "free_subscribers": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 13,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "occupied": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 116,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "occupied_short_stay": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 113,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "occupied_subscribers": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 3,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            }
+                        },
+                        "provenance": ""
+                    },
+                    "608612_0": {
+                        "name": "(default)",
+                        "data": null,
+                        "branch": {
+                            "free": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 224,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "free_short_stay": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 207,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "free_subscribers": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 17,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "occupied": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 16,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "occupied_short_stay": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 13,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "occupied_subscribers": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 3,
+                                        "period": 600,
+                                        "timestamp": 1735689600000
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            }
+                        },
+                        "provenance": ""
+                    }
+                },
+                "provenance": ""
+            }
+        ]
+    },
+    "syncedStations": {
+        "ParkingFacility": [
+            {
+                "Stations": [
+                    {
+                        "id": "608612",
+                        "name": "Parcheggio Stazione Brunico",
+                        "stationType": "ParkingFacility",
+                        "latitude": 46.792815456220296,
+                        "longitude": 11.927622005916659,
+                        "origin": "",
+                        "metaData": {
+                            "capacity": 240,
+                            "capacity_short_stay": 240,
+                            "capacity_subscribers": 240,
+                            "municipality": "Brunico",
+                            "standard_name": "Parcheggio Stazione Brunico"
+                        }
+                    },
+                    {
+                        "id": "607440",
+                        "name": "Parcheggio Stazione Bressanone",
+                        "stationType": "ParkingFacility",
+                        "latitude": 46.713708199562525,
+                        "longitude": 11.650497804658093,
+                        "origin": "",
+                        "metaData": {
+                            "capacity": 481,
+                            "capacity_short_stay": 481,
+                            "capacity_subscribers": 481,
+                            "municipality": "Bressanone",
+                            "standard_name": "Parcheggio Stazione Bressanone"
+                        }
+                    }
+                ],
+                "SyncState": true,
+                "OnlyActivate": false
+            }
+        ],
+        "ParkingStation": [
+            {
+                "Stations": [
+                    {
+                        "id": "608612_0",
+                        "name": "Parcheggio Stazione Brunico Mobilitätszentrum",
+                        "stationType": "ParkingStation",
+                        "latitude": 46.792815456220296,
+                        "longitude": 11.927622005916659,
+                        "origin": "",
+                        "parentStation": "608612",
+                        "metaData": {
+                            "capacity": 240,
+                            "capacity_short_stay": 220,
+                            "capacity_subscribers": 20,
+                            "free_limit": 240,
+                            "free_limit_short_stay": 219,
+                            "free_limit_subscribers": 20,
+                            "municipality": "Brunico",
+                            "occupancy_limit": 240,
+                            "occupancy_limit_short_stay": 219,
+                            "occupancy_limit_subscribers": 21,
+                            "standard_name": "Parcheggio Stazione Brunico Mobilitätszentrum"
+                        }
+                    },
+                    {
+                        "id": "607440_0",
+                        "name": "Parcheggio Stazione Bressanone 01-Priel",
+                        "stationType": "ParkingStation",
+                        "latitude": 46.713708199562525,
+                        "longitude": 11.650497804658093,
+                        "origin": "",
+                        "parentStation": "607440",
+                        "metaData": {
+                            "capacity": 199,
+                            "capacity_short_stay": 198,
+                            "capacity_subscribers": 1,
+                            "free_limit": 197,
+                            "free_limit_short_stay": 197,
+                            "free_limit_subscribers": 0,
+                            "municipality": "Bressanone",
+                            "occupancy_limit": 199,
+                            "occupancy_limit_short_stay": 198,
+                            "occupancy_limit_subscribers": 1,
+                            "standard_name": "Parcheggio Stazione Bressanone 01-Priel"
+                        }
+                    },
+                    {
+                        "id": "607440_1",
+                        "name": "Parcheggio Stazione Bressanone 02-Rosslauf",
+                        "stationType": "ParkingStation",
+                        "latitude": 46.713708199562525,
+                        "longitude": 11.650497804658093,
+                        "origin": "",
+                        "parentStation": "607440",
+                        "metaData": {
+                            "capacity": 90,
+                            "capacity_short_stay": 30,
+                            "capacity_subscribers": 60,
+                            "free_limit": 89,
+                            "free_limit_short_stay": 29,
+                            "free_limit_subscribers": 59,
+                            "municipality": "Bressanone",
+                            "occupancy_limit": 90,
+                            "occupancy_limit_short_stay": 30,
+                            "occupancy_limit_subscribers": 60,
+                            "standard_name": "Parcheggio Stazione Bressanone 02-Rosslauf"
+                        }
+                    },
+                    {
+                        "id": "607440_2",
+                        "name": "Parcheggio Stazione Bressanone 03-C.Mobilità-Mobilitätsz",
+                        "stationType": "ParkingStation",
+                        "latitude": 46.713708199562525,
+                        "longitude": 11.650497804658093,
+                        "origin": "",
+                        "parentStation": "607440",
+                        "metaData": {
+                            "capacity": 192,
+                            "capacity_short_stay": 176,
+                            "capacity_subscribers": 16,
+                            "free_limit": 190,
+                            "free_limit_short_stay": 175,
+                            "free_limit_subscribers": 16,
+                            "municipality": "Bressanone",
+                            "occupancy_limit": 192,
+                            "occupancy_limit_short_stay": 176,
+                            "occupancy_limit_subscribers": 16,
+                            "standard_name": "Parcheggio Stazione Bressanone 03-C.Mobilità-Mobilitätsz"
+                        }
+                    }
+                ],
+                "SyncState": true,
+                "OnlyActivate": false
+            }
+        ]
+    }
+}

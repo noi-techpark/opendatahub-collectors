@@ -3,6 +3,7 @@ module opendatahub.com/tr-meteorology-bz-forecast
 go 1.23.4
 
 require (
+	github.com/gocarina/gocsv v0.0.0-20240520201108-78e41c74b4b1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/noi-techpark/go-bdp-client v1.2.0
 	github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20250206130024-73dceb95cbd8
