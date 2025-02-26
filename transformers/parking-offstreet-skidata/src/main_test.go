@@ -119,6 +119,7 @@ func isNumeric(rv reflect.Value) bool {
 
 func TestSkidata(t *testing.T) {
 	var in = FacilityData{}
+	station_proto = ReadStations("../resources/stations.csv")
 	err := bdpmock.LoadInputData(&in, "../testdata/input/skidata.json")
 	require.Nil(t, err)
 
@@ -140,15 +141,17 @@ func TestSkidata(t *testing.T) {
 	require.Nil(t, err)
 
 	mock := b.(*bdpmock.BdpMock)
+	bdpmock.WriteOutput(mock.Requests(), "../testdata/output/skidata--out.json")
 
 	actual := unifyNumbersToFloat(mock.Requests())
 	expected := unifyNumbersToFloat(out)
 
-	assert.DeepEqual(t, actual, expected)
+	assert.DeepEqual(t, expected, actual)
 }
 
 func TestMyBestParking(t *testing.T) {
 	var in = FacilityData{}
+	station_proto = ReadStations("../resources/stations.csv")
 	err := bdpmock.LoadInputData(&in, "../testdata/input/mybestparking.json")
 	require.Nil(t, err)
 
@@ -170,9 +173,36 @@ func TestMyBestParking(t *testing.T) {
 	require.Nil(t, err)
 
 	mock := b.(*bdpmock.BdpMock)
+	bdpmock.WriteOutput(mock.Requests(), "../testdata/output/mybestparking--out.json")
 
 	actual := unifyNumbersToFloat(mock.Requests())
 	expected := unifyNumbersToFloat(out)
 
-	assert.DeepEqual(t, actual, expected)
+	assert.DeepEqual(t, expected, actual)
+}
+
+func TestStations(t *testing.T) {
+	stations := ReadStations("../resources/stations.csv")
+
+	s := stations.GetStationByID("")
+	require.Nil(t, s)
+
+	s = stations.GetStationByID("406983")
+	require.NotNil(t, s)
+	assert.Equal(t, "105", s.ID)
+
+	m := s.ToMetadata()
+	net := m["netex_parking"].(map[string]any)
+	assert.Equal(t, len(net), 7)
+	vtypes := (net["vehicletypes"]).(string)
+	assert.Equal(t, vtypes, "allPassengerVehicles")
+
+	s = stations.GetStationByID("608612")
+	require.NotNil(t, s)
+	assert.Equal(t, "608612", s.ID)
+
+	m = s.ToMetadata()
+	net2, ok := m["netex_parking"]
+	assert.Equal(t, false, ok)
+	assert.Equal(t, nil, net2)
 }

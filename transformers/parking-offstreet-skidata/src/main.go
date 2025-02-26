@@ -6,7 +6,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	"strconv"
 
@@ -66,25 +65,15 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *dto.Raw[FacilityDat
 
 	for _, facility := range payload.Rawdata {
 		id := facility.GetID()
-		parentStationCode := strconv.Itoa(id)
-		lat, lon := getLocationOrDefault(id, facility.Latitude, facility.Longitude)
-		parentStation := bdplib.CreateStation(parentStationCode, facility.Description, stationTypeParent, lat, lon, bdp.GetOrigin())
-		parentStation.MetaData = map[string]interface{}{
-			"IdCompany":    facility.IdCompany,
-			"City":         facility.City,
-			"Address":      facility.Address,
-			"ZIPCode":      facility.ZIPCode,
-			"Telephone1":   facility.Telephone1,
-			"Telephone2":   facility.Telephone2,
-			"municipality": facility.City,
+		parent_station_data := station_proto.GetStationByID(strconv.Itoa(id))
+		if nil == parent_station_data {
+			slog.Error("no parent station data", "facility_id", strconv.Itoa(id))
+			panic("no parent station data")
 		}
 
-		// set City=Brunico for parking lot "Parcheggio Stazione Brunico Mobilitätszentrum"
-		// old api gives wrongly Bolzano
-		if parentStationCode == "608612" {
-			parentStation.MetaData["City"] = "Brunico"
-			parentStation.MetaData["municipality"] = "Brunico"
-		}
+		parentStation := bdplib.CreateStation(parent_station_data.ID, parent_station_data.Name,
+			stationTypeParent, parent_station_data.Lat, parent_station_data.Lon, bdp.GetOrigin())
+		parentStation.MetaData = parent_station_data.ToMetadata()
 
 		parentStations = append(parentStations, parentStation)
 
@@ -106,27 +95,24 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *dto.Raw[FacilityDat
 		// so iterating over freeplaces and checking if the station with the parkNo has already been created is needed
 		for _, freePlace := range facility.FacilityDetails {
 			// create ParkingStation
-			stationCode := parentStationCode + "_" + strconv.Itoa(freePlace.ParkNo)
-			station, ok := stations[stationCode]
+			facility_id := strconv.Itoa(facility.GetID()) + "_" + strconv.Itoa(freePlace.ParkNo)
+			station_data := station_proto.GetStationByID(facility_id)
+			if nil == station_data {
+				slog.Error("no station data", "facility_id", facility_id)
+				panic("no station data")
+			}
+			station, ok := stations[facility_id]
+
 			if !ok {
-				lat, lon := getLocationOrDefault(freePlace.FacilityId, freePlace.Latitude, freePlace.Longitude)
+
 				station = bdplib.CreateStation(
-					stationCode, fmt.Sprintf("%s %s", facility.Description, freePlace.FacilityDescription),
-					stationType, lat, lon, bdp.GetOrigin())
+					station_data.ID, station_data.Name, stationType, station_data.Lat, station_data.Lon, bdp.GetOrigin())
 				station.ParentStation = parentStation.Id
 
-				station.MetaData = make(map[string]interface{})
-				station.MetaData["FacilityDescription"] = freePlace.FacilityDescription
-				station.MetaData["municipality"] = facility.City
+				station.MetaData = station_data.ToMetadata()
 
-				// set City=Brunico for parking lot "Parcheggio Stazione Brunico Mobilitätszentrum"
-				// old api gives wrongly Bolzano
-				if parentStationCode == "608612" {
-					station.MetaData["municipality"] = "Brunico"
-				}
-
-				stations[stationCode] = station
-				slog.Debug("Create station " + stationCode)
+				stations[station_data.ID] = station
+				slog.Debug("Create station " + station_data.ID)
 			}
 
 			switch freePlace.CountingCategoryNo {
@@ -135,8 +121,8 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *dto.Raw[FacilityDat
 				station.MetaData["free_limit_"+shortStay] = freePlace.FreeLimit
 				station.MetaData["occupancy_limit_"+shortStay] = freePlace.OccupancyLimit
 				station.MetaData["capacity_"+shortStay] = freePlace.Capacity
-				dataMap.AddRecord(stationCode, dataTypeFreeShort, bdplib.CreateRecord(ts, freePlace.FreePlaces, 600))
-				dataMap.AddRecord(stationCode, dataTypeOccupiedShort, bdplib.CreateRecord(ts, freePlace.CurrentLevel, 600))
+				dataMap.AddRecord(station_data.ID, dataTypeFreeShort, bdplib.CreateRecord(ts, freePlace.FreePlaces, 600))
+				dataMap.AddRecord(station_data.ID, dataTypeOccupiedShort, bdplib.CreateRecord(ts, freePlace.CurrentLevel, 600))
 				// facility data
 				freeShortStaySum += freePlace.FreePlaces
 				occupiedShortStaySum += freePlace.CurrentLevel
@@ -146,8 +132,8 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *dto.Raw[FacilityDat
 				station.MetaData["free_limit_"+subscribers] = freePlace.FreeLimit
 				station.MetaData["occupancy_limit_"+subscribers] = freePlace.OccupancyLimit
 				station.MetaData["capacity_"+subscribers] = freePlace.Capacity
-				dataMap.AddRecord(stationCode, dataTypeFreeSubs, bdplib.CreateRecord(ts, freePlace.FreePlaces, 600))
-				dataMap.AddRecord(stationCode, dataTypeOccupiedSubs, bdplib.CreateRecord(ts, freePlace.CurrentLevel, 600))
+				dataMap.AddRecord(station_data.ID, dataTypeFreeSubs, bdplib.CreateRecord(ts, freePlace.FreePlaces, 600))
+				dataMap.AddRecord(station_data.ID, dataTypeOccupiedSubs, bdplib.CreateRecord(ts, freePlace.CurrentLevel, 600))
 				// facility data
 				freeSubscribersSum += freePlace.FreePlaces
 				occupiedSubscribersSum += freePlace.CurrentLevel
@@ -157,8 +143,8 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *dto.Raw[FacilityDat
 				station.MetaData["free_limit"] = freePlace.FreeLimit
 				station.MetaData["occupancy_limit"] = freePlace.OccupancyLimit
 				station.MetaData["capacity"] = freePlace.Capacity
-				dataMap.AddRecord(stationCode, dataTypeFreeTotal, bdplib.CreateRecord(ts, freePlace.FreePlaces, 600))
-				dataMap.AddRecord(stationCode, dataTypeOccupiedTotal, bdplib.CreateRecord(ts, freePlace.CurrentLevel, 600))
+				dataMap.AddRecord(station_data.ID, dataTypeFreeTotal, bdplib.CreateRecord(ts, freePlace.FreePlaces, 600))
+				dataMap.AddRecord(station_data.ID, dataTypeOccupiedTotal, bdplib.CreateRecord(ts, freePlace.CurrentLevel, 600))
 				// total facility data
 				freeTotalSum += freePlace.FreePlaces
 				occupiedTotalSum += freePlace.CurrentLevel
@@ -168,10 +154,10 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *dto.Raw[FacilityDat
 
 		// assign total facility data, if data is not 0
 		if freeTotalSum > 0 {
-			dataMapParent.AddRecord(parentStationCode, dataTypeFreeTotal, bdplib.CreateRecord(ts, freeTotalSum, 600))
+			dataMapParent.AddRecord(parent_station_data.ID, dataTypeFreeTotal, bdplib.CreateRecord(ts, freeTotalSum, 600))
 		}
 		if occupiedTotalSum > 0 {
-			dataMapParent.AddRecord(parentStationCode, dataTypeOccupiedTotal, bdplib.CreateRecord(ts, occupiedTotalSum, 600))
+			dataMapParent.AddRecord(parent_station_data.ID, dataTypeOccupiedTotal, bdplib.CreateRecord(ts, occupiedTotalSum, 600))
 		}
 		if capacityTotal > 0 {
 			parentStation.MetaData["capacity"] = capacityTotal
@@ -179,10 +165,10 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *dto.Raw[FacilityDat
 
 		// subscribers
 		if freeSubscribersSum > 0 {
-			dataMapParent.AddRecord(parentStationCode, dataTypeFreeSubs, bdplib.CreateRecord(ts, freeSubscribersSum, 600))
+			dataMapParent.AddRecord(parent_station_data.ID, dataTypeFreeSubs, bdplib.CreateRecord(ts, freeSubscribersSum, 600))
 		}
 		if occupiedSubscribersSum > 0 {
-			dataMapParent.AddRecord(parentStationCode, dataTypeOccupiedSubs, bdplib.CreateRecord(ts, occupiedTotalSum, 600))
+			dataMapParent.AddRecord(parent_station_data.ID, dataTypeOccupiedSubs, bdplib.CreateRecord(ts, occupiedTotalSum, 600))
 		}
 		if capacitySubscribers > 0 {
 			parentStation.MetaData["capacity_"+subscribers] = capacityTotal
@@ -190,10 +176,10 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *dto.Raw[FacilityDat
 
 		// short stay
 		if freeShortStaySum > 0 {
-			dataMapParent.AddRecord(parentStationCode, dataTypeFreeShort, bdplib.CreateRecord(ts, freeShortStaySum, 600))
+			dataMapParent.AddRecord(parent_station_data.ID, dataTypeFreeShort, bdplib.CreateRecord(ts, freeShortStaySum, 600))
 		}
 		if occupiedShortStaySum > 0 {
-			dataMapParent.AddRecord(parentStationCode, dataTypeOccupiedShort, bdplib.CreateRecord(ts, occupiedShortStaySum, 600))
+			dataMapParent.AddRecord(parent_station_data.ID, dataTypeOccupiedShort, bdplib.CreateRecord(ts, occupiedShortStaySum, 600))
 		}
 		if capacityShortStay > 0 {
 			parentStation.MetaData["capacity_"+shortStay] = capacityTotal
@@ -233,10 +219,12 @@ func SyncDataTypes(bdp bdplib.Bdp) {
 }
 
 var env tr.Env
+var station_proto Stations
 
 func main() {
 	envconfig.MustProcess("", &env)
 	b := bdplib.FromEnv()
+	station_proto = ReadStations("../resources/stations.csv")
 
 	SyncDataTypes(b)
 

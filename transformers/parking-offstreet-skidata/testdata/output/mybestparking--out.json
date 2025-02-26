@@ -6,7 +6,7 @@
                 "name": "(default)",
                 "data": null,
                 "branch": {
-                    "406983": {
+                    "105": {
                         "name": "(default)",
                         "data": null,
                         "branch": {
@@ -94,7 +94,7 @@
                 "name": "(default)",
                 "data": null,
                 "branch": {
-                    "406983_0": {
+                    "105": {
                         "name": "(default)",
                         "data": null,
                         "branch": {
@@ -183,23 +183,30 @@
             {
                 "Stations": [
                     {
-                        "id": "406983",
-                        "name": "Parcheggio Laurin",
+                        "id": "105",
+                        "name": "P05 - Laurin",
                         "stationType": "ParkingFacility",
-                        "latitude": 0,
-                        "longitude": 0,
+                        "latitude": 46.498174099984666,
+                        "longitude": 11.357255100008064,
                         "origin": "",
                         "metaData": {
-                            "Address": "Via Laurin 1/a",
-                            "City": "Bolzano",
-                            "IdCompany": 255,
-                            "Telephone1": "",
-                            "Telephone2": "",
-                            "ZIPCode": "29100",
                             "capacity": 90,
                             "capacity_short_stay": 90,
                             "capacity_subscribers": 90,
-                            "municipality": "Bolzano"
+                            "municipality": "Bolzano - Bozen",
+                            "name_de": "Laurin",
+                            "name_en": "Laurin",
+                            "name_it": "Laurin",
+                            "netex_parking": {
+                                "charging": true,
+                                "hazard_prohibited": true,
+                                "layout": "openSpace",
+                                "reservation": "noReservations",
+                                "surveillance": true,
+                                "type": "urbanParking",
+                                "vehicletypes": "allPassengerVehicles"
+                            },
+                            "standard_name": "Parcheggio Laurin"
                         }
                     }
                 ],
@@ -211,25 +218,31 @@
             {
                 "Stations": [
                     {
-                        "id": "406983_0",
-                        "name": "Parcheggio Laurin PARK LAURIN BZ",
+                        "id": "105",
+                        "name": "P05 - Laurin",
                         "stationType": "ParkingStation",
-                        "latitude": 0,
-                        "longitude": 0,
+                        "latitude": 46.498174099984666,
+                        "longitude": 11.357255100008064,
                         "origin": "",
-                        "parentStation": "406983",
+                        "parentStation": "105",
                         "metaData": {
-                            "FacilityDescription": "PARK LAURIN BZ",
                             "capacity": 90,
-                            "capacity_short_stay": 90,
-                            "capacity_subscribers": 15,
                             "free_limit": 89,
-                            "free_limit_short_stay": 89,
-                            "free_limit_subscribers": 14,
-                            "municipality": "Bolzano",
+                            "municipality": "Bolzano - Bozen",
+                            "name_de": "Laurin",
+                            "name_en": "Laurin",
+                            "name_it": "Laurin",
+                            "netex_parking": {
+                                "charging": true,
+                                "hazard_prohibited": true,
+                                "layout": "openSpace",
+                                "reservation": "noReservations",
+                                "surveillance": true,
+                                "type": "urbanParking",
+                                "vehicletypes": "allPassengerVehicles"
+                            },
                             "occupancy_limit": 90,
-                            "occupancy_limit_short_stay": 90,
-                            "occupancy_limit_subscribers": 15
+                            "standard_name": "Parcheggio Laurin"
                         }
                     }
                 ],
