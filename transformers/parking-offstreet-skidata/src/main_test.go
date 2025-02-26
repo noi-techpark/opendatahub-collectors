@@ -6,10 +6,13 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"reflect"
+	"sort"
 	"testing"
 	"time"
 
+	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"github.com/noi-techpark/go-bdp-client/bdpmock"
 	"github.com/noi-techpark/go-opendatahub-ingest/dto"
 	"github.com/stretchr/testify/require"
@@ -117,6 +120,76 @@ func isNumeric(rv reflect.Value) bool {
 	return false
 }
 
+// NormalizeBdpMockCalls sorts all slices contained within the BdpMockCalls structure
+// so that comparisons between expected and actual calls are order-independent.
+func NormalizeBdpMockCalls(calls *bdpmock.BdpMockCalls) {
+	// Normalize SyncedDataTypes: map[string][][]bdplib.DataType
+	for key, dataTypesCalls := range calls.SyncedDataTypes {
+		// For each call (a slice of DataType slices)
+		for i := range dataTypesCalls {
+			// Sort each inner slice by a string representation.
+			sort.Slice(dataTypesCalls[i], func(a, b int) bool {
+				return fmt.Sprintf("%v", dataTypesCalls[i][a]) < fmt.Sprintf("%v", dataTypesCalls[i][b])
+			})
+		}
+		// Sort the outer slice by comparing the string representation of each inner slice.
+		sort.Slice(dataTypesCalls, func(i, j int) bool {
+			return dataTypeSliceToString(dataTypesCalls[i]) < dataTypeSliceToString(dataTypesCalls[j])
+		})
+		calls.SyncedDataTypes[key] = dataTypesCalls
+	}
+
+	// Normalize SyncedData: map[string][]bdplib.DataMap
+	for key, dataMaps := range calls.SyncedData {
+		// Assuming each DataMap has a Name field you can sort by.
+		sort.Slice(dataMaps, func(i, j int) bool {
+			return dataMaps[i].Name < dataMaps[j].Name
+		})
+		calls.SyncedData[key] = dataMaps
+	}
+
+	// Normalize SyncedStations: map[string][]BdpMockStationCall
+	for key, stationCalls := range calls.SyncedStations {
+		// First, sort the Stations slice in each call.
+		for i := range stationCalls {
+			sort.Slice(stationCalls[i].Stations, func(a, b int) bool {
+				// Assuming each Station has an Id field.
+				return stationCalls[i].Stations[a].Id < stationCalls[i].Stations[b].Id
+			})
+		}
+		// Then, sort the slice of BdpMockStationCall.
+		sort.Slice(stationCalls, func(i, j int) bool {
+			// Compare based on the first station's Id, or length if empty.
+			var idI, idJ string
+			if len(stationCalls[i].Stations) > 0 {
+				idI = stationCalls[i].Stations[0].Id
+			}
+			if len(stationCalls[j].Stations) > 0 {
+				idJ = stationCalls[j].Stations[0].Id
+			}
+			if idI == idJ {
+				// Fall back to comparing SyncState and OnlyActivate if needed.
+				if stationCalls[i].SyncState == stationCalls[j].SyncState {
+					return !stationCalls[i].OnlyActivate && stationCalls[j].OnlyActivate
+				}
+				return !stationCalls[i].SyncState && stationCalls[j].SyncState
+			}
+			return idI < idJ
+		})
+		calls.SyncedStations[key] = stationCalls
+	}
+}
+
+// dataTypeSliceToString converts a slice of bdplib.DataType into a string representation.
+// This is used for sorting slices of DataType.
+func dataTypeSliceToString(slice []bdplib.DataType) string {
+	s := ""
+	for _, dt := range slice {
+		s += fmt.Sprintf("%v", dt)
+	}
+	return s
+}
+
 func TestSkidata(t *testing.T) {
 	var in = FacilityData{}
 	station_proto = ReadStations("../resources/stations.csv")
@@ -141,9 +214,10 @@ func TestSkidata(t *testing.T) {
 	require.Nil(t, err)
 
 	mock := b.(*bdpmock.BdpMock)
-	bdpmock.WriteOutput(mock.Requests(), "../testdata/output/skidata--out.json")
 
-	actual := unifyNumbersToFloat(mock.Requests())
+	req := mock.Requests()
+	NormalizeBdpMockCalls(&req)
+	actual := unifyNumbersToFloat(req)
 	expected := unifyNumbersToFloat(out)
 
 	assert.DeepEqual(t, expected, actual)
@@ -173,9 +247,10 @@ func TestMyBestParking(t *testing.T) {
 	require.Nil(t, err)
 
 	mock := b.(*bdpmock.BdpMock)
-	bdpmock.WriteOutput(mock.Requests(), "../testdata/output/mybestparking--out.json")
 
-	actual := unifyNumbersToFloat(mock.Requests())
+	req := mock.Requests()
+	NormalizeBdpMockCalls(&req)
+	actual := unifyNumbersToFloat(req)
 	expected := unifyNumbersToFloat(out)
 
 	assert.DeepEqual(t, expected, actual)
