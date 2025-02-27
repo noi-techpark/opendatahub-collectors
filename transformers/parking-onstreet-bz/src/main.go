@@ -71,18 +71,11 @@ func main() {
 	}
 	ms.FailOnError(b.SyncStations(ParkingSensor, stations, false, false), "failed syncing stations")
 
-	syncStations := map[string]struct {
-		synced  bool
-		station bdplib.Station
-	}{}
+	stationMap := map[string]bdplib.Station{}
 	for _, s := range stations {
-		syncStations[s.Id] = struct {
-			synced  bool
-			station bdplib.Station
-		}{
-			false, s,
-		}
+		stationMap[s.Id] = s
 	}
+	stationSynced := map[string]bool{}
 
 	// LISTEN FOR MEASUREMENTS
 	tr.ListenFromEnv(cfg.Env, func(r *dto.Raw[MqttRaw]) error {
@@ -114,17 +107,17 @@ func main() {
 			m.AddRecord(p.DeviceInfo.DevEui, dtOccupied.Name, bdplib.CreateRecord(t.UnixMilli(), occupied, 1))
 
 			// Since we received data, set that station active
-			syncStation, found := syncStations[p.DeviceInfo.DevEui]
+			syncStation, found := stationMap[p.DeviceInfo.DevEui]
 			if !found {
 				return fmt.Errorf("unknown station %s. Please add to csv", p.DeviceInfo.DevEui)
 			}
 			// only activate station once
-			if !syncStation.synced {
-				if err := b.SyncStations(ParkingSensor, []bdplib.Station{syncStation.station}, true, true); err != nil {
+			if stationSynced[syncStation.Id] {
+				if err := b.SyncStations(ParkingSensor, []bdplib.Station{syncStation}, true, true); err != nil {
 					return fmt.Errorf("could not sync single station %s: %w", p.DeviceInfo.DevEui, err)
 				}
-				syncStation.synced = true
-				slog.Info("Activated station", "scode", syncStation.station.Id)
+				stationSynced[syncStation.Id] = true
+				slog.Info("Activated station", "scode", syncStation.Id)
 			}
 
 			if err := b.PushData(ParkingSensor, m); err != nil {
