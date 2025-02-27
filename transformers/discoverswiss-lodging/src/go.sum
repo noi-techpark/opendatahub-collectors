@@ -26,8 +26,8 @@ github.com/mattn/go-isatty v0.0.20 h1:xfD0iDuEKnDkl03q4limB+vH+GxLEtL/jb4xVJSWWE
 github.com/mattn/go-isatty v0.0.20/go.mod h1:W+V8PltTTMOvKvAeJH7IuucS94S2C6jfK/D7dTCTo3Y=
 github.com/montanaflynn/stats v0.7.1 h1:etflOAAHORrCC44V+aR6Ftzort912ZU+YLiSTuV8eaE=
 github.com/montanaflynn/stats v0.7.1/go.mod h1:etXPPgVO6n31NxCd9KQUMvCM+ve0ruNzt6R8Bnaayow=
-github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250225133429-d1811388b1aa h1:3+qddPObD9vsuAcqE3/TSj1zkWXUvIcgivqu4xiQ1hc=
-github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250225133429-d1811388b1aa/go.mod h1:5WamTY7eAAHj6B3jHwAbudv6rnUY5f5OqGyY3UWothg=
+github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250227152554-e14f26774568 h1:Sa3Q0suq7mSbMlT3zgpldiff78Z2hljEmtXez1THOvs=
+github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250227152554-e14f26774568/go.mod h1:5WamTY7eAAHj6B3jHwAbudv6rnUY5f5OqGyY3UWothg=
 github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20250206130024-73dceb95cbd8 h1:k/Sm0aADdKrGurPcKr0mAxwemH23YKBfP3K6Yj+NzVc=
 github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20250206130024-73dceb95cbd8/go.mod h1:i/2Gbagc/PBHZD7pjW/22WHvc9MBkhJ9RhVhJ/s9h3c=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=

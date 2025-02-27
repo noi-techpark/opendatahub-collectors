@@ -99,6 +99,7 @@ func main() {
 	go func(){
 		for lb := range lbChannel {
 			acco := mappers.MapLodgingBusinessToAccommodation(lb)
+			fmt.Println("ACCO TYPE: ",acco.AccoTypeId)
 			accoChannel <- acco
 		}
 	}()
