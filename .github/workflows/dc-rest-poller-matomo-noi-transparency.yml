@@ -1,0 +1,84 @@
+name: CI/CD dc-rest-poller matomo-noi-transparency
+
+on: 
+  push:
+    paths:
+      - "collectors/rest-poller/**"
+      - "!collectors/rest-poller/infrastructure/helm/*"
+      - "collectors/rest-poller/infrastructure/helm/matomo-noi-transparency.yaml"
+      - ".github/workflows/dc-rest-poller-matomo-noi-transparency.yml"
+
+env:
+  WORKING_DIRECTORY: collectors/rest-poller
+  DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/dc-rest-poller
+  DOCKER_TAG: ${{ github.sha }}
+  KUBERNETES_NAMESPACE: collector
+  VALUES_YAML: infrastructure/helm/matomo-noi-transparency.yaml
+  K8S_NAME: dc-rest-poller-matomo-noi-transparency
+  MATOMO_URL: >-
+    https://noi.matomo.cloud/
+    ?module=API
+    &method=API.getBulkRequest
+    &format=json
+    &token_auth=${{ secrets.MATOMO_NOI_API_TOKEN }}
+    &urls[0]=idSite%3D1%26method%3DCustomReports.getCustomReport%26idCustomReport%3D1%26expanded%3D1%26date%3Dyesterday%26period%3Dyear
+    &urls[1]=idSite%3D1%26method%3DCustomReports.getCustomReport%26idCustomReport%3D1%26expanded%3D1%26date%3Dyesterday%26period%3Dmonth
+    &urls[2]=idSite%3D1%26method%3DCustomReports.getCustomReport%26idCustomReport%3D1%26expanded%3D1%26date%3Dyesterday%26period%3Dweek
+    &urls[3]=idSite%3D1%26method%3DCustomReports.getCustomReport%26idCustomReport%3D1%26expanded%3D1%26date%3Dyesterday%26period%3Dday
+
+  # OK, listen up, this is how this URL works:
+  # https://developer.matomo.org/api-reference/reporting-api
+  # 
+  # Matomo does have a special getBulkRequest feature where you can make multiple requests at once.
+  # We need to get all the data for a custom report id=1, for the periods (year, month, week, day)
+  # So we are making four identical requests, one for each period
+  # The single requests are in url-encoded format as urls[n]
+  #
+  # basically we're just doing ?idSite=1&method=CustomReports.getCustomReport&idCustomReport=1&expanded=1&date=yesterday&period=whatever
+  # but 4 times
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    concurrency: dc-rest-poller-matomo-noi-transparency-build
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    - name: Build and push images
+      uses: noi-techpark/github-actions/docker-build-and-push@v2
+      with:
+        working-directory: ${{ env.WORKING_DIRECTORY }}/infrastructure
+        docker-username: ${{ github.actor }}
+        docker-password: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy-matomo-noi-transparency-test:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-22.04
+    concurrency: dc-rest-poller-matomo-noi-transparency-test
+    environment: test
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Customize values.yaml
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          yq -i '.image.repository="${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML}}
+          yq -i '.image.tag="${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
+          yq -i '.image.pullPolicy="IfNotPresent"' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.HTTP_URL="${{ env.MATOMO_URL }}"' ${{ env.VALUES_YAML }}
+
+      - name: Deploy on cluster  
+        uses: noi-techpark/github-actions/helm-deploy@v2
+        with:
+          k8s-name: dc-rest-poller-matomo-noi-transparency
+          k8s-namespace: collector
+          chart-path: helm/generic-collector
+          values-file: ${{ env.WORKING_DIRECTORY}}/${{ env.VALUES_YAML }}
+          aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
+          aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
+          aws-eks-cluster-name: aws-main-eu-01
+          aws-region: eu-west-1
+
