@@ -146,6 +146,7 @@ func main() {
 				slog.Error("failed marshalling lodging object", "err", err)
 				continue
 			}
+			fmt.Println("ADDITIONAL,TYPE",lodging.AdditionalType)
 			
 			mq <- dto.RawAny{
 				Provider:  env.PROVIDER,

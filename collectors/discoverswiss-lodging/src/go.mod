@@ -6,7 +6,7 @@ require (
 	github.com/hashicorp/go-retryablehttp v0.7.7
 	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250227152554-e14f26774568
+	github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250228154840-c5a02f67ee9f
 	github.com/robfig/cron/v3 v3.0.1
 )
 
