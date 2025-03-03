@@ -17,7 +17,6 @@ import (
 	"github.com/noi-techpark/go-opendatahub-ingest/ms"
 	"github.com/noi-techpark/go-opendatahub-ingest/tr"
 	"github.com/noi-techpark/go-timeseries-client/odhts"
-	"github.com/rabbitmq/amqp091-go"
 )
 
 const stationTypeLocation = "EChargingStation"
@@ -88,11 +87,6 @@ func main() {
 	rabbit, err := mq.Connect(cfg.MQ_URI, cfg.MQ_CONSUMER)
 	ms.FailOnError(err, "failed connecting to rabbitmq")
 	defer rabbit.Close()
-
-	rabbit.OnClose(func(err *amqp091.Error) {
-		slog.Error("rabbitmq connection closed unexpectedly")
-		panic(err)
-	})
 
 	pushMQ, err := rabbit.Consume(cfg.MQ_EXCHANGE, cfg.MQ_PUSH_QUEUE, cfg.MQ_PUSH_KEY)
 	ms.FailOnError(err, "failed creating push queue")
