@@ -15,16 +15,15 @@ env:
   KUBERNETES_NAMESPACE: collector
   VALUES_YAML: infrastructure/helm/matomo-noi-transparency.yaml
   K8S_NAME: dc-rest-poller-matomo-noi-transparency
-  MATOMO_URL: >-
-    https://noi.matomo.cloud/
-    ?module=API
-    &method=API.getBulkRequest
-    &format=json
-    &token_auth=${{ secrets.MATOMO_NOI_API_TOKEN }}
-    &urls[0]=idSite%3D1%26method%3DCustomReports.getCustomReport%26idCustomReport%3D1%26expanded%3D1%26date%3Dyesterday%26period%3Dyear
-    &urls[1]=idSite%3D1%26method%3DCustomReports.getCustomReport%26idCustomReport%3D1%26expanded%3D1%26date%3Dyesterday%26period%3Dmonth
-    &urls[2]=idSite%3D1%26method%3DCustomReports.getCustomReport%26idCustomReport%3D1%26expanded%3D1%26date%3Dyesterday%26period%3Dweek
-    &urls[3]=idSite%3D1%26method%3DCustomReports.getCustomReport%26idCustomReport%3D1%26expanded%3D1%26date%3Dyesterday%26period%3Dday
+  MATOMO_URL: "https://noi.matomo.cloud/\
+    ?module=API\
+    &method=API.getBulkRequest\
+    &format=json\
+    &token_auth=${{ secrets.MATOMO_NOI_API_TOKEN }}\
+    &urls[0]=idSite%3D1%26method%3DCustomReports.getCustomReport%26idCustomReport%3D1%26expanded%3D1%26date%3Dyesterday%26period%3Dyear\
+    &urls[1]=idSite%3D1%26method%3DCustomReports.getCustomReport%26idCustomReport%3D1%26expanded%3D1%26date%3Dyesterday%26period%3Dmonth\
+    &urls[2]=idSite%3D1%26method%3DCustomReports.getCustomReport%26idCustomReport%3D1%26expanded%3D1%26date%3Dyesterday%26period%3Dweek\
+    &urls[3]=idSite%3D1%26method%3DCustomReports.getCustomReport%26idCustomReport%3D1%26expanded%3D1%26date%3Dyesterday%26period%3Dday"
 
   # OK, listen up, this is how this URL works:
   # https://developer.matomo.org/api-reference/reporting-api
