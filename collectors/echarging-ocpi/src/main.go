@@ -12,7 +12,6 @@ import (
 	"github.com/noi-techpark/go-opendatahub-ingest/dc"
 	"github.com/noi-techpark/go-opendatahub-ingest/mq"
 	"github.com/noi-techpark/go-opendatahub-ingest/ms"
-	"github.com/rabbitmq/amqp091-go"
 	"github.com/robfig/cron/v3"
 	sloggin "github.com/samber/slog-gin"
 )
@@ -51,10 +50,6 @@ func connectMq() mq.R {
 		slog.Error("cannot open rabbitmq connection. aborting")
 		panic(err)
 	}
-	rabbit.OnClose(func(err *amqp091.Error) {
-		slog.Error("rabbit connection closed unexpectedly", "err", err)
-		panic(err)
-	})
 	return rabbit
 }
 
