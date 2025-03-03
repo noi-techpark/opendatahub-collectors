@@ -5,7 +5,7 @@ go 1.23.4
 require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/noi-techpark/go-bdp-client v1.2.1
-	github.com/noi-techpark/go-opendatahub-ingest v1.0.0
+	github.com/noi-techpark/go-opendatahub-ingest v1.2.0
 	gotest.tools/v3 v3.5.2
 )
 
@@ -13,6 +13,7 @@ require (
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/klauspost/compress v1.18.0 // indirect
+	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/montanaflynn/stats v0.7.1 // indirect
 	github.com/rabbitmq/amqp091-go v1.10.0 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
