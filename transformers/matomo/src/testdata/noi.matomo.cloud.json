@@ -1,0 +1,917 @@
+[
+  [
+    {
+      "label": "1",
+      "nb_visits": 400,
+      "level": 1,
+      "idsubdatatable": 1,
+      "segment": "visitCount==1;pageUrl=@societa-trasparente,pageUrl=@transparente-verwaltung",
+      "subtable": [
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/disposizioni-generali",
+          "nb_visits": 173,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/allgemeine-bestimmungen",
+          "nb_visits": 70,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/bandi-di-gara-e-contratti",
+          "nb_visits": 61,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/bandi-di-gara-e-contratti/avvisi-e-indagini-di-mercato",
+          "nb_visits": 57,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/personale",
+          "nb_visits": 36,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/altri-contenuti",
+          "nb_visits": 32,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/disposizioni-generali/prevenzione-della-corruzione",
+          "nb_visits": 29,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/ausschreibungen-und-vertraege/bekanntmachungen-und-marktkonsultationen",
+          "nb_visits": 27,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/ausschreibungen-und-vertraege",
+          "nb_visits": 25,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/organisation",
+          "nb_visits": 25,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/personal/direktor",
+          "nb_visits": 19,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/organisation/organigramma",
+          "nb_visits": 18,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/ausschreibungen-und-vertraege/zusammensetzung-der-bewertungskommission-und-curricula-sowie-beratender-technischer-ausschuss/beratender-technischer-ausschuss/gebaeude-b1",
+          "nb_visits": 16,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/disposizioni-generali/atti-generali",
+          "nb_visits": 16,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/personal",
+          "nb_visits": 15,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/disposizioni-generali/prevenzione-della-corruzione/relazione-del-responsabile-della-prevenzione-della-corruzione-e-della-trasparenza",
+          "nb_visits": 15,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/performance",
+          "nb_visits": 14,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/allgemeine-bestimmungen/korruptionsvorbeugung",
+          "nb_visits": 11,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/organisation/politisch-administrative-organe/verguetungen",
+          "nb_visits": 11,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/personal/ehemalige-fuehrungskraefte",
+          "nb_visits": 11,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/bandi-di-gara-e-contratti/avvisi-e-indagini-di-mercato/avvisi-speciali",
+          "nb_visits": 11,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/bilanci/bilancio",
+          "nb_visits": 11,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/ausschreibungen-und-vertraege/zusammensetzung-der-bewertungskommission-und-curricula-sowie-beratender-technischer-ausschuss/beratender-technischer-ausschuss/noi-techpark-bruneck",
+          "nb_visits": 10,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/mitarbeiter-und-berater",
+          "nb_visits": 10,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/organisation",
+          "nb_visits": 10,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/personal/fuehrungskraefte",
+          "nb_visits": 10,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/personal/fuehrungskraefte/director-of-labs-start-ups-and-operations-and-deputy-ceo",
+          "nb_visits": 10,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/altri-contenuti/prevenzione-della-corruzione",
+          "nb_visits": 10,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/bandi-di-gara-e-contratti/akten-betreffend-die-planung-der-arbeiten-bauwerke-dienstleistungen-und-lieferungen",
+          "nb_visits": 10,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/mitarbeiter-und-berater",
+          "nb_visits": 10,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/personal/stellenplan/2023",
+          "nb_visits": 9,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/disposizioni-generali/prevenzione-della-corruzione/piano-triennale-per-la-prevenzione-della-corruzione-e-trasparenza",
+          "nb_visits": 9,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/opere-pubbliche",
+          "nb_visits": 9,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/personale/direttore",
+          "nb_visits": 9,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/ausschreibungen-und-vertraege/bekanntmachungen-und-marktkonsultationen/besondere-vergabebekanntmachungen",
+          "nb_visits": 8,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/organisation/politisch-administrative-organe/verwaltungsrat/aktueller-verwaltungsrat",
+          "nb_visits": 8,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/altri-contenuti/prevenzione-della-corruzione/relazione-del-responsabile-della-prevenzione-della-corruzione-e-della-trasparenza",
+          "nb_visits": 8,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/bilanci",
+          "nb_visits": 8,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/controlli-e-rilievi-sull-amministrazione/organismi-indipendenti-di-valutazione-nuclei-di-valutazione-o-altri-organismi-con-funzioni-analoghe",
+          "nb_visits": 8,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/pagamenti-dell-amministrazione",
+          "nb_visits": 8,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/allgemeine-bestimmungen/korruptionsvorbeugung/dreijahresplan-fuer-korruptionsvorbeugung-und-transparenz",
+          "nb_visits": 7,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/allgemeine-bestimmungen/korruptionsvorbeugung/dreijahresplan-fuer-korruptionsvorbeugung-und-transparenz/2024-2026",
+          "nb_visits": 7,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/allgemeine-bestimmungen/korruptionsvorbeugung/verantwortlicher-fuer-transparenz-und-korruptionsvorbeugung",
+          "nb_visits": 7,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/ausschreibungen-und-vertraege/pnrr-piano-nazionale-di-ripresa-e-resilienza",
+          "nb_visits": 7,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/disposizioni-generali/prevenzione-della-corruzione/piano-triennale-per-la-prevenzione-della-corruzione-e-trasparenza/2024-2026",
+          "nb_visits": 7,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/organisation/titolari-di-incarichi-politici-di-amministrazione-di-direzione-e-di-governo",
+          "nb_visits": 7,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/reclutamento-del-personale",
+          "nb_visits": 7,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/sovvenzioni-contributi-sussidi-vantaggi-economici",
+          "nb_visits": 7,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/ausschreibungen-und-vertraege/bekanntmachungen-und-marktkonsultationen/marktkonsultation-fuer-den-kauf-einer-immobilie-und-deren-technischen-bericht",
+          "nb_visits": 6,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/ausschreibungen-und-vertraege/zusammensetzung-der-bewertungskommission-und-curricula-sowie-beratender-technischer-ausschuss/beratender-technischer-ausschuss/gebaeude-b1/baulos-b1",
+          "nb_visits": 6,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/organisation/politisch-administrative-organe/verwaltungsrat",
+          "nb_visits": 6,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/personaleinstellung",
+          "nb_visits": 6,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/personaleinstellung/auswahlverfahren",
+          "nb_visits": 6,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/altri-contenuti/prevenzione-della-corruzione/responsabile-per-la-prevenzione-della-corruzione-e-trasparenza",
+          "nb_visits": 6,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/bandi-di-gara-e-contratti/avvisi-e-indagini-di-mercato/indagine-di-mercato-per-l-acquisto-di-un-immobile-e-relativa-relazione-tecnica",
+          "nb_visits": 6,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/bandi-di-gara-e-contratti/pnrr-piano-nazionale-di-ripresa-e-resilienza",
+          "nb_visits": 6,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/controlli-e-rilievi-sull-amministrazione",
+          "nb_visits": 6,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/disposizioni-generali/prevenzione-della-corruzione/piano-triennale-per-la-prevenzione-della-corruzione-e-trasparenza/2025-2027",
+          "nb_visits": 6,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/organisation/titolari-di-incarichi-politici-di-amministrazione-di-direzione-e-di-governo/consiglio-di-amministrazione",
+          "nb_visits": 6,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/organisation/titolari-di-incarichi-politici-di-amministrazione-di-direzione-e-di-governo/consiglio-di-amministrazione/consiglio-di-amministrazione-attuale",
+          "nb_visits": 6,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/ausschreibungen-und-vertraege/akten-betreffend-die-planung-der-arbeiten-bauwerke-dienstleistungen-und-lieferungen",
+          "nb_visits": 5,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/ausschreibungen-und-vertraege/informationen-zu-den-einzelnen-verfahren-in-tabellenform",
+          "nb_visits": 5,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/kontrollen-und-erhebung-ueber-die-verwaltung/oiv-bewertungsgremien-oder-andere-gremien-mit-aehnlichen-funktionen",
+          "nb_visits": 5,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/organisation/politisch-administrative-organe/aufsichtsrat/aktueller-aufsichtsrat",
+          "nb_visits": 5,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/personale/contrattazione-collettiva",
+          "nb_visits": 5,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/personale/titolari-di-incarichi-dirigenziali",
+          "nb_visits": 5,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/servizi-erogati",
+          "nb_visits": 5,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/allgemeine-bestimmungen/allgemeine-rechtsakte",
+          "nb_visits": 4,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/allgemeine-bestimmungen/korruptionsvorbeugung/dreijahresplan-fuer-korruptionsvorbeugung-und-transparenz/2019-2021",
+          "nb_visits": 4,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/allgemeine-bestimmungen/korruptionsvorbeugung/dreijahresplan-fuer-korruptionsvorbeugung-und-transparenz/2023-2025",
+          "nb_visits": 4,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/ausschreibungen-und-vertraege/bekanntmachungen-und-marktkonsultationen/markterhebung-fuer-die-vergabe-der-dienstleistung-zur-planung-eines-kuenstlerischen-werks",
+          "nb_visits": 4,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/ausschreibungen-und-vertraege/zusammensetzung-der-bewertungskommission-und-curricula-sowie-beratender-technischer-ausschuss/beratender-technischer-ausschuss",
+          "nb_visits": 4,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/ausschreibungen-und-vertraege/zusammensetzung-der-bewertungskommission-und-curricula-sowie-beratender-technischer-ausschuss/beratender-technischer-ausschuss/gebaeude-a6",
+          "nb_visits": 4,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/ausschreibungen-und-vertraege/zusammensetzung-der-bewertungskommission-und-curricula-sowie-beratender-technischer-ausschuss/beratender-technischer-ausschuss/noi-techpark-bruneck/baulos-bruneck",
+          "nb_visits": 4,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/ausschreibungen-und-vertraege/zusammensetzung-der-bewertungskommission-und-curricula-sowie-beratender-technischer-ausschuss/bewertungskommissionen/projektierung-und-ausfuehrung-d2-d3",
+          "nb_visits": 4,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/organisation/organigramm",
+          "nb_visits": 4,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/organisation/politisch-administrative-organe",
+          "nb_visits": 4,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/organisation/politisch-administrative-organe/verwaltungsrat/verwaltungsrat-2020-2023",
+          "nb_visits": 4,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/performance",
+          "nb_visits": 4,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/personal/fuehrungskraefte/director-of-innovation-tech-transfer",
+          "nb_visits": 4,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/personaleinstellung/alle-offenen-stellen",
+          "nb_visits": 4,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/beni-immobili-e-gestione-patrimonio/canoni-di-locazione-o-affitto",
+          "nb_visits": 4,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/beni-immobili-e-gestione-patrimonio/patrimonio-immobiliare",
+          "nb_visits": 4,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/controlli-e-rilievi-sull-amministrazione/organo-di-controllo-che-svolge-le-funzioni-oiv",
+          "nb_visits": 4,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/disposizioni-generali/prevenzione-della-corruzione/responsabile-per-la-prevenzione-della-corruzione-e-trasparenza",
+          "nb_visits": 4,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/organisation/titolari-di-incarichi-politici-di-amministrazione-di-direzione-e-di-governo/compensi",
+          "nb_visits": 4,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/personale/contrattazione-integrativa",
+          "nb_visits": 4,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/societa-controllate",
+          "nb_visits": 4,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/allgemeine-bestimmungen/korruptionsvorbeugung/bericht-des-verantwortlichen-fuer-die-vorbeugung-der-korruption",
+          "nb_visits": 3,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/allgemeine-bestimmungen/korruptionsvorbeugung/dreijahresplan-fuer-korruptionsvorbeugung-und-transparenz/2022-2024",
+          "nb_visits": 3,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/allgemeine-bestimmungen/korruptionsvorbeugung/ermittlung-der-gesellschaftsinternen-uebertretungen",
+          "nb_visits": 3,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/ausschreibungen-und-vertraege/unterlagen-des-oeffentlichen-auftraggebers-getrennt-fuer-jedes-verfahren",
+          "nb_visits": 3,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/ausschreibungen-und-vertraege/zusammensetzung-der-bewertungskommission-und-curricula-sowie-beratender-technischer-ausschuss/beratender-technischer-ausschuss/noi-techpark-bruneck/anlage-h2",
+          "nb_visits": 3,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/kontrollen-und-erhebung-ueber-die-verwaltung",
+          "nb_visits": 3,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/personal/stellenplan",
+          "nb_visits": 3,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/altri-contenuti/accesso-civico",
+          "nb_visits": 3,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/altri-contenuti/prevenzione-della-corruzione/relazione-del-responsabile-della-prevenzione-della-corruzione-e-della-trasparenza/2024",
+          "nb_visits": 3,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/bandi-di-gara-e-contratti/composizione-delle-commissioni-di-valutazione-e-curricula-e-collegio-consultivo-tecnico/collegio-consultivo-tecnico-cct/edificio-a6",
+          "nb_visits": 3,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/bandi-di-gara-e-contratti/composizione-delle-commissioni-di-valutazione-e-curricula-e-collegio-consultivo-tecnico/collegio-consultivo-tecnico-cct/edificio-b1/lotto-facciate-b1",
+          "nb_visits": 3,
+          "level": 2
+        },
+        {
+          "label": "Others",
+          "nb_visits": 769,
+          "level": 2
+        }
+      ]
+    },
+    {
+      "label": "2",
+      "nb_visits": 1,
+      "level": 1,
+      "idsubdatatable": 2,
+      "segment": "visitCount==2;pageUrl=@societa-trasparente,pageUrl=@transparente-verwaltung",
+      "subtable": [
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/bandi-di-gara-e-contratti/akten-betreffend-die-planung-der-arbeiten-bauwerke-dienstleistungen-und-lieferungen",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/bandi-di-gara-e-contratti/atti-delle-amministrazioni-aggiudicatrici-distintamente-per-ogni-procedura",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/bandi-di-gara-e-contratti/avvisi-e-indagini-di-mercato",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/bandi-di-gara-e-contratti/informazioni-sulle-singole-procedure-in-formato-tabellare",
+          "nb_visits": 1,
+          "level": 2
+        }
+      ]
+    }
+  ],
+  [
+    {
+      "label": "1",
+      "nb_visits": 9,
+      "level": 1,
+      "idsubdatatable": 1,
+      "segment": "visitCount==1;pageUrl=@societa-trasparente,pageUrl=@transparente-verwaltung",
+      "subtable": [
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/bandi-di-gara-e-contratti/avvisi-e-indagini-di-mercato",
+          "nb_visits": 4,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/disposizioni-generali",
+          "nb_visits": 2,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/personal",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/personal/stellenplan",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/altri-contenuti",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/bandi-di-gara-e-contratti/composizione-delle-commissioni-di-valutazione-e-curricula-e-collegio-consultivo-tecnico/collegio-consultivo-tecnico-cct/edificio-a6",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/bandi-di-gara-e-contratti/composizione-delle-commissioni-di-valutazione-e-curricula-e-collegio-consultivo-tecnico/collegio-consultivo-tecnico-cct/edificio-b1/lotto-elettrico-b1",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/personale",
+          "nb_visits": 1,
+          "level": 2
+        }
+      ]
+    }
+  ],
+  [
+    {
+      "label": "1",
+      "nb_visits": 44,
+      "level": 1,
+      "idsubdatatable": 1,
+      "segment": "visitCount==1;pageUrl=@societa-trasparente,pageUrl=@transparente-verwaltung",
+      "subtable": [
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/disposizioni-generali",
+          "nb_visits": 22,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/bandi-di-gara-e-contratti/avvisi-e-indagini-di-mercato",
+          "nb_visits": 12,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/bandi-di-gara-e-contratti",
+          "nb_visits": 8,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/personale",
+          "nb_visits": 5,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/organisation/organigramma",
+          "nb_visits": 4,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/allgemeine-bestimmungen",
+          "nb_visits": 3,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/disposizioni-generali/atti-generali",
+          "nb_visits": 3,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/mitarbeiter-und-berater",
+          "nb_visits": 3,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/organisation",
+          "nb_visits": 3,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/ausschreibungen-und-vertraege/bekanntmachungen-und-marktkonsultationen",
+          "nb_visits": 2,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/personal",
+          "nb_visits": 2,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/personal/direktor",
+          "nb_visits": 2,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/whistleblowing",
+          "nb_visits": 2,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/bandi-di-gara-e-contratti/akten-betreffend-die-planung-der-arbeiten-bauwerke-dienstleistungen-und-lieferungen",
+          "nb_visits": 2,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/bilanci",
+          "nb_visits": 2,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/bilanci/bilancio",
+          "nb_visits": 2,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/personale/contrattazione-collettiva",
+          "nb_visits": 2,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/personale/dotazione-organica",
+          "nb_visits": 2,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/reclutamento-del-personale",
+          "nb_visits": 2,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/reclutamento-del-personale/criteri-e-modalita",
+          "nb_visits": 2,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/sovvenzioni-contributi-sussidi-vantaggi-economici",
+          "nb_visits": 2,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/allgemeine-bestimmungen/korruptionsvorbeugung/dreijahresplan-fuer-korruptionsvorbeugung-und-transparenz/2024-2026",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/ausschreibungen-und-vertraege/bekanntmachungen-und-marktkonsultationen/besondere-vergabebekanntmachungen",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/ausschreibungen-und-vertraege/bekanntmachungen-und-marktkonsultationen/markterhebung-fuer-die-vergabe-der-dienstleistung-zur-planung-eines-kuenstlerischen-werks",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/ausschreibungen-und-vertraege/zusammensetzung-der-bewertungskommission-und-curricula-sowie-beratender-technischer-ausschuss/beratender-technischer-ausschuss/gebaeude-b1",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/bilanzen/bilanz",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/mitarbeiter-und-berater",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/organisation/organigramm",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/organisation/politisch-administrative-organe/verguetungen",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/personal/abwesenheitsquoten",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/personal/ergaenzende-kollektivvertragverhandlungen",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/personal/stellenplan",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/personal/stellenplan/2023",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/personaleinstellung/alle-offenen-stellen",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/personaleinstellung/auswahlverfahren",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/de/ueber-uns/transparente-verwaltung/subventionen-und-wirtschaftliche-vorteile/gewaehrungsakte/2019",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/altri-contenuti",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/bandi-di-gara-e-contratti/avvisi-e-indagini-di-mercato/indagine-di-mercato-per-l-acquisto-di-un-immobile-e-relativa-relazione-tecnica",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/bandi-di-gara-e-contratti/composizione-delle-commissioni-di-valutazione-e-curricula-e-collegio-consultivo-tecnico/collegio-consultivo-tecnico-cct/edificio-b1/lotto-edile-b1",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/bandi-di-gara-e-contratti/composizione-delle-commissioni-di-valutazione-e-curricula-e-collegio-consultivo-tecnico/collegio-consultivo-tecnico-cct/edificio-b1/lotto-elettrico-b1",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/disposizioni-generali/atti-generali/patto-di-integrita",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/organisation/telefono-e-posta-elettronica",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/organisation/titolari-di-incarichi-politici-di-amministrazione-di-direzione-e-di-governo",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/organisation/titolari-di-incarichi-politici-di-amministrazione-di-direzione-e-di-governo/collegio-sindacale",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/organisation/titolari-di-incarichi-politici-di-amministrazione-di-direzione-e-di-governo/collegio-sindacale/collegio-sindacale-attuale",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/organisation/titolari-di-incarichi-politici-di-amministrazione-di-direzione-e-di-governo/compensi",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/organisation/titolari-di-incarichi-politici-di-amministrazione-di-direzione-e-di-governo/consiglio-di-amministrazione",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/organisation/titolari-di-incarichi-politici-di-amministrazione-di-direzione-e-di-governo/consiglio-di-amministrazione/consiglio-di-amministrazione-attuale",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/pagamenti-dell-amministrazione",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/performance",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/personale/contrattazione-integrativa",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/personale/dotazione-organica/2023",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/personale/incarichi-conferiti-e-autorizzati-ai-dipendenti",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/personale/titolari-di-incarichi-dirigenziali",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/personale/titolari-di-incarichi-dirigenziali/director-of-innovation-tech-transfer",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/servizi-erogati",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/sovvenzioni-contributi-sussidi-vantaggi-economici/criteri-di-accesso",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "staging.noi.bz.it/de/ueber-uns/transparente-verwaltung/allgemeine-bestimmungen",
+          "nb_visits": 1,
+          "level": 2
+        },
+        {
+          "label": "staging.noi.bz.it/de/ueber-uns/transparente-verwaltung/subventionen-und-wirtschaftliche-vorteile",
+          "nb_visits": 1,
+          "level": 2
+        }
+      ]
+    }
+  ],
+  [
+    {
+      "label": "1",
+      "nb_uniq_visitors": 1,
+      "nb_visits": 1,
+      "level": 1,
+      "idsubdatatable": 1,
+      "segment": "visitCount==1;pageUrl=@societa-trasparente,pageUrl=@transparente-verwaltung",
+      "subtable": [
+        {
+          "label": "noi.bz.it/it/chi-siamo/societa-trasparente/disposizioni-generali",
+          "nb_uniq_visitors": 1,
+          "nb_visits": 1,
+          "level": 2
+        }
+      ]
+    }
+  ]
+]
