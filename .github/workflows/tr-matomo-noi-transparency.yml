@@ -37,7 +37,7 @@ jobs:
     concurrency: tr-matomo-noi-transparency-deploy-test
     environment: test
     env:
-      VALUES_YAML: infrastructure/helm/values.yaml
+      VALUES_YAML: infrastructure/helm/noi-transparency.yaml
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
