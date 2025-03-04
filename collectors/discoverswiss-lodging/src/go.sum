@@ -26,6 +26,10 @@ github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250304084243-5b6e6
 github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250304084243-5b6e61e7250f/go.mod h1:5WamTY7eAAHj6B3jHwAbudv6rnUY5f5OqGyY3UWothg=
 github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20241121092514-13f81a2c1241 h1:FI5JAF/RwPZEjcpzC8JQhbSI757SEmL2+ncl0WRCI2A=
 github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20241121092514-13f81a2c1241/go.mod h1:OR71Qot9WXWSNwLjNNuhhdIts1KbDfDzbwv2F/Q6KOk=
+github.com/noi-techpark/go-opendatahub-ingest v1.3.0 h1:M0+w6epEQhGjmACESgC46kABtOVCy2jWhZQG0WssPsE=
+github.com/noi-techpark/go-opendatahub-ingest v1.3.0/go.mod h1:i/2Gbagc/PBHZD7pjW/22WHvc9MBkhJ9RhVhJ/s9h3c=
+github.com/noi-techpark/go-opendatahub-ingest v1.3.1 h1:lfJjn9K2Hza9EE+g/mtDOSfNMuRtcwa2OE7sP9CWk6E=
+github.com/noi-techpark/go-opendatahub-ingest v1.3.1/go.mod h1:i/2Gbagc/PBHZD7pjW/22WHvc9MBkhJ9RhVhJ/s9h3c=
 github.com/rabbitmq/amqp091-go v1.10.0 h1:STpn5XsHlHGcecLmMFCtg7mqq0RnD+zFr4uzukfVhBw=
 github.com/rabbitmq/amqp091-go v1.10.0/go.mod h1:Hy4jKW5kQART1u+JkDTF9YYOQUHXqMuhrgxOEeS7G4o=
 github.com/robfig/cron/v3 v3.0.1 h1:WdRxkvbJztn8LMz/QEvLN5sBU+xKpSqwwUO1Pjr4qDs=

@@ -116,55 +116,56 @@ func main() {
 		slog.Error("failed parsing url", "url", env.HTTP_URL, "err", err)
 	}	
 	c := cron.New(cron.WithSeconds())
-	c.AddFunc(env.CRON, func() {
-		slog.Info("Starting poll job")
-		jobstart := time.Now()
-	continuationToken := ""
+		c.AddFunc(env.CRON, func() {
+			slog.Info("Starting poll job")
+			jobstart := time.Now()
+			continuationToken := ""
 
-	for {
-		currentURL := *discoverswissUrl
+		for {
+			currentURL := *discoverswissUrl
 
-	if continuationToken != "" {
-		q := currentURL.Query()
-		q.Set("continuationToken", continuationToken)
-		currentURL.RawQuery = q.Encode()
-	}
-
-		body, err := lodgingRequest(&currentURL, headers, httpMethod)
-		if err != nil{
-		slog.Error("Could not perform the query", "err", err)
-		}
-		var response models.DiscoverSwissResponse
-		err = json.Unmarshal([]byte(body), &response)
-		if err != nil {
-			slog.Error("failed unmarshalling DiscoverSwissResponse object", "err", err)
-			return
+		if continuationToken != "" {
+			q := currentURL.Query()
+			q.Set("continuationToken", continuationToken)
+			currentURL.RawQuery = q.Encode()
 		}
 
-		for _, lodging := range response.Data {
-			jsonLodging, err := json.Marshal(lodging)
+
+			body, err := lodgingRequest(&currentURL, headers, httpMethod)
+			if err != nil{
+			slog.Error("Could not perform the query", "err", err)
+			}
+			var response models.DiscoverSwissResponse
+			err = json.Unmarshal([]byte(body), &response)
 			if err != nil {
-				slog.Error("failed marshalling lodging object", "err", err)
-				continue
+				slog.Error("failed unmarshalling DiscoverSwissResponse object", "err", err)
+				return
 			}
-			fmt.Println("ADDITIONAL,TYPE",lodging.AdditionalType)
-			
-			mq <- dto.RawAny{
-				Provider:  env.PROVIDER,
-				Timestamp: time.Now(),
-				Rawdata:   string(jsonLodging),
-			}
-			
-		}
 
-		if !response.HasNextPage || response.NextPageToken == "" {
-			break
+			for _, lodging := range response.Data {
+				jsonLodging, err := json.Marshal(lodging)
+				if err != nil {
+					slog.Error("failed marshalling lodging object", "err", err)
+					continue
+				}
+				fmt.Println("ADDITIONAL,TYPE",lodging.AdditionalType)
+				
+				mq <- dto.RawAny{
+					Provider:  env.PROVIDER,
+					Timestamp: time.Now(),
+					Rawdata:   string(jsonLodging),
+				}
+				
+			}
+
+			if !response.HasNextPage || response.NextPageToken == "" {
+				break
+			}
+		
+			continuationToken = response.NextPageToken
 		}
-	
-		continuationToken = response.NextPageToken
-	}
-	slog.Info("Polling job completed", "runtime_ms", time.Since(jobstart).Milliseconds())
-})
+		slog.Info("Polling job completed", "runtime_ms", time.Since(jobstart).Milliseconds())
+	})
 c.Run()
 }
 
