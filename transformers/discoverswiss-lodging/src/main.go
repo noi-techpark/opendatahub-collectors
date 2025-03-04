@@ -95,6 +95,7 @@ func main() {
 
 	})
 
+
 	accoChannel := make(chan models.Accommodation,400)
 	go func(){
 		for lb := range lbChannel {
