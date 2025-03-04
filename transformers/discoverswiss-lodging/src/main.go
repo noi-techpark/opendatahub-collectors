@@ -5,11 +5,13 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log/slog"
 	"net/url"
 
+	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-opendatahub-ingest/dto"
 	"github.com/noi-techpark/go-opendatahub-ingest/mq"
@@ -65,10 +67,10 @@ type idplusaccomodation struct{
 
 func main() {
 	//FOR LOCAL TESTING UNCOMMENT THIS LINES
-	// err := godotenv.Load("../.env")
-	// if err != nil {
-	// 	slog.Error("Error loading .env file")
-	// }
+	err := godotenv.Load("../.env")
+	if err != nil {
+		slog.Error("Error loading .env file")
+	}
 	envconfig.MustProcess("", &env)
 	ms.InitLog(env.Env.LOG_LEVEL)
 
@@ -76,25 +78,14 @@ func main() {
 	ms.FailOnError(err, "failed connecting to rabbitmq")
 	defer rabbit.Close()
 
-	dataMQ, err := rabbit.Consume(env.Env.MQ_EXCHANGE, env.Env.MQ_QUEUE, env.Env.MQ_KEY)
-	ms.FailOnError(err, "failed creating data queue")
-
-
 	fmt.Println("Waiting for messages. To exit press CTRL+C")
 	lbChannel := make(chan models.LodgingBusiness,400)
-	go tr.HandleQueue(dataMQ, env.Env.MONGO_URI, func(r *dto.Raw[string]) error {
-		fmt.Println("DATA FLOWING")
-		payload, err := unmarshalGeneric[models.LodgingBusiness](r.Rawdata)
-		if err != nil {
-			slog.Error("cannot unmarshall raw data", "err", err)
-			return err
-		}
 
-		lbChannel <- *payload
+	stackOs := tr.NewTrStack[models.LodgingBusiness](&env.Env)
+	go stackOs.Start(context.Background(), func(ctx context.Context, r *dto.Raw[models.LodgingBusiness]) error {
+		lbChannel <- r.Rawdata
 		return nil
-
 	})
-
 
 	accoChannel := make(chan models.Accommodation,400)
 	go func(){
