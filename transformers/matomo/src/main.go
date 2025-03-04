@@ -81,7 +81,7 @@ func main() {
 			}
 		}
 
-		ms.FailOnError(b.SyncStations(STATIONTYPE, stations, true, true), "error syncing stations")
+		ms.FailOnError(b.SyncStations(STATIONTYPE, stations, true, false), "error syncing stations")
 		ms.FailOnError(b.PushData(STATIONTYPE, dm), "error pushing measurements")
 
 		return nil
