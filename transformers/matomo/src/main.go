@@ -23,7 +23,7 @@ var env struct {
 	REPORT_NAME string
 }
 
-const STATIONTYPE = "Website"
+const STATIONTYPE = "WebStatistics"
 
 func main() {
 	slog.Info("Matomo data collector starting up...")
