@@ -5,7 +5,7 @@ go 1.23.1
 require (
 	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250306095836-d821459d9dd8
+	github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250306105709-66d7ced87833
 	github.com/noi-techpark/go-opendatahub-ingest v1.3.1
 )
 
