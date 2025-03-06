@@ -28,6 +28,8 @@ github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250305140652-5f380
 github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250305140652-5f380931ddf2/go.mod h1:5WamTY7eAAHj6B3jHwAbudv6rnUY5f5OqGyY3UWothg=
 github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250306093115-be9b65f8d3d9 h1:d4DGt/tncBsHQoIPdGe/HY8hV1dBGM+sQjYQqzYA8Kc=
 github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250306093115-be9b65f8d3d9/go.mod h1:5WamTY7eAAHj6B3jHwAbudv6rnUY5f5OqGyY3UWothg=
+github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250306095836-d821459d9dd8 h1:oEkGP1a56RUteBIV6Je4ISiPqTNXMtGCXp5Vqp8Lreg=
+github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250306095836-d821459d9dd8/go.mod h1:5WamTY7eAAHj6B3jHwAbudv6rnUY5f5OqGyY3UWothg=
 github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20241121092514-13f81a2c1241 h1:FI5JAF/RwPZEjcpzC8JQhbSI757SEmL2+ncl0WRCI2A=
 github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20241121092514-13f81a2c1241/go.mod h1:OR71Qot9WXWSNwLjNNuhhdIts1KbDfDzbwv2F/Q6KOk=
 github.com/noi-techpark/go-opendatahub-ingest v1.3.0 h1:M0+w6epEQhGjmACESgC46kABtOVCy2jWhZQG0WssPsE=
