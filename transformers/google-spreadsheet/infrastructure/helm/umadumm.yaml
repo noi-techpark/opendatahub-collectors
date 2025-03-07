@@ -12,7 +12,7 @@ resources:
 
 env:
   # ODH Core Writer Connection
-  BASE_URI: http://bdp-core.core.svc.cluster.local:8080/json
+  BASE_URI: http://bdp-core.core.svc.cluster.local/json
   scope: openid
 
   origin: municipality bolzano
