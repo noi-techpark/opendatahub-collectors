@@ -55,6 +55,10 @@ func main() {
 		dm := b.CreateDataMap()
 
 		for p, period := range dto {
+			// if there were no visits in a period, the array is empty
+			if len(period) == 0 {
+				continue
+			}
 			segment := period[0] // we should only have one in our use case
 			dt := dts[p]         // datatypes are in same order as bulk requests
 
