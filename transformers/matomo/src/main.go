@@ -5,6 +5,8 @@
 package main
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"log/slog"
@@ -74,10 +76,11 @@ func main() {
 				if rec.Label == "Others" {
 					site = bdplib.CreateStation(report.Id+":others", report.Name+" - Others", STATIONTYPE, 0, 0, b.GetOrigin())
 				} else {
-					site = bdplib.CreateStation(rec.Label, rec.Label, STATIONTYPE, 0, 0, b.GetOrigin())
+					site = bdplib.CreateStation(shortenUnique(rec.Label), shortenUnique(rec.Label), STATIONTYPE, 0, 0, b.GetOrigin())
 				}
 				site.MetaData = map[string]any{
 					"report": report.Id,
+					"url":    rec.Label,
 				}
 				stations = append(stations, site)
 
@@ -91,6 +94,16 @@ func main() {
 		return nil
 	})
 	ms.FailOnError(err, "transformer handler failed")
+}
+
+// since DB fields on station are limited to 255 chars, we cut the string,
+// and append a hash of the complete one to the end to guarantee uniqueness
+func shortenUnique(s string) string {
+	if len(s) > 255 {
+		hash := md5.Sum([]byte(s))
+		return s[:245] + hex.EncodeToString(hash[:])[:10]
+	}
+	return s
 }
 
 func unmarshalRawJson(s string) (MatomoCustomReport, error) {
