@@ -17,3 +17,11 @@ func TestUnmarshal(t *testing.T) {
 	_, err = unmarshalRawJson(string(f))
 	assert.NilError(t, err)
 }
+
+func TestShorten(t *testing.T) {
+	assert.Equal(t, "test", shortenUnique("test"))
+	short1 := shortenUnique("noi.bz.it/it/chi-siamo/societa-trasparente/bandi-di-gara-e-contratti/composizione-delle-commissioni-di-valutazione-e-curricula-e-collegio-consultivo-tecnico/commissioni-di-valutazione/lieferung-und-installation-audio-video-anlage-noi-techpark-bozen-baulos-b1")
+	short2 := shortenUnique("noi.bz.it/it/chi-siamo/societa-trasparente/bandi-di-gara-e-contratti/composizione-delle-commissioni-di-valutazione-e-curricula-e-collegio-consultivo-tecnico/commissioni-di-valutazione/lieferung-und-installation-audio-video-anlage-noi-techpark-bozen-baulos-b1dahsdiahwoidaoiwhd")
+	assert.Equal(t, 255, len(short1))
+	assert.Assert(t, short1 != short2)
+}
