@@ -66,6 +66,9 @@ func main() {
 
 			// Create top level records stations
 			report := bdplib.CreateStation(env.REPORT_ID, env.REPORT_NAME, STATIONTYPE, 0, 0, b.GetOrigin())
+			report.MetaData = map[string]any{
+				"url": env.REPORT_ID,
+			}
 			stations = append(stations, report)
 
 			dm.AddRecord(report.Id, dt.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), segment.NbVisits, env.PERIOD))
