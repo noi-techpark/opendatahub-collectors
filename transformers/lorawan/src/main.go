@@ -89,9 +89,9 @@ func main() {
 		os.Exit(1)
 	}
 	dtSensorTemperature := "air-temperature"
-	dtSensorBattery := "battery-state"
+	dtSensorBattery := bdplib.CreateDataType("battery-state-percent", "%", "Battery level expressed in percentage over the total", "Instantaneous")
 	dtSensorHumidity := "air-humidity"
-	dtSensorCo2 := "co2"
+	dtSensorCo2 := bdplib.CreateDataType("co2-ppm", "ppm", "CO2 concentration in ppm", "Instantaneous")
 	dtSensorGenericValues := bdplib.CreateDataType("sensor-values", "", "generic values from sensors placed in NOI facilities that do not follow either of the two specifications defined ", "Instantaneous")
 	ds := []bdplib.DataType{dtSensorGenericValues}
 	failOnError(b.SyncDataTypes(Station, ds), "Error pushing datatypes")
@@ -144,15 +144,15 @@ func main() {
 
 		switch data := sensorData.(type) {
 		case *SensorBasicMessage:
-			sensorDataMap.AddRecord(sensorId, dtSensorBattery, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Battery, Period))
+			sensorDataMap.AddRecord(sensorId, dtSensorBattery.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Battery, Period))
 			sensorDataMap.AddRecord(sensorId, dtSensorTemperature, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Temperature, Period))
 			sensorDataMap.AddRecord(sensorId, dtSensorHumidity, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Humidity, Period))
 
 		case *SensorCo2Message:
-			sensorDataMap.AddRecord(sensorId, dtSensorBattery, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Battery, Period))
+			sensorDataMap.AddRecord(sensorId, dtSensorBattery.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Battery, Period))
 			sensorDataMap.AddRecord(sensorId, dtSensorTemperature, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Temperature, Period))
 			sensorDataMap.AddRecord(sensorId, dtSensorHumidity, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Humidity, Period))
-			sensorDataMap.AddRecord(sensorId, dtSensorCo2, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Co2, Period))
+			sensorDataMap.AddRecord(sensorId, dtSensorCo2.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Co2, Period))
 
 		case *SensorGenericMessage:
 			sensorDataMap.AddRecord(sensorId, dtSensorGenericValues.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.RawValue, Period))
