@@ -93,7 +93,7 @@ func main() {
 	dtSensorHumidity := "air-humidity"
 	dtSensorCo2 := bdplib.CreateDataType("co2-ppm", "ppm", "CO2 concentration in ppm", "Instantaneous")
 	dtSensorGenericValues := bdplib.CreateDataType("sensor-values", "", "generic values from sensors placed in NOI facilities that do not follow either of the two specifications defined ", "Instantaneous")
-	ds := []bdplib.DataType{dtSensorGenericValues}
+	ds := []bdplib.DataType{dtSensorGenericValues, dtSensorBattery, dtSensorCo2}
 	failOnError(b.SyncDataTypes(Station, ds), "Error pushing datatypes")
 	log.Println("Waiting for messages. To exit press CTRL+C")
 
