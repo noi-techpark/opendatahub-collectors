@@ -5,6 +5,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -101,23 +102,17 @@ func main() {
 	failOnError(err, "failed connecting to rabbitmq")
 	defer rabbit.Close()
 
-	dataMQ, err := rabbit.Consume(env.Env.MQ_EXCHANGE, env.Env.MQ_QUEUE, env.Env.MQ_KEY)
-	failOnError(err, "failed creating data queue")
+	// dataMQ, err := rabbit.Consume(env.Env.MQ_EXCHANGE, env.Env.MQ_QUEUE, env.Env.MQ_KEY)
+	// failOnError(err, "failed creating data queue")
 
-	//The payload structure could be better optimized since accessing sensor name this way is not the most elegant solution
-	go tr.HandleQueue(dataMQ, env.Env.MONGO_URI, func(r *dto.Raw[string]) error {
+	stackOs := tr.NewTrStack[Response](&env.Env)
+	
+	go stackOs.Start(context.Background(), func(ctx context.Context, r *dto.Raw[Response]) error {
 		fmt.Println("DATA FLOWING")
-		fmt.Println(r.Rawdata)
 		sensorDataMap := b.CreateDataMap()
-		payload, err := unmarshalGeneric[Response](r.Rawdata)
-		if err != nil {
-			slog.Error("cannot unmarshall raw data", "err", err)
-			return err
-		}
-
+		payload := r.Rawdata
 		applicationName := payload.Results[0].Series[0].Values[0][1]
 		sensorId := stationId(payload.Results[0].Series[0].Values[0][3], Origin)
-
 		position := processSensorPosition(payload.Results[0].Series[0].Values[0][3])
 
 		switch position {
@@ -171,6 +166,74 @@ func main() {
 
 	select {}
 }
+
+	//The payload structure could be better optimized since accessing sensor name this way is not the most elegant solution
+// 	go tr.HandleQueue(dataMQ, env.Env.MONGO_URI, func(r *dto.Raw[string]) error {
+// 		fmt.Println("DATA FLOWING")
+// 		fmt.Println(r.Rawdata)
+// 		sensorDataMap := b.CreateDataMap()
+// 		payload, err := unmarshalGeneric[Response](r.Rawdata)
+// 		if err != nil {
+// 			slog.Error("cannot unmarshall raw data", "err", err)
+// 			return err
+// 		}
+
+// 		applicationName := payload.Results[0].Series[0].Values[0][1]
+// 		sensorId := stationId(payload.Results[0].Series[0].Values[0][3], Origin)
+
+// 		position := processSensorPosition(payload.Results[0].Series[0].Values[0][3])
+
+// 		switch position {
+// 		case "BZ":
+// 			s := bdplib.CreateStation(sensorId, sensorId, Station, bzCoordinates.Lat, bzCoordinates.Long, Origin)
+// 			if err := b.SyncStations(Station, []bdplib.Station{s}, false, false); err != nil {
+// 				slog.Error("Error syncing stations", "err", err)
+
+// 			}
+// 			fmt.Println("station pushed")
+// 		case "BK":
+// 			s := bdplib.CreateStation(sensorId, sensorId, Station, brkCoordinates.Lat, brkCoordinates.Long, Origin)
+// 			if err := b.SyncStations(Station, []bdplib.Station{s}, false, false); err != nil {
+// 				slog.Error("Error syncing stations", "err", err)
+
+// 			}
+// 			fmt.Println("station pushed")
+// 		}
+
+// 		sensorData, err := processSensorData(applicationName, payload.Results[0].Series[0].Values[0][5])
+// 		if err != nil {
+// 			return err
+// 		}
+
+// 		switch data := sensorData.(type) {
+// 		case *SensorBasicMessage:
+// 			sensorDataMap.AddRecord(sensorId, dtSensorBattery.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Battery, Period))
+// 			sensorDataMap.AddRecord(sensorId, dtSensorTemperature, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Temperature, Period))
+// 			sensorDataMap.AddRecord(sensorId, dtSensorHumidity, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Humidity, Period))
+
+// 		case *SensorCo2Message:
+// 			sensorDataMap.AddRecord(sensorId, dtSensorBattery.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Battery, Period))
+// 			sensorDataMap.AddRecord(sensorId, dtSensorTemperature, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Temperature, Period))
+// 			sensorDataMap.AddRecord(sensorId, dtSensorHumidity, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Humidity, Period))
+// 			sensorDataMap.AddRecord(sensorId, dtSensorCo2.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.Co2, Period))
+
+// 		case *SensorGenericMessage:
+// 			sensorDataMap.AddRecord(sensorId, dtSensorGenericValues.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), data.RawValue, Period))
+
+// 		default:
+// 			return fmt.Errorf("unknown sensor type: %T", data)
+// 		}
+// 		if err := b.PushData(Station, sensorDataMap); err != nil {
+// 			return fmt.Errorf("error pushing  data: %w", err)
+// 		}
+
+// 		slog.Info("Updated sensors data")
+// 		return nil
+
+// 	})
+
+// 	select {}
+// }
 
 func failOnError(err error, msg string) {
 	if err != nil {
