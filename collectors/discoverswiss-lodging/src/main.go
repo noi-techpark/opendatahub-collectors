@@ -16,7 +16,6 @@ import (
 	"time"
 
 	"github.com/hashicorp/go-retryablehttp"
-	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-opendatahub-discoverswiss/models"
 	"github.com/noi-techpark/go-opendatahub-ingest/dc"
@@ -101,8 +100,8 @@ func customHeaders() http.Header {
 func main() {
 	slog.Info("Starting data collector...")
 
-	err := godotenv.Load("../.env")	
-	ms.FailOnError(err, "could not load .env file")
+	// err := godotenv.Load("../.env")	
+	// ms.FailOnError(err, "could not load .env file")
 	
 	envconfig.MustProcess("", &env)
 	ms.InitLog(env.LOG_LEVEL)
