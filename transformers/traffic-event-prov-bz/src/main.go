@@ -62,8 +62,8 @@ func unmarshalRawJson(s string) ([]trafficEvent, error) {
 
 func mapEvent(d trafficEvent) (bdplib.Event, error) {
 	e := bdplib.Event{}
-	e.Uuid = makeUUID(d)
-	e.EventSeriesUuid = makeUUID(seriesUUID(d))
+	e.Uuid = makeUUID(toJsonOrPanic(uuidObj(d)))
+	e.EventSeriesUuid = makeUUID([]byte(strconv.Itoa(d.MessageID)))
 	e.Category = fmt.Sprintf("%s_%s | %s_%s", d.TycodeIt, d.SubTycodeIt, d.TycodeDe, d.SubTycodeDe)
 	e.Name = strconv.Itoa(d.MessageID)
 	e.Description = fmt.Sprintf("%s | %s", d.DescriptionIt, d.DescriptionDe)
@@ -166,11 +166,23 @@ func point2WKT(x float64, y float64) (string, error) {
 	return wkt.Marshal(p)
 }
 
-type SeriesUUIDMap struct {
-	BeginDate string  `json:"beginDate"`
-	EndDate   string  `json:"endDate"`
-	X         float64 `json:"x"`
-	Y         float64 `json:"y"`
+type UUIDMap struct {
+	MessageID               int     `json:"messageId"`
+	X                       float64 `json:"x"`
+	Y                       float64 `json:"y"`
+	BeginDate               string  `json:"beginDate"`
+	EndDate                 string  `json:"endDate"`
+	TycodeValue             string  `json:"tycodeValue"`
+	SubTycodeValue          string  `json:"subTycodeValue"`
+	PlaceDe                 string  `json:"placeDe"`
+	PlaceIt                 string  `json:"placeIt"`
+	MessageStatus           int     `json:"messageStatus"`
+	MessageZoneID           int     `json:"messageZoneId"`
+	MessageGradID           int     `json:"messageGradId"`
+	MessageTypeID           int     `json:"messageTypeId"`
+	MessageStreetID         int     `json:"messageStreetId"`
+	MessageStreetNr         string  `json:"messageStreetNr"`
+	MessageStreetHierarchie int     `json:"messageStreetHierarchie"`
 }
 
 const dayDateFormat = "2006-01-02"
@@ -180,11 +192,13 @@ const dayDateFormat = "2006-01-02"
 // see corresponding main_test.go/Test_namespace
 const UUID_NAMESPACE = "c168cf4d-7fc7-5608-acad-c167f498f096"
 
-func seriesUUID(e trafficEvent) SeriesUUIDMap {
-	return SeriesUUIDMap{BeginDate: e.BeginDate, EndDate: e.EndDate, X: *e.X, Y: *e.Y}
+func uuidObj(e trafficEvent) UUIDMap {
+	return UUIDMap{e.MessageID, *e.X, *e.Y, e.BeginDate, e.EndDate,
+		e.TycodeValue, e.SubTycodeValue, e.PlaceDe, e.PlaceIt, e.MessageStatus, e.MessageZoneID, e.MessageGradID, e.MessageTypeID,
+		e.MessageStreetID, e.MessageStreetNr, e.MessageStreetHierarchie}
 }
 
-func makeUUID(obj any) string {
+func toJsonOrPanic(obj any) []byte {
 	// if you ever port this to another language:
 	// golang Json creation is deterministic: Always in order or struct fields and no whitespace
 	// the hash is a UUID V5, with custom namespace (see the constant's comment on how it was created)
@@ -192,7 +206,11 @@ func makeUUID(obj any) string {
 	if err != nil {
 		panic(fmt.Errorf("cannot marshal uuid json: %w", err))
 	}
+	return json
+}
+
+func makeUUID(b []byte) string {
 	namespace := uuid.MustParse(UUID_NAMESPACE)
-	uuid := uuid.NewSHA1(namespace, []byte(json)).String()
+	uuid := uuid.NewSHA1(namespace, b).String()
 	return uuid
 }

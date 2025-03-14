@@ -74,7 +74,7 @@ func Test_integration(t *testing.T) {
 }
 
 func Test_UUIDJson(t *testing.T) {
-	u := SeriesUUIDMap{BeginDate: "2024-01-01", EndDate: "2024-05-01", X: 12, Y: 13}
+	u := UUIDMap{BeginDate: "2024-01-01", EndDate: "2024-05-01", X: 12, Y: 13}
 	su := "{\"beginDate\":\"2024-01-01\",\"endDate\":\"2024-05-01\",\"x\":12,\"y\":13}"
 
 	json, err := json.Marshal(u)
