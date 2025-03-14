@@ -16,6 +16,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o main
 FROM alpine:3 AS build
 WORKDIR /app
 COPY --from=build-env /app/main .
+COPY src/sensors.json .
 ENTRYPOINT [ "./main"]
 
 # LOCAL DEVELOPMENT
