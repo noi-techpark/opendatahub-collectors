@@ -5,6 +5,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log/slog"
@@ -37,9 +38,9 @@ var env struct {
 
 const ENV_HEADER_PREFIX = "HTTP_HEADER_"
 
-const URL = "https://edp-portal.eurac.edu/sensordb/query?db=db_opendatahub&u=opendatahub&p=H84o0VpLqqnZ0Drm&q=select%%20*%%20from%%20device_frmpayload_data_message%%20WHERE%%20%%22device_name%%22%%3D%%27%s%%27%%20ORDER%%20BY%%20time%%20DESC%%20limit%%201"
-
-var deviceNames = []string{"NOI-Brunico-Temperature", "FreeSoftwareLab-Temperature", "NOI-A1-Floor1-CO2"}
+type Config struct {
+	Sensors []string `json:"sensors"`	
+}
 
 func httpRequest(url *url.URL, httpHeaders http.Header, httpMethod string) (string,error) {
 	headers := httpHeaders
@@ -80,6 +81,16 @@ func main() {
 	ms.InitLog(env.LOG_LEVEL)
 	httpMethod := env.HTTP_METHOD
 	headers := customHeaders()
+	sensorNames,err := os.ReadFile("../sensors.json")
+	if err != nil {
+		slog.Error("error reading sensors file", "err", err)
+	}
+	var sensors Config
+	err = json.Unmarshal(sensorNames, &sensors)
+	if err != nil {
+		slog.Error("error unmarshalling sensors file", "err", err)
+	}
+	deviceNames := sensors.Sensors
 	urls := buildLorawanUrls(deviceNames, env.LORAWAN_PASSWORD, env.HTTP_URL)
 	var urlsSlice []*url.URL
 	for _, singleUrl := range urls {

@@ -1,0 +1,7 @@
+{
+    "sensors":[
+        "NOI-Brunico-Temperature", 
+        "FreeSoftwareLab-Temperature",
+        "NOI-A1-Floor1-CO2"
+    ]
+}
