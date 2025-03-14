@@ -101,7 +101,7 @@ func main() {
 				"name_DE":  raw.Name_DE,
 				"name_IT":  raw.Name_IT,
 				"capacity": raw.Capacity,
-				"municipality": "Marling - Marlengo"
+				"municipality": "Marling - Marlengo",
 			}
 			if err := b.SyncStations(ParkingStation, []bdplib.Station{s}, true, false); err != nil {
 				slog.Error("Error syncing stations", "err", err, "msg", msgBody)
