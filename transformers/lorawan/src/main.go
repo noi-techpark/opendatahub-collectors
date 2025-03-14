@@ -16,7 +16,6 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"github.com/noi-techpark/go-opendatahub-ingest/dto"
-	"github.com/noi-techpark/go-opendatahub-ingest/mq"
 	"github.com/noi-techpark/go-opendatahub-ingest/ms"
 	"github.com/noi-techpark/go-opendatahub-ingest/tr"
 )
@@ -98,15 +97,15 @@ func main() {
 	failOnError(b.SyncDataTypes(Station, ds), "Error pushing datatypes")
 	log.Println("Waiting for messages. To exit press CTRL+C")
 
-	rabbit, err := mq.Connect(env.Env.MQ_URI, env.Env.MQ_CLIENT)
-	failOnError(err, "failed connecting to rabbitmq")
-	defer rabbit.Close()
+	// rabbit, err := mq.Connect(env.Env.MQ_URI, env.Env.MQ_CLIENT)
+	// failOnError(err, "failed connecting to rabbitmq")
+	// defer rabbit.Close()
 
 	// dataMQ, err := rabbit.Consume(env.Env.MQ_EXCHANGE, env.Env.MQ_QUEUE, env.Env.MQ_KEY)
 	// failOnError(err, "failed creating data queue")
 
 	stackOs := tr.NewTrStack[Response](&env.Env)
-	
+
 	go stackOs.Start(context.Background(), func(ctx context.Context, r *dto.Raw[Response]) error {
 		fmt.Println("DATA FLOWING")
 		sensorDataMap := b.CreateDataMap()
