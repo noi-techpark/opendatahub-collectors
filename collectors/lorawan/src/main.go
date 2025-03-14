@@ -81,7 +81,7 @@ func main() {
 	ms.InitLog(env.LOG_LEVEL)
 	httpMethod := env.HTTP_METHOD
 	headers := customHeaders()
-	sensorNames,err := os.ReadFile("../sensors.json")
+	sensorNames,err := os.ReadFile("./sensors.json")
 	if err != nil {
 		slog.Error("error reading sensors file", "err", err)
 	}
