@@ -264,7 +264,7 @@ func TestStations(t *testing.T) {
 
 	s = stations.GetStationByID("406983")
 	require.NotNil(t, s)
-	assert.Equal(t, "105", s.ID)
+	assert.Equal(t, "105_facility", s.ID)
 
 	m := s.ToMetadata()
 	net := m["netex_parking"].(map[string]any)
