@@ -249,6 +249,7 @@ func TestMyBestParking(t *testing.T) {
 	mock := b.(*bdpmock.BdpMock)
 
 	req := mock.Requests()
+
 	NormalizeBdpMockCalls(&req)
 	actual := unifyNumbersToFloat(req)
 	expected := unifyNumbersToFloat(out)
