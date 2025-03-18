@@ -1,0 +1,19 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/dc-s3-poller
+  pullPolicy: IfNotPresent
+  tag: "0.0.1" # Set this when upgrading chart with --set-value
+
+env:
+  MQ_CLIENT: dc-meteorology-bz-forecast
+  PROVIDER: s3-poller/meteorology-bz-forecast
+
+  CRON: "0 0 0/1 * * *"
+
+  AWS_REGION: "eu-west-1"
+  AWS_S3_FILE_NAME: "SMOS_MCPL-WX_EXP_SIAG.JSON"
+  AWS_S3_BUCKET_NAME: dc-meteorology-province-forecast
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
