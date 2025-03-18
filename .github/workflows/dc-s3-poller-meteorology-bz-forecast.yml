@@ -60,3 +60,34 @@ jobs:
           aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
           aws-eks-cluster-name: aws-main-eu-01
           aws-region: eu-west-1
+  
+  deploy-meteorology-bz-forecast-prod:
+    if: github.ref == 'refs/heads/prod'
+    needs: build
+    runs-on: ubuntu-22.04
+    concurrency: dc-s3-poller-meteorology-bz-forecast-prod
+    environment: prod
+    env:
+      VALUES_YAML: infrastructure/helm/meteorology-bz-forecast.prod.yaml
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Customize values.yaml
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          yq -i '.image.tag="${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
+          yq -i '.env.AWS_ACCESS_KEY_ID="${{ secrets.METEOROLOGY_BZ_FORECAST_AWS_ACCESS_KEY_ID }}"' ${{ env.VALUES_YAML }}
+          yq -i '.env.AWS_ACCESS_SECRET_KEY="${{ secrets.METEOROLOGY_BZ_FORECAST_AWS_S3_ACCESS_SECRET_KEY }}"' ${{ env.VALUES_YAML }}
+
+      - name: Deploy on cluster  
+        uses: noi-techpark/github-actions/helm-deploy@v2
+        with:
+          k8s-name: dc-s3-poller-meteorology-bz-forecast
+          k8s-namespace: collector
+          chart-path: helm/generic-collector
+          values-file: ${{ env.WORKING_DIRECTORY}}/${{ env.VALUES_YAML }}
+          aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
+          aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
+          aws-eks-cluster-name: aws-main-eu-01
+          aws-region: eu-west-1
