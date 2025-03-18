@@ -32,21 +32,6 @@ const (
 	dataTypeOccupiedTotal = "occupied"
 )
 
-func getLocationOrDefault(facilityId int, lat float64, lon float64) (float64, float64) {
-	// if lat != 0 && lon != 0 {
-	// 	return lat, lon
-	// }
-	// if facilityId == brunicoId {
-	// 	return brunicoLat, brunicoLon
-	// }
-	// if facilityId == bressanoneId {
-	// 	return bressanoneLat, bressanoneLon
-	// }
-	// slog.Info("No default location found for facilityID" + strconv.Itoa(facilityId))
-	// return lat, lon
-	return 0, 0
-}
-
 func TransformWithBdp(bdp bdplib.Bdp) tr.Handler[FacilityData] {
 	return func(ctx context.Context, payload *dto.Raw[FacilityData]) error {
 		return Transform(ctx, bdp, payload)
@@ -187,8 +172,8 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *dto.Raw[FacilityDat
 	}
 
 	// -------
-	bdp.SyncStations(stationTypeParent, parentStations, true, false)
-	bdp.SyncStations(stationType, values(stations), true, false)
+	bdp.SyncStations(stationTypeParent, parentStations, true, true)
+	bdp.SyncStations(stationType, values(stations), true, true)
 	bdp.PushData(stationTypeParent, dataMapParent)
 	bdp.PushData(stationType, dataMap)
 	return nil
