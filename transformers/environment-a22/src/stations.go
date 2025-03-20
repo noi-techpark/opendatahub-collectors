@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/noi-techpark/go-timeseries-writer-client/bdplib"
+	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"golang.org/x/exp/maps"
 )
 

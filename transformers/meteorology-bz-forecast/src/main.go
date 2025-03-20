@@ -14,10 +14,10 @@ import (
 	"time"
 
 	"github.com/kelseyhightower/envconfig"
+	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"github.com/noi-techpark/go-opendatahub-ingest/dto"
 	"github.com/noi-techpark/go-opendatahub-ingest/ms"
 	"github.com/noi-techpark/go-opendatahub-ingest/tr"
-	"github.com/noi-techpark/go-timeseries-writer-client/bdplib"
 )
 
 // hard coded bz coordinates for main Station Dto location 46.49067, 11.33982

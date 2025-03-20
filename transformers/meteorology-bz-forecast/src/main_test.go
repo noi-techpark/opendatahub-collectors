@@ -8,9 +8,9 @@ import (
 	"context"
 	"testing"
 
+	"github.com/noi-techpark/go-bdp-client/bdplib"
+	"github.com/noi-techpark/go-bdp-client/bdpmock"
 	"github.com/noi-techpark/go-opendatahub-ingest/dto"
-	"github.com/noi-techpark/go-timeseries-writer-client/bdplib"
-	"github.com/noi-techpark/go-timeseries-writer-client/bdpmock"
 	"github.com/stretchr/testify/require"
 	"gotest.tools/v3/assert"
 )

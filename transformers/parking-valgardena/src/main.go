@@ -12,11 +12,11 @@ import (
 	"strconv"
 
 	"github.com/kelseyhightower/envconfig"
+	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"github.com/noi-techpark/go-opendatahub-ingest/dto"
 	"github.com/noi-techpark/go-opendatahub-ingest/mq"
 	"github.com/noi-techpark/go-opendatahub-ingest/ms"
 	"github.com/noi-techpark/go-opendatahub-ingest/tr"
-	"github.com/noi-techpark/go-timeseries-writer-client/bdplib"
 )
 
 const Station = "ParkingStation"
@@ -77,7 +77,7 @@ func main() {
 		parkingid := stationId(payload.Uid, Origin)
 		parkingData.AddRecord(parkingid, DataType, bdplib.CreateRecord(r.Timestamp.UnixMilli(), payload.Occupancy, Period))
 		if err := b.PushData(Station, parkingData); err != nil {
-			slog.Error("error pushing parking occupancy data:", "err", err)
+			slog.Error("error pushing parking occupancy data:","err", err)
 			return err
 		}
 		slog.Info("Updated parking station occupancy")
@@ -118,7 +118,7 @@ func main() {
 		if err := b.SyncStations(Station, stations, true, false); err != nil {
 			slog.Error("Error syncing stations", "err", err)
 		}
-
+		
 		slog.Info("Updated parking station occupancy")
 		return nil
 	})
