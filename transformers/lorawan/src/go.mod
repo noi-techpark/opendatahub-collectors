@@ -4,7 +4,7 @@ go 1.22.2
 
 require (
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/noi-techpark/go-bdp-client v1.0.0
+	github.com/noi-techpark/go-timeseries-writer-client v1.0.0
 	github.com/noi-techpark/go-opendatahub-ingest v1.3.1
 )
 

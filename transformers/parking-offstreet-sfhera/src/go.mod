@@ -3,7 +3,7 @@ module opendatahub.com/tr-parking-offstreet-sfhera
 go 1.22.0
 
 require (
-	github.com/noi-techpark/go-bdp-client v1.0.0
+	github.com/noi-techpark/go-timeseries-writer-client v1.0.0
 	github.com/rabbitmq/amqp091-go v1.10.0
 	go.mongodb.org/mongo-driver v1.16.0
 )

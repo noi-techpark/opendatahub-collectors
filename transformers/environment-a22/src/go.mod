@@ -3,7 +3,7 @@ module opendatahub.com/tr-environment-a22
 go 1.22.0
 
 require (
-	github.com/noi-techpark/go-bdp-client v1.0.0
+	github.com/noi-techpark/go-timeseries-writer-client v1.0.0
 	github.com/noi-techpark/go-opendatahub-ingest v0.0.0-20241119065535-d68a9695ad44
 	github.com/relvacode/iso8601 v1.5.0
 	golang.org/x/exp v0.0.0-20241108190413-2d47ceb2692f
