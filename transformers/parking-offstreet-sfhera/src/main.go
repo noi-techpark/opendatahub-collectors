@@ -15,7 +15,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/noi-techpark/go-bdp-client/bdplib"
+	"github.com/noi-techpark/go-timeseries-writer-client/bdplib"
 	"github.com/rabbitmq/amqp091-go"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"

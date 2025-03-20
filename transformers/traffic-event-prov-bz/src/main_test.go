@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
-	"github.com/noi-techpark/go-bdp-client/bdplib"
+	"github.com/noi-techpark/go-timeseries-writer-client/bdplib"
 	"github.com/wI2L/jsondiff"
 	"gotest.tools/v3/assert"
 )

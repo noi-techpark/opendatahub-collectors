@@ -14,7 +14,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/noi-techpark/go-bdp-client/bdplib"
+	"github.com/noi-techpark/go-timeseries-writer-client/bdplib"
 	"github.com/rabbitmq/amqp091-go"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -98,9 +98,9 @@ func main() {
 			s := bdplib.CreateStation("parking-sta-marlengo", raw.Name_IT, ParkingStation, raw.Latitude, raw.Longitude, b.Origin)
 
 			s.MetaData = map[string]any{
-				"name_DE":  raw.Name_DE,
-				"name_IT":  raw.Name_IT,
-				"capacity": raw.Capacity,
+				"name_DE":      raw.Name_DE,
+				"name_IT":      raw.Name_IT,
+				"capacity":     raw.Capacity,
 				"municipality": "Marling - Marlengo",
 			}
 			if err := b.SyncStations(ParkingStation, []bdplib.Station{s}, true, false); err != nil {

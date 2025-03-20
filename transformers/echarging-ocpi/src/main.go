@@ -11,12 +11,12 @@ import (
 	"sync"
 
 	"github.com/kelseyhightower/envconfig"
-	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"github.com/noi-techpark/go-opendatahub-ingest/dto"
 	"github.com/noi-techpark/go-opendatahub-ingest/mq"
 	"github.com/noi-techpark/go-opendatahub-ingest/ms"
 	"github.com/noi-techpark/go-opendatahub-ingest/tr"
 	"github.com/noi-techpark/go-timeseries-client/odhts"
+	"github.com/noi-techpark/go-timeseries-writer-client/bdplib"
 )
 
 const stationTypeLocation = "EChargingStation"

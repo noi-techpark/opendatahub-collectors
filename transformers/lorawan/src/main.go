@@ -14,10 +14,10 @@ import (
 	"slices"
 
 	"github.com/kelseyhightower/envconfig"
-	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"github.com/noi-techpark/go-opendatahub-ingest/dto"
 	"github.com/noi-techpark/go-opendatahub-ingest/ms"
 	"github.com/noi-techpark/go-opendatahub-ingest/tr"
+	"github.com/noi-techpark/go-timeseries-writer-client/bdplib"
 )
 
 const Station = "IndoorStation"
@@ -166,7 +166,7 @@ func main() {
 	select {}
 }
 
-	//The payload structure could be better optimized since accessing sensor name this way is not the most elegant solution
+//The payload structure could be better optimized since accessing sensor name this way is not the most elegant solution
 // 	go tr.HandleQueue(dataMQ, env.Env.MONGO_URI, func(r *dto.Raw[string]) error {
 // 		fmt.Println("DATA FLOWING")
 // 		fmt.Println(r.Rawdata)
