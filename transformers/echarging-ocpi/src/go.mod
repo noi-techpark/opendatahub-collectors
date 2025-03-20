@@ -3,7 +3,7 @@ module opendatahub.com/tr-echarging-ocpi
 go 1.23.3
 
 require (
-	github.com/noi-techpark/go-timeseries-writer-client v1.2.1
+	github.com/noi-techpark/go-bdp-client v1.2.1
 	github.com/noi-techpark/go-timeseries-client v0.0.0-20241031132739-c45d758598b3
 	github.com/rabbitmq/amqp091-go v1.10.0
 )

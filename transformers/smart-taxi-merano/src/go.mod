@@ -3,7 +3,7 @@ module opendatahub.com/tr-smart-taxi-merano
 go 1.22.2
 
 require (
-	github.com/noi-techpark/go-timeseries-writer-client v1.0.0
+	github.com/noi-techpark/go-bdp-client v1.0.0
 	github.com/rabbitmq/amqp091-go v1.10.0
 	go.mongodb.org/mongo-driver v1.17.0
 )
