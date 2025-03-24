@@ -59,7 +59,7 @@ func startCron(rabbit mq.R) {
 	// Poll locations endpoint to get all charging stations and their plugs
 	if _, err := c.AddFunc(cfg.PULL_LOCATIONS_CRON, func() {
 		if err := getAllLocations(rabbit, cfg.PROVIDER+"-pull-locations"); err != nil {
-			slog.Error("pull locations job failed")
+			slog.Error("pull locations job failed", "err", err)
 		}
 	}); err != nil {
 		panic(err)

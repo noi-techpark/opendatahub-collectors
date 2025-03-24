@@ -10,6 +10,8 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"regexp"
+	"strings"
 	"time"
 
 	"github.com/noi-techpark/go-opendatahub-ingest/dto"
@@ -20,6 +22,7 @@ func getAllLocations(rabbit mq.R, provider string) error {
 	slog.Debug("Pulling all locations")
 	url := cfg.PULL_LOCATIONS_ENDPOINT
 	for url != "" {
+		slog.Debug("Requesting locations page at url", "url", url)
 		// Our mongodb cannot handle huge files, hence we push piecewise
 		locations, next, err := getPage(url, cfg.PULL_TOKEN)
 		if err != nil {
@@ -36,10 +39,30 @@ func getAllLocations(rabbit mq.R, provider string) error {
 			slog.Error("error getting locations")
 			return err
 		}
-		url = next
+
+		// the link header is in format:
+		// <https://example.com/ocpi/cpo/locations/2.2?limit=100&offset=100>; rel="next"
+		if strings.Contains(next, "rel=\"next\"") {
+			url, err = parseUrlFromNext(next)
+			if err != nil {
+				return err
+			}
+		} else {
+			url = ""
+		}
 	}
+	slog.Debug("Pulling locations done")
 
 	return nil
+}
+
+func parseUrlFromNext(link string) (string, error) {
+	re := regexp.MustCompile(`<([^>]+)>`)
+	match := re.FindStringSubmatch(link)
+	if len(match) > 1 {
+		return match[1], nil
+	}
+	return "", fmt.Errorf("could not extract URL from link: %s", link)
 }
 
 func getPage(url string, token string) ([]map[string]any, string, error) {
