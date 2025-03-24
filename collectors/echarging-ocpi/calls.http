@@ -7,7 +7,11 @@ SPDX-License-Identifier: CC0-1.0
 # @host=http://localhost:{{$dotenv SERVER_PORT}}
 @host=https://neogy.ocpi.io.opendatahub.com
 
-### EVSE status update
+### Pull locations
+GET {{$dotenv PULL_LOCATIONS_ENDPOINT}}
+Authorization: Token {{$dotenv PULL_TOKEN}}
+
+### mock EVSE status update
 PATCH {{host}}/ocpi/emsp/2.2/locations/IT/ABC/LOC1/EVSE1
 Authorization: Token {{ $dotenv OCPI_TOKENS }}
 
@@ -24,5 +28,5 @@ Authorization: Token TestToken1
 PATCH {{host}}/ocpi/emsp/2.2/locations/IT/ABC/LOC1/EVSE1
 Authorization: Token InvalidToken
 
-### 
+###  health check
 GET {{host}}/health
