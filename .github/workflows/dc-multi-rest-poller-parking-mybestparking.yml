@@ -84,6 +84,7 @@ jobs:
           yq -i '.image.repository="${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML}}
           yq -i '.image.tag="${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
           yq -i '.image.pullPolicy="IfNotPresent"' ${{ env.VALUES_YAML }}
+          yq -i '.env.LOG_LEVEL = "INFO"' ${{ env.VALUES_YAML }}
           yq -i '.envSecret.OAUTH_CLIENT_ID = "${{ secrets.SKIDATA_OAUTH_CLIENT_ID }}"' ${{ env.VALUES_YAML }}
           yq -i '.envSecret.OAUTH_CLIENT_SECRET = "${{ secrets.SKIDATA_OAUTH_CLIENT_SECRET }}"' ${{ env.VALUES_YAML }}
           yq -i '.envSecret.OAUTH_USERNAME = "${{ secrets.SKIDATA_OAUTH_USERNAME }}"' ${{ env.VALUES_YAML }}
