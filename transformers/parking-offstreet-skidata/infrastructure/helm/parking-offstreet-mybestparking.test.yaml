@@ -1,0 +1,42 @@
+# SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-parking-offstreet-skidata
+  pullPolicy: IfNotPresent
+  tag: sometaghere
+
+imagePullSecrets:
+  - name: container-registry-r
+
+env:
+  # ODH Core Writer Connection
+  LOG_LEVEL: "DEBUG"
+  MQ_QUEUE: multi-rest-poller.parking-mybestparking
+  MQ_EXCHANGE: routed  
+  MQ_KEY: multi-rest-poller.parking-mybestparking
+  MQ_CLIENT: tr-parking-offstreet-mybestparking
+
+  BDP_BASE_URL: http://bdp-core.core.svc.cluster.local
+  BDP_PROVENANCE_VERSION: 
+  BDP_PROVENANCE_NAME: 
+  BDP_ORIGIN: skidata
+
+  RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
+
+envSecretRef:
+  - name: MQ_URI 
+    secret: rabbitmq-svcbind
+    key: uri
+  - name: ODH_TOKEN_URL
+    secret: oauth-collector
+    key: tokenUri
+  - name: ODH_CLIENT_ID
+    secret: oauth-collector
+    key: clientId
+  - name: ODH_CLIENT_SECRET
+    secret: oauth-collector
+    key: clientSecret

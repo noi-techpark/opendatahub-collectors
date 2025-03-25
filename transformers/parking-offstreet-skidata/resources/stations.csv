@@ -1,0 +1,9 @@
+id,facility_id,name,municipality,name_en,name_it,name_de,standard_name,netex_type,netex_vehicletypes,netex_layout,netex_hazard_prohibited,netex_charging,netex_surveillance,netex_reservation,lat,lon
+105_facility,406983,P05 - Laurin,Bolzano - Bozen,Laurin,Laurin,Laurin,Parcheggio Laurin,urbanParking,allPassengerVehicles,openSpace,true,true,true,noReservations,46.498174099984666,11.357255100008064
+608612,608612,Parcheggio Stazione Brunico,Brunico,,,,Parcheggio Stazione Brunico,,,,,,,,46.792815456220296,11.927622005916659
+607440,607440,Parcheggio Stazione Bressanone,Bressanone,,,,Parcheggio Stazione Bressanone,,,,,,,,46.713708199562525,11.650497804658093
+105,406983_0,P05 - Laurin,Bolzano - Bozen,Laurin,Laurin,Laurin,Parcheggio Laurin,urbanParking,allPassengerVehicles,openSpace,true,true,true,noReservations,46.498174099984666,11.357255100008064
+608612_0,608612_0,Parcheggio Stazione Brunico Mobilitätszentrum,Brunico,,,,Parcheggio Stazione Brunico Mobilitätszentrum,,,,,,,,46.792815456220296,11.927622005916659
+607440_0,607440_0,Parcheggio Stazione Bressanone 01-Priel,Bressanone,,,,Parcheggio Stazione Bressanone 01-Priel,,,,,,,,46.713708199562525,11.650497804658093
+607440_1,607440_1,Parcheggio Stazione Bressanone 02-Rosslauf,Bressanone,,,,Parcheggio Stazione Bressanone 02-Rosslauf,,,,,,,,46.713708199562525,11.650497804658093
+607440_2,607440_2,Parcheggio Stazione Bressanone 03-C.Mobilità-Mobilitätsz,Bressanone,,,,Parcheggio Stazione Bressanone 03-C.Mobilità-Mobilitätsz,,,,,,,,46.713708199562525,11.650497804658093

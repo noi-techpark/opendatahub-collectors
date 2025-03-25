@@ -1,0 +1,23 @@
+# SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+http_call:
+  url: https://www.onecenter.info/api/DAZ/GetFacilities
+  method: GET
+  headers:
+    Accept: application/json
+  data_selector: "$.Data.Facilities[?(@.ReceiptMerchant == 'STA – Strutture Trasporto Alto Adige SpA Via dei Conciapelli, 60 39100  Bolzano UID: 00586190217')]"
+  # data_selector: "$.Data.Facilities[*]"
+  data_selector_type: json
+  nested_calls:
+    - url: https://www.onecenter.info/api/DAZ/FacilityFreePlaces?FacilityID=%s
+      method: GET
+      headers:
+        Accept: application/json
+      param_selector_type: json
+      param_selectors:
+        - '$.FacilityId'
+      data_destination_field: FacilityDetails
+      data_selector: "$.Data.FreePlaces[*]"
+      data_selector_type: json
