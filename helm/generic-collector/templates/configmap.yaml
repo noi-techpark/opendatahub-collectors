@@ -1,0 +1,15 @@
+{{- if .Values.configMap.files }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "generic-collector.configMapName" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "generic-collector.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+data:
+  {{- range $filename, $content := .Values.configMap.files }}
+  {{ $filename }}: |-
+    {{ $content | nindent 4 }}
+  {{- end }}
+{{- end }}

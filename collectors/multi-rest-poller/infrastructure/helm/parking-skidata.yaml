@@ -1,0 +1,23 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/multi-rest-poller
+  pullPolicy: IfNotPresent
+  tag: "0.2.0" # Set this when upgrading chart with --set-value
+
+env:
+  MQ_CLIENT: dc-multi-rest-poller-parking-skidata
+  PROVIDER: multi-rest-poller/parking-skidata
+
+  CRON: "0 */10 * * * *"
+  HTTP_CONFIG_PATH: "/config/http-config.yaml"
+  AUTH_STRATEGY: oauth2
+  OAUTH_METHOD: password
+  OAUTH_TOKEN_URL: https://www.onecenter.info/oauth/token
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
+
+configMap:
+  mountPath: "/config/"
+  files: {}

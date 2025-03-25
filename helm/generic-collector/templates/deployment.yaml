@@ -34,29 +34,29 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-          {{- range $k, $v := .Values.env }}
+            {{- range $k, $v := .Values.env }}
             - name: {{ $k | quote }}
               value: {{ $v | quote }}
-          {{- end }}
-          {{- range $k, $v := .Values.envSecret }}
-            - name: {{ $k | quote}}
+            {{- end }}
+            {{- range $k, $v := .Values.envSecret }}
+            - name: {{ $k | quote }}
               valueFrom:
                 secretKeyRef:
                   name: {{ include "generic-collector.envSecretName" $ }}
                   key: {{ $k | quote }}
-          {{- end }}
-          {{- range $secret := .Values.envSecretRef }}
+            {{- end }}
+            {{- range $secret := .Values.envSecretRef }}
             - name: {{ $secret.name }}
               valueFrom:
                 secretKeyRef:
                   name: {{ $secret.secret | quote }}
                   key: {{ $secret.key | quote }}
-          {{- end }}
-          {{- range $k, $v := .Values.envFrom }}
+            {{- end }}
+            {{- range $k, $v := .Values.envFrom }}
             - name: {{ $k | quote }}
               valueFrom:
                 {{- toYaml $v | nindent 16 }}
-          {{- end }}
+            {{- end }}
           {{- if .Values.service.enabled }}
           ports:
             - name: http
@@ -64,18 +64,31 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: {{.Values.service.health.path}}
+              path: {{ .Values.service.health.path }}
               port: http
             initialDelaySeconds: {{ .Values.service.health.delay }}
           readinessProbe:
             httpGet:
-              path: {{.Values.service.health.path}}
+              path: {{ .Values.service.health.path }}
               port: http
             initialDelaySeconds: {{ .Values.service.health.delay }}
-          readinessProbe:
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          {{- if .Values.configMap.files }}
+          volumeMounts:
+            - name: {{ include "generic-collector.configMapName" $ }}
+              mountPath: {{ .Values.configMap.mountPath }}
+              {{- if .Values.configMap.subPath }}
+              subPath: {{ .Values.configMap.subPath }}
+              {{- end }}
+          {{- end }}
+      {{- if .Values.configMap.files }}
+      volumes:
+        - name: {{ include "generic-collector.configMapName" $ }}
+          configMap:
+            name: {{ include "generic-collector.configMapName" $ }}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
