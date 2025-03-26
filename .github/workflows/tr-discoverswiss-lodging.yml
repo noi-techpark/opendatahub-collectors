@@ -82,12 +82,9 @@ jobs:
             yq -i '.image.repository = "${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML }}
             yq -i '.image.tag = "${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
             yq -i '.image.pullPolicy = "IfNotPresent"' ${{ env.VALUES_YAML }}
-
-            // THE TOKEN CLIENT SECRET IS DIFFERENT IN PROD!!!!!
-
-            yq -i '.envSecret.ODH_CORE_TOKEN_CLIENT_SECRET = "${{ secrets.ODH_CORE_TOKEN_CLIENT_SECRET_DISCOVERSWISS }}"' ${{ env.VALUES_YAML }}
+            yq -i '.envSecret.ODH_CORE_TOKEN_CLIENT_SECRET = "${{ secrets.ODH_CORE_TOKEN_CLIENT_SECRET_DISCOVERSWISS_PROD }}"' ${{ env.VALUES_YAML }}
             yq -i '.env.RAW_FILTER_URL_TEMPLATE = "https://tourism.api.opendatahub.com/v1/Accommodation?rawfilter=eq(Mapping.discoverswiss.id,%%22%s%%22)&fields=Id"' ${{ env.VALUES_YAML }}
-            yq -i '.env.ODH_CORE_TOKEN_URL = "https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token"' ${{ env.VALUES_YAML }}
+            yq -i '.env.ODH_CORE_TOKEN_URL = "https://auth.opendatahub.com/auth/realms/noi/protocol/openid-connect/token"' ${{ env.VALUES_YAML }}
             yq -i '.env.ODH_CORE_TOKEN_CLIENT_ID = "odh-api-core-discoverswiss"' ${{ env.VALUES_YAML }}
             yq -i '.env.ODH_API_CORE_URL = "https://tourism.api.opendatahub.com/v1/Accommodation"' ${{ env.VALUES_YAML }}
       
