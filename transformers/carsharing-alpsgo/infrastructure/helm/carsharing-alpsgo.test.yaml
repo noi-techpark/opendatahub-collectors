@@ -23,7 +23,7 @@ env:
   BDP_BASE_URL: http://bdp-core.core.svc.cluster.local
   BDP_PROVENANCE_VERSION: 
   BDP_PROVENANCE_NAME: 
-  BDP_ORIGIN: alpsgo
+  BDP_ORIGIN: AlpsGo
 
   RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
 

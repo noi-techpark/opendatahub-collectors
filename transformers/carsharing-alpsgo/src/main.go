@@ -17,13 +17,9 @@ import (
 	"github.com/noi-techpark/go-opendatahub-ingest/tr"
 )
 
-// hard coded bz coordinates for main Station Dto location 46.49067, 11.33982
 const (
 	StationTypeCarSharing = "CarsharingStation"
 	StationTypeVechile    = "CarsharingCar"
-
-	shortStay   = "short_stay"
-	subscribers = "subscribers"
 
 	dataTypeAvailableVehicles = "number-available"
 
