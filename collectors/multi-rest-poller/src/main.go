@@ -7,7 +7,6 @@ package main
 import (
 	"context"
 	"log/slog"
-	"os"
 	"time"
 
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/dc"
@@ -40,23 +39,12 @@ func main() {
 	ms.InitWithEnv(context.Background(), "", &env)
 	slog.Info("Starting data collector...")
 
-<<<<<<< HEAD
 	defer tel.FlushOnPanic()
-=======
-	mq, err := dc.PubFromEnv(env.Env)
-	// ms.FailOnError(err, "failed creating mq publisher")
->>>>>>> f31f3d4 (feat: implemented pagination in multipoller)
 
 	config, err := LoadConfig(env.HTTP_CONFIG_PATH)
 	ms.FailOnError(context.Background(), err, "failed to load call config")
 
 	collector := dc.NewDc[dc.EmptyData](context.Background(), env.Env)
-
-	resultJSON, err := Poll(config)
-
-	if err := os.WriteFile("out.json", []byte(resultJSON), 0644); err != nil {
-		panic(fmt.Errorf("could not write JSON to file: %w", err))
-	}
 
 	c := cron.New(cron.WithSeconds())
 	c.AddFunc(env.CRON, func() {
