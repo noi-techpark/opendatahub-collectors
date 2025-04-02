@@ -1,0 +1,49 @@
+# SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+http_calls:
+  data_selector_type: json
+  nested_calls:
+    - url: https://portal.moqo.de/api_aggregator/stations
+      method: GET
+      headers:
+        Accept: application/json
+      data_selector_type: json
+      data_selector: $.stations
+      data_destination_field: stations
+      pagination:
+        request_strategy: query
+        response_strategy: body
+        request_key: page
+        offset_builder:
+          current_start: 1
+          increment: 1
+    - url: https://portal.moqo.de/api_aggregator/vehicles
+      method: GET
+      headers:
+        Accept: application/json
+      data_destination_field: vehicles
+      data_selector: $.vehicles
+      data_selector_type: json
+      pagination:
+        request_strategy: query
+        response_strategy: body
+        request_key: page
+        offset_builder:
+          current_start: 1
+          increment: 1
+    - url: https://portal.moqo.de/api_aggregator/availabilities
+      method: GET
+      headers:
+        Accept: application/json
+      data_destination_field: availabilities
+      data_selector: $.availabilities
+      data_selector_type: json
+      pagination:
+        request_strategy: query
+        response_strategy: body
+        request_key: page
+        offset_builder:
+          current_start: 1
+          increment: 1
