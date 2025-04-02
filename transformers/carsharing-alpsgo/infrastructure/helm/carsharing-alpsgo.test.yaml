@@ -18,7 +18,7 @@ env:
   MQ_QUEUE: multi-rest-poller.carsharing-alpsgo
   MQ_EXCHANGE: routed  
   MQ_KEY: multi-rest-poller.carsharing-alpsgo
-  MQ_CLIENT: tr-parking-offstreet-mybestparking
+  MQ_CLIENT: tr-carsharing-alpsgo
 
   BDP_BASE_URL: http://bdp-core.core.svc.cluster.local
   BDP_PROVENANCE_VERSION: 
