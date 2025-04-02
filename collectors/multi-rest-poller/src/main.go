@@ -5,7 +5,9 @@
 package main
 
 import (
+	"fmt"
 	"log/slog"
+	"os"
 	"time"
 
 	"github.com/kelseyhightower/envconfig"
@@ -30,6 +32,8 @@ var env struct {
 
 	BASIC_AUTH_USERNAME string
 	BASIC_AUTH_PASSWORD string
+
+	AUTH_BEARER_TOKEN string
 }
 
 func main() {
@@ -38,10 +42,16 @@ func main() {
 	ms.InitLog(env.LOG_LEVEL)
 
 	mq, err := dc.PubFromEnv(env.Env)
-	ms.FailOnError(err, "failed creating mq publisher")
+	// ms.FailOnError(err, "failed creating mq publisher")
 
 	config, err := LoadConfig(env.HTTP_CONFIG_PATH)
 	ms.FailOnError(err, "failed to load call config")
+
+	resultJSON, err := Poll(config)
+
+	if err := os.WriteFile("out.json", []byte(resultJSON), 0644); err != nil {
+		panic(fmt.Errorf("could not write JSON to file: %w", err))
+	}
 
 	c := cron.New(cron.WithSeconds())
 	c.AddFunc(env.CRON, func() {
