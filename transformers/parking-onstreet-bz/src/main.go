@@ -112,7 +112,7 @@ func main() {
 				return fmt.Errorf("unknown station %s. Please add to csv", p.DeviceInfo.DevEui)
 			}
 			// only activate station once
-			if stationSynced[syncStation.Id] {
+			if !stationSynced[syncStation.Id] {
 				if err := b.SyncStations(ParkingSensor, []bdplib.Station{syncStation}, true, true); err != nil {
 					return fmt.Errorf("could not sync single station %s: %w", p.DeviceInfo.DevEui, err)
 				}
