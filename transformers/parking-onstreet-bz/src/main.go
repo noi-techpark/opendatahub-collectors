@@ -69,7 +69,6 @@ func main() {
 			},
 		})
 	}
-	ms.FailOnError(b.SyncStations(ParkingSensor, stations, false, false), "failed syncing stations")
 
 	stationMap := map[string]bdplib.Station{}
 	for _, s := range stations {
