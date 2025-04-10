@@ -9,6 +9,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"github.com/wI2L/jsondiff"
 	"gotest.tools/v3/assert"
@@ -70,4 +71,9 @@ func Test_integration(t *testing.T) {
 			t.Log(string(s))
 		}
 	}
+}
+
+// validate hardcoded namespace UUID
+func Test_namespace(t *testing.T) {
+	assert.Equal(t, UUID_NAMESPACE, uuid.NewSHA1(uuid.Nil, []byte("traffic-event-prov-bz")).String())
 }

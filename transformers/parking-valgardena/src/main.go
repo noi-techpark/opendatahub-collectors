@@ -5,15 +5,11 @@
 package main
 
 import (
-	//"fmt"
-
 	"encoding/json"
 	"fmt"
 	"log/slog"
 	"os"
 	"strconv"
-
-	//"strconv"
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-bdp-client/bdplib"
@@ -21,13 +17,12 @@ import (
 	"github.com/noi-techpark/go-opendatahub-ingest/mq"
 	"github.com/noi-techpark/go-opendatahub-ingest/ms"
 	"github.com/noi-techpark/go-opendatahub-ingest/tr"
-	//"go.starlark.net/lib/time"
 )
 
 const Station = "ParkingStation"
 const Period = 120
 const Origin = "GARDENA"
-const DataTypeO = "occupied"
+const DataType = "occupied"
 
 var env struct {
 	tr.Env
@@ -36,8 +31,6 @@ var env struct {
 	MQ_META_EXCHANGE string
 	MQ_META_KEY      string
 	MQ_META_CLIENT   string
-
-	//MQ_CONSUMER string
 }
 
 type payloadMetaData struct {
@@ -68,15 +61,13 @@ func main() {
 	}
 
 	rabbit, err := mq.Connect(env.Env.MQ_URI, env.Env.MQ_CLIENT)
-	failOnError(err, "failed connecting to rabbitmq")
+	ms.FailOnError(err, "failed connecting to rabbitmq")
 	defer rabbit.Close()
 
 	dataMQ, err := rabbit.Consume(env.Env.MQ_EXCHANGE, env.Env.MQ_QUEUE, env.Env.MQ_KEY)
-	failOnError(err, "failed creating data queue")
+	ms.FailOnError(err, "failed creating data queue")
 
 	go tr.HandleQueue(dataMQ, env.Env.MONGO_URI, func(r *dto.Raw[string]) error {
-		fmt.Println("DATA FLOWING")
-		fmt.Println(r.Rawdata)
 		parkingData := b.CreateDataMap()
 		payload, err := unmarshalRawdata[payloadData](r.Rawdata)
 		if err != nil {
@@ -84,28 +75,36 @@ func main() {
 			return err
 		}
 		parkingid := stationId(payload.Uid, Origin)
-		parkingData.AddRecord(parkingid, DataTypeO, bdplib.CreateRecord(r.Timestamp.UnixMilli(), payload.Occupancy, Period))
+		parkingData.AddRecord(parkingid, DataType, bdplib.CreateRecord(r.Timestamp.UnixMilli(), payload.Occupancy, Period))
 		if err := b.PushData(Station, parkingData); err != nil {
-			return fmt.Errorf("error pushing parking occupancy data: %w", err)
+			slog.Error("error pushing parking occupancy data:","err", err)
+			return err
 		}
 		slog.Info("Updated parking station occupancy")
 		return nil
-
 	})
 
 	metaDataMQ, err := rabbit.Consume(env.MQ_META_EXCHANGE, env.MQ_META_QUEUE, env.MQ_META_KEY)
-	failOnError(err, "failed creating data queue")
+	ms.FailOnError(err, "failed creating data queue")
 
 	go tr.HandleQueue(metaDataMQ, env.Env.MONGO_URI, func(r *dto.Raw[string]) error {
-		fmt.Println("META DATA FLOWING")
-		fmt.Println(r.Rawdata)
-		//parkingMetaData := b.CreateDataMap()
-		payloadArray, _ := unmarshalRawdata[payloadMetaArray](r.Rawdata)
+		payloadArray, err := unmarshalRawdata[payloadMetaArray](r.Rawdata)
+		if err != nil {
+			slog.Error("cannot unmarshall raw data", "err", err)
+		}
 		var stations []bdplib.Station
 		for _, payload := range *payloadArray {
 			parkingid := stationId(payload.Uid, b.Origin)
-			lat, _ := strconv.ParseFloat(payload.Lat, 64)
-			lon, _ := strconv.ParseFloat(payload.Long, 64)
+			lat, err := strconv.ParseFloat(payload.Lat, 64)
+			if err != nil {
+				slog.Error("cannot parse latitude", "err", err)
+				continue
+			}
+			lon, err := strconv.ParseFloat(payload.Long, 64)
+			if err != nil {
+				slog.Error("cannot parse longitude", "err", err)
+				continue
+			}
 			s := bdplib.CreateStation(parkingid, payload.NameIT, Station, lat, lon, Origin)
 
 			MetaData := make(map[string]interface{})
@@ -114,24 +113,17 @@ func main() {
 
 			s.MetaData = MetaData
 			stations = append(stations, s)
-
-
 		}
+
 		if err := b.SyncStations(Station, stations, true, false); err != nil {
 			slog.Error("Error syncing stations", "err", err)
 		}
+		
 		slog.Info("Updated parking station occupancy")
 		return nil
 	})
 
 	select {}
-}
-
-func failOnError(err error, msg string) {
-	if err != nil {
-		slog.Error(msg, "err", err)
-		panic(err)
-	}
 }
 
 func stationId(id string, origin string) string {

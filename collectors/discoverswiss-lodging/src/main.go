@@ -15,7 +15,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/kelseyhightower/envconfig"
+	"github.com/noi-techpark/go-opendatahub-discoverswiss/models"
 	"github.com/noi-techpark/go-opendatahub-ingest/dc"
 	"github.com/noi-techpark/go-opendatahub-ingest/dto"
 	"github.com/noi-techpark/go-opendatahub-ingest/ms"
@@ -41,113 +43,23 @@ var env struct {
 	PAGING_OFFSET_NAME string
 }
 
-type DiscoverSwissResponse struct {
-	Count         int               `json:"count"`
-	HasNextPage   bool              `json:"hasNextPage"`
-	NextPageToken string            `json:"nextPageToken"`
-	Data          []LodgingBusiness `json:"data"`
-}
-type LodgingBusiness struct {
-	Name string `json:"name"`
-
-	Address struct {
-		AddressCountry  string `json:"addressCountry"`
-		AddressLocality string `json:"addressLocality"`
-		PostalCode      string `json:"postalCode"`
-		StreetAddress   string `json:"streetAddress"`
-		Email           string `json:"email"`
-		Telephone       string `json:"telephone"`
-	} `json:"address"`
-
-	Geo struct {
-		Latitude  float64 `json:"latitude"`
-		Longitude float64 `json:"longitude"`
-	} `json:"geo"`
-
-	NumberOfRooms []struct {
-		PropertyID string `json:"propertyId"`
-		Value      string `json:"value"`
-	} `json:"numberOfRooms"`
-
-	StarRating StarRating `json:"starRating"`
-
-	NumberOfBeds int `json:"numberOfBeds"`
-
-	Identifier string `json:"identifier"`
-
-	CheckinTime      string `json:"checkinTime"`
-	CheckinTimeTo    string `json:"checkinTimeTo"`
-	CheckoutTimeFrom string `json:"checkoutTimeFrom"`
-	CheckoutTime     string `json:"checkoutTime"`
-
-	License string `json:"license"`
-}
-
-	
-
-type StarRating struct {
-	RatingValue    float64 `json:"ratingValue"`
-	AdditionalType string  `json:"additionalType"`
-	Name           string  `json:"name"`
-}
-
-
-
 const ENV_HEADER_PREFIX = "HTTP_HEADER_"
-
-func retryOnError(httpreq func() (string, error), resp http.Response) (string, error) {
-	retryAfter := resp.Header.Get("Retry-After")
-	if retryAfter != "" {
-		retryAfterDuration, err := time.ParseDuration(retryAfter + "s")
-		if err != nil {
-			return "", err
-		}
-		fmt.Println("Retrying after", retryAfterDuration)
-		time.Sleep(retryAfterDuration)
-		return httpreq()
-	}else{
-		return "", fmt.Errorf("http request returned non-Ok status: %d", resp.StatusCode)}
-}
 
 func lodgingRequest(url *url.URL, httpHeaders http.Header, httpMethod string) (string, error) {
     headers := httpHeaders
     u := url
-    req, err := http.NewRequest(httpMethod, u.String(), http.NoBody)
+	client := retryablehttp.NewClient()
+    req, err := retryablehttp.NewRequest(httpMethod, u.String(), http.NoBody)
     if err != nil {
         return "", fmt.Errorf("could not create http request: %w", err)
     }
 
-    req.Header = headers
-
-    client := &http.Client{}
+    req.Header = headers  
     resp, err := client.Do(req)
     if err != nil {
         return "", fmt.Errorf("error during http request: %w", err)
     }
-
     defer resp.Body.Close()
-
-    if resp.StatusCode != http.StatusOK {
-        if resp.StatusCode == http.StatusTooManyRequests {
-            retryFunc := func() (string, error) {
-                return lodgingRequest(url, httpHeaders, httpMethod)
-            }
-			// retryAfter := resp.Header.Get("Retry-After")
-			// if retryAfter != "" {
-			// 	retryAfterDuration, err := time.ParseDuration(retryAfter + "s")
-			// 	if err != nil {
-			// 		return "", err
-			// 	}
-			// 	fmt.Println("Retrying after", retryAfterDuration)
-			// 	time.Sleep(retryAfterDuration)
-            return retryOnError(retryFunc, *resp)
-    //     }else{
-    //     return "", fmt.Errorf("http request returned non-Ok status: %d", resp.StatusCode)}
-    // }
-}else{
-	return "", fmt.Errorf("http request returned non-Ok status: %d", resp.StatusCode)
-}
-	}
 
     body, err := io.ReadAll(resp.Body)
     if err != nil {
@@ -187,9 +99,10 @@ func customHeaders() http.Header {
 
 func main() {
 	slog.Info("Starting data collector...")
-	// err := godotenv.Load("../.env")
-	
+
+	// err := godotenv.Load("../.env")	
 	// ms.FailOnError(err, "could not load .env file")
+	
 	envconfig.MustProcess("", &env)
 	ms.InitLog(env.LOG_LEVEL)
 	mq, err := dc.PubFromEnv(env.Env)
@@ -201,69 +114,57 @@ func main() {
 	if err != nil {
 		slog.Error("failed parsing url", "url", env.HTTP_URL, "err", err)
 	}	
-	fmt.Println("URL: ", discoverswissUrl)
 	c := cron.New(cron.WithSeconds())
-	c.AddFunc(env.CRON, func() {
-		slog.Info("Starting poll job")
-		jobstart := time.Now()
-	continuationToken := ""
+		c.AddFunc(env.CRON, func() {
+			slog.Info("Starting poll job")
+			jobstart := time.Now()
+			continuationToken := ""
 
-	for {
-		numberRequest := 0
-		currentURL := *discoverswissUrl
+		for {
+			currentURL := *discoverswissUrl
 
-	if continuationToken != "" {
-		q := currentURL.Query()
-
-		q.Set("continuationToken", continuationToken)
-		currentURL.RawQuery = q.Encode()
-	}
-
-		body, err := lodgingRequest(&currentURL, headers, httpMethod)
-		if err != nil{
-		fmt.Println("Could not perform the query due to err: ", err)
+		if continuationToken != "" {
+			q := currentURL.Query()
+			q.Set("continuationToken", continuationToken)
+			currentURL.RawQuery = q.Encode()
 		}
-		numberRequest++
-		fmt.Println("Lodging: ", numberRequest)
 
-		var response DiscoverSwissResponse
-		err = json.Unmarshal([]byte(body), &response)
-		if err != nil {
-			slog.Error("failed unmarshalling DiscoverSwissResponse object", "err", err)
-			return
-		}
-		fmt.Println("UP TO HERE")
-		for _, lodging := range response.Data {
-
-			jsonLodging, err := json.Marshal(lodging)
+			body, err := lodgingRequest(&currentURL, headers, httpMethod)
+			if err != nil{
+			slog.Error("Could not perform the query", "err", err)
+			}
+			var response models.DiscoverSwissResponse
+			err = json.Unmarshal([]byte(body), &response)
 			if err != nil {
-				slog.Error("failed marshalling lodging object", "err", err)
-				continue
+				slog.Error("failed unmarshalling DiscoverSwissResponse object", "err", err)
+				return
 			}
-			
-			fmt.Println(string(jsonLodging))
 
-
-			mq <- dto.RawAny{
-				Provider:  env.PROVIDER,
-				Timestamp: time.Now(),
-				Rawdata:   string(jsonLodging),
+			for _, lodging := range response.Data {
+				jsonLodging, err := json.Marshal(lodging)
+				if err != nil {
+					slog.Error("failed marshalling lodging object", "err", err)
+					continue
+				}
+				fmt.Println("ADDITIONAL,TYPE",lodging.AdditionalType)
+				
+				mq <- dto.RawAny{
+					Provider:  env.PROVIDER,
+					Timestamp: time.Now(),
+					Rawdata:   string(jsonLodging),
+				}
+				
 			}
-			
-		}
 
-	
-
-		if !response.HasNextPage || response.NextPageToken == "" {
-			break
+			if !response.HasNextPage || response.NextPageToken == "" {
+				break
+			}
+		
+			continuationToken = response.NextPageToken
 		}
-	
-		continuationToken = response.NextPageToken
-	}
-	slog.Info("Polling job completed", "runtime_ms", time.Since(jobstart).Milliseconds())
-})
+		slog.Info("Polling job completed", "runtime_ms", time.Since(jobstart).Milliseconds())
+	})
 c.Run()
-
 }
 
 	

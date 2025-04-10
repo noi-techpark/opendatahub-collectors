@@ -16,7 +16,7 @@ env:
   MQ_KEY: lorawan.data 
   MQ_CLIENT: lorawan-data-consumer 
 
-  BDP_BASE_URL: https://share.opendatahub.testingmachine.eu
+  BDP_BASE_URL: http://bdp-core.core.svc.cluster.local
   BDP_PROVENANCE_VERSION: 
   BDP_PROVENANCE_NAME: 
   BDP_ORIGIN: NOI

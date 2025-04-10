@@ -16,6 +16,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-opendatahub-ingest/dc"
 	"github.com/noi-techpark/go-opendatahub-ingest/dto"
@@ -26,16 +27,9 @@ import (
 var env struct {
 	dc.Env
 	CRON string
-
 	RAW_BINARY bool
-
 	HTTP_URL    string
 	HTTP_METHOD string `default:"GET"`
-
-	PAGING_PARAM_TYPE  string // query, header, path...
-	PAGING_SIZE        int
-	PAGING_LIMIT_NAME  string
-	PAGING_OFFSET_NAME string
 }
 
 type ParkingMetadata struct {
@@ -55,33 +49,29 @@ type ParkingData struct {
 
 const ENV_HEADER_PREFIX = "HTTP_HEADER_"
 
-func httpRequest(url *url.URL, httpHeaders http.Header, httpMethod string) []byte {
-
+func httpRequest(url *url.URL, httpHeaders http.Header, httpMethod string) (string,error) {
 	headers := httpHeaders
 	u := url
-	req, err := http.NewRequest(httpMethod, u.String(), http.NoBody)
-	ms.FailOnError(err, "could not create http request")
-
+	client := retryablehttp.NewClient()
+	req, err := retryablehttp.NewRequest(httpMethod, u.String(), http.NoBody)
+	if err != nil {
+		slog.Error("error creating http request:", "err", err)
+		return "", err
+	}
 	req.Header = headers
-
-	client := &http.Client{}
+	
 	resp, err := client.Do(req)
 	if err != nil {
 		slog.Error("error during http request:", "err", err)
-		return nil
-	}
-	if resp.StatusCode != http.StatusOK {
-		slog.Error("http request returned non-OK status", "statusCode", resp.StatusCode)
-		return nil
+		return "", err
 	}
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		slog.Error("error reading response body:", "err", err)
-		return nil
-	}
-	return body
-
+		return "", err
+	}	
+	return string(body), nil
 }
 
 func main() {
@@ -103,40 +93,36 @@ func main() {
 		slog.Info("Starting poll job")
 		jobstart := time.Now()
 
-		body := httpRequest(u, headers, httpMethod)
+		body,err := httpRequest(u, headers, httpMethod)
+		if err != nil {
+			slog.Error("error during http request:", "err", err)
+		}
 
 		var parkingMetaDataSlice []ParkingMetadata
 
-
-		var parkingDataSingle ParkingData
-
-		if err := json.Unmarshal(body, &parkingMetaDataSlice); err != nil {
+		if err := json.Unmarshal([]byte(body), &parkingMetaDataSlice); err != nil {
 			log.Fatalf("failed: %v", err)
 		}
 
+		var parkingDataSingle ParkingData
 		for _, parking := range parkingMetaDataSlice {
-			url2 := fmt.Sprintf("https://parking.valgardena.it/get_station_data?id=%s", parking.ID)
-			u2, err := url.Parse(url2)
-			ms.FailOnError(err, "failed parsing poll URL")
-			body = httpRequest(u2, headers, httpMethod)
-			if err := json.Unmarshal(body, &parkingDataSingle); err != nil {
-				log.Fatalf("failed: %v", err)
+			urlData := fmt.Sprintf("https://parking.valgardena.it/get_station_data?id=%s", parking.ID)
+			urlDataParsed, err := url.Parse(urlData)
+			if err != nil {
+				slog.Error("error parsing url:", "err", err)
 			}
-			//parkingDataSlice = append(parkingDataSlice, parkingDataSingle)
-
-			var raw any
-			if env.RAW_BINARY {
-				raw = body
-			} else {
-				raw = string(body)
+			body,err = httpRequest(urlDataParsed, headers, httpMethod)
+			if err != nil {
+				slog.Error("error during http request:", "err", err)
 			}
-
-			fmt.Println(raw)
+			if err := json.Unmarshal([]byte(body), &parkingDataSingle); err != nil {
+				slog.Error("failed to unmarshal parking data", "err", err)
+			}
 
 			mq <- dto.RawAny{
 				Provider:  env.PROVIDER,
 				Timestamp: time.Now(),
-				Rawdata:   raw,
+				Rawdata:   body,
 			}
 		}
 		slog.Info("Polling job completed", "runtime_ms", time.Since(jobstart).Milliseconds())

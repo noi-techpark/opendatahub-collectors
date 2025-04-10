@@ -12,7 +12,7 @@ imagePullSecrets:
 
 env:
   # ODH Core Writer Connection
-  BASE_URI: http://bdp-core.core.svc.cluster.local:8080/json
+  BASE_URI: http://bdp-core.core.svc.cluster.local/json
   authorizationUri: https://auth.opendatahub.testingmachine.eu/auth
   tokenUri: https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token
   clientId: odh-mobility-datacollector-development
