@@ -77,3 +77,26 @@ func Test_integration(t *testing.T) {
 func Test_namespace(t *testing.T) {
 	assert.Equal(t, UUID_NAMESPACE, uuid.NewSHA1(uuid.Nil, []byte("traffic-event-prov-bz")).String())
 }
+
+func Test_joinStr(t *testing.T) {
+	tests := []struct {
+		name string
+		s1   string
+		sep  string
+		s2   string
+		want string
+	}{
+		{name: "bestcase", s1: "hi", sep: "_", s2: "bye", want: "hi_bye"},
+		{name: "first null", s1: "", sep: "_", s2: "bye", want: "bye"},
+		{name: "second null", s1: "hi", sep: "_", s2: "", want: "hi"},
+		{name: "all null", s1: "", sep: "_", s2: "", want: ""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := joinStr(tt.s1, tt.sep, tt.s2)
+			if got != tt.want {
+				t.Errorf("joinStr() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
