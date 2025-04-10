@@ -26,9 +26,9 @@ var env tr.Env
 const UUID_NS = "traffic-events-prov-bz"
 
 func main() {
-	slog.Info("Traffic data collector starting up...")
 	envconfig.MustProcess("", &env)
 	ms.InitLog(env.LOG_LEVEL)
+	slog.Info("Traffic data collector starting up...")
 
 	b := bdplib.FromEnv()
 
