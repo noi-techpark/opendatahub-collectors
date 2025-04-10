@@ -60,13 +60,23 @@ func unmarshalRawJson(s string) ([]trafficEvent, error) {
 	return dtos, err
 }
 
+func joinStr(s1 string, sep string, s2 string) string {
+	if s1 == "" {
+		return s2
+	}
+	if s2 == "" {
+		return s1
+	}
+	return s1 + sep + s2
+}
+
 func mapEvent(d trafficEvent) (bdplib.Event, error) {
 	e := bdplib.Event{}
 	e.Uuid = makeUUID(toJsonOrPanic(uuidObj(d)))
 	e.EventSeriesUuid = makeUUID([]byte(strconv.Itoa(d.MessageID)))
-	e.Category = fmt.Sprintf("%s_%s | %s_%s", d.TycodeIt, d.SubTycodeIt, d.TycodeDe, d.SubTycodeDe)
+	e.Category = joinStr(joinStr(d.TycodeIt, "_", d.SubTycodeIt), " | ", joinStr(d.TycodeDe, "_", d.SubTycodeDe))
 	e.Name = strconv.Itoa(d.MessageID)
-	e.Description = fmt.Sprintf("%s | %s", d.DescriptionIt, d.DescriptionDe)
+	e.Description = joinStr(d.DescriptionIt, " | ", d.DescriptionDe)
 
 	if d.X != nil && d.Y != nil {
 		wkt, err := point2WKT(*d.X, *d.Y)
