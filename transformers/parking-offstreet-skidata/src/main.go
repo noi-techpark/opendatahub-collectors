@@ -6,14 +6,15 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"strconv"
 
-	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-bdp-client/bdplib"
-	"github.com/noi-techpark/go-opendatahub-ingest/dto"
-	"github.com/noi-techpark/go-opendatahub-ingest/ms"
-	"github.com/noi-techpark/go-opendatahub-ingest/tr"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
+	"github.com/noi-techpark/opendatahub-go-sdk/tel/logger"
 )
 
 // hard coded bz coordinates for main Station Dto location 46.49067, 11.33982
@@ -33,12 +34,14 @@ const (
 )
 
 func TransformWithBdp(bdp bdplib.Bdp) tr.Handler[FacilityData] {
-	return func(ctx context.Context, payload *dto.Raw[FacilityData]) error {
+	return func(ctx context.Context, payload *rdb.Raw[FacilityData]) error {
 		return Transform(ctx, bdp, payload)
 	}
 }
 
-func Transform(ctx context.Context, bdp bdplib.Bdp, payload *dto.Raw[FacilityData]) error {
+func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[FacilityData]) error {
+	log := logger.Get(ctx)
+
 	var parentStations []bdplib.Station
 	// save stations by stationCode
 	stations := make(map[string]bdplib.Station)
@@ -48,11 +51,15 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *dto.Raw[FacilityDat
 
 	ts := payload.Timestamp.UnixMilli()
 
+	// if rand.Intn(10) <= 1 {
+	return fmt.Errorf("test error")
+	// }
+
 	for _, facility := range payload.Rawdata {
 		id := facility.GetID()
 		parent_station_data := station_proto.GetStationByID(strconv.Itoa(id))
 		if nil == parent_station_data {
-			slog.Error("no parent station data", "facility_id", strconv.Itoa(id))
+			log.Error("no parent station data", "facility_id", strconv.Itoa(id))
 			panic("no parent station data")
 		}
 
@@ -83,7 +90,7 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *dto.Raw[FacilityDat
 			facility_id := strconv.Itoa(facility.GetID()) + "_" + strconv.Itoa(freePlace.ParkNo)
 			station_data := station_proto.GetStationByID(facility_id)
 			if nil == station_data {
-				slog.Error("no station data", "facility_id", facility_id)
+				log.Error("no station data", "facility_id", facility_id)
 				panic("no station data")
 			}
 			station, ok := stations[facility_id]
@@ -97,7 +104,7 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *dto.Raw[FacilityDat
 				station.MetaData = station_data.ToMetadata()
 
 				stations[station_data.ID] = station
-				slog.Debug("Create station " + station_data.ID)
+				log.Debug("Create station " + station_data.ID)
 			}
 
 			switch freePlace.CountingCategoryNo {
@@ -201,21 +208,23 @@ func SyncDataTypes(bdp bdplib.Bdp) {
 	dataTypes = append(dataTypes, bdplib.CreateDataType(dataTypeOccupiedTotal, "", "Amount of occupied parking slots", "Instantaneous"))
 
 	err := bdp.SyncDataTypes(stationType, dataTypes)
-	ms.FailOnError(err, "failed to sync types")
+	ms.FailOnError(context.Background(), err, "failed to sync types")
 }
 
 var env tr.Env
 var station_proto Stations
 
 func main() {
-	envconfig.MustProcess("", &env)
+	ms.InitWithEnv(context.Background(), "", &env)
+	slog.Info("Starting data transformer...")
+
 	b := bdplib.FromEnv()
 	station_proto = ReadStations("../resources/stations.csv")
 
 	SyncDataTypes(b)
 
-	slog.Info("listening")
-	listener := tr.NewTrStack[FacilityData](&env)
+	listener := tr.NewTr[FacilityData](context.Background(), env)
 	err := listener.Start(context.Background(), TransformWithBdp(b))
-	ms.FailOnError(err, "error while listening to queue")
+
+	ms.FailOnError(context.Background(), err, "error while listening to queue")
 }

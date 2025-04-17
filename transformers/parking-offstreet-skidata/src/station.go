@@ -5,11 +5,12 @@
 package main
 
 import (
+	"context"
 	"os"
 	"strconv"
 
 	"github.com/gocarina/gocsv"
-	"github.com/noi-techpark/go-opendatahub-ingest/ms"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
 )
 
 // Station represents one record from the CSV.
@@ -38,12 +39,12 @@ type Stations []Station
 // readStations opens and unmarshals the CSV file into a slice of Station pointers.
 func ReadStations(filename string) Stations {
 	f, err := os.Open(filename)
-	ms.FailOnError(err, "failed opening csv file")
+	ms.FailOnError(context.Background(), err, "failed opening csv file")
 	defer f.Close()
 
 	var facilities Stations
 	err = gocsv.UnmarshalFile(f, &facilities)
-	ms.FailOnError(err, "failed unmarshalling csv")
+	ms.FailOnError(context.Background(), err, "failed unmarshalling csv")
 
 	return facilities
 }

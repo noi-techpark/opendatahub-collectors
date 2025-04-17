@@ -27,6 +27,9 @@ env:
 
   RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
 
+  SERVICE_NAME: tr-parking-offstreet-skidata
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
 envSecretRef:
   - name: MQ_URI 
     secret: rabbitmq-svcbind
