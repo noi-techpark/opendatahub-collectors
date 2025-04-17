@@ -6,7 +6,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	"strconv"
 
@@ -50,10 +49,6 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[FacilityDat
 	dataMap := bdp.CreateDataMap()
 
 	ts := payload.Timestamp.UnixMilli()
-
-	// if rand.Intn(10) <= 1 {
-	return fmt.Errorf("test error")
-	// }
 
 	for _, facility := range payload.Rawdata {
 		id := facility.GetID()
