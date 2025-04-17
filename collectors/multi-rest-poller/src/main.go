@@ -5,13 +5,14 @@
 package main
 
 import (
+	"context"
 	"log/slog"
 	"time"
 
-	"github.com/kelseyhightower/envconfig"
-	"github.com/noi-techpark/go-opendatahub-ingest/dc"
-	"github.com/noi-techpark/go-opendatahub-ingest/dto"
-	"github.com/noi-techpark/go-opendatahub-ingest/ms"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/dc"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
+	"github.com/noi-techpark/opendatahub-go-sdk/tel"
 	"github.com/robfig/cron/v3"
 )
 
@@ -33,31 +34,37 @@ var env struct {
 }
 
 func main() {
+	ms.InitWithEnv(context.Background(), "", &env)
 	slog.Info("Starting data collector...")
-	envconfig.MustProcess("", &env)
-	ms.InitLog(env.LOG_LEVEL)
 
-	mq, err := dc.PubFromEnv(env.Env)
-	ms.FailOnError(err, "failed creating mq publisher")
+	defer tel.FlushOnPanic()
 
 	config, err := LoadConfig(env.HTTP_CONFIG_PATH)
-	ms.FailOnError(err, "failed to load call config")
+	ms.FailOnError(context.Background(), err, "failed to load call config")
+
+	collector := dc.NewDc[dc.EmptyData](context.Background(), env.Env)
 
 	c := cron.New(cron.WithSeconds())
 	c.AddFunc(env.CRON, func() {
-		slog.Info("Starting poll job")
-		jobstart := time.Now()
+		collector.GetInputChannel() <- dc.NewInput[dc.EmptyData](context.Background(), nil)
+	})
 
+	slog.Info("Setup complete. Starting cron scheduler")
+	go func() {
+		c.Run()
+	}()
+
+	err = collector.Start(context.Background(), func(ctx context.Context, a dc.EmptyData) (*rdb.RawAny, error) {
 		data, err := Poll(config)
-		ms.FailOnError(err, "failed to poll data")
+		if err != nil {
+			return nil, err
+		}
 
-		mq <- dto.RawAny{
+		return &rdb.RawAny{
 			Provider:  env.PROVIDER,
 			Timestamp: time.Now(),
 			Rawdata:   data,
-		}
-		slog.Info("Polling job completed", "runtime_ms", time.Since(jobstart).Milliseconds())
+		}, nil
 	})
-	slog.Info("Setup complete. Starting cron scheduler")
-	c.Run()
+	ms.FailOnError(context.Background(), err, err.Error())
 }
