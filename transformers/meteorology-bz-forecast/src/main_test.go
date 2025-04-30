@@ -10,7 +10,7 @@ import (
 
 	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"github.com/noi-techpark/go-bdp-client/bdpmock"
-	"github.com/noi-techpark/go-opendatahub-ingest/dto"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	"github.com/stretchr/testify/require"
 	"gotest.tools/v3/assert"
 )
@@ -26,7 +26,7 @@ func TestTransformation(t *testing.T) {
 
 	b := bdpmock.MockFromEnv()
 
-	raw := dto.Raw[Forecast]{
+	raw := rdb.Raw[Forecast]{
 		Rawdata: in,
 	}
 

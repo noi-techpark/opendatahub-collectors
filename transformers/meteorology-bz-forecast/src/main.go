@@ -13,11 +13,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-bdp-client/bdplib"
-	"github.com/noi-techpark/go-opendatahub-ingest/dto"
-	"github.com/noi-techpark/go-opendatahub-ingest/ms"
-	"github.com/noi-techpark/go-opendatahub-ingest/tr"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
 )
 
 // hard coded bz coordinates for main Station Dto location 46.49067, 11.33982
@@ -49,20 +48,20 @@ type MunicipalityMap struct {
 	municipalities []MunicipalityDto
 }
 
-func NewMunicipalityMap() *MunicipalityMap {
+func NewMunicipalityMap(ctx context.Context) *MunicipalityMap {
 	// Open the JSON file
 	file, err := os.Open("municipalities.json")
-	ms.FailOnError(err, "cannot open municipalities.json")
+	ms.FailOnError(ctx, err, "cannot open municipalities.json")
 	defer file.Close()
 
 	// Read the file content
 	byteValue, err := io.ReadAll(file)
-	ms.FailOnError(err, "cannot read municipalities.json")
+	ms.FailOnError(ctx, err, "cannot read municipalities.json")
 
 	// Unmarshal JSON into struct
 	var mun []MunicipalityDto
 	err = json.Unmarshal(byteValue, &mun)
-	ms.FailOnError(err, "cannot unmarshal municipalities.json")
+	ms.FailOnError(ctx, err, "cannot unmarshal municipalities.json")
 
 	return &MunicipalityMap{
 		municipalities: mun,
@@ -79,15 +78,15 @@ func (mm MunicipalityMap) GetLocation(de_name string) *LocationDto {
 }
 
 func TransformWithBdp(bdp bdplib.Bdp) tr.Handler[Forecast] {
-	return func(ctx context.Context, payload *dto.Raw[Forecast]) error {
+	return func(ctx context.Context, payload *rdb.Raw[Forecast]) error {
 		return Transform(ctx, bdp, payload)
 	}
 }
 
-func Transform(ctx context.Context, bdp bdplib.Bdp, payload *dto.Raw[Forecast]) error {
+func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Forecast]) error {
 	forecast := payload.Rawdata
 
-	municipalities := NewMunicipalityMap()
+	municipalities := NewMunicipalityMap(ctx)
 
 	modelMetadata := bdplib.CreateStation(forecast.Info.Model,
 		forecast.Info.Model, OriginStationType, BZ_LAT, BZ_LON, bdp.GetOrigin())
@@ -99,7 +98,7 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *dto.Raw[Forecast]) 
 	}
 
 	runTimestamp, err := time.Parse(time.RFC3339, forecast.Info.CurrentModelRun)
-	ms.FailOnError(err, "failed to parse time")
+	ms.FailOnError(ctx, err, "failed to parse time")
 
 	dm := bdp.CreateDataMap()
 	dm.AddRecord(forecast.Info.Model, ForecastAirTemperatureMax, bdplib.CreateRecord(runTimestamp.UnixMilli(), forecast.Info.AbsTempMax, PERIOD12H))
@@ -246,7 +245,8 @@ func mapQuantitativeValues(value string) string {
 var env tr.Env
 
 func main() {
-	envconfig.MustProcess("", &env)
+	ms.InitWithEnv(context.Background(), "", &env)
+	slog.Info("Starting data transformer...")
 	b := bdplib.FromEnv()
 
 	// The old data collector was trying to enrich the type with the localization of each type in the Metadata.
@@ -256,13 +256,14 @@ func main() {
 	// Therefore we aribtrary chose one
 	dataTypeList := bdplib.NewDataTypeList(nil)
 	err := dataTypeList.Load("datatypes.json")
-	ms.FailOnError(err, "could not load datatypes")
+	ms.FailOnError(context.Background(), err, "could not load datatypes")
 
 	slog.Info("pushing datatypes on startup")
 	b.SyncDataTypes(OriginStationType, dataTypeList.All())
 
 	slog.Info("listening")
-	listener := tr.NewTrStack[Forecast](&env)
+	listener := tr.NewTr[Forecast](context.Background(), env)
 	err = listener.Start(context.Background(), TransformWithBdp(b))
-	ms.FailOnError(err, "error while listening to queue")
+
+	ms.FailOnError(context.Background(), err, "error while listening to queue")
 }
