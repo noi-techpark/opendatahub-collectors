@@ -13,6 +13,7 @@ import (
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
+	"github.com/noi-techpark/opendatahub-go-sdk/tel"
 	"github.com/noi-techpark/opendatahub-go-sdk/tel/logger"
 )
 
@@ -212,6 +213,8 @@ var station_proto Stations
 func main() {
 	ms.InitWithEnv(context.Background(), "", &env)
 	slog.Info("Starting data transformer...")
+
+	defer tel.FlushOnPanic()
 
 	b := bdplib.FromEnv()
 	station_proto = ReadStations("../resources/stations.csv")

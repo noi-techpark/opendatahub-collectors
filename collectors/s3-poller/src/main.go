@@ -17,6 +17,7 @@ import (
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/dc"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
+	"github.com/noi-techpark/opendatahub-go-sdk/tel"
 	"github.com/robfig/cron/v3"
 )
 
@@ -35,6 +36,8 @@ var env struct {
 func main() {
 	ms.InitWithEnv(context.Background(), "", &env)
 	slog.Info("Starting data collector...")
+
+	defer tel.FlushOnPanic()
 
 	// Create a custom AWS configuration
 	customConfig, err := config.LoadDefaultConfig(context.Background(),

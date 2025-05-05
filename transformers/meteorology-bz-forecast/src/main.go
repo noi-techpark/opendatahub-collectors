@@ -17,6 +17,7 @@ import (
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
+	"github.com/noi-techpark/opendatahub-go-sdk/tel"
 )
 
 // hard coded bz coordinates for main Station Dto location 46.49067, 11.33982
@@ -248,6 +249,8 @@ func main() {
 	ms.InitWithEnv(context.Background(), "", &env)
 	slog.Info("Starting data transformer...")
 	b := bdplib.FromEnv()
+
+	defer tel.FlushOnPanic()
 
 	// The old data collector was trying to enrich the type with the localization of each type in the Metadata.
 	// Unfortunately the received JSON has different localizations for the same DataType but different period:
