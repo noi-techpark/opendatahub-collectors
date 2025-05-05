@@ -11,6 +11,9 @@ env:
   HTTP_CONFIG_PATH: "/config/http-config.yaml"
   AUTH_STRATEGY: bearer
 
+  SERVICE_NAME: dc-multi-rest-poller-carsharing-alpsgo
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
 envSecretRef:
   - name: MQ_URI
     secret: rabbitmq-svcbind

@@ -10,11 +10,11 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-bdp-client/bdplib"
-	"github.com/noi-techpark/go-opendatahub-ingest/dto"
-	"github.com/noi-techpark/go-opendatahub-ingest/ms"
-	"github.com/noi-techpark/go-opendatahub-ingest/tr"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
+	"github.com/noi-techpark/opendatahub-go-sdk/tel"
 )
 
 const (
@@ -37,12 +37,12 @@ const (
 )
 
 func TransformWithBdp(bdp bdplib.Bdp) tr.Handler[Root] {
-	return func(ctx context.Context, payload *dto.Raw[Root]) error {
+	return func(ctx context.Context, payload *rdb.Raw[Root]) error {
 		return Transform(ctx, bdp, payload)
 	}
 }
 
-func Transform(ctx context.Context, bdp bdplib.Bdp, payload *dto.Raw[Root]) error {
+func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) error {
 	// save stations by stationCode
 	carsharing_stations := make(map[int]bdplib.Station)
 	vehiles_stations := make(map[int]bdplib.Station)
@@ -148,7 +148,7 @@ func SyncDataTypes(bdp bdplib.Bdp) {
 	dataTypes = append(dataTypes, bdplib.CreateDataType(dataTypeAvailableVehicles, "", "number of available vehicles / charging points", "Instantaneous"))
 
 	err := bdp.SyncDataTypes(StationTypeCarSharing, dataTypes)
-	ms.FailOnError(err, fmt.Sprintf("failed to sync types for station %s", StationTypeCarSharing))
+	ms.FailOnError(context.Background(), err, fmt.Sprintf("failed to sync types for station %s", StationTypeCarSharing))
 
 	dataTypes = []bdplib.DataType{}
 	dataTypes = append(dataTypes, bdplib.CreateDataType(dataTypeVehicleCurrentStation, "", "The current station the car is parked in", "Instantaneous"))
@@ -165,19 +165,23 @@ func SyncDataTypes(bdp bdplib.Bdp) {
 	dataTypes = append(dataTypes, bdplib.CreateDataType(dataTypeVehicleFutureAvailability1440, "", "Availability in 1440 minutes ", "Instantaneous"))
 
 	err = bdp.SyncDataTypes(StationTypeVechile, dataTypes)
-	ms.FailOnError(err, fmt.Sprintf("failed to sync types for station %s", StationTypeVechile))
+	ms.FailOnError(context.Background(), err, fmt.Sprintf("failed to sync types for station %s", StationTypeVechile))
 }
 
 var env tr.Env
 
 func main() {
-	envconfig.MustProcess("", &env)
+	ms.InitWithEnv(context.Background(), "", &env)
+	slog.Info("Starting data transformer...")
+
+	defer tel.FlushOnPanic()
+
 	b := bdplib.FromEnv()
 
 	SyncDataTypes(b)
 
-	slog.Info("listening")
-	listener := tr.NewTrStack[Root](&env)
+	listener := tr.NewTr[Root](context.Background(), env)
 	err := listener.Start(context.Background(), TransformWithBdp(b))
-	ms.FailOnError(err, "error while listening to queue")
+
+	ms.FailOnError(context.Background(), err, "error while listening to queue")
 }
