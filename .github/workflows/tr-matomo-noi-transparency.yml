@@ -72,13 +72,8 @@ jobs:
     if: github.ref == 'refs/heads/prod'
     needs: 
       - build
-<<<<<<< HEAD:.github/workflows/tr-matomo-noi-transparency.yml
     runs-on: ubuntu-24.04
     concurrency: tr-matomo-noi-transparency-deploy-prod
-=======
-    runs-on: ubuntu-22.04
-    concurrency: tr-lorawan-deploy-prod
->>>>>>> 15da467 (tr lorawan: fix typo on ci/cd):.github/workflows/tr-lorawan.yml
     environment: prod
     env:
       VALUES_YAML: infrastructure/helm/noi-transparency.yaml
