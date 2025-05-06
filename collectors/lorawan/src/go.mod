@@ -1,6 +1,6 @@
 module opendatahub.com/rest-poller
 
-go 1.22.7
+go 1.23.0
 
 require (
 	github.com/hashicorp/go-retryablehttp v0.7.7

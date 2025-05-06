@@ -1,6 +1,6 @@
 module opendatahub.com/tr-parking-offstreet-sfhera
 
-go 1.22.0
+go 1.23.0
 
 require (
 	github.com/noi-techpark/go-bdp-client v1.0.0

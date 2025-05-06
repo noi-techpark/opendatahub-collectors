@@ -1,6 +1,6 @@
 module opendatahub.com/tr-smart-taxi-merano
 
-go 1.22.2
+go 1.23.0
 
 require (
 	github.com/noi-techpark/go-bdp-client v1.0.0
