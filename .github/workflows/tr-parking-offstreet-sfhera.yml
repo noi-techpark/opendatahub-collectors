@@ -19,6 +19,8 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     concurrency: tr-parking-offstreet-sfhera-build
+    permissions:
+      packages: write
     steps:
     - name: Checkout source code
       uses: actions/checkout@v4

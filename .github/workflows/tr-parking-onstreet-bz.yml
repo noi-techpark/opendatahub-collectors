@@ -19,6 +19,8 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     concurrency: tr-parking-onstreet-bz-build
+    permissions:
+      packages: write
     steps:
     - name: Checkout source code
       uses: actions/checkout@v4
