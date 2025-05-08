@@ -14,10 +14,10 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/kelseyhightower/envconfig"
-	"github.com/noi-techpark/go-opendatahub-ingest/dc"
-	"github.com/noi-techpark/go-opendatahub-ingest/dto"
-	"github.com/noi-techpark/go-opendatahub-ingest/ms"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/dc"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
+	"github.com/noi-techpark/opendatahub-go-sdk/tel"
 	"github.com/robfig/cron/v3"
 )
 
@@ -34,9 +34,10 @@ var env struct {
 }
 
 func main() {
+	ms.InitWithEnv(context.Background(), "", &env)
 	slog.Info("Starting data collector...")
-	envconfig.MustProcess("", &env)
-	ms.InitLog(env.LOG_LEVEL)
+
+	defer tel.FlushOnPanic()
 
 	// Create a custom AWS configuration
 	customConfig, err := config.LoadDefaultConfig(context.Background(),
@@ -45,19 +46,24 @@ func main() {
 			credentials.NewStaticCredentialsProvider(env.AWS_ACCESS_KEY_ID, env.AWS_ACCESS_SECRET_KEY, ""),
 		),
 	)
-	ms.FailOnError(err, "failed to create AWS config")
+	ms.FailOnError(context.Background(), err, "failed to create AWS config")
 
 	// Create an S3 client
 	s3Client := s3.NewFromConfig(customConfig)
 
-	mq, err := dc.PubFromEnv(env.Env)
-	ms.FailOnError(err, "failed creating mq publisher")
+	collector := dc.NewDc[dc.EmptyData](context.Background(), env.Env)
 
 	c := cron.New(cron.WithSeconds())
 	c.AddFunc(env.CRON, func() {
-		slog.Info("Starting poll job")
-		jobstart := time.Now()
+		collector.GetInputChannel() <- dc.NewInput[dc.EmptyData](context.Background(), nil)
+	})
 
+	slog.Info("Setup complete. Starting cron scheduler")
+	go func() {
+		c.Run()
+	}()
+
+	err = collector.Start(context.Background(), func(ctx context.Context, a dc.EmptyData) (*rdb.RawAny, error) {
 		// Get the object from S3
 		output, err := s3Client.GetObject(context.Background(), &s3.GetObjectInput{
 			Bucket: aws.String(env.AWS_S3_BUCKET_NAME),
@@ -65,14 +71,14 @@ func main() {
 		})
 		if err != nil {
 			slog.Error("error while getting s3 object:", "err", err, "bucket", env.AWS_S3_BUCKET_NAME, "file", env.AWS_S3_FILE_NAME)
-			return
+			return nil, err
 		}
 
 		defer output.Body.Close()
 		body, err := io.ReadAll(output.Body)
 		if err != nil {
 			slog.Error("error reading response body:", "err", err)
-			return
+			return nil, err
 		}
 
 		var raw any
@@ -82,13 +88,11 @@ func main() {
 			raw = string(body)
 		}
 
-		mq <- dto.RawAny{
+		return &rdb.RawAny{
 			Provider:  env.PROVIDER,
 			Timestamp: time.Now(),
 			Rawdata:   raw,
-		}
-		slog.Info("Polling job completed", "runtime_ms", time.Since(jobstart).Milliseconds())
+		}, nil
 	})
-	slog.Info("Setup complete. Starting cron scheduler")
-	c.Run()
+	ms.FailOnError(context.Background(), err, err.Error())
 }

@@ -12,6 +12,8 @@ env:
   AUTH_STRATEGY: oauth2
   OAUTH_METHOD: password
   OAUTH_TOKEN_URL: https://www.onecenter.info/oauth/token
+  SERVICE_NAME: dc-multi-rest-poller-parking-skidata
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 
 envSecretRef:
   - name: MQ_URI

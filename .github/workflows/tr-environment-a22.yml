@@ -15,12 +15,18 @@ env:
   KUBERNETES_NAMESPACE: collector
 
 jobs:
-  build:
-    runs-on: ubuntu-22.04
-    concurrency: tr-environment-a22-build
+  ci:
+    runs-on: ubuntu-24.04
+    concurrency: tr-environment-a22-ci
+    permissions:
+      packages: write
     steps:
     - name: Checkout source code
       uses: actions/checkout@v4
+
+    - name: Run tests
+      working-directory: ${{ env.WORKING_DIRECTORY }}/infrastructure
+      run: docker compose --ansi never -f docker-compose.test.yml run --rm --build test
 
     - name: Build and push images
       uses: noi-techpark/github-actions/docker-build-and-push@v2
@@ -32,8 +38,8 @@ jobs:
   deploy-test:
     if: github.ref == 'refs/heads/main'
     needs: 
-      - build
-    runs-on: ubuntu-22.04
+      - ci
+    runs-on: ubuntu-24.04
     concurrency: tr-environment-a22-deploy-test
     environment: test
     env:

@@ -3,7 +3,6 @@ module opendatahub.com/tr-discoverswiss-lodging
 go 1.23.1
 
 require (
-	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/noi-techpark/go-opendatahub-discoverswiss v0.0.0-20250328123718-d29ea5ea27c7
 	github.com/noi-techpark/go-opendatahub-ingest v1.3.1

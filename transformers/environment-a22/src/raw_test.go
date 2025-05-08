@@ -14,7 +14,7 @@ import (
 )
 
 func TestRawUnmarshal(t *testing.T) {
-	f, err := os.ReadFile("../test/raw_example.json")
+	f, err := os.ReadFile("./testdata/raw_example.json")
 	assert.NilError(t, err)
 	raw := dto.Raw[payload]{}
 	err = json.Unmarshal(f, &raw)
