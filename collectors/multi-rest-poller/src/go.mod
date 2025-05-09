@@ -3,7 +3,7 @@ module opendatahub.com/multi-rest-poller
 go 1.23.7
 
 require (
-	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.0
+	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.3
 	github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0
 	github.com/oliveagle/jsonpath v0.0.0-20180606110733-2e52cf6e6852
 	github.com/robfig/cron/v3 v3.0.1
@@ -78,4 +78,8 @@ require (
 	google.golang.org/protobuf v1.36.6 // indirect
 )
 
-require github.com/rabbitmq/amqp091-go v1.10.0 // indirect
+require (
+	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
+	github.com/hashicorp/go-retryablehttp v0.7.7 // indirect
+	github.com/rabbitmq/amqp091-go v1.10.0 // indirect
+)

@@ -31,7 +31,7 @@ var env struct {
 
 	RAW_BINARY bool
 
-	HTTP_URL    string
+	HTTP_URL string
 
 	HTTP_METHOD string `default:"GET"`
 
@@ -46,29 +46,28 @@ var env struct {
 const ENV_HEADER_PREFIX = "HTTP_HEADER_"
 
 func lodgingRequest(url *url.URL, httpHeaders http.Header, httpMethod string) (string, error) {
-    headers := httpHeaders
-    u := url
+	headers := httpHeaders
+	u := url
 	client := retryablehttp.NewClient()
-    req, err := retryablehttp.NewRequest(httpMethod, u.String(), http.NoBody)
-    if err != nil {
-        return "", fmt.Errorf("could not create http request: %w", err)
-    }
+	req, err := retryablehttp.NewRequest(httpMethod, u.String(), http.NoBody)
+	if err != nil {
+		return "", fmt.Errorf("could not create http request: %w", err)
+	}
 
-    req.Header = headers  
-    resp, err := client.Do(req)
-    if err != nil {
-        return "", fmt.Errorf("error during http request: %w", err)
-    }
-    defer resp.Body.Close()
+	req.Header = headers
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("error during http request: %w", err)
+	}
+	defer resp.Body.Close()
 
-    body, err := io.ReadAll(resp.Body)
-    if err != nil {
-        return "", fmt.Errorf("error reading DiscoverSwissResponse body: %w", err)
-    }
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("error reading DiscoverSwissResponse body: %w", err)
+	}
 
-    return string(body), nil
+	return string(body), nil
 }
-
 
 func customHeaders() http.Header {
 	headers := http.Header{}
@@ -95,14 +94,12 @@ func customHeaders() http.Header {
 	return headers
 }
 
-
-
 func main() {
 	slog.Info("Starting data collector...")
 
-	// err := godotenv.Load("../.env")	
+	// err := godotenv.Load("../.env")
 	// ms.FailOnError(err, "could not load .env file")
-	
+
 	envconfig.MustProcess("", &env)
 	ms.InitLog(env.LOG_LEVEL)
 	mq, err := dc.PubFromEnv(env.Env)
@@ -113,25 +110,25 @@ func main() {
 	discoverswissUrl, err := url.Parse(env.HTTP_URL)
 	if err != nil {
 		slog.Error("failed parsing url", "url", env.HTTP_URL, "err", err)
-	}	
+	}
 	c := cron.New(cron.WithSeconds())
-		c.AddFunc(env.CRON, func() {
-			slog.Info("Starting poll job")
-			jobstart := time.Now()
-			continuationToken := ""
+	c.AddFunc(env.CRON, func() {
+		slog.Info("Starting poll job")
+		jobstart := time.Now()
+		continuationToken := ""
 
 		for {
 			currentURL := *discoverswissUrl
 
-		if continuationToken != "" {
-			q := currentURL.Query()
-			q.Set("continuationToken", continuationToken)
-			currentURL.RawQuery = q.Encode()
-		}
+			if continuationToken != "" {
+				q := currentURL.Query()
+				q.Set("continuationToken", continuationToken)
+				currentURL.RawQuery = q.Encode()
+			}
 
 			body, err := lodgingRequest(&currentURL, headers, httpMethod)
-			if err != nil{
-			slog.Error("Could not perform the query", "err", err)
+			if err != nil {
+				slog.Error("Could not perform the query", "err", err)
 			}
 			var response models.DiscoverSwissResponse
 			err = json.Unmarshal([]byte(body), &response)
@@ -146,35 +143,23 @@ func main() {
 					slog.Error("failed marshalling lodging object", "err", err)
 					continue
 				}
-				fmt.Println("ADDITIONAL,TYPE",lodging.AdditionalType)
-				
+				fmt.Println("ADDITIONAL,TYPE", lodging.AdditionalType)
+
 				mq <- dto.RawAny{
 					Provider:  env.PROVIDER,
 					Timestamp: time.Now(),
 					Rawdata:   string(jsonLodging),
 				}
-				
+
 			}
 
 			if !response.HasNextPage || response.NextPageToken == "" {
 				break
 			}
-		
+
 			continuationToken = response.NextPageToken
 		}
 		slog.Info("Polling job completed", "runtime_ms", time.Since(jobstart).Milliseconds())
 	})
-c.Run()
+	c.Run()
 }
-
-	
-
-
-
-
-
-
-
-
-
-
