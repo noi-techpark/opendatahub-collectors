@@ -7,7 +7,7 @@ env:
   MQ_CLIENT: dc-multi-rest-poller-discoverswiss-lodging
   PROVIDER: multi-rest-poller/discoverswiss-lodging
 
-  CRON: "0 16 */2 * * *"
+  CRON: "0 51 9 * * *"
   HTTP_CONFIG_PATH: "/config/http-config.yaml"
 
 

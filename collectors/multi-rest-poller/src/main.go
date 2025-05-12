@@ -111,18 +111,17 @@ func main() {
 		ms.FailOnError(ctx, err, "failed to poll", "err", err)
 
 		// only publish if something returned
-		if data == nil {
-			return
+		if data != nil {
+			enc_data, err := encoder(data)
+			ms.FailOnError(ctx, err, "failed to encode data", "err", err, "data", data)
+
+			err = c.Publish(ctx, &rdb.RawAny{
+				Provider:  env.PROVIDER,
+				Timestamp: time.Now(),
+				Rawdata:   enc_data,
+			})
 		}
 
-		enc_data, err := encoder(data)
-		ms.FailOnError(ctx, err, "failed to encode data", "err", err, "data", data)
-
-		err = c.Publish(ctx, &rdb.RawAny{
-			Provider:  env.PROVIDER,
-			Timestamp: time.Now(),
-			Rawdata:   enc_data,
-		})
 		ms.FailOnError(ctx, err, "failed to publish", "err", err)
 
 		logger.Get(ctx).Info("collection completed", "runtime_ms", time.Since(jobstart).Milliseconds())

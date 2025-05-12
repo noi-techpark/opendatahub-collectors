@@ -5,6 +5,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -15,6 +16,7 @@ import (
 	"strings"
 
 	"github.com/hashicorp/go-retryablehttp"
+	"github.com/noi-techpark/opendatahub-go-sdk/tel/logger"
 	"github.com/oliveagle/jsonpath"
 	"gopkg.in/yaml.v3"
 	"opendatahub.com/multi-rest-poller/oauth"
@@ -221,6 +223,8 @@ func httpRequest(method, url string, headers map[string]string, body any) ([]byt
 	}
 
 	client := retryablehttp.NewClient()
+	client.Logger = logger.Get(context.Background())
+
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("error during http request for %s: %s", url, err.Error())
