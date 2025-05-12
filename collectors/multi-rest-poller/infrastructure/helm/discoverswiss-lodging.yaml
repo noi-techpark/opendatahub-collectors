@@ -9,6 +9,7 @@ env:
 
   CRON: "0 0 */2 * * *"
   HTTP_CONFIG_PATH: "/config/http-config.yaml"
+  
 
   SERVICE_NAME: dc-multi-rest-poller-discoverswiss-lodging
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
