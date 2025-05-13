@@ -7,9 +7,8 @@ env:
   MQ_CLIENT: dc-multi-rest-poller-discoverswiss-lodging
   PROVIDER: multi-rest-poller/discoverswiss-lodging
 
-  CRON: "0 55 7 * * *"
+  CRON: "0 0 9 * * *"
   HTTP_CONFIG_PATH: "/config/http-config.yaml"
-
 
   SERVICE_NAME: dc-multi-rest-poller-discoverswiss-lodging
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317

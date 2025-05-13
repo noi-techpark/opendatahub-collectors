@@ -6,7 +6,7 @@
 @token={{$dotenv API_TOKEN}}
 
 # @name first_call
-GET https://api.discover.swiss/info/v2/lodgingbusinesses?continuationToken=%5B%7B%22token%22%3A%22%2BRID%3A~eSdPAMND6QSaEQUAAAAAAA%3D%3D%23RT%3A450%23TRC%3A4500%23ISV%3A2%23IEO%3A65567%23QCF%3A8%23FPC%3AAgEUFRQKAJqRAQEAA%2BWBbKoVCgBfhgCA1YP6gFyB%22%2C%22range%22%3A%7B%22min%22%3A%22%22%2C%22max%22%3A%22FF%22%7D%7D%5D 
+GET https://api.discover.swiss/info/v2/lodgingbusinesses
 Ocp-Apim-Subscription-Key: {{token}}
 
 @nextPageToken = {{first_call.response.body.nextPageToken}}
