@@ -35,8 +35,6 @@ var env struct {
 	RAW_FILTER_URL_TEMPLATE string
 }
 
-const RAW_FILTER_URL_TEMPLATE = "https://api.tourism.testingmachine.eu/v1/Accommodation?rawfilter=eq(Mapping.discoverswiss.id,%%22%s%%22)&fields=Id"
-
 type contextualAccomodation struct {
 	ctx           context.Context
 	Id            string
