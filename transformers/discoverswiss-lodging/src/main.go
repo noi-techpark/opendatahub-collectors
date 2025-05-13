@@ -74,6 +74,7 @@ func main() {
 
 	go func() {
 		for acco := range accoChannel {
+			ctx := acco.ctx
 			logger.Get(acco.ctx).Debug("getting content accomodation", "id", acco.Accommodation.Mapping.DiscoverSwiss.Id)
 			odhID, err := odhContentClient.GetAccomodationIdByRawFilter(
 				acco.ctx, acco.Accommodation.Mapping.DiscoverSwiss.Id, env.RAW_FILTER_URL_TEMPLATE,
@@ -100,7 +101,7 @@ func main() {
 				postChannel <- acco
 			}
 
-			trace.SpanFromContext(acco.ctx).End()
+			trace.SpanFromContext(ctx).End()
 		}
 	}()
 
