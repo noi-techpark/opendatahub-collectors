@@ -6,173 +6,160 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log/slog"
 	"net/url"
 
-	"github.com/kelseyhightower/envconfig"
-	"github.com/noi-techpark/go-opendatahub-ingest/dto"
-	"github.com/noi-techpark/go-opendatahub-ingest/mq"
-	"github.com/noi-techpark/go-opendatahub-ingest/ms"
-	"github.com/noi-techpark/go-opendatahub-ingest/tr"
-
-	"github.com/noi-techpark/go-opendatahub-discoverswiss/mappers"
-	"github.com/noi-techpark/go-opendatahub-discoverswiss/models"
-	"github.com/noi-techpark/go-opendatahub-discoverswiss/utilities"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
+	"github.com/noi-techpark/opendatahub-go-sdk/tel"
+	"github.com/noi-techpark/opendatahub-go-sdk/tel/logger"
+	"go.opentelemetry.io/otel/trace"
+	odhContentClient "opendatahub.com/tr-discoverswiss-lodging/odh-content-client"
+	odhContentMapper "opendatahub.com/tr-discoverswiss-lodging/odh-content-mapper"
+	odhContentModel "opendatahub.com/tr-discoverswiss-lodging/odh-content-model"
 )
-
-type TokenResponse struct {
-	AccessToken string `json:"access_token"`
-	ExpiresIn   int    `json:"expires_in"`
-	TokenType   string `json:"token_type"`
-}
 
 var env struct {
 	tr.Env
 
-	HTTP_URL    string
-	HTTP_METHOD string `default:"GET"`
-
-	ODH_CORE_TOKEN_URL string
-	ODH_CORE_TOKEN_USERNAME string
-	ODH_CORE_TOKEN_PASSWORD string
-	ODH_CORE_TOKEN_CLIENT_ID string
+	ODH_CORE_TOKEN_URL           string
+	ODH_CORE_TOKEN_USERNAME      string
+	ODH_CORE_TOKEN_PASSWORD      string
+	ODH_CORE_TOKEN_CLIENT_ID     string
 	ODH_CORE_TOKEN_CLIENT_SECRET string
 
-	ODH_API_CORE_URL string 
-
-	SUBSCRIPTION_KEY string
+	ODH_API_CORE_URL string
 
 	RAW_FILTER_URL_TEMPLATE string
 }
 
-const ENV_HEADER_PREFIX = "HTTP_HEADER_"
-
-const RAW_FILTER_URL_TEMPLATE = "https://api.tourism.testingmachine.eu/v1/Accommodation?rawfilter=eq(Mapping.discoverswiss.id,%%22%s%%22)&fields=Id"
-
-func unmarshalGeneric[T any](values string) (*T, error) {
-	var result T
-	if err := json.Unmarshal([]byte(values), &result); err != nil {
-		return nil, fmt.Errorf("error unmarshalling payload json: %w", err)
-	}
-	return &result, nil
+type contextualAccomodation struct {
+	ctx           context.Context
+	Id            string
+	Accommodation odhContentModel.Accommodation
 }
 
-type idplusaccomodation struct{
-	Id string
-	Accommodation models.Accommodation
+func CloneContext(ctx context.Context) context.Context {
+	// Start from a fresh background
+	newCtx := context.Background()
+
+	// Copy span if exists
+	if span := trace.SpanFromContext(ctx); span != nil && span.SpanContext().IsValid() {
+		newCtx = trace.ContextWithSpan(newCtx, span)
+	}
+
+	newCtx = logger.WithTracedLogger(newCtx)
+
+	// Add more context values here if needed (user ID, trace ID, etc.)
+	return newCtx
 }
 
 func main() {
-	//FOR LOCAL TESTING UNCOMMENT THIS LINES
-	// err := godotenv.Load("../.env")
-	// if err != nil {
-	// 	slog.Error("Error loading .env file")
-	// }
-	envconfig.MustProcess("", &env)
-	ms.InitLog(env.Env.LOG_LEVEL)
+	ms.InitWithEnv(context.Background(), "", &env)
+	slog.Info("Starting data transformer...")
 
-	rabbit, err := mq.Connect(env.Env.MQ_URI, env.Env.MQ_CLIENT)
-	ms.FailOnError(err, "failed connecting to rabbitmq")
-	defer rabbit.Close()
+	defer tel.FlushOnPanic()
 
-	fmt.Println("Waiting for messages. To exit press CTRL+C")
-	lbChannel := make(chan models.LodgingBusiness,400)
+	contentCoreUrl, err := url.Parse(env.ODH_API_CORE_URL)
+	ms.FailOnError(context.Background(), err, "could not parse core url")
+	slog.Info("core url", "value", contentCoreUrl.String())
 
-	stackOs := tr.NewTrStack[models.LodgingBusiness](&env.Env)
-	go stackOs.Start(context.Background(), func(ctx context.Context, r *dto.Raw[models.LodgingBusiness]) error {
-		lbChannel <- r.Rawdata
-		return nil
-	})
+	accoChannel := make(chan contextualAccomodation, 400)
+	var putChannel = make(chan contextualAccomodation, 1000)
+	var postChannel = make(chan contextualAccomodation, 1000)
 
-	accoChannel := make(chan models.Accommodation,400)
-	go func(){
-		for lb := range lbChannel {
-			acco := mappers.MapLodgingBusinessToAccommodation(lb)
-			fmt.Println("ACCO TYPE: ",acco.AccoTypeId)
-			accoChannel <- acco
-		}
-	}()
-	
-	var putChannel = make(chan idplusaccomodation,1000)
-	var postChannel = make(chan models.Accommodation,1000)
-	go func(){		
-		fmt.Println("GET RAW FILTER")
-		for acco := range accoChannel {			
-			rawfilter,err := utilities.GetAccomodationIdByRawFilter(acco.Mapping.DiscoverSwiss.Id,env.RAW_FILTER_URL_TEMPLATE)
-			if err != nil {
-				slog.Error("cannot get rawfilter", "err", err)
-				return
-			}
-			if len(rawfilter)>0 && rawfilter != "" {
-				idplusaccomodation := idplusaccomodation{Id: rawfilter, Accommodation: acco}
-				putChannel <- idplusaccomodation
-			}else{
+	go func() {
+		for acco := range accoChannel {
+			ctx := acco.ctx
+			logger.Get(acco.ctx).Debug("getting content accomodation", "id", acco.Accommodation.Mapping.DiscoverSwiss.Id)
+			odhID, err := odhContentClient.GetAccomodationIdByRawFilter(
+				acco.ctx, acco.Accommodation.Mapping.DiscoverSwiss.Id, env.RAW_FILTER_URL_TEMPLATE,
+			)
+			ms.FailOnError(acco.ctx, err, "cannot get accomodation from content", "id", acco.Accommodation.Mapping.DiscoverSwiss.Id)
+			if len(odhID) > 0 && odhID != "" {
+				ctx, _ := tel.TraceStart(
+					CloneContext(acco.ctx),
+					fmt.Sprintf("%s.put", tel.GetServiceName()),
+					trace.WithSpanKind(trace.SpanKindInternal),
+				)
+
+				acco.ctx = ctx
+				acco.Id = odhID
+				putChannel <- acco
+			} else {
+				ctx, _ := tel.TraceStart(
+					CloneContext(acco.ctx),
+					fmt.Sprintf("%s.post", tel.GetServiceName()),
+					trace.WithSpanKind(trace.SpanKindInternal),
+				)
+
+				acco.ctx = ctx
 				postChannel <- acco
 			}
-		}}()
-	
-		go func(){			
-			tokenSource,err := utilities.GetAccessToken(env.ODH_CORE_TOKEN_URL,env.ODH_CORE_TOKEN_CLIENT_ID, env.ODH_CORE_TOKEN_CLIENT_SECRET)
-			if err != nil {
-				slog.Error("cannot get token", "err", err)
-				fmt.Println("ERROR GETTING TOKEN: ",err)
-				return
-			}
-			for acco := range putChannel {
-				u, err := url.Parse(env.ODH_API_CORE_URL)
-				slog.Info("URL", "value", u.String())
-				if err != nil {
-					slog.Error("cannot parse url", "err", err)
-					return
-				}
-				puttoken,err := tokenSource.Token()
-				fmt.Println("PRINT PUTTOKEN: ",puttoken)
-				if err != nil {
-					slog.Error("cannot get token", "err", err)
-					fmt.Println("ERROR TOKEN: ",err)
-					return
-				}
-				respStatus,err := utilities.PutContentApi(u, puttoken.AccessToken, acco.Accommodation, acco.Id)
-				if err != nil {
-					slog.Error("cannot make authorized request", "err", err)
-					fmt.Println("ERROR PUT: ",err)
-					return
-					
-				}
-				fmt.Println("RESPONSE STATUS: ",respStatus)
-			}}()
-	
-		go func(){				
-				u,err := url.Parse(env.ODH_API_CORE_URL)
-				if err != nil {
-					slog.Error("cannot parse url", "err", err)
-					return
-				}
-				token,err := utilities.GetAccessToken(env.ODH_CORE_TOKEN_URL, env.ODH_CORE_TOKEN_CLIENT_ID, env.ODH_CORE_TOKEN_CLIENT_SECRET)
-				if err != nil {
-					slog.Error("cannot get token", "err", err)
-					return
-				}
 
-				for acco := range postChannel {
-					fmt.Println("POSTING")
-					posttoken,err := token.Token()
-					if err != nil {
-						slog.Error("cannot get token", "err", err)
-						return
-					}
-					respStatus,err := utilities.PostContentApi(u, posttoken.AccessToken, acco)
-					if err != nil {
-						slog.Error("cannot make authorized request", "err", err)
-						return
-					}
-					 slog.Info("RESPONSE STATUS", "status", respStatus)
-				}
-			}()
+			trace.SpanFromContext(ctx).End()
+		}
+	}()
 
-		 select{}
+	go func() {
+		tokenSource, err := odhContentClient.GetAccessToken(env.ODH_CORE_TOKEN_URL, env.ODH_CORE_TOKEN_CLIENT_ID, env.ODH_CORE_TOKEN_CLIENT_SECRET)
+		ms.FailOnError(context.Background(), err, "failed to instantiate oauth token source")
+
+		for acco := range putChannel {
+			logger.Get(acco.ctx).Debug("putting content accomodation",
+				"id", acco.Accommodation.Mapping.DiscoverSwiss.Id,
+				"content_id", acco.Id)
+
+			puttoken, err := tokenSource.Token()
+			ms.FailOnError(acco.ctx, err, "failed to get content api token")
+
+			_, err = odhContentClient.PutContentApi(acco.ctx, contentCoreUrl, puttoken.AccessToken, acco.Accommodation, acco.Id)
+			ms.FailOnError(acco.ctx, err, "failed to put content accomodation", "id", acco.Accommodation.Mapping.DiscoverSwiss.Id,
+				"content_id", acco.Id)
+
+			slog.Debug("put ok", "id", acco.Accommodation.Mapping.DiscoverSwiss.Id)
+			trace.SpanFromContext(acco.ctx).End()
+		}
+	}()
+
+	go func() {
+		token, err := odhContentClient.GetAccessToken(env.ODH_CORE_TOKEN_URL, env.ODH_CORE_TOKEN_CLIENT_ID, env.ODH_CORE_TOKEN_CLIENT_SECRET)
+		ms.FailOnError(context.Background(), err, "failed to instantiate oauth token source")
+
+		for acco := range postChannel {
+			logger.Get(acco.ctx).Debug("posting content accomodation",
+				"id", acco.Accommodation.Mapping.DiscoverSwiss.Id)
+
+			posttoken, err := token.Token()
+			ms.FailOnError(acco.ctx, err, "failed to get content api token")
+
+			_, err = odhContentClient.PostContentApi(acco.ctx, contentCoreUrl, posttoken.AccessToken, acco)
+			ms.FailOnError(acco.ctx, err, "failed to post content accomodation", "id", acco.Accommodation.Mapping.DiscoverSwiss.Id)
+
+			slog.Debug("post ok", "id", acco.Accommodation.Mapping.DiscoverSwiss.Id)
+			trace.SpanFromContext(acco.ctx).End()
+		}
+	}()
+
+	listener := tr.NewTr[odhContentModel.LodgingBusiness](context.Background(), env.Env)
+	err = listener.Start(context.Background(), func(ctx context.Context, r *rdb.Raw[odhContentModel.LodgingBusiness]) error {
+
+		logger.Get(ctx).Info("Processing accomodation", "id", r.Rawdata.Identifier)
+		acco := odhContentMapper.MapLodgingBusinessToAccommodation(r.Rawdata)
+
+		// we need to create a new span since the one in start will end after return
+		// by doing so we also need to clone the context to a fresh new one since ctx will be canceled after return
+		ctx, _ = tel.TraceStart(
+			CloneContext(ctx),
+			fmt.Sprintf("%s.async-process", tel.GetServiceName()),
+			trace.WithSpanKind(trace.SpanKindInternal),
+		)
+
+		accoChannel <- contextualAccomodation{ctx: ctx, Accommodation: acco, Id: ""}
+		return nil
+
+	})
+	ms.FailOnError(context.Background(), err, "error while listening to queue")
 }
-
-

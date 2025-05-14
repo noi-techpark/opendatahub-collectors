@@ -5,6 +5,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -14,6 +15,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/hashicorp/go-retryablehttp"
+	"github.com/noi-techpark/opendatahub-go-sdk/tel/logger"
 	"github.com/oliveagle/jsonpath"
 	"gopkg.in/yaml.v3"
 	"opendatahub.com/multi-rest-poller/oauth"
@@ -22,6 +25,13 @@ import (
 type RootConfig struct {
 	Call              *CallConfig              `yaml:"http_call"`
 	MultipleRootCalls *RootMultipleCallsConfig `yaml:"http_calls"`
+}
+
+func (r RootConfig) SelectorType() string {
+	if r.Call != nil {
+		return r.Call.DataSelectorType
+	}
+	return r.MultipleRootCalls.DataSelectorType
 }
 
 type RootMultipleCallsConfig struct {
@@ -33,6 +43,7 @@ type CallConfig struct {
 	URL               string            `yaml:"url"`
 	Method            string            `yaml:"method"`
 	Headers           map[string]string `yaml:"headers"`
+	Stream            bool              `yaml:"stream"`
 	DataSelector      string            `yaml:"data_selector"`
 	DataSelectorType  string            `yaml:"data_selector_type"`
 	NestedCalls       []CallConfig      `yaml:"nested_calls"`
@@ -43,10 +54,10 @@ type CallConfig struct {
 }
 
 type Pagination struct {
-	RequestStrategy  string        `yaml:"request_strategy"`  // header | query | body
-	ResponseStrategy string        `yaml:"response_strategy"` // header | body
-	OffsetBuilder    OffsetBuilder `yaml:"offset_builder"`    //
-	RequestKey       string        `yaml:"request_key"`       // where to put the offset for next requests
+	RequestStrategy string        `yaml:"request_strategy"` // header | query | body
+	LookupStrategy  string        `yaml:"lookup_strategy"`  // header | body | increment
+	OffsetBuilder   OffsetBuilder `yaml:"offset_builder"`   //
+	RequestKey      string        `yaml:"request_key"`      // where to put the offset for next requests
 }
 
 type OffsetBuilder struct {
@@ -56,6 +67,8 @@ type OffsetBuilder struct {
 	NextType         string `yaml:"next_type"`
 	BreakOnNextEmpty bool   `yaml:"break_on_next_empty"`
 }
+
+type encoder func(d any) (string, error)
 
 var oauthProvider *oauth.OAuthProvider = nil
 
@@ -82,24 +95,21 @@ func LoadConfig(filename string) (*RootConfig, error) {
 }
 
 // Poll is the entry point that starts the recursive processing and returns the final result as a string.
-func Poll(config *RootConfig) (string, error) {
+func Poll(config *RootConfig, stream chan<- any) (any, error) {
 	if env.AUTH_STRATEGY == "oauth2" {
 		oauthProvider = oauth.NewOAuthProvider()
 	}
 
 	var result interface{} = nil
-	var root_selector_type string = ""
 	var err error
 
 	if config.Call != nil {
-		root_selector_type = config.Call.DataSelectorType
-		result, err = processCall(*config.Call)
+		result, err = processCall(*config.Call, stream)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 	} else if config.MultipleRootCalls != nil {
 		calls_result := map[string]interface{}{}
-		root_selector_type = config.MultipleRootCalls.DataSelectorType
 		wrapped_calls := CallConfig{
 			NestedCalls: config.MultipleRootCalls.NestedCalls,
 		}
@@ -107,33 +117,44 @@ func Poll(config *RootConfig) (string, error) {
 		err := handleNestedCalls(wrapped_calls, &calls_result)
 		result = calls_result
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 	}
 
 	// calls went good but selector returned nil
 	if result == nil {
-		return "", nil
+		return nil, nil
 	}
 
-	// Based on the configured DataSelectorType, convert the result to a string.
-	if root_selector_type == "json" {
-		// For JSON responses, marshal the result.
-		finalBytes, err := json.Marshal(result)
-		if err != nil {
-			return "", fmt.Errorf("error marshalling final result: %s", err.Error())
+	// calls went good but no results
+	if array_result, ok := result.([]interface{}); ok && len(array_result) == 0 {
+		return nil, nil
+	}
+
+	return result, nil
+}
+
+func GetEncoder(c RootConfig) func(d any) (string, error) {
+	return func(d any) (string, error) {
+		// Based on the configured DataSelectorType, convert the result to a string.
+		if c.SelectorType() == "json" {
+			// For JSON responses, marshal the result.
+			finalBytes, err := json.Marshal(d)
+			if err != nil {
+				return "", fmt.Errorf("error marshalling final result: %s", err.Error())
+			}
+			return string(finalBytes), nil
 		}
-		return string(finalBytes), nil
-	}
 
-	// For non-JSON types assume the result is a string or can be converted.
-	switch res := result.(type) {
-	case string:
-		return res, nil
-	case []byte:
-		return string(res), nil
-	default:
-		return fmt.Sprintf("%v", res), nil
+		// For non-JSON types assume the result is a string or can be converted.
+		switch res := d.(type) {
+		case string:
+			return res, nil
+		case []byte:
+			return string(res), nil
+		default:
+			return fmt.Sprintf("%v", res), nil
+		}
 	}
 }
 
@@ -168,11 +189,17 @@ func extractData(result []byte, selector_type, selector string) (interface{}, er
 	return result, nil
 }
 
+// existsData check if a JSONPath selector exists in data.
+func existsData(result []byte, selector_type, selector string) bool {
+	r, err := extractData(result, selector_type, selector)
+	return err == nil && r != nil
+}
+
 func httpRequest(method, url string, headers map[string]string, body any) ([]byte, error) {
 	// TODO BODY for POST
 	var req_body io.Reader = nil
 
-	req, err := http.NewRequest(method, url, req_body)
+	req, err := retryablehttp.NewRequest(method, url, req_body)
 	if err != nil {
 		return nil, fmt.Errorf("could not create request for url %s: %s", url, err.Error())
 	}
@@ -195,7 +222,9 @@ func httpRequest(method, url string, headers map[string]string, body any) ([]byt
 		req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", env.AUTH_BEARER_TOKEN))
 	}
 
-	client := &http.Client{}
+	client := retryablehttp.NewClient()
+	client.Logger = logger.Get(context.Background())
+
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("error during http request for %s: %s", url, err.Error())
@@ -230,7 +259,7 @@ func handleNestedCalls(parent_call CallConfig, data *map[string]any) error {
 			nestedCall.URL = fmt.Sprintf(nestedCall.URL, params...)
 		}
 		// Recursively process the nested call.
-		nestedResult, err := processCall(nestedCall)
+		nestedResult, err := processCall(nestedCall, nil)
 		if err != nil {
 			return fmt.Errorf("error processing nested call for url %s: %s", nestedCall.URL, err.Error())
 		}
@@ -241,53 +270,26 @@ func handleNestedCalls(parent_call CallConfig, data *map[string]any) error {
 	return nil
 }
 
-// processCall sends the HTTP request for the given config, optionally extracts data using a JSONPath selector,
-// and then processes any nested calls recursively.
-func processCall(config CallConfig) (interface{}, error) {
-	slog.Info("pulling endpoint", "endpoint", config.URL)
-
-	if config.Pagination != nil && config.Pagination.ResponseStrategy == "body" {
-		if config.DataSelectorType == "" || config.DataSelector == "" {
-			return nil, fmt.Errorf(
-				"pagination with response_strategy == 'body' requires data_selector and data_selector_type to be set",
-			)
-		}
-	}
-
-	/// -------------------- CALL first time is the same for paginated and not paginated
+func getTree(config CallConfig, method, url string, headers map[string]string, body any) (any, []byte, error) {
+	/// -------------------- CALL
 	// TODO BODY for POST
-	body, err := httpRequest(config.Method, config.URL, config.Headers, nil)
+	body_res, err := httpRequest(method, url, headers, body)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	/// -------------------- RESULT MANIPULATION
-	result, err := extractData(body, config.DataSelectorType, config.DataSelector)
+	result, err := extractData(body_res, config.DataSelectorType, config.DataSelector)
 	if err != nil {
-		return nil, fmt.Errorf("error extracting data on url %s: %s", config.URL, err.Error())
-	}
-
-	/// -------------------- PAGINATION
-	if config.Pagination != nil {
-		array_result, ok := result.([]interface{})
-		if !ok {
-			return nil, fmt.Errorf("cannot paginate if results are not arrays url %s", config.URL)
-		}
-		pagination_results, err := doPaginatedRequests(config, body)
-		if err != nil {
-			return nil, fmt.Errorf("error performing pagination url %s: %s", config.URL, err.Error())
-		}
-		array_result = append(array_result, pagination_results...)
-		result = array_result
+		return nil, nil, fmt.Errorf("error extracting data: %s", err.Error())
 	}
 
 	// Process nested calls if defined.
 	if len(config.NestedCalls) == 0 {
-		return result, nil
+		return result, body_res, nil
 	}
 
 	/// -------------------- NESTED CALLS
-
 	switch data := result.(type) {
 	case []interface{}:
 		// Iterate over each entity in the slice.
@@ -298,7 +300,7 @@ func processCall(config CallConfig) (interface{}, error) {
 			}
 			err := handleNestedCalls(config, &itemMap)
 			if err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 			data[i] = itemMap
 		}
@@ -307,16 +309,75 @@ func processCall(config CallConfig) (interface{}, error) {
 		// Process nested calls for a single object.
 		err := handleNestedCalls(config, &data)
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 		result = data
+	}
+
+	return result, body_res, nil
+}
+
+func handleStream(config CallConfig, data any, stream chan<- any) (any, bool) {
+	if stream == nil || !config.Stream {
+		return data, false
+	}
+
+	array_data, ok := data.([]interface{})
+	// if not array, stream the whole data and return nil
+	if !ok {
+		stream <- data
+		return nil, true
+	}
+
+	// if array stream element by element and return empty array
+	for _, d := range array_data {
+		stream <- d
+	}
+
+	return []any{}, true
+}
+
+// processCall sends the HTTP request for the given config, optionally extracts data using a JSONPath selector,
+// and then processes any nested calls recursively.
+func processCall(config CallConfig, stream chan<- any) (interface{}, error) {
+	slog.Info("pulling endpoint", "endpoint", config.URL)
+
+	if config.Pagination != nil && config.Pagination.LookupStrategy == "body" {
+		if config.DataSelectorType == "" || config.DataSelector == "" {
+			return nil, fmt.Errorf(
+				"pagination with response_strategy == 'body' requires data_selector and data_selector_type to be set",
+			)
+		}
+	}
+
+	/// -------------------- CALL first time is the same for paginated and not paginated
+	result, body_result, err := getTree(config, config.Method, config.URL, config.Headers, nil)
+	if err != nil {
+		return nil, fmt.Errorf("error getting data from url %s: %s", config.URL, err.Error())
+	}
+
+	// handle steram
+	result, _ = handleStream(config, result, stream)
+
+	/// -------------------- PAGINATION
+	if config.Pagination != nil {
+		array_result, ok := result.([]interface{})
+		if !ok {
+			return nil, fmt.Errorf("cannot paginate if results are not arrays url %s", config.URL)
+		}
+		pagination_results, err := doPaginatedRequests(config, body_result, stream)
+		if err != nil {
+			return nil, fmt.Errorf("error performing pagination url %s: %s", config.URL, err.Error())
+		}
+		array_result = append(array_result, pagination_results...)
+		result = array_result
 	}
 
 	return result, nil
 }
 
 // doPaginatedRequest loops requests and aggregates the data from each page.
-func doPaginatedRequests(config CallConfig, first_call_body []byte) ([]interface{}, error) {
+func doPaginatedRequests(config CallConfig, first_call_body []byte, stream chan<- any) ([]interface{}, error) {
 	p := config.Pagination
 	offsetBuilder := p.OffsetBuilder
 	prev_call_body := first_call_body
@@ -331,12 +392,22 @@ func doPaginatedRequests(config CallConfig, first_call_body []byte) ([]interface
 		var newOffsetFound bool
 		var err error
 
-		switch p.ResponseStrategy {
+		switch p.LookupStrategy {
 		case "body":
-			currentOffset, newOffsetFound, err = computeNextOffsetBody(config, prev_call_body, currentOffset)
-		// TODO handle 'header' response strategy
+			currentOffset, newOffsetFound, err = computeNextOffsetBody(config, prev_call_body)
+		case "increment":
+			// Current offset must be numeric to add increment
+			cur, err := toInt(currentOffset)
+			if err != nil {
+				// Can't increment a non-integer offset
+				return nil, fmt.Errorf("cannot increment non-integer offset %v: %w", currentOffset, err)
+			}
+			currentOffset = cur + offsetBuilder.Increment
+			newOffsetFound = true
+
+		// TODO handle 'header' lookup strategy
 		default:
-			return nil, fmt.Errorf("unsupported pagination response strategy %q", p.RequestStrategy)
+			return nil, fmt.Errorf("unsupported pagination lookup strategy %q", p.LookupStrategy)
 		}
 
 		if err != nil {
@@ -348,28 +419,21 @@ func doPaginatedRequests(config CallConfig, first_call_body []byte) ([]interface
 		}
 
 		url := config.URL
+		headers := cloneHeaders(config.Headers)
+
 		p := config.Pagination
 		var body []byte = nil
 
-		slog.Info("pulling url %s with pagination %v", config.URL, currentOffset)
+		slog.Info("pulling", "url", config.URL, "pagination", currentOffset)
 
 		switch p.RequestStrategy {
 		case "header":
 			// Place offset in the headers as p.RequestKey
-			mergedHeaders := cloneHeaders(config.Headers)
-			mergedHeaders[p.RequestKey] = fmt.Sprintf("%v", currentOffset)
-			body, err = httpRequest(config.Method, url, config.Headers, nil)
-			if err != nil {
-				return nil, err
-			}
+			headers[p.RequestKey] = fmt.Sprintf("%v", currentOffset)
 
 		case "query":
 			// Place offset as query param, e.g. ?page=OFFSET
-			reqURL, err := buildURLWithQueryParam(config.URL, p.RequestKey, fmt.Sprintf("%v", currentOffset))
-			if err != nil {
-				return nil, err
-			}
-			body, err = httpRequest(config.Method, reqURL, config.Headers, nil)
+			url, err = buildURLWithQueryParam(config.URL, p.RequestKey, fmt.Sprintf("%v", currentOffset))
 			if err != nil {
 				return nil, err
 			}
@@ -378,7 +442,7 @@ func doPaginatedRequests(config CallConfig, first_call_body []byte) ([]interface
 			return nil, fmt.Errorf("unsupported pagination strategy %q", p.RequestStrategy)
 		}
 
-		result, err := extractData(body, config.DataSelectorType, config.DataSelector)
+		result, body_Result, err := getTree(config, config.Method, url, headers, body)
 		if err != nil {
 			return nil, fmt.Errorf("error extracting data on url %s: %s", config.URL, err.Error())
 		}
@@ -389,68 +453,59 @@ func doPaginatedRequests(config CallConfig, first_call_body []byte) ([]interface
 			break
 		}
 
-		// If extracted is not an array, we treat it as a single item
-		array_result, ok := result.([]interface{})
-		if !ok {
-			return nil, fmt.Errorf("cannot paginate if results are not arrays url %s", config.URL)
-		}
+		result, streamed := handleStream(config, result, stream)
 
-		// If empty array data, we stop
-		if len(array_result) == 0 {
-			slog.Debug("no data extracted; stopping pagination")
-			break
-		}
+		if !streamed {
+			// no need to check if the refecltion goes well since we already did it for the first call in "processCall"
+			array_result := result.([]interface{})
+			// If empty array data, we stop
+			if len(array_result) == 0 {
+				slog.Debug("no data extracted; stopping pagination")
+				break
+			}
 
-		allItems = append(allItems, array_result...)
-		prev_call_body = body
+			allItems = append(allItems, array_result...)
+		}
+		prev_call_body = body_Result
 	}
 
 	return allItems, nil
 }
 
-func computeNextOffsetBody(config CallConfig, response_body []byte, currentOffset interface{}) (interface{}, bool, error) {
+func computeNextOffsetBody(config CallConfig, response_body []byte) (interface{}, bool, error) {
 	var nextOffset interface{} = nil
 	newOffsetFound := true
 	offsetBuilder := config.Pagination.OffsetBuilder
+	var val interface{} = nil
+	var err error = nil
 
-	if offsetBuilder.Next != "" {
-		val, err := extractData(response_body, config.DataSelectorType, offsetBuilder.Next)
+	if existsData(response_body, config.DataSelectorType, offsetBuilder.Next) {
+		val, err = extractData(response_body, config.DataSelectorType, offsetBuilder.Next)
 		if err != nil {
 			return nil, false, fmt.Errorf("error extracting next offset: %w", err)
 		}
+	}
 
-		// If we found a next offset in the JSON
-		if val != nil && !isEmptyValue(val) {
-			// Convert it to int/string if needed
-			switch offsetBuilder.NextType {
-			case "int":
-				intVal, err := toInt(val)
-				if err != nil {
-					return nil, false, fmt.Errorf("next offset is not convertible to int: %v", err)
-				}
-				nextOffset = intVal
-			case "string":
-				nextOffset = fmt.Sprintf("%v", val)
-			default:
-				// if no next_type is specified, fallback to raw
-				nextOffset = val
+	// If we found a next offset in the JSON
+	if val != nil && !isEmptyValue(val) {
+		// Convert it to int/string if needed
+		switch offsetBuilder.NextType {
+		case "int":
+			intVal, err := toInt(val)
+			if err != nil {
+				return nil, false, fmt.Errorf("next offset is not convertible to int: %v", err)
 			}
-		}
-
-		if offsetBuilder.BreakOnNextEmpty && isEmptyValue(nextOffset) {
-			return nil, false, nil
+			nextOffset = intVal
+		case "string":
+			nextOffset = fmt.Sprintf("%v", val)
+		default:
+			// if no next_type is specified, fallback to raw
+			nextOffset = val
 		}
 	}
 
-	// If, try the increment approach
-	if offsetBuilder.Increment != 0 {
-		// Current offset must be numeric to add increment
-		cur, err := toInt(currentOffset)
-		if err != nil {
-			// Can't increment a non-integer offset
-			return nil, false, fmt.Errorf("cannot increment non-integer offset %v: %w", currentOffset, err)
-		}
-		nextOffset = cur + offsetBuilder.Increment
+	if offsetBuilder.BreakOnNextEmpty && isEmptyValue(nextOffset) {
+		return nil, false, nil
 	}
 
 	return nextOffset, newOffsetFound, nil
