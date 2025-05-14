@@ -6,6 +6,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"time"
 
@@ -13,7 +14,10 @@ import (
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	"github.com/noi-techpark/opendatahub-go-sdk/tel"
+	"github.com/noi-techpark/opendatahub-go-sdk/tel/logger"
 	"github.com/robfig/cron/v3"
+	"go.opentelemetry.io/otel/trace"
+	"go.opentelemetry.io/otel/trace/noop"
 )
 
 var env struct {
@@ -42,31 +46,85 @@ func main() {
 	defer tel.FlushOnPanic()
 
 	config, err := LoadConfig(env.HTTP_CONFIG_PATH)
+	encoder := GetEncoder(*config)
+
 	ms.FailOnError(context.Background(), err, "failed to load call config")
 
 	collector := dc.NewDc[dc.EmptyData](context.Background(), env.Env)
 
+	slog.Info("Setup complete. Starting cron scheduler")
+
 	c := cron.New(cron.WithSeconds())
 	c.AddFunc(env.CRON, func() {
-		collector.GetInputChannel() <- dc.NewInput[dc.EmptyData](context.Background(), nil)
-	})
+		jobstart := time.Now()
 
-	slog.Info("Setup complete. Starting cron scheduler")
-	go func() {
-		c.Run()
-	}()
+		ctx, c := collector.StartCollection(context.Background())
+		defer c.End(ctx)
 
-	err = collector.Start(context.Background(), func(ctx context.Context, a dc.EmptyData) (*rdb.RawAny, error) {
-		data, err := Poll(config)
-		if err != nil {
-			return nil, err
+		logger.Get(ctx).Debug("collecting")
+
+		// Create cancelable context for the job
+		streamCtx, cancel := context.WithCancel(ctx)
+		defer cancel()
+
+		stream_channel := make(chan any, 1)
+
+		go func(ctx context.Context) {
+			defer close(stream_channel)
+			for {
+				select {
+				case <-ctx.Done():
+					return
+				case stream_d, ok := <-stream_channel:
+					if !ok {
+						return
+					}
+					// streamed results
+					enc_data, err := encoder(stream_d)
+					ms.FailOnError(ctx, err, "failed to encode data", "err", err, "data", stream_d)
+
+					pubCtx := ctx
+					var pubSpan trace.Span = noop.Span{}
+					// link span without full trace
+					rootContext := trace.SpanContextFromContext(ctx)
+					if rootContext.IsValid() {
+						pubCtx, pubSpan = tel.TraceStart(context.Background(), fmt.Sprintf("%s.data-stream", tel.GetServiceName()),
+							trace.WithLinks(trace.Link{
+								SpanContext: rootContext,
+							}),
+							trace.WithSpanKind(trace.SpanKindInternal),
+						)
+					}
+
+					err = c.Publish(pubCtx, &rdb.RawAny{
+						Provider:  env.PROVIDER,
+						Timestamp: time.Now(),
+						Rawdata:   enc_data,
+					})
+					ms.FailOnError(pubCtx, err, "failed to publish", "err", err)
+					pubSpan.End()
+				}
+			}
+		}(streamCtx)
+
+		data, err := Poll(config, stream_channel)
+		ms.FailOnError(ctx, err, "failed to poll", "err", err)
+
+		// only publish if something returned
+		if data != nil {
+			enc_data, err := encoder(data)
+			ms.FailOnError(ctx, err, "failed to encode data", "err", err, "data", data)
+
+			err = c.Publish(ctx, &rdb.RawAny{
+				Provider:  env.PROVIDER,
+				Timestamp: time.Now(),
+				Rawdata:   enc_data,
+			})
 		}
 
-		return &rdb.RawAny{
-			Provider:  env.PROVIDER,
-			Timestamp: time.Now(),
-			Rawdata:   data,
-		}, nil
+		ms.FailOnError(ctx, err, "failed to publish", "err", err)
+
+		logger.Get(ctx).Info("collection completed", "runtime_ms", time.Since(jobstart).Milliseconds())
 	})
-	ms.FailOnError(context.Background(), err, err.Error())
+	c.Run()
 }

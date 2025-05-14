@@ -1,0 +1,21 @@
+# SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+http_call:
+  url: https://api.discover.swiss/info/v2/lodgingbusinesses
+  method: GET
+  stream: true
+  headers:
+    Accept: application/json
+  data_selector_type: json
+  data_selector: $.data
+  pagination:
+    request_strategy: query
+    lookup_strategy: body
+    request_key: continuationToken
+    
+    offset_builder:
+      next_field: $.nextPageToken
+      next_type: string
+      break_on_next_empty: true

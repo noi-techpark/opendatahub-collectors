@@ -47,3 +47,6 @@ secrets.yml
 .vscode
 .apt_generated
 .m2
+
+go.work
+go.work.sum

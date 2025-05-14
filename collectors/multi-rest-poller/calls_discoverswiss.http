@@ -1,0 +1,18 @@
+# SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+###
+@token={{$dotenv API_TOKEN}}
+
+# @name first_call
+GET https://api.discover.swiss/info/v2/lodgingbusinesses
+Ocp-Apim-Subscription-Key: {{token}}
+
+@nextPageToken = {{first_call.response.body.nextPageToken}}
+
+###
+
+# @name second_call
+GET https://api.discover.swiss/info/v2/lodgingbusinesses?continuationToken={{nextPageToken}}
+Ocp-Apim-Subscription-Key: {{token}}
