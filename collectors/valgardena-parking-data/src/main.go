@@ -26,8 +26,8 @@ import (
 
 var env struct {
 	dc.Env
-	CRON string
-	RAW_BINARY bool
+	CRON        string
+	RAW_BINARY  bool
 	HTTP_URL    string
 	HTTP_METHOD string `default:"GET"`
 }
@@ -49,7 +49,7 @@ type ParkingData struct {
 
 const ENV_HEADER_PREFIX = "HTTP_HEADER_"
 
-func httpRequest(url *url.URL, httpHeaders http.Header, httpMethod string) (string,error) {
+func httpRequest(url *url.URL, httpHeaders http.Header, httpMethod string) (string, error) {
 	headers := httpHeaders
 	u := url
 	client := retryablehttp.NewClient()
@@ -59,7 +59,7 @@ func httpRequest(url *url.URL, httpHeaders http.Header, httpMethod string) (stri
 		return "", err
 	}
 	req.Header = headers
-	
+
 	resp, err := client.Do(req)
 	if err != nil {
 		slog.Error("error during http request:", "err", err)
@@ -70,7 +70,7 @@ func httpRequest(url *url.URL, httpHeaders http.Header, httpMethod string) (stri
 	if err != nil {
 		slog.Error("error reading response body:", "err", err)
 		return "", err
-	}	
+	}
 	return string(body), nil
 }
 
@@ -93,7 +93,7 @@ func main() {
 		slog.Info("Starting poll job")
 		jobstart := time.Now()
 
-		body,err := httpRequest(u, headers, httpMethod)
+		body, err := httpRequest(u, headers, httpMethod)
 		if err != nil {
 			slog.Error("error during http request:", "err", err)
 		}
@@ -106,12 +106,12 @@ func main() {
 
 		var parkingDataSingle ParkingData
 		for _, parking := range parkingMetaDataSlice {
-			urlData := fmt.Sprintf("https://parking.valgardena.it/get_station_data?id=%s", parking.ID)
+			urlData := fmt.Sprintf("https://parking.valgardena.it/get_station_data?id=%s", url.QueryEscape(parking.ID))
 			urlDataParsed, err := url.Parse(urlData)
 			if err != nil {
 				slog.Error("error parsing url:", "err", err)
 			}
-			body,err = httpRequest(urlDataParsed, headers, httpMethod)
+			body, err = httpRequest(urlDataParsed, headers, httpMethod)
 			if err != nil {
 				slog.Error("error during http request:", "err", err)
 			}

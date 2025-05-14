@@ -1,0 +1,15 @@
+# SPDX-FileCopyrightText: 2025 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+@host = https://parking.valgardena.it
+
+### Get list of stations
+GET {{host}}/get_station_metadata
+Accept: application/json
+{{$dotenv HTTP_HEADER_AUTHORIZATION}}
+
+### Get single station occupancy
+GET {{host}}/get_station_data?id=alpe di siusi
+Accept: application/json
+{{$dotenv HTTP_HEADER_AUTHORIZATION}}
