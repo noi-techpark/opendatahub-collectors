@@ -10,7 +10,7 @@ imagePullSecrets:
 
 env:
   # ODH Core Writer Connection
-  LOG_LEVEL: "DEBUG"
+  LOG_LEVEL: "INFO"
   MQ_QUEUE: discoverswiss.lodging  
   MQ_EXCHANGE: routed  
   MQ_KEY: discoverswiss.lodging 
