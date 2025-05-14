@@ -1,0 +1,23 @@
+# SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+https://source.digital-mobility.solutions/moqo-public/aggregator-api/-/blob/master/aggregator_openapi.yaml?ref_type=heads
+
+###
+@token={{$dotenv API_TOKEN}}
+
+GET https://portal.moqo.de/api_aggregator/stations
+Authorization: Bearer {{token}}
+
+###
+GET https://portal.moqo.de/api_aggregator/vehicles?page=1
+Authorization: Bearer {{token}}
+
+###
+GET https://portal.moqo.de/api_aggregator/vehicles/8482150
+Authorization: Bearer {{token}}
+
+###
+GET https://portal.moqo.de/api_aggregator/availabilities?page=1
+Authorization: Bearer {{token}}

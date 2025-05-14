@@ -31,6 +31,8 @@ var env struct {
 
 	BASIC_AUTH_USERNAME string
 	BASIC_AUTH_PASSWORD string
+
+	AUTH_BEARER_TOKEN string
 }
 
 func main() {
