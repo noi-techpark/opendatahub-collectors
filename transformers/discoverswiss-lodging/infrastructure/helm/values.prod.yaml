@@ -19,7 +19,7 @@ env:
   RAW_FILTER_URL_TEMPLATE: "https://tourism.api.opendatahub.com/v1/Accommodation?rawfilter=eq(Mapping.discoverswiss.id,%%22%s%%22)&fields=Id"
   ODH_CORE_TOKEN_URL: "https://auth.opendatahub.com/auth/realms/noi/protocol/openid-connect/token"
   ODH_CORE_TOKEN_CLIENT_ID: "odh-api-core-discoverswiss"
-  ODH_API_CORE_URL: "https://tourism.api.openatahub.com/v1/Accommodation"
+  ODH_API_CORE_URL: "https://tourism.api.opendatahub.com/v1/Accommodation"
   RAW_DATA_BRIDGE_ENDPOINT: "http://raw-data-bridge.core.svc.cluster.local:2000"
 
   SERVICE_NAME: tr-discoverswiss-lodging
