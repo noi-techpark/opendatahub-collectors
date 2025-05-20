@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-lorawan
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-discoverswiss-lodging
   pullPolicy: IfNotPresent
   tag: sometaghere
 
@@ -11,15 +11,19 @@ imagePullSecrets:
 env:
   # ODH Core Writer Connection
   LOG_LEVEL: "INFO"
-  MQ_QUEUE: discoverswiss.lodging  
+  MQ_QUEUE: multi-rest-poller.discoverswiss-lodging
   MQ_EXCHANGE: routed  
-  MQ_KEY: discoverswiss.lodging 
-  MQ_CLIENT: discoverswiss-lodging-consumer 
+  MQ_KEY: multi-rest-poller.discoverswiss-lodging
+  MQ_CLIENT: tr-discoverswiss-lodging
+
   RAW_FILTER_URL_TEMPLATE: "https://tourism.api.opendatahub.com/v1/Accommodation?rawfilter=eq(Mapping.discoverswiss.id,%%22%s%%22)&fields=Id"
   ODH_CORE_TOKEN_URL: "https://auth.opendatahub.com/auth/realms/noi/protocol/openid-connect/token"
   ODH_CORE_TOKEN_CLIENT_ID: "odh-api-core-discoverswiss"
   ODH_API_CORE_URL: "https://tourism.api.openatahub.com/v1/Accommodation"
   RAW_DATA_BRIDGE_ENDPOINT: "http://raw-data-bridge.core.svc.cluster.local:2000"
+
+  SERVICE_NAME: tr-discoverswiss-lodging
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 
 envSecret:
   ODH_CORE_TOKEN_CLIENT_SECRET: ""

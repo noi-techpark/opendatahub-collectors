@@ -169,6 +169,7 @@ func main() {
 					"postal_code":   loc.PostalCode,
 					"time_zone":     loc.TimeZone,
 					"opening_times": loc.OpeningTimes,
+					"capacity":      len(loc.Evses),
 				}
 				if len(loc.Directions) > 0 {
 					station.MetaData["directions"] = loc.Directions
