@@ -135,7 +135,7 @@ func main() {
 			posttoken, err := token.Token()
 			ms.FailOnError(acco.ctx, err, "failed to get content api token")
 
-			_, err = odhContentClient.PostContentApi(acco.ctx, contentCoreUrl, posttoken.AccessToken, acco)
+			_, err = odhContentClient.PostContentApi(acco.ctx, contentCoreUrl, posttoken.AccessToken, acco.Accommodation)
 			ms.FailOnError(acco.ctx, err, "failed to post content accomodation", "id", acco.Accommodation.Mapping.DiscoverSwiss.Id)
 
 			slog.Debug("post ok", "id", acco.Accommodation.Mapping.DiscoverSwiss.Id)
