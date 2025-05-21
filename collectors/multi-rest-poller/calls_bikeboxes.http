@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+###
+@token={{$dotenv TOKEN}}
+
+
+# @name locations
+GET https://sta.api.weelo.it/resources/locations?languageID=it
+Authorization: Bearer {{token}}
+
+@station_id = {{locations.response.body.$.[0].stations[0].stationID}}
+
+###
+
+# @name stations
+GET https://sta.api.weelo.it/resources/station?languageID=it&stationID={{station_id}}
+Authorization: Bearer {{token}}

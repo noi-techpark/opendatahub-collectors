@@ -266,16 +266,7 @@ http_call:
 - RabbitMQ
 - Docker (optional)
 
-### Running with Docker
-The project includes Docker configuration for easy deployment:
-```
-# Start with Docker Compose
-docker-compose up -d
 
-# Build and run
-docker build -f infrastructure/docker/Dockerfile -t multi-rest-poller .
-docker run -d --env-file .env multi-rest-poller
-```
 
 ### Setup
 1. Clone repo
