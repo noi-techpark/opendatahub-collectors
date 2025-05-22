@@ -5,7 +5,7 @@ SPDX-License-Identifier: CC0-1.0
 -->
 
 # Multi-REST-Pollor
-A versatile data collector that pulls data from multiple REST endpoints with support for pagination, nested API calls, and various authentication methods. The service is designed to collect data from RESTful APIs and forward it to the ODH processing pipeline (or a MongoDB waiting to be processed).
+A versatile data collector that pulls data from multiple REST endpoints with support for pagination, nested API calls, and various authentication methods. The service is designed to collect data from RESTful APIs and forward it to the ODH processing pipeline.
 
 ## Overview
 Multi-REST-Poller is a Go-based service that enables the polling of RESTful APIs with the following features:
@@ -27,6 +27,7 @@ The main package coordinates the overall application flow:
 - Sets up cron-based scheduling
 - Configures the data collector
 - Processes API results and forwards them the ODH
+- Handles data streaming for large datasets
 
 ### Call Configuration
 The call configuration system supports:
@@ -37,10 +38,11 @@ The call configuration system supports:
 
 ### HTTP Request Processing
 The service handles HTTP requests with:
-- Method specification (GET, POST, etc.)
+- Method specification (like GET and POST)
 - Header customization
 - Authentication injection
 - Response parsing
+- Retry logic with exponential backoff
 
 ### Data Selection
 Data is extracted from responses using:
@@ -104,6 +106,7 @@ http_call:
     Content-Type: "application/json"
   data_selector: "$.data"
   data_selector_type: "json"
+  stream: false
 
 # Option 2: Multiple HTTP calls
 http_calls:
@@ -124,7 +127,8 @@ http_calls:
 |:--------------------:|:-----------------:|:----------------------------------------------:|
 |url                   |string             |The API endpoint URL                            |
 |method                |string             |HTTP method (GET, POST, etc)                    |
-|headers               |map[string][string]|HTTP request headers                            |
+|headers               |map[string]string  |HTTP request headers                            |
+|stream                |bool               |Enable streaming for large datasets             |
 |data_selector         |string             |JSONPath to extract specific data               |
 |data_selector_type    |string             |Type of data selection ("json", "string")       |
 |nested_calls          |[]CallConfig       |Configuration for subsequent API calls          |
@@ -136,9 +140,9 @@ http_calls:
 #### Pagination Configuration
 ```
 pagination:
-  request_strategy: "query"  # header | query | body
-  response_strategy: "body"  # header | body
-  request_key: "page"        # query parameter name
+  request_strategy: "query"   # header | query | body
+  lookup_strategy: "body"     # header | body
+  request_key: "page"         # query parameter name
   offset_builder:
     current_start: 0
     next_field: "$.meta.next_page"
@@ -150,7 +154,7 @@ pagination:
 |Property         |Type         |Description                                                     |
 |:---------------:|:-----------:|:--------------------------------------------------------------:|
 |request_strategy |string       |How to include pagination parameters ("header", "query", "body")|
-|response_strategy|string       |How pagination data is returned ("header", "body")              |
+|lookup_strategy  |string       |How pagination data is returned ("header", "body")              |
 |offset_builder   |OffsetBuilder|Configuration for offset calculation                            |
 |request_key      |string       |Parameter name for the pagination requests                      |
 
@@ -158,7 +162,7 @@ pagination:
 |Property           |Type  |Description                                        |
 |:-----------------:|:----:|:-------------------------------------------------:|
 |current_start      |int   |Initial offset value                               |
-|next               |string|JSONPath to extract next offset from response      |
+|next_field         |string|JSONPath to extract next offset from response      |
 |increment          |int   |Value to increment offset by                       |
 |next_type          |string|Type of next offset value ("int", "string")        |
 |break_on_next_empty|bool  |Whether to stop pagination when next field is empty|
@@ -178,7 +182,7 @@ nested_calls:
 ```
 
 ### Authentication Configuration
-The servce supports multiple authentication methods:
+The service supports multiple authentication methods:
 
 #### OAuth2
 ```
@@ -259,6 +263,18 @@ http_call:
       data_destination_field: "user_details"
 ```
 
+#### Streaming Large Datasets
+```
+http_call:
+  url: "https://api.example.com/large-dataset"
+  mthod: "GET"
+  headers:
+    Accept: "application/json"
+  data_selector: "$.items"
+  data_selector_type: "json"
+  stream: true
+```
+
 ## Development
 
 ### Requirements
@@ -294,6 +310,12 @@ go run src/main.go
     - Confirm pagination parameters match API requiremens
     - Verify offset calculation logic works with the API
     - Test pagination limits and boundary conditions
+  
+4. #### Streaming Issues
+    - Ensure the data is an array when using streaming
+    - Monitor memory usage with large datasets
+    - Check for proper channel handling
+
 
 ### Logging
 The service uses structural logging with configurable levels. Set LOGLEVEL=DEBUG for detailed diagnostics during troubleshooting.
