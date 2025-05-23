@@ -181,7 +181,8 @@ func processStationTask(ctx context.Context, task stationTask, horizon int64, bd
 			"window_start", milliToRFC3339(window), "window_end", milliToRFC3339(windowEnd))
 
 		err = bdp.PushData(station.StationType, measurements)
-		ms.FailOnError(windowCtx, err, "failed to push data")
+		ms.FailOnError(windowCtx, err, "failed to push data", "station", station.Id,
+			"window_start", milliToRFC3339(window), "window_end", milliToRFC3339(windowEnd))
 	}
 }
 
@@ -265,6 +266,7 @@ func main() {
 		var wg sync.WaitGroup
 
 		// Start workers
+		logger.Get(ctx).Info(fmt.Sprintf("spawning %d workers", MaxWorkers))
 		for i := 0; i < MaxWorkers; i++ {
 			wg.Add(1)
 			go func() {
