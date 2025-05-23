@@ -12,10 +12,10 @@ env:
   SERVICE_NAME: el-a22-traffic
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 
-  CRON: "0 0/10 * * * *"
+  CRON: "0 0/2 * * * *"
   LOG_LEVEL: "DEBUG"
 
-  NINJA_URL: http://ninja-api.core.svc.cluster.local
+  NINJA_URL: https://mobility.api.opendatahub.testingmachine.eu
   NINJA_CONSUMER: el-a22-traffic
 
   BDP_BASE_URL: http://bdp-core.core.svc.cluster.local
