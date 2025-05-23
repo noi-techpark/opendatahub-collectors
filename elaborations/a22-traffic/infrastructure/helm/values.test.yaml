@@ -12,7 +12,7 @@ env:
   SERVICE_NAME: el-a22-traffic
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 
-  CRON: "0 0/2 * * * *"
+  CRON: "0 0/10 * * * *"
   LOG_LEVEL: "DEBUG"
 
   NINJA_URL: https://mobility.api.opendatahub.testingmachine.eu

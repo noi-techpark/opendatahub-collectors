@@ -120,6 +120,10 @@ func createDBConnection() (*sqlx.DB, error) {
 var sensorUtils *SensorTypeUtil = nil
 var euroTypeUtils *EUROTypeUtil = nil
 
+func milliToRFC3339(milli int64) string {
+	return time.Unix(milli/1000, (milli%1000)*1_000_000).UTC().Format(time.RFC3339)
+}
+
 func main() {
 	ms.InitWithEnv(context.Background(), "", &env)
 	slog.Info("Starting data transformer...")
@@ -210,8 +214,8 @@ func main() {
 			endTime := min(station.MaxTimestamp, horizon)
 			logger.Get(ctx).Info("processing station",
 				"stationcode", station.Id,
-				"start_time", time.Unix(startTime/1000, (startTime%1000)*1_000_000).UTC().Format(time.RFC3339),
-				"end_time", time.Unix(endTime/1000, (endTime%1000)*1_000_000).UTC().Format(time.RFC3339))
+				"start_time", milliToRFC3339(startTime),
+				"end_time", milliToRFC3339(endTime))
 
 			windowLength := int64(MeasurementPeriod * 1000)
 			for window := startTime; window <= endTime; window += windowLength {
@@ -232,13 +236,16 @@ func main() {
 				}
 
 				windowEnd := window + windowLength
-				logger.Get(windowCtx).Info("processing vehicles", "station", station.Id, "window_start", window, "window_end", windowEnd)
+				logger.Get(windowCtx).Info("processing vehicles", "station", station.Id,
+					"window_start", milliToRFC3339(window), "window_end", milliToRFC3339(windowEnd))
 
 				vehicles, err := ReadVehiclesWindow(context.Background(), ad22DbConnection, window, windowEnd, station.Id)
-				ms.FailOnError(windowCtx, err, "failed to get vehicles", "station", station.Id, "window_start", window, "window_end", windowEnd)
+				ms.FailOnError(windowCtx, err, "failed to get vehicles", "station", station.Id,
+					"window_start", milliToRFC3339(window), "window_end", milliToRFC3339(windowEnd))
 
 				measurements, err := elaborate(windowCtx, bdp, meas, station, vehicles, windowEnd, MeasurementPeriod)
-				ms.FailOnError(windowCtx, err, "failed to elaborate vehicles", "station", station.Id, "window_start", window, "window_end", windowEnd)
+				ms.FailOnError(windowCtx, err, "failed to elaborate vehicles", "station", station.Id,
+					"window_start", milliToRFC3339(window), "window_end", milliToRFC3339(windowEnd))
 
 				err = bdp.PushData(station.StationType, measurements)
 				ms.FailOnError(windowCtx, err, "failed to push data")
