@@ -173,7 +173,11 @@ func createClassAvgs(vehicles []Vehicle, equivalentVehicles float64, windowLengt
 		avgSpeed = sumSpeed / count
 		// windowLength is in seconds
 		avgFlow = equivalentVehicles * 3.6 / float64(windowLength)
-		avgDensity = avgFlow / avgSpeed
+		if avgSpeed == 0 {
+			avgDensity = 0
+		} else {
+			avgDensity = avgFlow / avgSpeed
+		}
 	}
 
 	return map[string]float64{
