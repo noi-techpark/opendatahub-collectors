@@ -124,6 +124,67 @@ func milliToRFC3339(milli int64) string {
 	return time.Unix(milli/1000, (milli%1000)*1_000_000).UTC().Format(time.RFC3339)
 }
 
+const MaxWorkers = 8 // tune based on your CPU/resources
+
+type stationTask struct {
+	Station Station
+	Meas    *measurementMap
+}
+
+func processStationTask(ctx context.Context, task stationTask, horizon int64, bdp bdplib.Bdp, ad22DbConnection *sqlx.DB) {
+	station := task.Station
+	meas := task.Meas
+
+	// if the min timestamp of this station (the type with the most past measurement) is >= station MaxTimestamp,
+	// it means there are no new data to consume for this station, skip it
+	minMeasTs := meas.startFrom(station)
+	if minMeasTs.UnixMilli() >= station.MaxTimestamp {
+		return
+	}
+
+	// we should get vehicles from meas First to be sure to process all data types, not only the most ahead
+	startTime := max(station.MinTimestamp, minMeasTs.UnixMilli())
+	endTime := min(station.MaxTimestamp, horizon)
+	logger.Get(ctx).Info("processing station",
+		"stationcode", station.Id,
+		"start_time", milliToRFC3339(startTime),
+		"end_time", milliToRFC3339(endTime))
+
+	windowLength := int64(MeasurementPeriod * 1000)
+	for window := startTime; window <= endTime; window += windowLength {
+
+		// span per window and link to main trace
+		windowCtx := ctx
+		var windowSpan trace.Span = noop.Span{}
+		defer windowSpan.End()
+		// link span without full trace
+		rootContext := trace.SpanContextFromContext(ctx)
+		if rootContext.IsValid() {
+			windowCtx, windowSpan = tel.TraceStart(context.Background(), fmt.Sprintf("%s.station-window", tel.GetServiceName()),
+				trace.WithLinks(trace.Link{
+					SpanContext: rootContext,
+				}),
+				trace.WithSpanKind(trace.SpanKindInternal),
+			)
+		}
+
+		windowEnd := window + windowLength
+		logger.Get(windowCtx).Info("processing vehicles", "station", station.Id,
+			"window_start", milliToRFC3339(window), "window_end", milliToRFC3339(windowEnd))
+
+		vehicles, err := ReadVehiclesWindow(context.Background(), ad22DbConnection, window, windowEnd, station.Id)
+		ms.FailOnError(windowCtx, err, "failed to get vehicles", "station", station.Id,
+			"window_start", milliToRFC3339(window), "window_end", milliToRFC3339(windowEnd))
+
+		measurements, err := elaborate(windowCtx, bdp, meas, station, vehicles, windowEnd, MeasurementPeriod)
+		ms.FailOnError(windowCtx, err, "failed to elaborate vehicles", "station", station.Id,
+			"window_start", milliToRFC3339(window), "window_end", milliToRFC3339(windowEnd))
+
+		err = bdp.PushData(station.StationType, measurements)
+		ms.FailOnError(windowCtx, err, "failed to push data")
+	}
+}
+
 func main() {
 	ms.InitWithEnv(context.Background(), "", &env)
 	slog.Info("Starting data transformer...")
@@ -200,57 +261,31 @@ func main() {
 		err = bdp.SyncStations(sensorStationType, bdpStations, true, true)
 		ms.FailOnError(ctx, err, "failed to sync stations")
 
+		stationChan := make(chan stationTask)
+		var wg sync.WaitGroup
+
+		// Start workers
+		for i := 0; i < MaxWorkers; i++ {
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				for task := range stationChan {
+					processStationTask(ctx, task, horizon, bdp, ad22DbConnection)
+				}
+			}()
+		}
+
+		// Enqueue tasks
 		for _, station := range stations {
 			meas, ok := measurements[station.Id]
-			minMeasTs := meas.startFrom(station)
-			// if the min timestamp of this station (the type with the most past measurement) is >= station MaxTimestamp,
-			// it means there are no new data to consume for this station, skip it
-			if ok && minMeasTs.UnixMilli() >= station.MaxTimestamp {
+			if !ok {
 				continue
 			}
-
-			// we should get vehicles from meas First to be sure to process all data types, not only the most ahead
-			startTime := max(station.MinTimestamp, minMeasTs.UnixMilli())
-			endTime := min(station.MaxTimestamp, horizon)
-			logger.Get(ctx).Info("processing station",
-				"stationcode", station.Id,
-				"start_time", milliToRFC3339(startTime),
-				"end_time", milliToRFC3339(endTime))
-
-			windowLength := int64(MeasurementPeriod * 1000)
-			for window := startTime; window <= endTime; window += windowLength {
-
-				// span per window and link to main trace
-				windowCtx := ctx
-				var windowSpan trace.Span = noop.Span{}
-				defer windowSpan.End()
-				// link span without full trace
-				rootContext := trace.SpanContextFromContext(ctx)
-				if rootContext.IsValid() {
-					windowCtx, windowSpan = tel.TraceStart(context.Background(), fmt.Sprintf("%s.station-window", tel.GetServiceName()),
-						trace.WithLinks(trace.Link{
-							SpanContext: rootContext,
-						}),
-						trace.WithSpanKind(trace.SpanKindInternal),
-					)
-				}
-
-				windowEnd := window + windowLength
-				logger.Get(windowCtx).Info("processing vehicles", "station", station.Id,
-					"window_start", milliToRFC3339(window), "window_end", milliToRFC3339(windowEnd))
-
-				vehicles, err := ReadVehiclesWindow(context.Background(), ad22DbConnection, window, windowEnd, station.Id)
-				ms.FailOnError(windowCtx, err, "failed to get vehicles", "station", station.Id,
-					"window_start", milliToRFC3339(window), "window_end", milliToRFC3339(windowEnd))
-
-				measurements, err := elaborate(windowCtx, bdp, meas, station, vehicles, windowEnd, MeasurementPeriod)
-				ms.FailOnError(windowCtx, err, "failed to elaborate vehicles", "station", station.Id,
-					"window_start", milliToRFC3339(window), "window_end", milliToRFC3339(windowEnd))
-
-				err = bdp.PushData(station.StationType, measurements)
-				ms.FailOnError(windowCtx, err, "failed to push data")
-			}
+			stationChan <- stationTask{Station: station, Meas: meas}
 		}
+		close(stationChan) // no more tasks
+
+		wg.Wait()
 
 		logger.Get(ctx).Info("elaboration completed", "runtime_ms", time.Since(now).Milliseconds())
 	})
