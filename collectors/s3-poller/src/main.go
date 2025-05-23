@@ -55,20 +55,31 @@ func main() {
 
 	c := cron.New(cron.WithSeconds())
 	c.AddFunc(env.CRON, func() {
-		ctx, c := collector.StartCollection(context.Background())
-		defer c.End(ctx)
+		collector.GetInputChannel() <- dc.NewInput[dc.EmptyData](context.Background(), nil)
+	})
 
+	slog.Info("Setup complete. Starting cron scheduler")
+	go func() {
+		c.Run()
+	}()
+
+	err = collector.Start(context.Background(), func(ctx context.Context, a dc.EmptyData) (*rdb.RawAny, error) {
 		// Get the object from S3
 		output, err := s3Client.GetObject(context.Background(), &s3.GetObjectInput{
 			Bucket: aws.String(env.AWS_S3_BUCKET_NAME),
 			Key:    aws.String(env.AWS_S3_FILE_NAME),
 		})
-
-		ms.FailOnError(ctx, err, "error while getting s3 object", "bucket", env.AWS_S3_BUCKET_NAME, "file", env.AWS_S3_FILE_NAME)
+		if err != nil {
+			slog.Error("error while getting s3 object:", "err", err, "bucket", env.AWS_S3_BUCKET_NAME, "file", env.AWS_S3_FILE_NAME)
+			return nil, err
+		}
 
 		defer output.Body.Close()
 		body, err := io.ReadAll(output.Body)
-		ms.FailOnError(ctx, err, "error reading response body", "bucket", env.AWS_S3_BUCKET_NAME, "file", env.AWS_S3_FILE_NAME)
+		if err != nil {
+			slog.Error("error reading response body:", "err", err)
+			return nil, err
+		}
 
 		var raw any
 		if env.RAW_BINARY {
@@ -77,12 +88,11 @@ func main() {
 			raw = string(body)
 		}
 
-		err = c.Publish(ctx, &rdb.RawAny{
+		return &rdb.RawAny{
 			Provider:  env.PROVIDER,
 			Timestamp: time.Now(),
 			Rawdata:   raw,
-		})
-		ms.FailOnError(ctx, err, "failed to publish", "err", err)
+		}, nil
 	})
-	c.Run()
+	ms.FailOnError(context.Background(), err, err.Error())
 }

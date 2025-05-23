@@ -123,9 +123,16 @@ func (m measurementMap) shouldElaborate(dataType string, ts time.Time) bool {
 
 // startFrom returns the earliest (minimum) "last" timestamp among all
 // data‐types if all are present, or 0 if any are missing.
-func (m measurementMap) startFrom() time.Time {
+func (m measurementMap) startFrom(s Station) time.Time {
 	// Check presence of every required data‐type
 	for _, dt := range allDataTypes {
+		// neet to exclude camera specific data types from normal stations, othwrwise we will have these stations starting from
+		// min timestamp every time
+		isCamera := IsCamera(s)
+		if !isCamera && (dt == DataTypeEuroPct ||
+			dt == DataTypeNationalityCount) {
+			continue
+		}
 		if _, ok := m.LastByDataTypes[dt]; !ok {
 			return time.Time{}
 		}

@@ -202,7 +202,7 @@ func main() {
 
 		for _, station := range stations {
 			meas, ok := measurements[station.Id]
-			minMeasTs := meas.startFrom()
+			minMeasTs := meas.startFrom(station)
 			// if the min timestamp of this station (the type with the most past measurement) is >= station MaxTimestamp,
 			// it means there are no new data to consume for this station, skip it
 			if ok && minMeasTs.UnixMilli() >= station.MaxTimestamp {
