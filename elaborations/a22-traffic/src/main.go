@@ -124,7 +124,7 @@ func milliToRFC3339(milli int64) string {
 	return time.Unix(milli/1000, (milli%1000)*1_000_000).UTC().Format(time.RFC3339)
 }
 
-const MaxWorkers = 1 // tune based on your CPU/resources
+const MaxWorkers = 8 // tune based on your CPU/resources
 
 type stationTask struct {
 	Station Station
@@ -159,7 +159,7 @@ func processStationTask(ctx context.Context, task stationTask, horizon int64, bd
 		return
 	}
 
-	// we should get vehicles from meas First to be sure to process all data types, not only the most ahead
+	// we get vehicles from meas First to be sure to process all data types, not only the most ahead
 	startTime := max(station.MinTimestamp, minMeasTs.UnixMilli())
 	endTime := min(station.MaxTimestamp, horizon)
 	logger.Get(ctx).Info("processing station",
@@ -181,7 +181,7 @@ func processStationTask(ctx context.Context, task stationTask, horizon int64, bd
 		batchSize += 1
 
 		windowEnd = window + windowLength
-		logger.Get(batchCtx).Info("processing vehicles", "station", station.Id,
+		logger.Get(batchCtx).Debug("processing vehicles", "station", station.Id,
 			"window_start", milliToRFC3339(window), "window_end", milliToRFC3339(windowEnd))
 
 		vehicles, err := ReadVehiclesWindow(context.Background(), ad22DbConnection, window, windowEnd, station.Id)
@@ -295,15 +295,15 @@ func main() {
 		stationChan := make(chan stationTask)
 		var wg sync.WaitGroup
 
-		var stat Station
-		for _, s := range stations {
-			if s.Id == "A22:6036:3" {
-				stat = s
-				break
-			}
-		}
+		// var stat Station
+		// for _, s := range stations {
+		// 	if s.Id == "A22:6036:3" {
+		// 		stat = s
+		// 		break
+		// 	}
+		// }
 
-		stations = []Station{stat}
+		// stations = []Station{stat}
 
 		// Start workers
 		logger.Get(ctx).Info(fmt.Sprintf("spawning %d workers", MaxWorkers))
