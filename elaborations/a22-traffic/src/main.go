@@ -167,52 +167,45 @@ func processStationTask(ctx context.Context, task stationTask, horizon int64, bd
 		"start_time", milliToRFC3339(startTime),
 		"end_time", milliToRFC3339(endTime))
 
-	dataMap := bdp.CreateDataMap()
-	batchMaxSize := 10
-	batchSize := 0
-
 	windowLength := int64(MeasurementPeriod * 1000)
-	window := startTime
-	windowEnd := window + windowLength
+	batchWindowCount := 10
+	batchWindowLength := windowLength * int64(batchWindowCount)
 
-	batchCtx, batchSpan := createBatchSpan(ctx)
+	for window := startTime; window <= endTime; window += batchWindowLength {
+		// Cap windowEnd so it doesn't exceed endTime
+		windowEnd := window + batchWindowLength
+		if windowEnd > endTime {
+			windowEnd = endTime
+		}
 
-	for ; window <= endTime; window += windowLength {
-		batchSize += 1
+		batchCtx, batchSpan := createBatchSpan(ctx)
+		defer batchSpan.End()
 
-		windowEnd = window + windowLength
-		logger.Get(batchCtx).Debug("processing vehicles", "station", station.Id,
+		logger.Get(batchCtx).Debug("batch query", "station", station.Id,
 			"window_start", milliToRFC3339(window), "window_end", milliToRFC3339(windowEnd))
 
 		vehicles, err := ReadVehiclesWindow(context.Background(), ad22DbConnection, window, windowEnd, station.Id)
 		ms.FailOnError(batchCtx, err, "failed to get vehicles", "station", station.Id,
 			"window_start", milliToRFC3339(window), "window_end", milliToRFC3339(windowEnd))
 
-		err = elaborate(batchCtx, &dataMap, meas, station, vehicles, windowEnd, MeasurementPeriod)
-		ms.FailOnError(batchCtx, err, "failed to elaborate vehicles", "station", station.Id,
-			"window_start", milliToRFC3339(window), "window_end", milliToRFC3339(windowEnd))
+		// Split vehicles by their window
+		vehicleMap := splitVehiclesByWindow(vehicles, window, windowLength)
 
-		if batchSize >= batchMaxSize {
-			err = bdp.PushData(station.StationType, dataMap)
-			ms.FailOnError(batchCtx, err, "failed to push data", "station", station.Id,
-				"window_start", milliToRFC3339(window), "window_end", milliToRFC3339(windowEnd))
+		dataMap := bdp.CreateDataMap()
 
-			// reset batch
-			batchSize = 0
-			dataMap = bdp.CreateDataMap()
+		for i := 0; i < batchWindowCount; i++ {
+			winStart := window + int64(i)*windowLength
+			winEnd := winStart + windowLength
+			vInWindow := vehicleMap[i]
 
-			batchSpan.End()
-			batchCtx, batchSpan = createBatchSpan(ctx)
+			err = elaborate(batchCtx, &dataMap, meas, station, vInWindow, winEnd, MeasurementPeriod)
+			ms.FailOnError(batchCtx, err, "failed to elaborate vehicles", "station", station.Id,
+				"window_start", milliToRFC3339(winStart), "window_end", milliToRFC3339(winEnd))
 		}
-	}
 
-	// final flush
-	if batchSize > 0 {
-		err := bdp.PushData(station.StationType, dataMap)
+		err = bdp.PushData(station.StationType, dataMap)
 		ms.FailOnError(batchCtx, err, "failed to push data", "station", station.Id,
 			"window_start", milliToRFC3339(window), "window_end", milliToRFC3339(windowEnd))
-
-		batchSpan.End()
 	}
 }
 

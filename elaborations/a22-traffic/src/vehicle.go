@@ -90,3 +90,15 @@ func ReadVehiclesWindow(ctx context.Context, db *sqlx.DB, fromTs, toTs int64, st
 
 	return vehicles, nil
 }
+
+func splitVehiclesByWindow(vehicles []Vehicle, windowStart int64, windowLength int64) map[int][]Vehicle {
+	windowMap := make(map[int][]Vehicle)
+
+	for _, v := range vehicles {
+		ts := v.Timestamp * 1000 // assuming v.Timestamp is in seconds
+		offset := int((ts - windowStart) / windowLength)
+		windowMap[offset] = append(windowMap[offset], v)
+	}
+
+	return windowMap
+}
