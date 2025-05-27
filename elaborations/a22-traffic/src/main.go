@@ -292,16 +292,6 @@ func main() {
 		stationChan := make(chan stationTask)
 		var wg sync.WaitGroup
 
-		// var stat Station
-		// for _, s := range stations {
-		// 	if s.Id == "A22:6036:3" {
-		// 		stat = s
-		// 		break
-		// 	}
-		// }
-
-		// stations = []Station{stat}
-
 		// Start workers
 		logger.Get(ctx).Info(fmt.Sprintf("spawning %d workers", MaxWorkers))
 		for i := 0; i < MaxWorkers; i++ {
