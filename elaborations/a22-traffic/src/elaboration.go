@@ -13,13 +13,11 @@ import (
 
 const NULL_VALUE = -999
 
-func elaborate(ctx context.Context, bdp bdplib.Bdp, existingMeasurements *measurementMap,
-	station Station, vehicles []Vehicle, timestamp int64, period uint64) (bdplib.DataMap, error) {
+func elaborate(ctx context.Context, dataMap *bdplib.DataMap, existingMeasurements *measurementMap,
+	station Station, vehicles []Vehicle, timestamp int64, period uint64) error {
 	// existingMeasurements is used to check wether a specific DataType should be elaborate by checking the time of last
 	// measurement in the ninja.
 	t := time.Unix(timestamp/1000, (timestamp%1000)*1_000_000).UTC()
-
-	dataMap := bdp.CreateDataMap()
 
 	// Euro distribution
 	if IsCamera(station) && existingMeasurements.shouldElaborate(DataTypeEuroPct, t) {
@@ -80,7 +78,7 @@ func elaborate(ctx context.Context, bdp bdplib.Bdp, existingMeasurements *measur
 		}
 	}
 
-	return dataMap, nil
+	return nil
 }
 
 func createVehicleCounts(vehicles []Vehicle) map[string]int {

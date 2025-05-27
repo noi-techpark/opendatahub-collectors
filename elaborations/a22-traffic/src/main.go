@@ -124,11 +124,28 @@ func milliToRFC3339(milli int64) string {
 	return time.Unix(milli/1000, (milli%1000)*1_000_000).UTC().Format(time.RFC3339)
 }
 
-const MaxWorkers = 8 // tune based on your CPU/resources
+const MaxWorkers = 1 // tune based on your CPU/resources
 
 type stationTask struct {
 	Station Station
 	Meas    *measurementMap
+}
+
+func createBatchSpan(ctx context.Context) (context.Context, trace.Span) {
+	// span per window and link to main trace
+	windowCtx := ctx
+	var windowSpan trace.Span = noop.Span{}
+	// link span without full trace
+	rootContext := trace.SpanContextFromContext(ctx)
+	if rootContext.IsValid() {
+		windowCtx, windowSpan = tel.TraceStart(context.Background(), fmt.Sprintf("%s.station-window", tel.GetServiceName()),
+			trace.WithLinks(trace.Link{
+				SpanContext: rootContext,
+			}),
+			trace.WithSpanKind(trace.SpanKindInternal),
+		)
+	}
+	return windowCtx, windowSpan
 }
 
 func processStationTask(ctx context.Context, task stationTask, horizon int64, bdp bdplib.Bdp, ad22DbConnection *sqlx.DB) {
@@ -150,39 +167,52 @@ func processStationTask(ctx context.Context, task stationTask, horizon int64, bd
 		"start_time", milliToRFC3339(startTime),
 		"end_time", milliToRFC3339(endTime))
 
+	dataMap := bdp.CreateDataMap()
+	batchMaxSize := 10
+	batchSize := 0
+
 	windowLength := int64(MeasurementPeriod * 1000)
-	for window := startTime; window <= endTime; window += windowLength {
+	window := startTime
+	windowEnd := window + windowLength
 
-		// span per window and link to main trace
-		windowCtx := ctx
-		var windowSpan trace.Span = noop.Span{}
-		defer windowSpan.End()
-		// link span without full trace
-		rootContext := trace.SpanContextFromContext(ctx)
-		if rootContext.IsValid() {
-			windowCtx, windowSpan = tel.TraceStart(context.Background(), fmt.Sprintf("%s.station-window", tel.GetServiceName()),
-				trace.WithLinks(trace.Link{
-					SpanContext: rootContext,
-				}),
-				trace.WithSpanKind(trace.SpanKindInternal),
-			)
-		}
+	batchCtx, batchSpan := createBatchSpan(ctx)
 
-		windowEnd := window + windowLength
-		logger.Get(windowCtx).Info("processing vehicles", "station", station.Id,
+	for ; window <= endTime; window += windowLength {
+		batchSize += 1
+
+		windowEnd = window + windowLength
+		logger.Get(batchCtx).Info("processing vehicles", "station", station.Id,
 			"window_start", milliToRFC3339(window), "window_end", milliToRFC3339(windowEnd))
 
 		vehicles, err := ReadVehiclesWindow(context.Background(), ad22DbConnection, window, windowEnd, station.Id)
-		ms.FailOnError(windowCtx, err, "failed to get vehicles", "station", station.Id,
+		ms.FailOnError(batchCtx, err, "failed to get vehicles", "station", station.Id,
 			"window_start", milliToRFC3339(window), "window_end", milliToRFC3339(windowEnd))
 
-		measurements, err := elaborate(windowCtx, bdp, meas, station, vehicles, windowEnd, MeasurementPeriod)
-		ms.FailOnError(windowCtx, err, "failed to elaborate vehicles", "station", station.Id,
+		err = elaborate(batchCtx, &dataMap, meas, station, vehicles, windowEnd, MeasurementPeriod)
+		ms.FailOnError(batchCtx, err, "failed to elaborate vehicles", "station", station.Id,
 			"window_start", milliToRFC3339(window), "window_end", milliToRFC3339(windowEnd))
 
-		err = bdp.PushData(station.StationType, measurements)
-		ms.FailOnError(windowCtx, err, "failed to push data", "station", station.Id,
+		if batchSize >= batchMaxSize {
+			err = bdp.PushData(station.StationType, dataMap)
+			ms.FailOnError(batchCtx, err, "failed to push data", "station", station.Id,
+				"window_start", milliToRFC3339(window), "window_end", milliToRFC3339(windowEnd))
+
+			// reset batch
+			batchSize = 0
+			dataMap = bdp.CreateDataMap()
+
+			batchSpan.End()
+			batchCtx, batchSpan = createBatchSpan(ctx)
+		}
+	}
+
+	// final flush
+	if batchSize > 0 {
+		err := bdp.PushData(station.StationType, dataMap)
+		ms.FailOnError(batchCtx, err, "failed to push data", "station", station.Id,
 			"window_start", milliToRFC3339(window), "window_end", milliToRFC3339(windowEnd))
+
+		batchSpan.End()
 	}
 }
 
@@ -264,6 +294,16 @@ func main() {
 
 		stationChan := make(chan stationTask)
 		var wg sync.WaitGroup
+
+		var stat Station
+		for _, s := range stations {
+			if s.Id == "A22:6036:3" {
+				stat = s
+				break
+			}
+		}
+
+		stations = []Station{stat}
 
 		// Start workers
 		logger.Get(ctx).Info(fmt.Sprintf("spawning %d workers", MaxWorkers))
