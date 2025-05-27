@@ -249,7 +249,11 @@ func main() {
 	c.AddFunc(env.CRON, func() {
 		//////////////////////////
 		now := time.Now().UTC()
-		horizon := now.UnixMilli() - (45 * 60 * 1000)
+		// horizon ensures that we do not use real-time data which might be incomplete
+		// the horizon must be a multiple of the Period, otherwise it uses partial data of the last period and the rest of the
+		// data wont be processed since we checkpoint the last window's endtime.
+		// right now it is 5 * period meaning 50 minutes
+		horizon := now.UnixMilli() - (5 * int64(MeasurementPeriod) * 1000)
 
 		ctx := context.Background()
 
