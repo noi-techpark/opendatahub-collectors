@@ -4,6 +4,8 @@ go 1.24.3
 
 require github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.3
 
+require github.com/google/go-cmp v0.7.0 // indirect
+
 require (
 	github.com/ThreeDotsLabs/watermill v1.4.6 // indirect
 	github.com/ThreeDotsLabs/watermill-amqp/v2 v2.1.3 // indirect
@@ -74,4 +76,5 @@ require (
 	google.golang.org/grpc v1.71.1 // indirect
 	google.golang.org/protobuf v1.36.5 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+	gotest.tools/v3 v3.5.2
 )

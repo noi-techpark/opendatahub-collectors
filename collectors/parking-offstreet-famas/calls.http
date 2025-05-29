@@ -1,0 +1,14 @@
+# SPDX-FileCopyrightText: 2025 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+### 
+POST {{$dotenv RPC_URL}}
+Content-Type: text/text/xml
+
+<?xml version="1.0"?>
+<methodCall>
+    <methodName>pGuide.getElencoIdentificativiParcheggi</methodName>
+    <params>
+    </params>
+</methodCall>
