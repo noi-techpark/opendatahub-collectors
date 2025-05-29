@@ -13,12 +13,12 @@ env:
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 
   CRON: "0 0/10 * * * *"
-  LOG_LEVEL: "DEBUG"
+  LOG_LEVEL: "INFO"
 
-  NINJA_URL: http://ninja-api.core.svc.cluster.local
+  NINJA_URL: https://mobility.api.opendatahub.com
   NINJA_CONSUMER: el-a22-traffic
 
-  BDP_BASE_URL: #TODO
+  BDP_BASE_URL: http://bdp-core.core.svc.cluster.local
   BDP_PROVENANCE_VERSION: 
   BDP_PROVENANCE_NAME: 
   BDP_ORIGIN: A22
@@ -28,10 +28,10 @@ env:
   NINJA_CLIENT_ID: odh-a22-dataprocessor
   NINJA_SCOPES: openid
 
-  A22DB_HOST: #TODO
+  A22DB_HOST: a22db.co90ybcr8iim.eu-west-1.rds.amazonaws.com
   A22DB_PORT: 5432
   A22DB_NAME: a22db
-  A22DB_SSLMODE: disable
+  A22DB_SSLMODE: require
 
   A22DB_USER: a22user
 

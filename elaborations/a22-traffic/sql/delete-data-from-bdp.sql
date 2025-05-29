@@ -76,7 +76,7 @@ BEGIN
         USING "type" t
         WHERE m.station_id = station_rec.station_id
           AND m.type_id = t.id
-          AND m.timestamp > '2025-05-10'
+          AND m.timestamp > '2024-07-10'
           AND m.period = 600
           AND t.cname IN (
             'Nr. Light Vehicles', 
