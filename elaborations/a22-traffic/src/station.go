@@ -63,7 +63,8 @@ func readStations(ctx context.Context, db *sqlx.DB, origin, stationType string) 
 	var stations []Station
 
 	for rows.Next() {
-		var code, name, geo, metadataStr string
+		var code, name, geo string
+		var metadataStr sql.NullString
 		var min_timestamp, max_timestamp sql.NullInt32
 		if err := rows.Scan(&code, &name, &geo, &min_timestamp, &max_timestamp, &metadataStr); err != nil {
 			return nil, err
@@ -77,8 +78,12 @@ func readStations(ctx context.Context, db *sqlx.DB, origin, stationType string) 
 		fmt.Sscanf(coords[0], "%f", &lat)
 		fmt.Sscanf(coords[1], "%f", &lng)
 
-		meta := make(map[string]interface{})
-		meta["a22_metadata"] = metadataStr
+		var meta map[string]interface{}
+		if metadataStr.Valid {
+			meta = map[string]interface{}{
+				"a22_metadata": metadataStr.String,
+			}
+		}
 
 		station := Station{
 			Station: bdplib.Station{
