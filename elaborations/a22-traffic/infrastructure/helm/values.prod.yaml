@@ -1,0 +1,54 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/el-a22-traffic
+  pullPolicy: IfNotPresent
+  tag: sometaghere
+
+imagePullSecrets:
+  - name: container-registry-r
+
+env:
+  SERVICE_NAME: el-a22-traffic
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+  CRON: "0 0/10 * * * *"
+  LOG_LEVEL: "INFO"
+
+  NINJA_URL: https://mobility.api.opendatahub.com
+  NINJA_CONSUMER: el-a22-traffic
+
+  BDP_BASE_URL: http://bdp-core.core.svc.cluster.local
+  BDP_PROVENANCE_VERSION: 
+  BDP_PROVENANCE_NAME: 
+  BDP_ORIGIN: A22
+
+  # NInja credentials
+  NINJA_TOKEN_URL: https://auth.opendatahub.com/auth/realms/noi/protocol/openid-connect/token
+  NINJA_CLIENT_ID: odh-a22-dataprocessor
+  NINJA_SCOPES: openid
+
+  A22DB_HOST: a22db.co90ybcr8iim.eu-west-1.rds.amazonaws.com
+  A22DB_PORT: 5432
+  A22DB_NAME: a22db
+  A22DB_SSLMODE: require
+
+  A22DB_USER: a22user
+
+envSecret:
+  NINJA_CLIENT_SECRET:  "<URL SET BY CICD>"
+  A22DB_PASSWORD:  "<URL SET BY CICD>"
+
+envSecretRef:
+  # BDP credentials
+  - name: ODH_TOKEN_URL
+    secret: oauth-collector
+    key: tokenUri
+  - name: ODH_CLIENT_ID
+    secret: oauth-collector
+    key: clientId
+  - name: ODH_CLIENT_SECRET
+    secret: oauth-collector
+    key: clientSecret
+
+

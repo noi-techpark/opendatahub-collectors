@@ -1,0 +1,15 @@
+# SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+@token = 
+
+###
+GET http://localhost:8991/flat,node/TrafficSensor/Nr.%20Light%20Vehicles,Nr.%20Heavy%20Vehicles,Nr.%20Buses,Nr.%20Equivalent%20Vehicles,Average%20Speed%20Light%20Vehicles,Average%20Speed%20Heavy%20Vehicles,Average%20Speed%20Buses,Variance%20Speed%20Light%20Vehicles,Variance%20Speed%20Heavy%20Vehicles,Variance%20Speed%20Buses,Average%20Gap,Average%20Headway,Average%20Density,Average%20Flow,EURO%20Category%20Pct,Plate%20Nationality%20Count/latest?limit=10000&offset=0&select=mvalidtime%2Ctname%2Cscode&where=sorigin.eq.A22
+Content-Type: application/json
+Authorization: Bearer {{ token }}
+
+###
+GET http://localhost:8991/flat,node/TrafficSensor/*/latest?limit=10000&where=mperiod.eq.600
+Content-Type: application/json
+Authorization: Bearer {{ token }}
