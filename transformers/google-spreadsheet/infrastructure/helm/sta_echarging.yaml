@@ -9,6 +9,7 @@ imagePullSecrets:
 resources:
   requests:
     memory: 500Mi
+    cpu: 15m
 
 env:
   # ODH Core Writer Connection

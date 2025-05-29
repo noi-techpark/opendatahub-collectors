@@ -23,6 +23,6 @@ require (
 	github.com/ThreeDotsLabs/watermill v1.4.5
 	github.com/ThreeDotsLabs/watermill-amqp/v2 v2.1.3
 	github.com/gorilla/websocket v1.5.3 // indirect
-	golang.org/x/net v0.37.0 // indirect
+	golang.org/x/net v0.38.0 // indirect
 	golang.org/x/sync v0.12.0 // indirect
 )

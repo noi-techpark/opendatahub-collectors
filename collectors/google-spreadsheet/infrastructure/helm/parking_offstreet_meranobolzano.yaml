@@ -35,6 +35,7 @@ ingress:
 resources:
   requests:
     memory: 200Mi
+    cpu: 10m
 
 env:
   SHEETS_APPLICATION_NAME: dc-spreadsheets-google-parking-offstreet-mebo

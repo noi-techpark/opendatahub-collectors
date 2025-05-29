@@ -1,0 +1,126 @@
+name: CI/CD el-a22-traffic
+
+on: 
+  push:
+    paths:
+      - "elaborations/a22-traffic/infrastructure/**"
+      - "elaborations/a22-traffic/src/**"
+      - ".github/workflows/el-a22-traffic.yml"     
+
+env:
+  PROJECT_NAME: el-a22-traffic
+  WORKING_DIRECTORY: elaborations/a22-traffic
+  DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/el-a22-traffic
+  DOCKER_TAG: ${{ github.sha }}
+  KUBERNETES_NAMESPACE: collector
+
+jobs:
+  tests:
+    runs-on: ubuntu-22.04
+    concurrency: el-a22-traffic-tests
+    
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.23.4
+          
+      - name: Install Dependencies
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: cd src && go mod tidy
+        
+      - name: Run Tests
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: cd src && go test -v ./...
+
+  build:
+    runs-on: ubuntu-22.04
+    concurrency: el-a22-traffic-build
+    needs: 
+      - tests
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    - name: Build and push images
+      uses: noi-techpark/github-actions/docker-build-and-push@v2
+      with:
+        working-directory: ${{ env.WORKING_DIRECTORY }}/infrastructure
+        docker-username: ${{ github.actor }}
+        docker-password: ${{ secrets.GITHUB_TOKEN }}
+          
+  deploy-test:
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feat/el-a22-traffic'
+    needs: 
+      - build
+    runs-on: ubuntu-22.04
+    concurrency: el-a22-traffic-deploy-test
+    environment: test
+    env:
+      VALUES_YAML: infrastructure/helm/values.test.yaml
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Customize values.yaml
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+            yq -i '.image.repository = "${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML }}
+            yq -i '.image.tag = "${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
+            yq -i '.image.pullPolicy = "IfNotPresent"' ${{ env.VALUES_YAML }}      
+            yq -i '.env.BDP_PROVENANCE_NAME="${{ env.PROJECT_NAME }}"' ${{ env.VALUES_YAML }}      
+            yq -i '.env.BDP_PROVENANCE_VERSION="${{github.sha}}"' ${{ env.VALUES_YAML }}      
+            yq -i '.envSecret.NINJA_CLIENT_SECRET="${{ secrets.A22_NINJA_READ_CIENT_SECRET }}"' ${{ env.VALUES_YAML }}      
+            yq -i '.envSecret.A22DB_PASSWORD="${{ secrets.A22_RAW_DB_PASSWORD }}"' ${{ env.VALUES_YAML }}      
+
+      - name: Deploy on cluster  
+        uses: noi-techpark/github-actions/helm-deploy@v2
+        with:
+          k8s-name: ${{ env.PROJECT_NAME }}
+          k8s-namespace: collector
+          chart-path: helm/generic-collector
+          values-file: ${{ env.WORKING_DIRECTORY }}/${{ env.VALUES_YAML }}
+          aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
+          aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
+          aws-eks-cluster-name: aws-main-eu-01
+          aws-region: eu-west-1
+
+  deploy-prod:
+    if: github.ref == 'refs/heads/prod'
+    needs: 
+      - build
+    runs-on: ubuntu-22.04
+    concurrency: el-a22-traffic-deploy-prod
+    environment: prod
+    env:
+      VALUES_YAML: infrastructure/helm/values.prod.yaml
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Customize values.yaml
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+            yq -i '.image.repository = "${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML }}
+            yq -i '.image.tag = "${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
+            yq -i '.image.pullPolicy = "IfNotPresent"' ${{ env.VALUES_YAML }}      
+            yq -i '.env.BDP_PROVENANCE_NAME="${{ env.PROJECT_NAME }}"' ${{ env.VALUES_YAML }}      
+            yq -i '.env.BDP_PROVENANCE_VERSION="${{github.sha}}"' ${{ env.VALUES_YAML }}      
+            yq -i '.envSecret.NINJA_CLIENT_SECRET="${{ secrets.A22_NINJA_READ_CIENT_SECRET }}"' ${{ env.VALUES_YAML }}      
+            yq -i '.envSecret.A22DB_PASSWORD="${{ secrets.A22_RAW_DB_PASSWORD }}"' ${{ env.VALUES_YAML }}      
+
+      - name: Deploy on cluster  
+        uses: noi-techpark/github-actions/helm-deploy@v2
+        with:
+          k8s-name: ${{ env.PROJECT_NAME }}
+          k8s-namespace: collector
+          chart-path: helm/generic-collector
+          values-file: ${{ env.WORKING_DIRECTORY }}/${{ env.VALUES_YAML }}
+          aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
+          aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
+          aws-eks-cluster-name: aws-main-eu-01
+          aws-region: eu-west-1
+
