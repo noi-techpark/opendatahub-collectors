@@ -181,7 +181,7 @@ func processStationTask(ctx context.Context, task stationTask, horizon int64, bd
 		batchCtx, batchSpan := createBatchSpan(ctx)
 		defer batchSpan.End()
 
-		logger.Get(batchCtx).Debug("batch query", "station", station.Id,
+		logger.Get(batchCtx).Info("batch query", "station", station.Id,
 			"window_start", milliToRFC3339(window), "window_end", milliToRFC3339(windowEnd))
 
 		vehicles, err := ReadVehiclesWindow(context.Background(), ad22DbConnection, window, windowEnd, station.Id)
