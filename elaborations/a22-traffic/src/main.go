@@ -52,6 +52,9 @@ const (
 	MeasurementPeriod uint64 = 600
 )
 
+// Hardcoded minimum allowed start time: 2024-Jul-09 23:59:59 UTC
+var hardcodedMinStartTime = time.Date(2024, time.July, 9, 23, 59, 59, 0, time.UTC).UnixMilli()
+
 // allDataTypes is the complete list of data‐types we expect.
 var allDataTypes = []string{
 	DataTypeLightVehicles,
@@ -161,6 +164,9 @@ func processStationTask(ctx context.Context, task stationTask, horizon int64, bd
 
 	// we get vehicles from meas First to be sure to process all data types, not only the most ahead
 	startTime := max(station.MinTimestamp, minMeasTs.UnixMilli())
+	// Apply hardcoded limit so startTime can't go back before 2024-Jul-09 23:59:59
+	startTime = max(startTime, hardcodedMinStartTime)
+
 	endTime := min(station.MaxTimestamp, horizon)
 	logger.Get(ctx).Info("processing station",
 		"stationcode", station.Id,
