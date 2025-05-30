@@ -201,6 +201,10 @@ func processStationTask(ctx context.Context, task stationTask, horizon int64, bd
 
 		for i := 0; i < batchWindowCount; i++ {
 			winStart := window + int64(i)*windowLength
+			if winStart >= windowEnd {
+				continue
+			}
+
 			winEnd := winStart + windowLength
 			vInWindow := vehicleMap[i]
 
