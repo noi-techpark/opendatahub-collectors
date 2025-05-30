@@ -201,7 +201,7 @@ func processStationTask(ctx context.Context, task stationTask, horizon int64, bd
 
 		for i := 0; i < batchWindowCount; i++ {
 			winStart := window + int64(i)*windowLength
-			if winStart >= windowEnd {
+			if winStart+windowLength >= windowEnd {
 				continue
 			}
 
