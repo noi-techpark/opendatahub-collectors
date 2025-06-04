@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+SPDX-FileCopyrightText: 2025 NOI Techpark <digital@noi.bz.it>
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
+<methodResponse>
+    <params>
+        <param>
+            <value>
+                <array>
+                    <data>
+                        <value>P05 - Laurin</value>
+                        <value>
+                            <int>0</int>
+                        </value>
+                        <value>
+                            <int>1747242053</int>
+                        </value>
+                        <value>
+                            <int>0</int>
+                        </value>
+                        <value>
+                            <int>0</int>
+                        </value>
+                        <value>
+                            <int>90</int>
+                        </value>
+                        <value>
+                            <int>1747733400</int>
+                        </value>
+                        <value>
+                            <int>1</int>
+                        </value>
+                        <value>
+                            <int>1747733400</int>
+                        </value>
+                        <value>
+                            <int>1</int>
+                        </value>
+                        <value>
+                            <int>1540364444</int>
+                        </value>
+                        <value>
+                            <int>0</int>
+                        </value>
+                        <value>
+                            <int>0</int>
+                        </value>
+                        <value>
+                            <int>0</int>
+                        </value>
+                        <value>
+                            <int>1540364444</int>
+                        </value>
+                    </data>
+                </array>
+            </value>
+        </param>
+    </params>
+</methodResponse>

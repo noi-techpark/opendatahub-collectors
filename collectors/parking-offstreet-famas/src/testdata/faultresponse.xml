@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+SPDX-FileCopyrightText: 2025 NOI Techpark <digital@noi.bz.it>
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
+<methodResponse>
+    <fault>
+        <value>
+            <struct>
+                <member>
+                    <name>faultCode</name>
+                    <value>
+                        <i4>0</i4>
+                    </value>
+                </member>
+                <member>
+                    <name>faultString</name>
+                    <value>
+                        <string>PVSS00ctrl (9), 2025.05.15 14:13:53.608, IMPL, INFO, 0, , ErrorVar,
+                            , Uninitialized error variable. Ignore this\n</string>
+                    </value>
+                </member>
+            </struct>
+        </value>
+    </fault>
+</methodResponse>

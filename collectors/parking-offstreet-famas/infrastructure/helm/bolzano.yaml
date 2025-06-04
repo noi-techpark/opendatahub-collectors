@@ -1,0 +1,20 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/parking-offstreet-famas
+  pullPolicy: IfNotPresent
+  tag: "0.2.0" # Set this when upgrading chart with --set-value
+
+env:
+  MQ_CLIENT: dc-parking-offstreet-famas-bolzano
+  PROVIDER: parking-offstreet-famas/bolzano
+
+  CRON: "0 */5 * * * *"
+  RPC_URL: http://109.117.22.203:7075/RPC2
+
+  SERVICE_NAME: dc-parking-offstreet-famas-bolzano
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+envSecret: 
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
