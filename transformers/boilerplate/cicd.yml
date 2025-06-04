@@ -2,49 +2,37 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-name: CI/CD tr-carsharing-alpsgo
+name: CI/CD tr-$PROJECT
 
 on: 
   push:
     paths:
-      - "transformers/carsharing-alpsgo/infrastructure/**"
-      - "!transformers/carsharing-alpsgo/infrastructure/helm/**"
-      - "transformers/carsharing-alpsgo/infrastructure/helm/carsharing-alpsgo*"
-      - "transformers/carsharing-alpsgo/src/**"
-      - ".github/workflows/tr-carsharing-alpsgo.yml"     
+      - "transformers/$PROJECT/**"
+      - ".github/workflows/tr-$PROJECT.yml"     
 
 env:
-  PROJECT_NAME: tr-carsharing-alpsgo
-  WORKING_DIRECTORY: transformers/carsharing-alpsgo
-  DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/tr-carsharing-alpsgo
+  PROJECT_NAME: tr-$PROJECT
+  WORKING_DIRECTORY: transformers/$PROJECT
+  DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/tr-$PROJECT
   DOCKER_TAG: ${{ github.sha }}
   KUBERNETES_NAMESPACE: collector
 
 jobs:
   tests:
-    runs-on: ubuntu-22.04
-    concurrency: tr-carsharing-alpsgo-tests
+    runs-on: ubuntu-24.04
+    concurrency: tr-$PROJECT-tests
     
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-      
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: 1.23.4
-          
-      - name: Install Dependencies
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: cd src && go mod tidy
-        
-      - name: Run Tests
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: cd src && go test -v ./...
+
+      - name: Run tests
+        run: docker run --rm --volume ./src:/code $(docker build -q . -f infrastructure/docker/Dockerfile --target test)
+        working-directory: ${{env.WORKING_DIRECTORY}}
 
   build:
-    runs-on: ubuntu-22.04
-    concurrency: tr-carsharing-alpsgo-build
+    runs-on: ubuntu-24.04
+    concurrency: tr-$PROJECT-build
     needs: 
       - tests
     steps:
@@ -58,36 +46,36 @@ jobs:
         docker-username: ${{ github.actor }}
         docker-password: ${{ secrets.GITHUB_TOKEN }}
           
-  deploy-test:
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev/alpsgo'
-    needs: 
-      - build
-    runs-on: ubuntu-22.04
-    concurrency: tr-carsharing-alpsgo-deploy-test
-    environment: test
-    env:
-      VALUES_YAML: infrastructure/helm/carsharing-alpsgo.test.yaml
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
+  # deploy-test:
+  #   if: github.ref == 'refs/heads/main'
+  #   needs: 
+  #     - build
+  #   runs-on: ubuntu-24.04
+  #   concurrency: tr-$PROJECT-deploy-test
+  #   environment: test
+  #   env:
+  #     VALUES_YAML: infrastructure/helm/$ORIGIN.yaml
+  #   steps:
+  #     - name: Checkout source code
+  #       uses: actions/checkout@v4
 
-      - name: Customize values.yaml
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: |
-            yq -i '.image.repository = "${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML }}
-            yq -i '.image.tag = "${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
-            yq -i '.image.pullPolicy = "IfNotPresent"' ${{ env.VALUES_YAML }}      
-            yq -i '.env.BDP_PROVENANCE_NAME="${{ env.PROJECT_NAME }}"' ${{ env.VALUES_YAML }}      
-            yq -i '.env.BDP_PROVENANCE_VERSION="${{github.sha}}"' ${{ env.VALUES_YAML }}      
+  #     - name: Customize values.yaml
+  #       working-directory: ${{ env.WORKING_DIRECTORY }}
+  #       run: |
+  #           yq -i '.image.repository = "${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML }}
+  #           yq -i '.image.tag = "${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
+  #           yq -i '.image.pullPolicy = "IfNotPresent"' ${{ env.VALUES_YAML }}      
+  #           yq -i '.env.BDP_PROVENANCE_NAME="${{ env.PROJECT_NAME }}"' ${{ env.VALUES_YAML }}      
+  #           yq -i '.env.BDP_PROVENANCE_VERSION="${{github.sha}}"' ${{ env.VALUES_YAML }}      
 
-      - name: Deploy on cluster  
-        uses: noi-techpark/github-actions/helm-deploy@v2
-        with:
-          k8s-name: ${{ env.PROJECT_NAME }}
-          k8s-namespace: collector
-          chart-path: helm/generic-collector
-          values-file: ${{ env.WORKING_DIRECTORY }}/${{ env.VALUES_YAML }}
-          aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
-          aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
-          aws-eks-cluster-name: aws-main-eu-01
-          aws-region: eu-west-1
+  #     - name: Deploy on cluster  
+  #       uses: noi-techpark/github-actions/helm-deploy@v2
+  #       with:
+  #         k8s-name: ${{ env.PROJECT_NAME }}
+  #         k8s-namespace: ${{ env.KUBERNETES_NAMESPACE }}
+  #         chart-path: helm/generic-collector
+  #         values-file: ${{ env.WORKING_DIRECTORY }}/${{ env.VALUES_YAML }}
+  #         aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
+  #         aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
+  #         aws-eks-cluster-name: aws-main-eu-01
+  #         aws-region: eu-west-1

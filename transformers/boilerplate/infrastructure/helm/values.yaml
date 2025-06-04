@@ -3,29 +3,26 @@
 # SPDX-License-Identifier: CC0-1.0
 
 image:
-  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-carsharing-alpsgo
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-$PROJECT
   pullPolicy: IfNotPresent
-  tag: sometaghere
-
-imagePullSecrets:
-  - name: container-registry-r
+  tag: latest
 
 env:
   # ODH Core Writer Connection
   LOG_LEVEL: "INFO"
-  MQ_QUEUE: multi-rest-poller.carsharing-alpsgo
-  MQ_EXCHANGE: routed  
-  MQ_KEY: multi-rest-poller.carsharing-alpsgo
-  MQ_CLIENT: tr-carsharing-alpsgo
+  MQ_QUEUE: $PROVIDER1.$PROVIDER2
+  MQ_EXCHANGE: routed
+  MQ_KEY: $PROVIDER1.$PROVIDER2
+  MQ_CLIENT: tr-$PROJECT
 
   BDP_BASE_URL: https://mobility.share.opendatahub.com
   BDP_PROVENANCE_VERSION: 
   BDP_PROVENANCE_NAME: 
-  BDP_ORIGIN: AlpsGo
+  BDP_ORIGIN: $ORIGIN
 
   RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
 
-  SERVICE_NAME: tr-carsharing-alpsgo
+  SERVICE_NAME: tr-$PROJECT
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 
 envSecretRef:
