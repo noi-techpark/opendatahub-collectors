@@ -47,6 +47,7 @@ func main() {
 
 	c := cron.New(cron.WithSeconds())
 	c.AddFunc(env.CRON, func() {
+		slog.Info("Job start")
 		ctx, c := collector.StartCollection(context.Background())
 		defer c.End(ctx)
 
@@ -85,6 +86,7 @@ func main() {
 		}); err != nil {
 			ms.FailOnError(ctx, err, "failed publishing to MQ")
 		}
+		slog.Info("Job complete", "records_pushed", len(rawRecs))
 	})
 	c.Run()
 }
