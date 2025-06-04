@@ -21,8 +21,8 @@ export PROVIDER1
 export PROVIDER2
 export ORIGIN
 
-BP_DIR="$(dirname "${BASH_SOURCE[0]}")"
-TARGET_DIR=$BP_DIR/../$PROJECT
+BP_DIR="$(dirname "${BASH_SOURCE[0]}")/go"
+TARGET_DIR=$BP_DIR/../../$PROJECT
 
 if [ -d "$TARGET_DIR" ]; then
     echo Target folder already exists. aborting...
