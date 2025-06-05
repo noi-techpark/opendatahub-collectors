@@ -1,0 +1,22 @@
+{
+    "Facilities": [
+        {
+            "id": 1,
+            "ReceiptMerchant": "foo"
+        },
+        {
+            "id": 2,
+            "ReceiptMerchant": "STA – Strutture Trasporto Alto Adige SpA Via dei Conciapelli, 60 39100  Bolzano UID: 00586190217",
+            "subFacilities": [
+                {
+                    "FacilityId": "s3",
+                    "locations": ["l1"]
+                },
+                {
+                    "FacilityId": "s4",
+                    "locations": ["l2", "l3"]
+                }
+            ]
+        }
+    ]
+}
