@@ -15,7 +15,12 @@ import (
 const RES_KEY = "$res"
 
 type Config struct {
-	Steps []Step `yaml:"steps"`
+	Steps   []Step  `yaml:"steps"`
+	Globals Globals `yaml:"globals"`
+}
+
+type Globals struct {
+	RootoContext interface{} `yaml:"rootContext"`
 }
 
 type Step struct {
@@ -26,8 +31,8 @@ type Step struct {
 	Steps             []Step                `yaml:"steps,omitempty"`
 	Request           *RequestConfig        `yaml:"request,omitempty"`
 	ResultTransformer string                `yaml:"resultTransformer,omitempty"`
-	ResultName        string                `yaml:"resultName,omitempty"`
 	MergeWithParentOn string                `yaml:"mergeWithParentOn,omitempty"`
+	MergeOn           string                `yaml:"mergeOn,omitempty"`
 	MergeWithContext  *MergeWithContextRule `yaml:"mergeWithContext,omitempty"`
 }
 
@@ -44,7 +49,8 @@ type MergeWithContextRule struct {
 }
 
 type Context struct {
-	Data map[string]interface{}
+	Data          interface{}
+	ParentContext string
 }
 
 type ApiCrawler struct {
@@ -78,35 +84,42 @@ func (a *ApiCrawler) SetClientRoundTripper(rt http.RoundTripper) {
 
 func (c *ApiCrawler) Run() error {
 	rootCtx := &Context{
-		Data: map[string]interface{}{},
+		Data:          c.Config.Globals.RootoContext,
+		ParentContext: "",
 	}
+
+	c.ContextMap["root"] = rootCtx
+	currentContext := "root"
+
 	for _, step := range c.Config.Steps {
-		if err := c.ExecuteStep(step, rootCtx); err != nil {
+		if err := c.ExecuteStep(step, currentContext, c.ContextMap); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (c *ApiCrawler) ExecuteStep(step Step, ctx *Context) error {
+func (c *ApiCrawler) ExecuteStep(step Step, currentContext string, contextMap map[string]*Context) error {
 	switch step.Type {
 	case "request":
-		return c.handleRequest(step, ctx)
+		return c.handleRequest(step, currentContext, contextMap)
 	case "forEach":
-		return c.handleForEach(step, ctx)
+		return c.handleForEach(step, currentContext, contextMap)
 	default:
 		return fmt.Errorf("unknown step type: %s", step.Type)
 	}
 }
 
-func (c *ApiCrawler) handleRequest(step Step, ctx *Context) error {
+func (c *ApiCrawler) handleRequest(step Step, currentContext string, contextMap map[string]*Context) error {
+	_ctx := contextMap[currentContext]
 	// 1. Expand URL using Go template
 	tmpl, err := template.New("url").Parse(step.Request.URL)
 	if err != nil {
 		return fmt.Errorf("error parsing URL template: %w", err)
 	}
 	var urlBuf bytes.Buffer
-	if err := tmpl.Execute(&urlBuf, ctx.Data); err != nil {
+	templateCtx := contextMapToTemplate(contextMap)
+	if err := tmpl.Execute(&urlBuf, templateCtx); err != nil {
 		return fmt.Errorf("error executing URL template: %w", err)
 	}
 	url := urlBuf.String()
@@ -141,7 +154,9 @@ func (c *ApiCrawler) handleRequest(step Step, ctx *Context) error {
 			return fmt.Errorf("invalid resultTransformer JQ: %w", err)
 		}
 		iter := query.Run(raw)
-		var results []interface{}
+		var singleResult interface{}
+		count := 0
+
 		for {
 			v, ok := iter.Next()
 			if !ok {
@@ -150,9 +165,15 @@ func (c *ApiCrawler) handleRequest(step Step, ctx *Context) error {
 			if err, isErr := v.(error); isErr {
 				return fmt.Errorf("jq error: %w", err)
 			}
-			results = append(results, v)
+
+			count++
+			if count > 1 {
+				return fmt.Errorf("resultTransformer yielded more than one value")
+			}
+
+			singleResult = v
 		}
-		transformed = results
+		transformed = singleResult
 	}
 
 	fmt.Printf("[Request] Got response (transformed): %+v\n", transformed)
@@ -163,16 +184,24 @@ func (c *ApiCrawler) handleRequest(step Step, ctx *Context) error {
 	// }
 
 	// 1. Explicit merge rule (advanced use)
-	if step.MergeWithParentOn != "" {
+	if step.MergeOn != "" {
 		// Simple jq merge on current context
-		updated, err := applyMergeRule(ctx.Data, step.MergeWithParentOn, transformed)
+		updated, err := applyMergeRule(_ctx.Data, step.MergeOn, transformed)
+		if err != nil {
+			return fmt.Errorf("mergeOn failed: %w", err)
+		}
+		_ctx.Data = updated
+	} else if step.MergeWithParentOn != "" {
+		parentCtx := contextMap[_ctx.ParentContext]
+		// Simple jq merge on current context
+		updated, err := applyMergeRule(parentCtx.Data, step.MergeWithParentOn, transformed)
 		if err != nil {
 			return fmt.Errorf("mergeWithParentOn failed: %w", err)
 		}
-		ctx.Data = updated
+		parentCtx.Data = updated
 	} else if step.MergeWithContext != nil {
 		// 2. Named context merge (cross-scope update)
-		targetCtx, ok := c.ContextMap[step.MergeWithContext.Name]
+		targetCtx, ok := contextMap[step.MergeWithContext.Name]
 		if !ok {
 			return fmt.Errorf("context '%s' not found", step.MergeWithContext.Name)
 		}
@@ -181,29 +210,39 @@ func (c *ApiCrawler) handleRequest(step Step, ctx *Context) error {
 			return fmt.Errorf("mergeWithContext failed: %w", err)
 		}
 		targetCtx.Data = updated
-	} else if step.ResultName != "" {
+	} else {
 		// 3. Simple assignment (shallow)
-		ctx.Data[step.ResultName] = transformed
-	} else if transformedMap, ok := transformed.(map[string]interface{}); ok {
-		// 4. If `transformed` is a map and nothing else is specified → deep merge
-		for k, v := range transformedMap {
-			ctx.Data[k] = v
+		switch data := _ctx.Data.(type) {
+		case []interface{}:
+			_ctx.Data = append(data, transformed.([]interface{})...) // Reassigns to field of original struct
+		case map[string]interface{}:
+			if transformedMap, ok := transformed.(map[string]interface{}); ok {
+				for k, v := range transformedMap {
+					data[k] = v // Modifies in-place
+				}
+			}
+		default:
+			_ctx.Data = transformed
 		}
-	} /*else {
-		// 5. Else fallback (e.g. assign under special key)
-		ctx.Data[RES_KEY] = transformed
-	}*/
+	}
+
+	for _, step := range step.Steps {
+		if err := c.ExecuteStep(step, currentContext, c.ContextMap); err != nil {
+			return err
+		}
+	}
 
 	return nil
 }
 
-func (c *ApiCrawler) handleForEach(step Step, ctx *Context) error {
+func (c *ApiCrawler) handleForEach(step Step, currentContext string, contextMap map[string]*Context) error {
+	_ctx := contextMap[currentContext]
 	query, err := gojq.Parse(step.Path)
 	if err != nil {
 		return fmt.Errorf("invalid jq path '%s': %w", step.Path, err)
 	}
 
-	iter := query.Run(ctx.Data)
+	iter := query.Run(_ctx.Data)
 	results := []interface{}{}
 	for {
 		v, ok := iter.Next()
@@ -223,57 +262,111 @@ func (c *ApiCrawler) handleForEach(step Step, ctx *Context) error {
 		}
 	}
 
+	executionResults := make([]interface{}, 0)
 	for i, item := range results {
 		fmt.Printf("[ForEach] Iteration %d as '%s': %v\n", i, step.As, item)
 
-		childCtx := &Context{
-			Data: copyMapWith(ctx.Data, step.As, item),
-		}
-
+		childContextMap := childMapWith(contextMap, currentContext, step.As, item)
 		for _, nested := range step.Steps {
-			if err := c.ExecuteStep(nested, childCtx); err != nil {
+			if err := c.ExecuteStep(nested, step.As, childContextMap); err != nil {
 				return err
 			}
 		}
+		executionResults = append(executionResults, childContextMap[step.As].Data)
+	}
+	// return nil
+
+	{
+		query, err := gojq.Parse(step.Path + " = $new")
+		if err != nil {
+			return fmt.Errorf("invalid merge rule JQ: %w", err)
+		}
+		code, err := gojq.Compile(query, gojq.WithVariables([]string{"$new"}))
+		if err != nil {
+			return fmt.Errorf("failed to compile merge rule: %w", err)
+		}
+
+		// Run the query against contextData, passing $res as a variable
+		iter := code.Run(_ctx.Data, executionResults)
+
+		v, ok := iter.Next()
+		if !ok {
+			return fmt.Errorf("patch yielded nothing")
+		}
+		if err, isErr := v.(error); isErr {
+			return err
+		}
+
+		// Assign new patched data
+		_ctx.Data = v
 	}
 
 	return nil
 }
 
-func applyMergeRule(contextData map[string]interface{}, rule string, result interface{}) (map[string]interface{}, error) {
-	ctx := map[string]interface{}{
-		RES_KEY: result,
-	}
-	for k, v := range contextData {
-		ctx[k] = v
-	}
+func applyMergeRule(contextData interface{}, rule string, result interface{}) (interface{}, error) {
+	// Parse the JQ expression
 	query, err := gojq.Parse(rule)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("invalid merge rule JQ: %w", err)
 	}
-	iter := query.Run(ctx)
-	value, ok := iter.Next()
-	if !ok {
-		return contextData, nil
+
+	// Create the evaluation context with $res variable bound
+	code, err := gojq.Compile(query, gojq.WithVariables([]string{"$res"}))
+	if err != nil {
+		return nil, fmt.Errorf("failed to compile merge rule: %w", err)
 	}
-	if err, isErr := value.(error); isErr {
-		return nil, err
+
+	// Run the query against contextData, passing $res as a variable
+	iter := code.Run(contextData, result)
+
+	// Collect the results, expecting exactly one
+	var values []interface{}
+	for {
+		v, ok := iter.Next()
+		if !ok {
+			break
+		}
+		if errVal, isErr := v.(error); isErr {
+			return nil, fmt.Errorf("error running JQ: %w", errVal)
+		}
+		values = append(values, v)
 	}
-	// NOTE: This assumes that the rule mutates a top-level object
-	// If your DSL implies mutation like `.foo =| $res`, you'll need to parse the assignment target and write to it.
-	// Here we assume `rule` returns a new map
-	newMap, ok := value.(map[string]interface{})
-	if !ok {
-		return nil, fmt.Errorf("merge rule did not return a valid map")
+
+	// Enforce exactly one result
+	if len(values) != 1 {
+		return nil, fmt.Errorf("merge rule must produce exactly one result, got %d", len(values))
 	}
-	return newMap, nil
+
+	return values[0], nil
 }
 
-func copyMapWith(base map[string]interface{}, key string, value interface{}) map[string]interface{} {
-	newMap := make(map[string]interface{}, len(base)+1)
+func childMapWith(base map[string]*Context, currentCotnext, key string, value interface{}) map[string]*Context {
+	newMap := make(map[string]*Context, len(base)+1)
 	for k, v := range base {
 		newMap[k] = v
 	}
-	newMap[key] = value
+	newMap[key] = &Context{
+		Data:          value,
+		ParentContext: currentCotnext,
+	}
 	return newMap
+}
+
+func contextMapToTemplate(base map[string]*Context) map[string]interface{} {
+	result := make(map[string]interface{})
+	// root special case
+	if rootMap, ok := base["root"].Data.(map[string]interface{}); ok {
+		for k, v := range rootMap {
+			result[k] = v
+		}
+	}
+
+	for k, c := range base {
+		if k == "root" {
+			continue
+		}
+		result[k] = c.Data
+	}
+	return result
 }

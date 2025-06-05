@@ -1,3 +1,6 @@
+globals:
+  rootContext: []
+  
 steps:
   - type: request
     name: Fetch Facilities
@@ -10,7 +13,6 @@ steps:
       [.Facilities[]
         | select(.ReceiptMerchant == "STA – Strutture Trasporto Alto Adige SpA Via dei Conciapelli, 60 39100  Bolzano UID: 00586190217")
       ]
-    mergeWithParentOn: .Facilities =| $res
     steps:
       - type: forEach
         path: .
@@ -19,39 +21,40 @@ steps:
           - type: request
             name: Get Facility Free Places
             request:
-              url: https://www.onecenter.info/api/DAZ/FacilityFreePlaces?FacilityID={{ facility.FacilityId }}
+              url: https://www.onecenter.info/api/DAZ/FacilityFreePlaces?FacilityID={{ .facility.FacilityId }}
               method: GET
               headers:
                 Accept: application/json
-            resultTransformer: '[.Data.FreePlaces]'
-            mergeWithParentOn: .FacilityDetails =| $res
+            resultTransformer: '[.FreePlaces]'
+            mergeOn: .FacilityDetails = $res
 
           - type: forEach
-            path: facility.subFacilities
+            path: .subFacilities
             as: sub
             steps:
               - type: request
                 name: Get SubFacility Free Places
                 request:
-                  url: https://www.onecenter.info/api/DAZ/FacilityFreePlaces?FacilityID={{ sub.FacilityId }}
+                  url: https://www.onecenter.info/api/DAZ/FacilityFreePlaces?FacilityID={{ .sub.FacilityId }}
                   method: GET
                   headers:
                     Accept: application/json
-                resultTransformer: '[.Data.FreePlaces]'
-                mergeWithParentOn: .SubFacilityDetails =| $res
+                resultTransformer: '[.FreePlaces]'
+                mergeOn: .SubFacilityDetails = $res
 
               - type: forEach
-                path: sub.locations
+                path: .locations
                 as: loc
                 steps:
                   - type: request
                     name: Get Location Details
                     request:
-                      url: https://www.onecenter.info/api/DAZ/Locations/{{ loc }}
+                      url: https://www.onecenter.info/api/DAZ/Locations/{{ .loc }}
                       method: GET
                       headers:
                         Accept: application/json
-                    #resultName: loc
                     mergeWithContext:
                       name: sub
-                      rule: .locationDetails = (.locationDetails // []) + [$loc]
+                      # rule: .locationDetails = (.locationDetails // []) + [$res]
+                      rule: ".locationDetails = (.locationDetails // {}) + {($res.id): $res}"
+                      # rule: "$res.id as $id | .locationDetails = (.locationDetails // {}) + { ($id): $res }"
