@@ -3,6 +3,8 @@ module opendatahub.com/multi-rest-poller
 go 1.23.7
 
 require (
+	github.com/hashicorp/go-retryablehttp v0.7.7
+	github.com/itchyny/gojq v0.12.17
 	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.3
 	github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0
 	github.com/oliveagle/jsonpath v0.0.0-20180606110733-2e52cf6e6852
@@ -65,7 +67,7 @@ require (
 	go.opentelemetry.io/otel/sdk v1.35.0 // indirect
 	go.opentelemetry.io/otel/sdk/log v0.11.0 // indirect
 	go.opentelemetry.io/otel/sdk/metric v1.35.0 // indirect
-	go.opentelemetry.io/otel/trace v1.35.0 // indirect
+	go.opentelemetry.io/otel/trace v1.35.0
 	go.opentelemetry.io/proto/otlp v1.5.0 // indirect
 	golang.org/x/arch v0.16.0 // indirect
 	golang.org/x/crypto v0.37.0 // indirect
@@ -80,6 +82,6 @@ require (
 
 require (
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
-	github.com/hashicorp/go-retryablehttp v0.7.7 // indirect
+	github.com/itchyny/timefmt-go v0.1.6 // indirect
 	github.com/rabbitmq/amqp091-go v1.10.0 // indirect
 )

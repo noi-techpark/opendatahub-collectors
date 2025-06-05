@@ -1,0 +1,90 @@
+- url: https://www.onecenter.info/api/DAZ/GetFacilities
+  method: GET
+  headers:
+    Accept: application/json
+  resultTransformer: |
+      .Data.Facilities[] 
+      | select(.ReceiptMerchant == "STA – Strutture Trasporto Alto Adige SpA Via dei Conciapelli, 60 39100  Bolzano UID: 00586190217")
+  # result here is 
+  # {
+  #   "FacilityId": "bla",
+  #   "subFacilities": [
+  #     {
+  #       "FacilityId": "foo"
+  #       "locations": [
+  #         "loc1"
+  #       ]
+  #     }
+  #   ]
+  # }
+
+  # all operations are contextualized in the result object
+  withObjectContext:
+    # No iterator meaning we still are in the result Object context
+    - select:
+        facility: .FacilityId
+      do:
+        - url: https://www.onecenter.info/api/DAZ/FacilityFreePlaces?FacilityID={{ .facility }}
+          method: GET
+          headers:
+            Accept: application/json
+          resultTransformer: '[.Data.FreePlaces]'
+          # result of the call will be place in "FacilityDetails" property of the parent using jq syntax
+          mergeWithParentOn: .FacilityDetails =| $res
+
+    # all operations are contextualized in the single entry of subFacilities
+    - iterator: .subFacilities
+      contextName: sub-fac
+      select:
+        facility: .FacilityId
+      do:
+        - url: https://www.onecenter.info/api/DAZ/FacilityFreePlaces?FacilityID={{ .facility }}
+          method: GET
+          headers:
+            Accept: application/json
+          resultTransformer: '[.Data.FreePlaces]'
+          # result of the call will be place in "SubFacilityDetails" property of the parent using jq syntax
+          mergeWithParentOn: .SubFacilityDetails =| $res
+      
+      withObjectContext:
+        - iterator: .locations
+          # selecting each location id from array
+          select:
+            location: .
+          do:
+            - url: https://www.onecenter.info/api/DAZ/Locations/{{ .location }}
+              method: GET
+              # assign a name to the result
+              resultName: loc
+              headers:
+                Accept: application/json
+              ## merge to specific context in the call tree
+              mergeWithContext: 
+                name: sub-fac
+                rule: .locationDetails = (.locationDetails // []) + [$loc]
+
+    # expected result:
+    # result here is 
+    # {
+    #   "FacilityId": "bla",
+    #   "FacilityDetails": {
+    #     "foo": "bar"
+    #   },
+    #   "subFacilities": [
+    #     {
+    #       "FacilityId": "foo",
+    #       "SubFacilityDetails": {
+    #         "address": "here"
+    #       },
+    #       "locations": [
+    #         "loc1"
+    #       ]
+    #       "locationDetails": [
+    #         {
+    #           "what": "details of loc 1"
+    #         }
+    #       ]
+    #     }
+    #   ]
+    # }
+
