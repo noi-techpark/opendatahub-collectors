@@ -1,4 +1,6 @@
 {
-    "id": 2,
-    "details": "foo bar"
+    "FreePlaces": {
+        "count": 10,
+        "details": "foo bar"
+    }
 }
