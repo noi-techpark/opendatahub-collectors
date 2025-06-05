@@ -34,7 +34,7 @@ jobs:
         docker-password: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-parking-offstreet-famas-bolzano-test:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feat/parking-offstreet-famas'
     needs: build
     runs-on: ubuntu-24.04
     concurrency: dc-parking-offstreet-famas-bolzano-test

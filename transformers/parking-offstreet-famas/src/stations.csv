@@ -1,0 +1,10 @@
+id,latitude,longitude,name,name_en,name_it,name_de,standard_name,netex_type,netex_vehicletypes,netex_layout,netex_hazard_prohibited,netex_charging,netex_surveillance,netex_reservation
+103,46.497805,11.355115,P03 - Piazza Walther,Piazza Walther,Piazza Walther,Waltherplatz,Parcheggio Piazza Walther,urbanParking,allPassengerVehicles,underground,true,false,true,noReservations
+104,46.500551,11.358216,P04 - Luna via Molini,Luna via Molini,Luna via Molini it,Luna MoliniStraße,Parcheggio Luna Via Molini,urbanParking,allPassengerVehicles,underground,true,true,true,noReservations
+106,46.497134,11.358907,P06 - Lauben Parking Portici,Lauben Parking Portici,Lauben Parking Portici,Lauben Parking,Parcheggio Lauben Parking,urbanParking,allPassengerVehicles,underground,true,true,true,noReservations
+107,46.502958,11.351793,P07 - Mareccio via C. de Medici,Mareccio via C. de Medici,Mareccio via C. de Medici,Mareccio C. de Medici Strasse,Parcheggio Mareccio,urbanParking,allPassengerVehicles,openSpace,true,false,true,noReservations
+108,46.494402,11.356716,P08 - BZ Centro via Mayr Nusser,BZ Centro via Mayr Nusser,BZ Centro via Mayr Nusser,BZ Centro Mayr Nusser Straße,Parcheggio BZ-Centro,urbanParking,allPassengerVehicles,underground,true,true,true,noReservations
+112,46.49781,11.33851,P12 – Piazza Tribunale,Piazza Tribunale,Piazza Tribunale,Gerichtsplatz,Parcheggio Tribunale,urbanParking,allPassengerVehicles,underground,true,false,true,noReservations
+113,46.49869,11.33818,P13 – Direzional Park,Direzional Park,Direzional Park,Direzional Park,Parcheggio Direzional Park,urbanParking,allPassengerVehicles,underground,true,false,true,noReservations
+115,46.491603,11.318078,P15 - Palasport via Resia,Palasport via Resia,Palasport via Resia,Palasport Reschenstraße,Parcheggio Palasport,urbanParking,allPassengerVehicles,openSpace,true,false,true,noReservations
+116,46.472249,11.327066,P16 - Fiera via Marco Polo/Buozzi,Fiera via Marco Polo/Buozzi,Fiera via Marco Polo/Buozzi,Messe Marco Polo/Buozzi Straße,Parcheggio Fiera,urbanParking,allPassengerVehicles,openSpace,true,true,true,noReservations
