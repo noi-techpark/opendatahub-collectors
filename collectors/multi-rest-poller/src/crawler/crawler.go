@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"io"
 	"net/http"
+	"net/url"
 	"os"
 
 	"github.com/itchyny/gojq"
@@ -37,10 +39,11 @@ type Step struct {
 }
 
 type RequestConfig struct {
-	URL     string            `yaml:"url"`
-	Method  string            `yaml:"method"`
-	Headers map[string]string `yaml:"headers,omitempty"`
-	Body    string            `yaml:"body,omitempty"`
+	URL        string            `yaml:"url"`
+	Method     string            `yaml:"method"`
+	Headers    map[string]string `yaml:"headers,omitempty"`
+	Body       string            `yaml:"body,omitempty"`
+	Pagination Pagination        `yaml:"pagination,omitempty"`
 }
 
 type MergeWithContextRule struct {
@@ -122,113 +125,149 @@ func (c *ApiCrawler) handleRequest(step Step, currentContext string, contextMap 
 	if err := tmpl.Execute(&urlBuf, templateCtx); err != nil {
 		return fmt.Errorf("error executing URL template: %w", err)
 	}
-	url := urlBuf.String()
-	fmt.Printf("[Request] Fetching: %s\n", url)
+	_url := urlBuf.String()
+	fmt.Printf("[Request] Fetching: %s\n", _url)
 
-	// 2. Create and send HTTP request
-	req, err := http.NewRequest(step.Request.Method, url, nil) // body support optional later
+	paginator, err := NewPaginator(ConfigP{step.Request.Pagination})
 	if err != nil {
-		return fmt.Errorf("error creating HTTP request: %w", err)
+		return fmt.Errorf("error creating request paginator: %w", err)
 	}
-	for k, v := range step.Request.Headers {
-		req.Header.Set(k, v)
-	}
-	client := &http.Client{Transport: c.clientRoundtripper}
-	resp, err := client.Do(req)
-	if err != nil {
-		return fmt.Errorf("error performing HTTP request: %w", err)
-	}
-	defer resp.Body.Close()
+	stop := false
+	next := paginator.NextFromCtx()
 
-	// 3. Decode JSON response into interface{}
-	var raw interface{}
-	if err := json.NewDecoder(resp.Body).Decode(&raw); err != nil {
-		return fmt.Errorf("error decoding JSON: %w", err)
-	}
-
-	// 4. Apply JQ transformer
-	transformed := raw
-	if step.ResultTransformer != "" {
-		query, err := gojq.Parse(step.ResultTransformer)
+	for !stop {
+		// 1. Inject query params
+		urlObj, err := url.Parse(_url)
 		if err != nil {
-			return fmt.Errorf("invalid resultTransformer JQ: %w", err)
+			return fmt.Errorf("invalid URL: %w", err)
 		}
-		iter := query.Run(raw)
-		var singleResult interface{}
-		count := 0
+		query := urlObj.Query()
+		for k, v := range next.QueryParams {
+			query.Set(k, v)
+		}
+		urlObj.RawQuery = query.Encode()
 
-		for {
-			v, ok := iter.Next()
-			if !ok {
-				break
+		// 2. Encode body if needed
+		var reqBody io.Reader
+		if len(next.BodyParams) > 0 {
+			bodyJSON, err := json.Marshal(next.BodyParams)
+			if err != nil {
+				return fmt.Errorf("error encoding body params: %w", err)
 			}
-			if err, isErr := v.(error); isErr {
-				return fmt.Errorf("jq error: %w", err)
+			reqBody = bytes.NewReader(bodyJSON)
+		}
+
+		// 2. Create and send HTTP request
+		req, err := http.NewRequest(step.Request.Method, urlObj.String(), reqBody)
+		if err != nil {
+			return fmt.Errorf("error creating HTTP request: %w", err)
+		}
+		// Apply headers from both config and paginator
+		for k, v := range step.Request.Headers {
+			req.Header.Set(k, v)
+		}
+		for k, v := range next.Headers {
+			req.Header.Set(k, v)
+		}
+
+		client := &http.Client{Transport: c.clientRoundtripper}
+		resp, err := client.Do(req)
+		if err != nil {
+			return fmt.Errorf("error performing HTTP request: %w", err)
+		}
+		defer resp.Body.Close()
+
+		// run next
+		next, stop, err = paginator.Next(resp)
+		if err != nil {
+			return fmt.Errorf("paginator update error: %w", err)
+		}
+
+		// 3. Decode JSON response into interface{}
+		var raw interface{}
+		if err := json.NewDecoder(resp.Body).Decode(&raw); err != nil {
+			return fmt.Errorf("error decoding JSON: %w", err)
+		}
+
+		// 4. Apply JQ transformer
+		transformed := raw
+		if step.ResultTransformer != "" {
+			query, err := gojq.Parse(step.ResultTransformer)
+			if err != nil {
+				return fmt.Errorf("invalid resultTransformer JQ: %w", err)
 			}
+			iter := query.Run(raw)
+			var singleResult interface{}
+			count := 0
 
-			count++
-			if count > 1 {
-				return fmt.Errorf("resultTransformer yielded more than one value")
-			}
-
-			singleResult = v
-		}
-		transformed = singleResult
-	}
-
-	fmt.Printf("[Request] Got response (transformed): %+v\n", transformed)
-
-	// 5. Apply ResultName (store result as named key)
-	// if step.ResultName != "" {
-	// 	ctx.Data[step.ResultName] = transformed
-	// }
-
-	// 1. Explicit merge rule (advanced use)
-	if step.MergeOn != "" {
-		// Simple jq merge on current context
-		updated, err := applyMergeRule(_ctx.Data, step.MergeOn, transformed)
-		if err != nil {
-			return fmt.Errorf("mergeOn failed: %w", err)
-		}
-		_ctx.Data = updated
-	} else if step.MergeWithParentOn != "" {
-		parentCtx := contextMap[_ctx.ParentContext]
-		// Simple jq merge on current context
-		updated, err := applyMergeRule(parentCtx.Data, step.MergeWithParentOn, transformed)
-		if err != nil {
-			return fmt.Errorf("mergeWithParentOn failed: %w", err)
-		}
-		parentCtx.Data = updated
-	} else if step.MergeWithContext != nil {
-		// 2. Named context merge (cross-scope update)
-		targetCtx, ok := contextMap[step.MergeWithContext.Name]
-		if !ok {
-			return fmt.Errorf("context '%s' not found", step.MergeWithContext.Name)
-		}
-		updated, err := applyMergeRule(targetCtx.Data, step.MergeWithContext.Rule, transformed)
-		if err != nil {
-			return fmt.Errorf("mergeWithContext failed: %w", err)
-		}
-		targetCtx.Data = updated
-	} else {
-		// 3. Simple assignment (shallow)
-		switch data := _ctx.Data.(type) {
-		case []interface{}:
-			_ctx.Data = append(data, transformed.([]interface{})...) // Reassigns to field of original struct
-		case map[string]interface{}:
-			if transformedMap, ok := transformed.(map[string]interface{}); ok {
-				for k, v := range transformedMap {
-					data[k] = v // Modifies in-place
+			for {
+				v, ok := iter.Next()
+				if !ok {
+					break
 				}
-			}
-		default:
-			_ctx.Data = transformed
-		}
-	}
+				if err, isErr := v.(error); isErr {
+					return fmt.Errorf("jq error: %w", err)
+				}
 
-	for _, step := range step.Steps {
-		if err := c.ExecuteStep(step, currentContext, c.ContextMap); err != nil {
-			return err
+				count++
+				if count > 1 {
+					return fmt.Errorf("resultTransformer yielded more than one value")
+				}
+
+				singleResult = v
+			}
+			transformed = singleResult
+		}
+
+		fmt.Printf("[Request] Got response (transformed): %+v\n", transformed)
+
+		// 1. Explicit merge rule (advanced use)
+		if step.MergeOn != "" {
+			// Simple jq merge on current context
+			updated, err := applyMergeRule(_ctx.Data, step.MergeOn, transformed)
+			if err != nil {
+				return fmt.Errorf("mergeOn failed: %w", err)
+			}
+			_ctx.Data = updated
+		} else if step.MergeWithParentOn != "" {
+			parentCtx := contextMap[_ctx.ParentContext]
+			// Simple jq merge on current context
+			updated, err := applyMergeRule(parentCtx.Data, step.MergeWithParentOn, transformed)
+			if err != nil {
+				return fmt.Errorf("mergeWithParentOn failed: %w", err)
+			}
+			parentCtx.Data = updated
+		} else if step.MergeWithContext != nil {
+			// 2. Named context merge (cross-scope update)
+			targetCtx, ok := contextMap[step.MergeWithContext.Name]
+			if !ok {
+				return fmt.Errorf("context '%s' not found", step.MergeWithContext.Name)
+			}
+			updated, err := applyMergeRule(targetCtx.Data, step.MergeWithContext.Rule, transformed)
+			if err != nil {
+				return fmt.Errorf("mergeWithContext failed: %w", err)
+			}
+			targetCtx.Data = updated
+		} else {
+			// 3. Simple assignment (shallow)
+			switch data := _ctx.Data.(type) {
+			case []interface{}:
+				_ctx.Data = append(data, transformed.([]interface{})...) // Reassigns to field of original struct
+			case map[string]interface{}:
+				if transformedMap, ok := transformed.(map[string]interface{}); ok {
+					for k, v := range transformedMap {
+						data[k] = v // Modifies in-place
+					}
+				}
+			default:
+				_ctx.Data = transformed
+			}
+		}
+
+		for _, step := range step.Steps {
+			if err := c.ExecuteStep(step, currentContext, c.ContextMap); err != nil {
+				return err
+			}
 		}
 	}
 
