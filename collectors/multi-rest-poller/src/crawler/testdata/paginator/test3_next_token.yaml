@@ -1,0 +1,55 @@
+configuration:
+  pagination:
+    params:
+      - name: token_body
+        location: query
+        type: dynamic
+        source: body:.nextToken
+
+      - name: token_header
+        location: header
+        type: dynamic
+        source: header:X-Next-Token
+    stopOn:
+      - type: responseBody
+        expression: ".nextToken == null"
+
+httpResults:
+  - body: |
+      {
+        "nextToken": "abc123"
+      }
+    header:
+      X-Next-Token: xyz789
+
+  - body: |
+      {
+        "nextToken": "def456"
+      }
+    header:
+      X-Next-Token: uvw000
+
+  - body: |
+      {
+        "nextToken": null
+      }
+    header:
+      X-Next-Token: done
+  
+  - body: "{}"
+
+paginationState:
+  - queryParams:
+      token_body: "abc123"
+    headers:
+      token_header: "xyz789"
+
+  - queryParams:
+      token_body: "def456"
+    headers:
+      token_header: "uvw000"
+
+  - queryParams:
+      token_body: "<nil>"
+    headers:
+      token_header: "done"

@@ -1,0 +1,28 @@
+configuration:
+  pagination:
+    params:
+      - name: since
+        location: body
+        type: datetime
+        format: "2006-01-02"
+        default: "2024-01-01"
+        increment: "24h"
+    stopOn:
+      - type: requestParam
+        param: ".body.since"
+        compare: gte
+        value: "2024-01-04"
+
+httpResults:
+  - body: "{}"
+    header: {}
+  - body: "{}"
+    header: {}
+  - body: "{}"
+    header: {}
+
+paginationState:
+  - bodyParams:
+      since: "2024-01-02"
+  - bodyParams:
+      since: "2024-01-03"
