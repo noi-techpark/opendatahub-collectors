@@ -451,6 +451,30 @@ func (p *Paginator) shouldStop(body interface{}) (bool, error) {
 	return false, nil
 }
 
+func (p *Paginator) NextFromCtx() *RequestParts {
+	q := make(map[string]string)
+	h := make(map[string]string)
+	b := make(map[string]interface{})
+
+	for _, param := range p.config.Pagination.Params {
+		val := p.ctx[param.Name]
+		switch param.Location {
+		case "query":
+			q[param.Name] = fmt.Sprintf("%v", val)
+		case "header":
+			h[param.Name] = fmt.Sprintf("%v", val)
+		case "body":
+			b[param.Name] = val
+		}
+	}
+
+	return &RequestParts{
+		QueryParams: q,
+		BodyParams:  b,
+		Headers:     h,
+	}
+}
+
 // Next advances the paginator and returns query/body/header params for the next request
 func (p *Paginator) Next(resp *http.Response) (*RequestParts, bool, error) {
 	if p.stopped {
@@ -491,25 +515,5 @@ func (p *Paginator) Next(resp *http.Response) (*RequestParts, bool, error) {
 		return nil, true, nil
 	}
 
-	q := make(map[string]string)
-	h := make(map[string]string)
-	b := make(map[string]interface{})
-
-	for _, param := range p.config.Pagination.Params {
-		val := p.ctx[param.Name]
-		switch param.Location {
-		case "query":
-			q[param.Name] = fmt.Sprintf("%v", val)
-		case "header":
-			h[param.Name] = fmt.Sprintf("%v", val)
-		case "body":
-			b[param.Name] = val
-		}
-	}
-
-	return &RequestParts{
-		QueryParams: q,
-		BodyParams:  b,
-		Headers:     h,
-	}, false, nil
+	return p.NextFromCtx(), false, nil
 }

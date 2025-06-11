@@ -1,0 +1,18 @@
+{
+    "data": [
+        {
+            "FacilityId": 3,
+            "ReceiptMerchant": "bar"
+        },
+        {
+            "FacilityId": 4,
+            "ReceiptMerchant": "STaaaaaa",
+            "subFacilities": [
+                {
+                    "FacilityId": "s4",
+                    "locations": ["l5"]
+                }
+            ]
+        }
+    ]
+}
