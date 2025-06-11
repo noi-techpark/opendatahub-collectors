@@ -1,0 +1,32 @@
+configuration:
+  pagination:
+    params:
+      - name: since
+        location: query
+        type: datetime
+        format: 2006-01-02T15:04:05Z
+        default: now -2d
+        increment: 1d
+
+    stopOn:
+      - type: requestParam
+        param: .query.since
+        compare: gte
+        value: now
+      - type: responseBody
+        expression: "(.| length == 0)"
+
+nowMock: 2025-01-03T00:00:00Z
+
+httpResults:
+  - body: "[1]"
+    header: {}
+  - body: "{}"
+    header: {}
+  - body:
+
+paginationState:
+  - queryParams:
+      since: 2025-01-02T00:00:00Z
+  - queryParams:
+      since: 2025-01-03T00:00:00Z
