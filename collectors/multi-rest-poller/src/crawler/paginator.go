@@ -62,7 +62,7 @@ func NewPaginator(cfg ConfigP) (*Paginator, error) {
 	p := &Paginator{
 		config:  cfg,
 		ctx:     make(PaginationContext),
-		stopped: false,
+		stopped: len(cfg.Pagination.Params) == 0,
 	}
 
 	// initialize context

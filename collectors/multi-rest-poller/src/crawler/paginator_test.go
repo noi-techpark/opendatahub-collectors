@@ -142,6 +142,23 @@ func TestNowMocking(t *testing.T) {
 	assert.Equal(t, "2025-01-02T00:00:00Z", dt.Format(time.RFC3339))
 }
 
+func TestEmptyPaginator(t *testing.T) {
+	p, err := NewPaginator(ConfigP{})
+	require.Nil(t, err)
+
+	body := io.NopCloser(strings.NewReader("{}"))
+
+	req := &http.Response{
+		StatusCode: 200,
+		Body:       body,
+	}
+
+	_, end, err := p.Next(req)
+	require.Nil(t, err)
+	require.True(t, end)
+	require.True(t, p.stopped)
+}
+
 func TestIntIncrement(t *testing.T) {
 	runPaginatorTest(t, "testdata/paginator/test1_int_increment.yaml", 3)
 }
