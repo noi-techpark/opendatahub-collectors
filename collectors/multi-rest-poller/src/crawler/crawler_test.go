@@ -38,3 +38,46 @@ func TestPaginatedIncrement(t *testing.T) {
 	err := craw.Run()
 	require.Nil(t, err)
 }
+
+func TestPaginatedIncrementNested(t *testing.T) {
+	mockTransport := crawler_testing.NewMockRoundTripper(map[string]string{
+		"https://www.onecenter.info/api/DAZ/GetFacilities?offset=0":          "testdata/crawler/paginated_increment_stream/facilities_1.json",
+		"https://www.onecenter.info/api/DAZ/GetFacilities?offset=1":          "testdata/crawler/paginated_increment_stream/facilities_2.json",
+		"https://www.onecenter.info/api/DAZ/FacilityFreePlaces?FacilityID=1": "testdata/crawler/paginated_increment_stream/facility_id_1.json",
+		"https://www.onecenter.info/api/DAZ/FacilityFreePlaces?FacilityID=2": "testdata/crawler/paginated_increment_stream/facility_id_2.json",
+		"https://www.onecenter.info/api/DAZ/FacilityFreePlaces?FacilityID=3": "testdata/crawler/paginated_increment_stream/facility_id_3.json",
+		"https://www.onecenter.info/api/DAZ/FacilityFreePlaces?FacilityID=4": "testdata/crawler/paginated_increment_stream/facility_id_4.json",
+	})
+
+	craw := NewApiCrawler("testing/example_pagination_increment_nested.yaml")
+	craw.SetClientRoundTripper(mockTransport)
+
+	err := craw.Run()
+	require.Nil(t, err)
+}
+
+func TestPaginatedIncrementStream(t *testing.T) {
+	mockTransport := crawler_testing.NewMockRoundTripper(map[string]string{
+		"https://www.onecenter.info/api/DAZ/GetFacilities?offset=0":          "testdata/crawler/paginated_increment_stream/facilities_1.json",
+		"https://www.onecenter.info/api/DAZ/GetFacilities?offset=1":          "testdata/crawler/paginated_increment_stream/facilities_2.json",
+		"https://www.onecenter.info/api/DAZ/FacilityFreePlaces?FacilityID=1": "testdata/crawler/paginated_increment_stream/facility_id_1.json",
+		"https://www.onecenter.info/api/DAZ/FacilityFreePlaces?FacilityID=2": "testdata/crawler/paginated_increment_stream/facility_id_2.json",
+		"https://www.onecenter.info/api/DAZ/FacilityFreePlaces?FacilityID=3": "testdata/crawler/paginated_increment_stream/facility_id_3.json",
+		"https://www.onecenter.info/api/DAZ/FacilityFreePlaces?FacilityID=4": "testdata/crawler/paginated_increment_stream/facility_id_4.json",
+	})
+
+	craw := NewApiCrawler("testing/example_pagination_increment_stream.yaml")
+	craw.SetClientRoundTripper(mockTransport)
+
+	stream := craw.GetDataStream()
+	defer close(stream)
+
+	go func() {
+		for d := range stream {
+			println(d)
+		}
+	}()
+
+	err := craw.Run()
+	require.Nil(t, err)
+}
