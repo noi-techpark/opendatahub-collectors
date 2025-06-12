@@ -25,6 +25,7 @@ type Globals struct {
 	RootContext    interface{}          `yaml:"rootContext"`
 	Authentication *AuthenticatorConfig `yaml:"auth,omitempty"`
 	Headers        map[string]string    `yaml:"headers,omitempty"`
+	Stream         bool                 `yaml:"stream,omitempty"`
 }
 
 type Step struct {
@@ -57,6 +58,8 @@ type MergeWithContextRule struct {
 type Context struct {
 	Data          interface{}
 	ParentContext string
+	key           string
+	depth         int
 }
 
 type ApiCrawler struct {
@@ -64,6 +67,7 @@ type ApiCrawler struct {
 	Config              Config
 	ContextMap          map[string]*Context
 	globalAuthenticator Authenticator
+	DataStream          chan any
 }
 
 func NewApiCrawler(configPath string) *ApiCrawler {
@@ -78,10 +82,23 @@ func NewApiCrawler(configPath string) *ApiCrawler {
 		panic(err)
 	}
 
+	if nil == cfg.Globals.RootContext {
+		panic("globals.rootContext must be either [] or {}")
+	}
+
+	if _, ok := cfg.Globals.RootContext.([]interface{}); cfg.Globals.Stream && !ok {
+		panic("globals.stream can be used only on array globals.rootContext")
+	}
+
 	c := &ApiCrawler{
 		clientRoundtripper: http.DefaultTransport,
 		Config:             cfg,
 		ContextMap:         map[string]*Context{},
+	}
+
+	// handle stream channel
+	if cfg.Globals.Stream {
+		c.DataStream = make(chan any)
 	}
 
 	// instantiate global authenticator
@@ -93,6 +110,10 @@ func NewApiCrawler(configPath string) *ApiCrawler {
 	return c
 }
 
+func (a *ApiCrawler) GetDataStream() chan interface{} {
+	return a.DataStream
+}
+
 func (a *ApiCrawler) SetClientRoundTripper(rt http.RoundTripper) {
 	a.clientRoundtripper = rt
 }
@@ -101,6 +122,8 @@ func (c *ApiCrawler) Run() error {
 	rootCtx := &Context{
 		Data:          c.Config.Globals.RootContext,
 		ParentContext: "",
+		depth:         0,
+		key:           "root",
 	}
 
 	c.ContextMap["root"] = rootCtx
@@ -298,6 +321,19 @@ func (c *ApiCrawler) handleRequest(step Step, currentContext string, contextMap 
 				return err
 			}
 		}
+
+		// at this point all inner steps have been executed for all entries in this call
+		// the tree has been completely retrieved and we can check the stream
+		if _ctx.depth == 0 && c.Config.Globals.Stream {
+			// No need to check conversion since rootContext is enforced to be an array
+			array_data := _ctx.Data.([]interface{})
+			for _, d := range array_data {
+				c.DataStream <- d
+			}
+
+			// reset data
+			_ctx.Data = []interface{}{}
+		}
 	}
 
 	return nil
@@ -334,7 +370,7 @@ func (c *ApiCrawler) handleForEach(step Step, currentContext string, contextMap 
 	for i, item := range results {
 		fmt.Printf("[ForEach] Iteration %d as '%s': %v\n", i, step.As, item)
 
-		childContextMap := childMapWith(contextMap, currentContext, step.As, item)
+		childContextMap := childMapWith(contextMap, _ctx, step.As, item)
 		for _, nested := range step.Steps {
 			if err := c.ExecuteStep(nested, step.As, childContextMap); err != nil {
 				return err
@@ -408,14 +444,16 @@ func applyMergeRule(contextData interface{}, rule string, result interface{}) (i
 	return values[0], nil
 }
 
-func childMapWith(base map[string]*Context, currentCotnext, key string, value interface{}) map[string]*Context {
+func childMapWith(base map[string]*Context, currentCotnext *Context, key string, value interface{}) map[string]*Context {
 	newMap := make(map[string]*Context, len(base)+1)
 	for k, v := range base {
 		newMap[k] = v
 	}
 	newMap[key] = &Context{
 		Data:          value,
-		ParentContext: currentCotnext,
+		ParentContext: currentCotnext.key,
+		key:           key,
+		depth:         currentCotnext.depth + 1,
 	}
 	return newMap
 }
