@@ -22,7 +22,9 @@ type Config struct {
 }
 
 type Globals struct {
-	RootoContext interface{} `yaml:"rootContext"`
+	RootContext    interface{}          `yaml:"rootContext"`
+	Authentication *AuthenticatorConfig `yaml:"auth,omitempty"`
+	Headers        map[string]string    `yaml:"headers,omitempty"`
 }
 
 type Step struct {
@@ -39,11 +41,12 @@ type Step struct {
 }
 
 type RequestConfig struct {
-	URL        string            `yaml:"url"`
-	Method     string            `yaml:"method"`
-	Headers    map[string]string `yaml:"headers,omitempty"`
-	Body       string            `yaml:"body,omitempty"`
-	Pagination Pagination        `yaml:"pagination,omitempty"`
+	URL            string               `yaml:"url"`
+	Method         string               `yaml:"method"`
+	Headers        map[string]string    `yaml:"headers,omitempty"`
+	Body           string               `yaml:"body,omitempty"`
+	Pagination     Pagination           `yaml:"pagination,omitempty"`
+	Authentication *AuthenticatorConfig `yaml:"auth,omitempty"`
 }
 
 type MergeWithContextRule struct {
@@ -57,9 +60,10 @@ type Context struct {
 }
 
 type ApiCrawler struct {
-	clientRoundtripper http.RoundTripper
-	Config             Config
-	ContextMap         map[string]*Context
+	clientRoundtripper  http.RoundTripper
+	Config              Config
+	ContextMap          map[string]*Context
+	globalAuthenticator Authenticator
 }
 
 func NewApiCrawler(configPath string) *ApiCrawler {
@@ -74,11 +78,19 @@ func NewApiCrawler(configPath string) *ApiCrawler {
 		panic(err)
 	}
 
-	return &ApiCrawler{
+	c := &ApiCrawler{
 		clientRoundtripper: http.DefaultTransport,
 		Config:             cfg,
 		ContextMap:         map[string]*Context{},
 	}
+
+	// instantiate global authenticator
+	if cfg.Globals.Authentication != nil {
+		c.globalAuthenticator = NewAuthenticator(*cfg.Globals.Authentication)
+	} else {
+		c.globalAuthenticator = NoopAuthenticator{}
+	}
+	return c
 }
 
 func (a *ApiCrawler) SetClientRoundTripper(rt http.RoundTripper) {
@@ -87,7 +99,7 @@ func (a *ApiCrawler) SetClientRoundTripper(rt http.RoundTripper) {
 
 func (c *ApiCrawler) Run() error {
 	rootCtx := &Context{
-		Data:          c.Config.Globals.RootoContext,
+		Data:          c.Config.Globals.RootContext,
 		ParentContext: "",
 	}
 
@@ -128,6 +140,13 @@ func (c *ApiCrawler) handleRequest(step Step, currentContext string, contextMap 
 	_url := urlBuf.String()
 	fmt.Printf("[Request] Fetching: %s\n", _url)
 
+	// instantiate authenticator
+	authenticator := c.globalAuthenticator
+	if step.Request.Authentication != nil {
+		authenticator = NewAuthenticator(*step.Request.Authentication)
+	}
+
+	// instantiate paginator
 	paginator, err := NewPaginator(ConfigP{step.Request.Pagination})
 	if err != nil {
 		return fmt.Errorf("error creating request paginator: %w", err)
@@ -163,12 +182,22 @@ func (c *ApiCrawler) handleRequest(step Step, currentContext string, contextMap 
 			return fmt.Errorf("error creating HTTP request: %w", err)
 		}
 		// Apply headers from both config and paginator
+		// priority is (ascending order)
+		// 1. Global
+		// 2. Request
+		// 3. Pagination
+		for k, v := range c.Config.Globals.Headers {
+			req.Header.Set(k, v)
+		}
 		for k, v := range step.Request.Headers {
 			req.Header.Set(k, v)
 		}
 		for k, v := range next.Headers {
 			req.Header.Set(k, v)
 		}
+
+		// apply authentication
+		authenticator.PrepareRequest(req)
 
 		client := &http.Client{Transport: c.clientRoundtripper}
 		resp, err := client.Do(req)
@@ -313,7 +342,6 @@ func (c *ApiCrawler) handleForEach(step Step, currentContext string, contextMap 
 		}
 		executionResults = append(executionResults, childContextMap[step.As].Data)
 	}
-	// return nil
 
 	{
 		query, err := gojq.Parse(step.Path + " = $new")
@@ -325,7 +353,7 @@ func (c *ApiCrawler) handleForEach(step Step, currentContext string, contextMap 
 			return fmt.Errorf("failed to compile merge rule: %w", err)
 		}
 
-		// Run the query against contextData, passing $res as a variable
+		// Run the query against contextData, passing $new as a variable
 		iter := code.Run(_ctx.Data, executionResults)
 
 		v, ok := iter.Next()
