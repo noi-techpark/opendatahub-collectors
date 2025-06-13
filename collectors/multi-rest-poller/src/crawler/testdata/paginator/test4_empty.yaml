@@ -5,7 +5,7 @@ configuration:
         location: query
         type: int
         default: "1"
-        increment: ". + 1"
+        increment: "+ 1"
     stopOn:
       - type: responseBody
         expression: "(.| length == 0)"

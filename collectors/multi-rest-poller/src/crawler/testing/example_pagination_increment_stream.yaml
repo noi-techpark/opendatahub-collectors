@@ -18,7 +18,7 @@ steps:
             location: query
             type: int
             default: 0
-            increment: ". + 1"
+            increment: "+ 1"
         stopOn:
           - type: requestParam
             param: ".query.offset"
