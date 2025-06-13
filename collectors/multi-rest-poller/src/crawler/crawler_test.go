@@ -9,6 +9,27 @@ import (
 	crawler_testing "opendatahub.com/multi-rest-poller/crawler/testing"
 )
 
+func TestExampleSingle(t *testing.T) {
+	mockTransport := crawler_testing.NewMockRoundTripper(map[string]string{
+		"https://www.onecenter.info/api/DAZ/GetFacilities":                   "testdata/crawler/example_single/facilities_1.json",
+		"https://www.onecenter.info/api/DAZ/FacilityFreePlaces?FacilityID=2": "testdata/crawler/example_single/facility_id_2.json",
+	})
+
+	craw := NewApiCrawler("testing/example_single.yaml")
+	craw.SetClientRoundTripper(mockTransport)
+
+	err := craw.Run()
+	require.Nil(t, err)
+
+	data := craw.GetData()
+
+	var expected interface{}
+	err = crawler_testing.LoadInputData(&expected, "testdata/crawler/example_single/output.json")
+	require.Nil(t, err)
+
+	assert.Equal(t, expected, data)
+}
+
 func TestExample2(t *testing.T) {
 	mockTransport := crawler_testing.NewMockRoundTripper(map[string]string{
 		"https://www.onecenter.info/api/DAZ/GetFacilities":                    "testdata/crawler/example2/facilities_1.json",
