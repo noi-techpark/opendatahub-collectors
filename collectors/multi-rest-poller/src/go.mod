@@ -3,6 +3,7 @@ module opendatahub.com/multi-rest-poller
 go 1.23.7
 
 require (
+	github.com/expr-lang/expr v1.17.5
 	github.com/hashicorp/go-retryablehttp v0.7.7
 	github.com/itchyny/gojq v0.12.17
 	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.3
@@ -10,7 +11,6 @@ require (
 	github.com/oliveagle/jsonpath v0.0.0-20180606110733-2e52cf6e6852
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/stretchr/testify v1.10.0
-	github.com/xhit/go-str2duration/v2 v2.1.0
 	golang.org/x/oauth2 v0.29.0
 	gopkg.in/yaml.v3 v3.0.1
 )
