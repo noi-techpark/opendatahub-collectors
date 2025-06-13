@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/expr-lang/expr"
 	"github.com/itchyny/gojq"
 	"gopkg.in/yaml.v3"
 )
@@ -79,6 +80,14 @@ func NewPaginatorFromFile(yamlData []byte) (*Paginator, error) {
 }
 func (p *Paginator) Ctx() PaginationContext {
 	return p.ctx
+}
+
+func evalSimpleExpr(expression string, val interface{}) (interface{}, error) {
+	prog, err := expr.Compile(fmt.Sprintf("x %s", expression))
+	if err != nil {
+		return nil, err
+	}
+	return expr.Run(prog, map[string]interface{}{"x": val})
 }
 
 func evalJQ(expr string, input interface{}) (interface{}, error) {
@@ -156,7 +165,7 @@ func (p *Paginator) applyIncrements() error {
 
 			case "int", "float":
 				// Increment using jq math expression (e.g. `. + 10`)
-				res, err := evalJQ(param.Increment, val)
+				res, err := evalSimpleExpr(param.Increment, val)
 				if err != nil {
 					return fmt.Errorf("jq eval error on increment for '%s': %w", param.Name, err)
 				}
