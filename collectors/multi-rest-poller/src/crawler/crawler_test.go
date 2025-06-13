@@ -3,6 +3,7 @@ package crawler
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	crawler_testing "opendatahub.com/multi-rest-poller/crawler/testing"
@@ -24,6 +25,14 @@ func TestExample2(t *testing.T) {
 
 	err := craw.Run()
 	require.Nil(t, err)
+
+	data := craw.GetData()
+
+	var expected interface{}
+	err = crawler_testing.LoadInputData(&expected, "testdata/crawler/example2/output.json")
+	require.Nil(t, err)
+
+	assert.Equal(t, expected, data)
 }
 
 func TestPaginatedIncrement(t *testing.T) {
@@ -37,6 +46,14 @@ func TestPaginatedIncrement(t *testing.T) {
 
 	err := craw.Run()
 	require.Nil(t, err)
+
+	data := craw.GetData()
+
+	var expected interface{}
+	err = crawler_testing.LoadInputData(&expected, "testdata/crawler/paginated_increment/output.json")
+	require.Nil(t, err)
+
+	assert.Equal(t, expected, data)
 }
 
 func TestPaginatedIncrementNested(t *testing.T) {
@@ -54,6 +71,14 @@ func TestPaginatedIncrementNested(t *testing.T) {
 
 	err := craw.Run()
 	require.Nil(t, err)
+
+	data := craw.GetData()
+
+	var expected interface{}
+	err = crawler_testing.LoadInputData(&expected, "testdata/crawler/paginated_increment_stream/output.json")
+	require.Nil(t, err)
+
+	assert.Equal(t, expected, data)
 }
 
 func TestPaginatedIncrementStream(t *testing.T) {
@@ -71,13 +96,20 @@ func TestPaginatedIncrementStream(t *testing.T) {
 
 	stream := craw.GetDataStream()
 	defer close(stream)
+	data := make([]interface{}, 0)
 
 	go func() {
 		for d := range stream {
-			println(d)
+			data = append(data, d)
 		}
 	}()
 
 	err := craw.Run()
 	require.Nil(t, err)
+
+	var expected interface{}
+	err = crawler_testing.LoadInputData(&expected, "testdata/crawler/paginated_increment_stream/output.json")
+	require.Nil(t, err)
+
+	assert.Equal(t, expected, data)
 }
