@@ -1,0 +1,65 @@
+[
+  {
+    "FacilityDetails": [
+      {
+        "count": 0,
+        "details": "1111111111111"
+      }
+    ],
+    "FacilityId": 1,
+    "ReceiptMerchant": "foo"
+  },
+  {
+    "FacilityDetails": [
+      {
+        "count": 999,
+        "details": "222222222"
+      }
+    ],
+    "FacilityId": 2,
+    "ReceiptMerchant": "STA – Strutture Trasporto Alto Adige SpA Via dei Conciapelli, 60 39100  Bolzano UID: 00586190217",
+    "subFacilities": [
+      {
+        "FacilityId": "s3",
+        "locations": [
+          "l1"
+        ]
+      },
+      {
+        "FacilityId": "s4",
+        "locations": [
+          "l2",
+          "l3"
+        ]
+      }
+    ]
+  },
+  {
+    "FacilityDetails": [
+      {
+        "count": 200,
+        "details": "33333333333"
+      }
+    ],
+    "FacilityId": 3,
+    "ReceiptMerchant": "bar"
+  },
+  {
+    "FacilityDetails": [
+      {
+        "count": -1,
+        "details": "44444444"
+      }
+    ],
+    "FacilityId": 4,
+    "ReceiptMerchant": "STaaaaaa",
+    "subFacilities": [
+      {
+        "FacilityId": "s4",
+        "locations": [
+          "l5"
+        ]
+      }
+    ]
+  }
+]

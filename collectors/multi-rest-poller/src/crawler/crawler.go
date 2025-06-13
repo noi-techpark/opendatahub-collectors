@@ -114,6 +114,10 @@ func (a *ApiCrawler) GetDataStream() chan interface{} {
 	return a.DataStream
 }
 
+func (a *ApiCrawler) GetData() interface{} {
+	return a.ContextMap["root"].Data
+}
+
 func (a *ApiCrawler) SetClientRoundTripper(rt http.RoundTripper) {
 	a.clientRoundtripper = rt
 }
