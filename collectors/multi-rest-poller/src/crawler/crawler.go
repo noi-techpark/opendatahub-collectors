@@ -33,6 +33,7 @@ type Step struct {
 	Name              string                `yaml:"name,omitempty"`
 	Path              string                `yaml:"path,omitempty"`
 	As                string                `yaml:"as,omitempty"`
+	Values            []interface{}         `yaml:"values,omitempty"`
 	Steps             []Step                `yaml:"steps,omitempty"`
 	Request           *RequestConfig        `yaml:"request,omitempty"`
 	ResultTransformer string                `yaml:"resultTransformer,omitempty"`
@@ -345,29 +346,34 @@ func (c *ApiCrawler) handleRequest(step Step, currentContext string, contextMap 
 
 func (c *ApiCrawler) handleForEach(step Step, currentContext string, contextMap map[string]*Context) error {
 	_ctx := contextMap[currentContext]
-	query, err := gojq.Parse(step.Path)
-	if err != nil {
-		return fmt.Errorf("invalid jq path '%s': %w", step.Path, err)
-	}
-
-	iter := query.Run(_ctx.Data)
 	results := []interface{}{}
-	for {
-		v, ok := iter.Next()
-		if !ok {
-			break
-		}
-		if err, isErr := v.(error); isErr {
-			return fmt.Errorf("jq error: %w", err)
-		}
-		results = append(results, v)
-	}
 
-	// Make sure the result is an array (jq might emit one-by-one items)
-	if len(results) == 1 {
-		if arr, ok := results[0].([]interface{}); ok {
-			results = arr
+	if len(step.Path) != 0 {
+		query, err := gojq.Parse(step.Path)
+		if err != nil {
+			return fmt.Errorf("invalid jq path '%s': %w", step.Path, err)
 		}
+
+		iter := query.Run(_ctx.Data)
+		for {
+			v, ok := iter.Next()
+			if !ok {
+				break
+			}
+			if err, isErr := v.(error); isErr {
+				return fmt.Errorf("jq error: %w", err)
+			}
+			results = append(results, v)
+		}
+
+		// Make sure the result is an array (jq might emit one-by-one items)
+		if len(results) == 1 {
+			if arr, ok := results[0].([]interface{}); ok {
+				results = arr
+			}
+		}
+	} else if step.Values != nil {
+		results = step.Values
 	}
 
 	executionResults := make([]interface{}, 0)
@@ -383,7 +389,9 @@ func (c *ApiCrawler) handleForEach(step Step, currentContext string, contextMap 
 		executionResults = append(executionResults, childContextMap[step.As].Data)
 	}
 
-	{
+	// We need to path the context with the result of the nested data.
+	// This has to be done only if we are using path selector, foreach with hadcoded values already merge with some othe context
+	if len(step.Path) != 0 {
 		query, err := gojq.Parse(step.Path + " = $new")
 		if err != nil {
 			return fmt.Errorf("invalid merge rule JQ: %w", err)
@@ -406,6 +414,19 @@ func (c *ApiCrawler) handleForEach(step Step, currentContext string, contextMap 
 
 		// Assign new patched data
 		_ctx.Data = v
+	}
+
+	// at this point all inner steps have been executed for all entries in this call
+	// the tree has been completely retrieved and we can check the stream
+	if _ctx.depth == 0 && c.Config.Globals.Stream {
+		// No need to check conversion since rootContext is enforced to be an array
+		array_data := contextMap["root"].Data.([]interface{})
+		for _, d := range array_data {
+			c.DataStream <- d
+		}
+
+		// reset data
+		contextMap["root"].Data = []interface{}{}
 	}
 
 	return nil
