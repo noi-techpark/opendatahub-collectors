@@ -348,7 +348,7 @@ func (c *ApiCrawler) handleForEach(step Step, currentContext string, contextMap 
 	_ctx := contextMap[currentContext]
 	results := []interface{}{}
 
-	if len(step.Path) != 0 {
+	if len(step.Path) != 0 && step.Values == nil {
 		query, err := gojq.Parse(step.Path)
 		if err != nil {
 			return fmt.Errorf("invalid jq path '%s': %w", step.Path, err)
@@ -373,7 +373,9 @@ func (c *ApiCrawler) handleForEach(step Step, currentContext string, contextMap 
 			}
 		}
 	} else if step.Values != nil {
-		results = step.Values
+		for _, v := range step.Values {
+			results = append(results, map[string]interface{}{"value": v})
+		}
 	}
 
 	executionResults := make([]interface{}, 0)
@@ -391,42 +393,40 @@ func (c *ApiCrawler) handleForEach(step Step, currentContext string, contextMap 
 
 	// We need to path the context with the result of the nested data.
 	// This has to be done only if we are using path selector, foreach with hadcoded values already merge with some othe context
-	if len(step.Path) != 0 {
-		query, err := gojq.Parse(step.Path + " = $new")
-		if err != nil {
-			return fmt.Errorf("invalid merge rule JQ: %w", err)
-		}
-		code, err := gojq.Compile(query, gojq.WithVariables([]string{"$new"}))
-		if err != nil {
-			return fmt.Errorf("failed to compile merge rule: %w", err)
-		}
-
-		// Run the query against contextData, passing $new as a variable
-		iter := code.Run(_ctx.Data, executionResults)
-
-		v, ok := iter.Next()
-		if !ok {
-			return fmt.Errorf("patch yielded nothing")
-		}
-		if err, isErr := v.(error); isErr {
-			return err
-		}
-
-		// Assign new patched data
-		_ctx.Data = v
+	query, err := gojq.Parse(step.Path + " = $new")
+	if err != nil {
+		return fmt.Errorf("invalid merge rule JQ: %w", err)
 	}
+	code, err := gojq.Compile(query, gojq.WithVariables([]string{"$new"}))
+	if err != nil {
+		return fmt.Errorf("failed to compile merge rule: %w", err)
+	}
+
+	// Run the query against contextData, passing $new as a variable
+	iter := code.Run(_ctx.Data, executionResults)
+
+	v, ok := iter.Next()
+	if !ok {
+		return fmt.Errorf("patch yielded nothing")
+	}
+	if err, isErr := v.(error); isErr {
+		return err
+	}
+
+	// Assign new patched data
+	_ctx.Data = v
 
 	// at this point all inner steps have been executed for all entries in this call
 	// the tree has been completely retrieved and we can check the stream
 	if _ctx.depth == 0 && c.Config.Globals.Stream {
 		// No need to check conversion since rootContext is enforced to be an array
-		array_data := contextMap["root"].Data.([]interface{})
+		array_data := _ctx.Data.([]interface{})
 		for _, d := range array_data {
 			c.DataStream <- d
 		}
 
 		// reset data
-		contextMap["root"].Data = []interface{}{}
+		_ctx.Data = []interface{}{}
 	}
 
 	return nil

@@ -4,6 +4,7 @@ globals:
   
 steps:
   - type: forEach
+    path: "."
     values: [1, 2]
     as: id
       
@@ -11,9 +12,9 @@ steps:
       - type: request
         name: Get Facility Free Places
         request:
-          url: https://www.onecenter.info/api/DAZ/FacilityFreePlaces?FacilityID={{ .id }}
+          url: https://www.onecenter.info/api/DAZ/FacilityFreePlaces?FacilityID={{ .id.value }}
           method: GET
           headers:
             Accept: application/json
         resultTransformer: '.FreePlaces'
-        mergeWithParentOn:  . + [$res]
+        mergeOn:  . = $res
