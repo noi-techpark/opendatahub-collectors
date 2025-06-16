@@ -1,5 +1,4 @@
-globals:
-  rootContext: []
+rootContext: []
   
 steps:
   - type: forEach

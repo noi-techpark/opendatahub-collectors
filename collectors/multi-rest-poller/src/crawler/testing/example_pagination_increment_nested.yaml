@@ -1,6 +1,5 @@
-globals:
-  rootContext: []
-  stream: false
+rootContext: []
+stream: false
   
 steps:
   - type: request
