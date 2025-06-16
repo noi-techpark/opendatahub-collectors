@@ -17,11 +17,7 @@ import (
 const RES_KEY = "$res"
 
 type Config struct {
-	Steps   []Step  `yaml:"steps"`
-	Globals Globals `yaml:"globals"`
-}
-
-type Globals struct {
+	Steps          []Step               `yaml:"steps"`
 	RootContext    interface{}          `yaml:"rootContext"`
 	Authentication *AuthenticatorConfig `yaml:"auth,omitempty"`
 	Headers        map[string]string    `yaml:"headers,omitempty"`
@@ -83,11 +79,11 @@ func NewApiCrawler(configPath string) *ApiCrawler {
 		panic(err)
 	}
 
-	if nil == cfg.Globals.RootContext {
+	if nil == cfg.RootContext {
 		panic("globals.rootContext must be either [] or {}")
 	}
 
-	if _, ok := cfg.Globals.RootContext.([]interface{}); cfg.Globals.Stream && !ok {
+	if _, ok := cfg.RootContext.([]interface{}); cfg.Stream && !ok {
 		panic("globals.stream can be used only on array globals.rootContext")
 	}
 
@@ -98,13 +94,13 @@ func NewApiCrawler(configPath string) *ApiCrawler {
 	}
 
 	// handle stream channel
-	if cfg.Globals.Stream {
+	if cfg.Stream {
 		c.DataStream = make(chan any)
 	}
 
 	// instantiate global authenticator
-	if cfg.Globals.Authentication != nil {
-		c.globalAuthenticator = NewAuthenticator(*cfg.Globals.Authentication)
+	if cfg.Authentication != nil {
+		c.globalAuthenticator = NewAuthenticator(*cfg.Authentication)
 	} else {
 		c.globalAuthenticator = NoopAuthenticator{}
 	}
@@ -125,7 +121,7 @@ func (a *ApiCrawler) SetClientRoundTripper(rt http.RoundTripper) {
 
 func (c *ApiCrawler) Run() error {
 	rootCtx := &Context{
-		Data:          c.Config.Globals.RootContext,
+		Data:          c.Config.RootContext,
 		ParentContext: "",
 		depth:         0,
 		key:           "root",
@@ -214,7 +210,7 @@ func (c *ApiCrawler) handleRequest(step Step, currentContext string, contextMap 
 		// 1. Global
 		// 2. Request
 		// 3. Pagination
-		for k, v := range c.Config.Globals.Headers {
+		for k, v := range c.Config.Headers {
 			req.Header.Set(k, v)
 		}
 		for k, v := range step.Request.Headers {
@@ -329,7 +325,7 @@ func (c *ApiCrawler) handleRequest(step Step, currentContext string, contextMap 
 
 		// at this point all inner steps have been executed for all entries in this call
 		// the tree has been completely retrieved and we can check the stream
-		if _ctx.depth == 0 && c.Config.Globals.Stream {
+		if _ctx.depth == 0 && c.Config.Stream {
 			// No need to check conversion since rootContext is enforced to be an array
 			array_data := _ctx.Data.([]interface{})
 			for _, d := range array_data {
@@ -418,7 +414,7 @@ func (c *ApiCrawler) handleForEach(step Step, currentContext string, contextMap 
 
 	// at this point all inner steps have been executed for all entries in this call
 	// the tree has been completely retrieved and we can check the stream
-	if _ctx.depth == 0 && c.Config.Globals.Stream {
+	if _ctx.depth == 0 && c.Config.Stream {
 		// No need to check conversion since rootContext is enforced to be an array
 		array_data := _ctx.Data.([]interface{})
 		for _, d := range array_data {

@@ -1,6 +1,5 @@
-globals:
-  rootContext: []
-  stream: true
+rootContext: []
+stream: true
   
 steps:
   - type: forEach
