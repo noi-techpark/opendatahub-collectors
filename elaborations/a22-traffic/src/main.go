@@ -55,6 +55,12 @@ const (
 // Hardcoded minimum allowed start time: 2024-Jul-09 23:59:59 UTC
 var hardcodedMinStartTime = time.Date(2024, time.July, 9, 23, 59, 59, 0, time.UTC).UnixMilli()
 
+// inconsistent data start:  2024-Jul-09 23:59:59 UTC
+var InconsistentDataStart = time.Date(2024, time.July, 9, 23, 59, 59, 0, time.UTC).UnixMilli()
+
+// inconsistent data end:  2024-Nov-26 23:59:59 UTC
+var InconsistentDataEnd = time.Date(2024, time.November, 26, 23, 59, 59, 0, time.UTC).UnixMilli()
+
 // allDataTypes is the complete list of data‐types we expect.
 var allDataTypes = []string{
 	DataTypeLightVehicles,
@@ -177,7 +183,14 @@ func processStationTask(ctx context.Context, task stationTask, horizon int64, bd
 	batchWindowCount := 10
 	batchWindowLength := windowLength * int64(batchWindowCount)
 
-	for window := startTime; window <= endTime; window += batchWindowLength {
+	// align start time with the nearest 10*x minute timestamp
+	alignedStartTime := (startTime / batchWindowLength) * batchWindowLength
+	for window := alignedStartTime; window < endTime; window += batchWindowLength {
+		// exclude windows where data is insonsistent
+		if window >= InconsistentDataStart && window <= InconsistentDataEnd {
+			continue
+		}
+
 		// Cap windowEnd so it doesn't exceed endTime
 		windowEnd := window + batchWindowLength
 		if windowEnd > endTime {
@@ -201,8 +214,8 @@ func processStationTask(ctx context.Context, task stationTask, horizon int64, bd
 
 		for i := 0; i < batchWindowCount; i++ {
 			winStart := window + int64(i)*windowLength
-			if winStart+windowLength >= windowEnd {
-				continue
+			if winStart >= windowEnd {
+				break
 			}
 
 			winEnd := winStart + windowLength
