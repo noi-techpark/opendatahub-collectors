@@ -23,7 +23,9 @@ WHERE m.station_id = s.id
     'Average Density', 
     'Average Flow', 
     'Euro Emission Standard', 
-    'Vehicle Count by Nationality'
+    'Vehicle Count by Nationality',
+    'EURO Category Pct',
+    'Plate Nationality Count'
   );
 
 ---
@@ -50,7 +52,9 @@ AND m.period = 600
     'Average Density', 
     'Average Flow', 
     'Euro Emission Standard', 
-    'Vehicle Count by Nationality'
+    'Vehicle Count by Nationality',
+    'EURO Category Pct',
+    'Plate Nationality Count'
   )
 order by m.timestamp desc
 limit 1000;
@@ -94,7 +98,9 @@ BEGIN
             'Average Density', 
             'Average Flow', 
             'Euro Emission Standard', 
-            'Vehicle Count by Nationality'
+            'Vehicle Count by Nationality',
+            'EURO Category Pct',
+            'Plate Nationality Count'
           );
 
         GET DIAGNOSTICS rows_deleted = ROW_COUNT;
@@ -146,7 +152,9 @@ WHERE m.station_id = s.id
     'Average Density', 
     'Average Flow', 
     'Euro Emission Standard', 
-    'Vehicle Count by Nationality'
+    'Vehicle Count by Nationality',
+    'EURO Category Pct',
+    'Plate Nationality Count'
   );
 
 ---
@@ -173,7 +181,9 @@ AND m.period = 600
     'Average Density', 
     'Average Flow', 
     'Euro Emission Standard', 
-    'Vehicle Count by Nationality'
+    'Vehicle Count by Nationality',
+    'EURO Category Pct',
+    'Plate Nationality Count'
   )
 order by m.timestamp desc
 limit 1000;
@@ -202,7 +212,9 @@ WHERE m.station_id = s.id
     'Average Density', 
     'Average Flow', 
     'Euro Emission Standard', 
-    'Vehicle Count by Nationality'
+    'Vehicle Count by Nationality',
+    'EURO Category Pct',
+    'Plate Nationality Count'
   );
 
 ---------------------------------------------
@@ -230,7 +242,9 @@ AND t.cname IN (
     'Average Density', 
     'Average Flow', 
     'Euro Emission Standard', 
-    'Vehicle Count by Nationality'
+    'Vehicle Count by Nationality',
+    'EURO Category Pct',
+    'Plate Nationality Count'
   );
 
 select count(*)
@@ -257,6 +271,8 @@ AND t.cname IN (
     'Average Density', 
     'Average Flow', 
     'Euro Emission Standard', 
-    'Vehicle Count by Nationality'
+    'Vehicle Count by Nationality',
+    'EURO Category Pct',
+    'Plate Nationality Count'
   );
 
