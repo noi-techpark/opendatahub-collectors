@@ -184,7 +184,7 @@ func processStationTask(ctx context.Context, task stationTask, horizon int64, bd
 	batchWindowLength := windowLength * int64(batchWindowCount)
 
 	// align start time with the nearest 10*x minute timestamp
-	alignedStartTime := (startTime / batchWindowLength) * batchWindowLength
+	alignedStartTime := (startTime / windowLength) * windowLength
 	for window := alignedStartTime; window < endTime; window += batchWindowLength {
 		// exclude windows where data is insonsistent
 		if window >= InconsistentDataStart && window <= InconsistentDataEnd {
@@ -220,6 +220,9 @@ func processStationTask(ctx context.Context, task stationTask, horizon int64, bd
 
 			winEnd := winStart + windowLength
 			vInWindow := vehicleMap[i]
+
+			logger.Get(batchCtx).Debug("elaborating", "station", station.Id,
+				"window_start", milliToRFC3339(winStart), "window_end", milliToRFC3339(winEnd), "vehicle_count", len(vInWindow))
 
 			err = elaborate(batchCtx, &dataMap, meas, station, vInWindow, winEnd, MeasurementPeriod)
 			ms.FailOnError(batchCtx, err, "failed to elaborate vehicles", "station", station.Id,
