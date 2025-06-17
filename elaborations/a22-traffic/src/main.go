@@ -185,6 +185,13 @@ func processStationTask(ctx context.Context, task stationTask, horizon int64, bd
 
 	// align start time with the nearest 10*x minute timestamp
 	alignedStartTime := (startTime / windowLength) * windowLength
+	endTime = (endTime / windowLength) * windowLength
+
+	logger.Get(ctx).Debug("processing station (aligned)",
+		"stationcode", station.Id,
+		"start_time", milliToRFC3339(startTime),
+		"end_time", milliToRFC3339(endTime))
+
 	for window := alignedStartTime; window < endTime; window += batchWindowLength {
 		// exclude windows where data is insonsistent
 		if window >= InconsistentDataStart && window <= InconsistentDataEnd {
