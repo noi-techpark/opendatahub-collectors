@@ -1,0 +1,103 @@
+{
+  "Name": "Foreach [2]  - [\n   {\n      \"Address\": \"Via dei Conciapelli, 60\",\n      \"City\": \"Bolzano\",\n      \"Description\": \"Parcheggio Stazione Brunico\",\n      \"FacilityId\": 608612,\n      \"IdCompany\": 18,\n      \"ParkNo\": 0,\n      \"PostNumber\": 500,\n      \"ReceiptMerchant\": \"STA – Strutture Trasporto Alto Adige SpA Via dei Conciapelli, 60 39100  Bolzano UID: 00586190217\",\n      \"Telephone1\": null,\n      \"Telephone2\": null,\n      \"Web\": null,\n      \"ZIPCode\": \"39100\"\n   },\n   {\n      \"Address\": \"Piazza Priel\",\n      \"City\": \"Bressanone\",\n      \"Description\": \"Parcheggio Priel Park\",\n      \"FacilityId\": 607440,\n      \"IdCompany\": 19,\n      \"ParkNo\": 0,\n      \"PostNumber\": 500,\n      \"ReceiptMerchant\": \"STA – Strutture Trasporto Alto Adige SpA Via dei Conciapelli, 60 39100  Bolzano UID: 00586190217\",\n      \"Telephone1\": null,\n      \"Telephone2\": null,\n      \"Web\": null,\n      \"ZIPCode\": \"39042\"\n   },\n   {\n      \"Address\": null,\n      \"City\": null,\n      \"Description\": \"Parcheggio Centro Mobilità Park\",\n      \"FacilityId\": 607440,\n      \"IdCompany\": 19,\n      \"ParkNo\": 2,\n      \"PostNumber\": 500,\n      \"ReceiptMerchant\": \"STA – Strutture Trasporto Alto Adige SpA Via dei Conciapelli, 60 39100  Bolzano UID: 00586190217\",\n      \"Telephone1\": null,\n      \"Telephone2\": null,\n      \"Web\": null,\n      \"ZIPCode\": null\n   }\n]",
+  "Config": {
+    "Type": "forEach",
+    "Name": "",
+    "Path": ".",
+    "As": "facility",
+    "Values": null,
+    "Steps": [
+      {
+        "Type": "request",
+        "Name": "Get Facility Details",
+        "Path": "",
+        "As": "",
+        "Values": null,
+        "Steps": null,
+        "Request": {
+          "URL": "https://www.onecenter.info/api/DAZ/FacilityFreePlaces?FacilityID={{ .facility.FacilityId }}",
+          "Method": "GET",
+          "Headers": {
+            "Accept": "application/json"
+          },
+          "Body": "",
+          "Pagination": {
+            "Params": null,
+            "StopOn": null
+          },
+          "Authentication": null
+        },
+        "ResultTransformer": ".Data.FreePlaces",
+        "MergeWithParentOn": "",
+        "MergeOn": ".FacilityDetails = $res",
+        "MergeWithContext": null
+      }
+    ],
+    "Request": null,
+    "ResultTransformer": "",
+    "MergeWithParentOn": "",
+    "MergeOn": "",
+    "MergeWithContext": null
+  },
+  "Data": {
+    "Address": null,
+    "City": null,
+    "Description": "Parcheggio Centro Mobilità Park",
+    "FacilityId": 607440,
+    "IdCompany": 19,
+    "ParkNo": 2,
+    "PostNumber": 500,
+    "ReceiptMerchant": "STA – Strutture Trasporto Alto Adige SpA Via dei Conciapelli, 60 39100  Bolzano UID: 00586190217",
+    "Telephone1": null,
+    "Telephone2": null,
+    "Web": null,
+    "ZIPCode": null
+  },
+  "Context": {
+    "Data": [
+      {
+        "Address": "Via dei Conciapelli, 60",
+        "City": "Bolzano",
+        "Description": "Parcheggio Stazione Brunico",
+        "FacilityId": 608612,
+        "IdCompany": 18,
+        "ParkNo": 0,
+        "PostNumber": 500,
+        "ReceiptMerchant": "STA – Strutture Trasporto Alto Adige SpA Via dei Conciapelli, 60 39100  Bolzano UID: 00586190217",
+        "Telephone1": null,
+        "Telephone2": null,
+        "Web": null,
+        "ZIPCode": "39100"
+      },
+      {
+        "Address": "Piazza Priel",
+        "City": "Bressanone",
+        "Description": "Parcheggio Priel Park",
+        "FacilityId": 607440,
+        "IdCompany": 19,
+        "ParkNo": 0,
+        "PostNumber": 500,
+        "ReceiptMerchant": "STA – Strutture Trasporto Alto Adige SpA Via dei Conciapelli, 60 39100  Bolzano UID: 00586190217",
+        "Telephone1": null,
+        "Telephone2": null,
+        "Web": null,
+        "ZIPCode": "39042"
+      },
+      {
+        "Address": null,
+        "City": null,
+        "Description": "Parcheggio Centro Mobilità Park",
+        "FacilityId": 607440,
+        "IdCompany": 19,
+        "ParkNo": 2,
+        "PostNumber": 500,
+        "ReceiptMerchant": "STA – Strutture Trasporto Alto Adige SpA Via dei Conciapelli, 60 39100  Bolzano UID: 00586190217",
+        "Telephone1": null,
+        "Telephone2": null,
+        "Web": null,
+        "ZIPCode": null
+      }
+    ],
+    "ParentContext": ""
+  }
+}

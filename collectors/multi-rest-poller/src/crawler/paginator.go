@@ -17,27 +17,27 @@ import (
 )
 
 type Param struct {
-	Name      string `yaml:"name"`
-	Location  string `yaml:"location"` // "query", "body", "header"
-	Type      string `yaml:"type"`     // "int", "float", "datetime", "dynamic"`
-	Format    string `yaml:"format,omitempty"`
-	Default   string `yaml:"default"`
-	Increment string `yaml:"increment,omitempty"`
-	Source    string `yaml:"source,omitempty"` // "body:selector" or "header:selector"
+	Name      string `yaml:"name" json:"name"`
+	Location  string `yaml:"location" json:"location"` // "query", "body", "header"
+	Type      string `yaml:"type" json:"type"`         // "int", "float", "datetime", "dynamic"`
+	Format    string `yaml:"format,omitempty" json:"format,omitempty"`
+	Default   string `yaml:"default" json:"default"`
+	Increment string `yaml:"increment,omitempty" json:"increment,omitempty"`
+	Source    string `yaml:"source,omitempty" json:"source,omitempty"` // "body:selector" or "header:selector"
 }
 
 type StopCondition struct {
-	Type       string `yaml:"type"`       // "responseBody", "requestParam"
-	Expression string `yaml:"expression"` // used by jq
+	Type       string `yaml:"type" json:"type"`             // "responseBody", "requestParam"
+	Expression string `yaml:"expression" json:"expression"` // used by jq
 
-	Param   string `yaml:"param,omitempty"`   // for requestParam
-	Compare string `yaml:"compare,omitempty"` // "lt", "lte", "eq", "gt", "gte"
-	Value   any    `yaml:"value,omitempty"`   // value to compare against
+	Param   string `yaml:"param,omitempty" json:"param,omitempty"`     // for requestParam
+	Compare string `yaml:"compare,omitempty" json:"compare,omitempty"` // "lt", "lte", "eq", "gt", "gte"
+	Value   any    `yaml:"value,omitempty" json:"value,omitempty"`     // value to compare against
 }
 
 type Pagination struct {
-	Params []Param         `yaml:"params"`
-	StopOn []StopCondition `yaml:"stopOn"`
+	Params []Param         `yaml:"params" json:"params"`
+	StopOn []StopCondition `yaml:"stopOn" json:"stopOn"`
 }
 
 type ConfigP struct {

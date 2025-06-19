@@ -1,0 +1,56 @@
+{
+  "Name": "Request Get Facility Details - https://www.onecenter.info/api/DAZ/FacilityFreePlaces?FacilityID=608612",
+  "Config": {
+    "Type": "request",
+    "Name": "Get Facility Details",
+    "Path": "",
+    "As": "",
+    "Values": null,
+    "Steps": null,
+    "Request": {
+      "URL": "https://www.onecenter.info/api/DAZ/FacilityFreePlaces?FacilityID={{ .facility.FacilityId }}",
+      "Method": "GET",
+      "Headers": {
+        "Accept": "application/json"
+      },
+      "Body": "",
+      "Pagination": {
+        "Params": null,
+        "StopOn": null
+      },
+      "Authentication": null
+    },
+    "ResultTransformer": ".Data.FreePlaces",
+    "MergeWithParentOn": "",
+    "MergeOn": ".FacilityDetails = $res",
+    "MergeWithContext": null
+  },
+  "Data": {
+    "ContentEncoding": null,
+    "ContentType": null,
+    "Data": {
+      "FreePlaces": [],
+      "Status": "OK"
+    },
+    "JsonRequestBehavior": 0,
+    "MaxJsonLength": null,
+    "RecursionLimit": null
+  },
+  "Context": {
+    "Data": {
+      "Address": "Via dei Conciapelli, 60",
+      "City": "Bolzano",
+      "Description": "Parcheggio Stazione Brunico",
+      "FacilityId": 608612,
+      "IdCompany": 18,
+      "ParkNo": 0,
+      "PostNumber": 500,
+      "ReceiptMerchant": "STA – Strutture Trasporto Alto Adige SpA Via dei Conciapelli, 60 39100  Bolzano UID: 00586190217",
+      "Telephone1": null,
+      "Telephone2": null,
+      "Web": null,
+      "ZIPCode": "39100"
+    },
+    "ParentContext": "root"
+  }
+}

@@ -1,0 +1,392 @@
+{
+  "Name": "Request Get Facilities - https://www.onecenter.info/api/DAZ/GetFacilities",
+  "Config": {
+    "Type": "request",
+    "Name": "Get Facilities",
+    "Path": "",
+    "As": "",
+    "Values": null,
+    "Steps": [
+      {
+        "Type": "forEach",
+        "Name": "",
+        "Path": ".",
+        "As": "facility",
+        "Values": null,
+        "Steps": [
+          {
+            "Type": "request",
+            "Name": "Get Facility Details",
+            "Path": "",
+            "As": "",
+            "Values": null,
+            "Steps": null,
+            "Request": {
+              "URL": "https://www.onecenter.info/api/DAZ/FacilityFreePlaces?FacilityID={{ .facility.FacilityId }}",
+              "Method": "GET",
+              "Headers": {
+                "Accept": "application/json"
+              },
+              "Body": "",
+              "Pagination": {
+                "Params": null,
+                "StopOn": null
+              },
+              "Authentication": null
+            },
+            "ResultTransformer": ".Data.FreePlaces",
+            "MergeWithParentOn": "",
+            "MergeOn": ".FacilityDetails = $res",
+            "MergeWithContext": null
+          }
+        ],
+        "Request": null,
+        "ResultTransformer": "",
+        "MergeWithParentOn": "",
+        "MergeOn": "",
+        "MergeWithContext": null
+      }
+    ],
+    "Request": {
+      "URL": "https://www.onecenter.info/api/DAZ/GetFacilities",
+      "Method": "GET",
+      "Headers": {
+        "Accept": "application/json"
+      },
+      "Body": "",
+      "Pagination": {
+        "Params": null,
+        "StopOn": null
+      },
+      "Authentication": null
+    },
+    "ResultTransformer": "[.Data.Facilities[]\n  | select(.ReceiptMerchant == \"STA – Strutture Trasporto Alto Adige SpA Via dei Conciapelli, 60 39100  Bolzano UID: 00586190217\")\n]\n",
+    "MergeWithParentOn": "",
+    "MergeOn": ". = $res",
+    "MergeWithContext": null
+  },
+  "Data": {
+    "ContentEncoding": null,
+    "ContentType": null,
+    "Data": {
+      "Facilities": [
+        {
+          "Address": "Via Vendramino Candiani, 28",
+          "City": "Pordenone",
+          "Description": "Pordenone - Parcheggio Candiani",
+          "FacilityId": 607341,
+          "IdCompany": 3,
+          "ParkNo": 0,
+          "PostNumber": 414,
+          "ReceiptMerchant": "GSM Pordenone   PORDENONE UID: 01",
+          "Telephone1": "0434520147",
+          "Telephone2": null,
+          "Web": "",
+          "ZIPCode": "33170"
+        },
+        {
+          "Address": "Via Guglielmo Oberdan",
+          "City": "Pordenone",
+          "Description": "Pordenone - Parcheggio Oberdan",
+          "FacilityId": 608000,
+          "IdCompany": 2,
+          "ParkNo": 0,
+          "PostNumber": 550,
+          "ReceiptMerchant": "GSM Pordenone   PORDENONE UID: 01",
+          "Telephone1": null,
+          "Telephone2": null,
+          "Web": "",
+          "ZIPCode": "33170"
+        },
+        {
+          "Address": "Viale Dante 1",
+          "City": "Pordenone",
+          "Description": "Pordenone Parcheggio Vallona",
+          "FacilityId": 607747,
+          "IdCompany": 8,
+          "ParkNo": 0,
+          "PostNumber": 500,
+          "ReceiptMerchant": "GSM Pordenone   PORDENONE UID: 01",
+          "Telephone1": null,
+          "Telephone2": null,
+          "Web": "",
+          "ZIPCode": "33170"
+        },
+        {
+          "Address": "P.zza Bione, 15",
+          "City": "Lecco",
+          "Description": "Garage con unica DAZ",
+          "FacilityId": 605477,
+          "IdCompany": 10,
+          "ParkNo": 0,
+          "PostNumber": 1000,
+          "ReceiptMerchant": "  P.zza Bione, 15 23900 Lecco UID: ",
+          "Telephone1": null,
+          "Telephone2": null,
+          "Web": null,
+          "ZIPCode": "23900"
+        },
+        {
+          "Address": "Via Palestro, 19",
+          "City": "Lecco",
+          "Description": "Tentori Alessandro Srl",
+          "FacilityId": 606442,
+          "IdCompany": 11,
+          "ParkNo": 0,
+          "PostNumber": 1000,
+          "ReceiptMerchant": " Via Palestro, 19 23900 Lecco UID: ",
+          "Telephone1": null,
+          "Telephone2": null,
+          "Web": null,
+          "ZIPCode": "23900"
+        },
+        {
+          "Address": null,
+          "City": null,
+          "Description": "Parcheggio Mazzini",
+          "FacilityId": 608836,
+          "IdCompany": 13,
+          "ParkNo": 0,
+          "PostNumber": 500,
+          "ReceiptMerchant": "Metro srl Piazzale Verdi c/o Vecchia Porta S. Donato snc 55100 Lucca UID: 01934370469",
+          "Telephone1": null,
+          "Telephone2": null,
+          "Web": null,
+          "ZIPCode": null
+        },
+        {
+          "Address": null,
+          "City": null,
+          "Description": "EuropaPark - La Spezia",
+          "FacilityId": 606830,
+          "IdCompany": 12,
+          "ParkNo": 0,
+          "PostNumber": 500,
+          "ReceiptMerchant": "Europa Park srl Piazza Europa, 16 19124  La Spezia UID: 0132315011",
+          "Telephone1": null,
+          "Telephone2": null,
+          "Web": null,
+          "ZIPCode": null
+        },
+        {
+          "Address": "Via Gardesana, 60",
+          "City": "Verona",
+          "Description": "Parcheggio Castello",
+          "FacilityId": 606756,
+          "IdCompany": 14,
+          "ParkNo": 0,
+          "PostNumber": 500,
+          "ReceiptMerchant": "Azienda Gardesana Servizi SpA Via 11 Settembre, 24 37019  Verona UID: 01855890230",
+          "Telephone1": null,
+          "Telephone2": null,
+          "Web": null,
+          "ZIPCode": "37010 "
+        },
+        {
+          "Address": "Via G. Mazzini, 23",
+          "City": "Verona",
+          "Description": "Parcheggio Polo Scolastico",
+          "FacilityId": 607812,
+          "IdCompany": 15,
+          "ParkNo": 0,
+          "PostNumber": 500,
+          "ReceiptMerchant": "Azienda Gardesana Servizi SpA Via 11 Settembre, 24 37019  Verona UID: 01855890230",
+          "Telephone1": null,
+          "Telephone2": null,
+          "Web": null,
+          "ZIPCode": "37010 "
+        },
+        {
+          "Address": null,
+          "City": null,
+          "Description": "Parcheggio Verdi",
+          "FacilityId": 600833,
+          "IdCompany": 16,
+          "ParkNo": 6,
+          "PostNumber": 550,
+          "ReceiptMerchant": "AGSM AIM Smart Solutions  Contrà Pedemuro San Biagio, 72 36100 Vicenza UID: 04147220232",
+          "Telephone1": null,
+          "Telephone2": null,
+          "Web": null,
+          "ZIPCode": null
+        },
+        {
+          "Address": "Largo Pietro Annigoni 9",
+          "City": "Firenze",
+          "Description": "Parcheggio SantAmbrogio",
+          "FacilityId": 601104,
+          "IdCompany": 17,
+          "ParkNo": 6,
+          "PostNumber": 377,
+          "ReceiptMerchant": "Firenze Parcheggi S.p.A. Piazza Pietro Annigoni 4 405501 Firenze UID: 03980970481",
+          "Telephone1": null,
+          "Telephone2": null,
+          "Web": null,
+          "ZIPCode": "50122"
+        },
+        {
+          "Address": "Via dei Conciapelli, 60",
+          "City": "Bolzano",
+          "Description": "Parcheggio Stazione Brunico",
+          "FacilityId": 608612,
+          "IdCompany": 18,
+          "ParkNo": 0,
+          "PostNumber": 500,
+          "ReceiptMerchant": "STA – Strutture Trasporto Alto Adige SpA Via dei Conciapelli, 60 39100  Bolzano UID: 00586190217",
+          "Telephone1": null,
+          "Telephone2": null,
+          "Web": null,
+          "ZIPCode": "39100"
+        },
+        {
+          "Address": "Piazza Priel",
+          "City": "Bressanone",
+          "Description": "Parcheggio Priel Park",
+          "FacilityId": 607440,
+          "IdCompany": 19,
+          "ParkNo": 0,
+          "PostNumber": 500,
+          "ReceiptMerchant": "STA – Strutture Trasporto Alto Adige SpA Via dei Conciapelli, 60 39100  Bolzano UID: 00586190217",
+          "Telephone1": null,
+          "Telephone2": null,
+          "Web": null,
+          "ZIPCode": "39042"
+        },
+        {
+          "Address": null,
+          "City": null,
+          "Description": "Stazione Smn",
+          "FacilityId": 601104,
+          "IdCompany": 17,
+          "ParkNo": 1,
+          "PostNumber": 377,
+          "ReceiptMerchant": "Firenze Parcheggi S.p.A. Piazza Pietro Annigoni 4 405501 Firenze UID: 03980970481",
+          "Telephone1": null,
+          "Telephone2": null,
+          "Web": null,
+          "ZIPCode": null
+        },
+        {
+          "Address": null,
+          "City": null,
+          "Description": "Fortezza Fiera",
+          "FacilityId": 601104,
+          "IdCompany": 17,
+          "ParkNo": 3,
+          "PostNumber": 377,
+          "ReceiptMerchant": "Firenze Parcheggi S.p.A. Piazza Pietro Annigoni 4 405501 Firenze UID: 03980970481",
+          "Telephone1": null,
+          "Telephone2": null,
+          "Web": null,
+          "ZIPCode": null
+        },
+        {
+          "Address": null,
+          "City": null,
+          "Description": "Stazione Binario 16",
+          "FacilityId": 601104,
+          "IdCompany": 17,
+          "ParkNo": 4,
+          "PostNumber": 377,
+          "ReceiptMerchant": "Firenze Parcheggi S.p.A. Piazza Pietro Annigoni 4 405501 Firenze UID: 03980970481",
+          "Telephone1": null,
+          "Telephone2": null,
+          "Web": null,
+          "ZIPCode": null
+        },
+        {
+          "Address": null,
+          "City": null,
+          "Description": "Alberti",
+          "FacilityId": 601104,
+          "IdCompany": 17,
+          "ParkNo": 5,
+          "PostNumber": 377,
+          "ReceiptMerchant": "Firenze Parcheggi S.p.A. Piazza Pietro Annigoni 4 405501 Firenze UID: 03980970481",
+          "Telephone1": null,
+          "Telephone2": null,
+          "Web": null,
+          "ZIPCode": null
+        },
+        {
+          "Address": null,
+          "City": null,
+          "Description": "Porta a Prato",
+          "FacilityId": 601104,
+          "IdCompany": 17,
+          "ParkNo": 9,
+          "PostNumber": 377,
+          "ReceiptMerchant": "Firenze Parcheggi S.p.A. Piazza Pietro Annigoni 4 405501 Firenze UID: 03980970481",
+          "Telephone1": null,
+          "Telephone2": null,
+          "Web": null,
+          "ZIPCode": null
+        },
+        {
+          "Address": null,
+          "City": null,
+          "Description": "Parcheggio Eden",
+          "FacilityId": 603761,
+          "IdCompany": 20,
+          "ParkNo": 0,
+          "PostNumber": 214,
+          "ReceiptMerchant": "Atam Arezzo Case Nuove di Ceciliano, 49/5 52100 Arezzo UID: IT00368260519",
+          "Telephone1": null,
+          "Telephone2": null,
+          "Web": null,
+          "ZIPCode": null
+        },
+        {
+          "Address": null,
+          "City": null,
+          "Description": "Parterre",
+          "FacilityId": 601104,
+          "IdCompany": 17,
+          "ParkNo": 7,
+          "PostNumber": 377,
+          "ReceiptMerchant": "Firenze Parcheggi S.p.A. Piazza Pietro Annigoni 4 405501 Firenze UID: 03980970481",
+          "Telephone1": null,
+          "Telephone2": null,
+          "Web": null,
+          "ZIPCode": null
+        },
+        {
+          "Address": null,
+          "City": null,
+          "Description": "Parcheggio Autosilo Buonconsiglio",
+          "FacilityId": 604215,
+          "IdCompany": 22,
+          "ParkNo": 0,
+          "PostNumber": 488,
+          "ReceiptMerchant": "Trentino Mobilità S.p.A. Via Castelbarco, 11 38122 Trento UID: 01606150223",
+          "Telephone1": null,
+          "Telephone2": null,
+          "Web": null,
+          "ZIPCode": null
+        },
+        {
+          "Address": null,
+          "City": null,
+          "Description": "Parcheggio Centro Mobilità Park",
+          "FacilityId": 607440,
+          "IdCompany": 19,
+          "ParkNo": 2,
+          "PostNumber": 500,
+          "ReceiptMerchant": "STA – Strutture Trasporto Alto Adige SpA Via dei Conciapelli, 60 39100  Bolzano UID: 00586190217",
+          "Telephone1": null,
+          "Telephone2": null,
+          "Web": null,
+          "ZIPCode": null
+        }
+      ],
+      "Status": "OK"
+    },
+    "JsonRequestBehavior": 0,
+    "MaxJsonLength": null,
+    "RecursionLimit": null
+  },
+  "Context": {
+    "Data": [],
+    "ParentContext": ""
+  }
+}
