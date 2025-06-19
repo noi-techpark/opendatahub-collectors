@@ -23,9 +23,9 @@ func (np NoopAuthenticator) PrepareRequest(req *http.Request) error {
 }
 
 type AuthenticatorConfig struct {
-	OAuthConfig
-	Type  string `yaml:"type,omitempty"` // basic | bearer | oauth
-	Token string `yaml:"token,omitempty"`
+	OAuthConfig `yaml:",inline"`
+	Type        string `yaml:"type,omitempty"` // basic | bearer | oauth
+	Token       string `yaml:"token,omitempty"`
 }
 
 type AuthenticatorImpl struct {
@@ -78,10 +78,10 @@ func (a AuthenticatorImpl) PrepareRequest(req *http.Request) error {
 }
 
 type OAuthConfig struct {
-	Method       string   `yaml:"method,omitempty"`
-	TokenURL     string   `yaml:"token_url,omitempty"`
-	ClientID     string   `yaml:"client_id,omitempty"`
-	ClientSecret string   `yaml:"client_secret,omitempty"`
+	Method       string   `yaml:"method,omitempty"` // password | client_credentials
+	TokenURL     string   `yaml:"tokenUrl,omitempty"`
+	ClientID     string   `yaml:"clientId,omitempty"`
+	ClientSecret string   `yaml:"clientSecret,omitempty"`
 	Username     string   `yaml:"username,omitempty"`
 	Password     string   `yaml:"password,omitempty"`
 	Scopes       []string `yaml:"scopes,omitempty"`
