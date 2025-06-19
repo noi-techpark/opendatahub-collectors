@@ -1,0 +1,182 @@
+{
+  "Name": "Request Transfomerd Get Facility Details - https://www.onecenter.info/api/DAZ/FacilityFreePlaces?FacilityID=607440",
+  "Config": {
+    "Type": "request",
+    "Name": "Get Facility Details",
+    "Path": "",
+    "As": "",
+    "Values": null,
+    "Steps": null,
+    "Request": {
+      "URL": "https://www.onecenter.info/api/DAZ/FacilityFreePlaces?FacilityID={{ .facility.FacilityId }}",
+      "Method": "GET",
+      "Headers": {
+        "Accept": "application/json"
+      },
+      "Body": "",
+      "Pagination": {
+        "Params": null,
+        "StopOn": null
+      },
+      "Authentication": null
+    },
+    "ResultTransformer": ".Data.FreePlaces",
+    "MergeWithParentOn": "",
+    "MergeOn": ".FacilityDetails = $res",
+    "MergeWithContext": null
+  },
+  "Data": [
+    {
+      "Capacity": 198,
+      "CountingCategory": "SostaBreve",
+      "CountingCategoryNo": 1,
+      "CurrentLevel": 197,
+      "FacilityDescription": "01-Priel",
+      "FacilityID": 607440,
+      "FreeLimit": 197,
+      "FreePlaces": 1,
+      "Latitude": 0,
+      "Longitude": 0,
+      "OccupancyLimit": 198,
+      "ParkNo": 0,
+      "Reservation": 0
+    },
+    {
+      "Capacity": 1,
+      "CountingCategory": "Abbonati",
+      "CountingCategoryNo": 2,
+      "CurrentLevel": 0,
+      "FacilityDescription": "01-Priel",
+      "FacilityID": 607440,
+      "FreeLimit": 0,
+      "FreePlaces": 1,
+      "Latitude": 0,
+      "Longitude": 0,
+      "OccupancyLimit": 1,
+      "ParkNo": 0,
+      "Reservation": 0
+    },
+    {
+      "Capacity": 199,
+      "CountingCategory": "Totale",
+      "CountingCategoryNo": 3,
+      "CurrentLevel": 197,
+      "FacilityDescription": "01-Priel",
+      "FacilityID": 607440,
+      "FreeLimit": 197,
+      "FreePlaces": 2,
+      "Latitude": 0,
+      "Longitude": 0,
+      "OccupancyLimit": 199,
+      "ParkNo": 0,
+      "Reservation": 0
+    },
+    {
+      "Capacity": 30,
+      "CountingCategory": "SostaBreve",
+      "CountingCategoryNo": 1,
+      "CurrentLevel": -14,
+      "FacilityDescription": "02-Rosslauf",
+      "FacilityID": 607440,
+      "FreeLimit": 29,
+      "FreePlaces": 44,
+      "Latitude": 0,
+      "Longitude": 0,
+      "OccupancyLimit": 30,
+      "ParkNo": 1,
+      "Reservation": 0
+    },
+    {
+      "Capacity": 60,
+      "CountingCategory": "Abbonati",
+      "CountingCategoryNo": 2,
+      "CurrentLevel": 26,
+      "FacilityDescription": "02-Rosslauf",
+      "FacilityID": 607440,
+      "FreeLimit": 59,
+      "FreePlaces": 34,
+      "Latitude": 0,
+      "Longitude": 0,
+      "OccupancyLimit": 60,
+      "ParkNo": 1,
+      "Reservation": 0
+    },
+    {
+      "Capacity": 90,
+      "CountingCategory": "Totale",
+      "CountingCategoryNo": 3,
+      "CurrentLevel": 12,
+      "FacilityDescription": "02-Rosslauf",
+      "FacilityID": 607440,
+      "FreeLimit": 89,
+      "FreePlaces": 78,
+      "Latitude": 0,
+      "Longitude": 0,
+      "OccupancyLimit": 90,
+      "ParkNo": 1,
+      "Reservation": 0
+    },
+    {
+      "Capacity": 151,
+      "CountingCategory": "SostaBreve",
+      "CountingCategoryNo": 1,
+      "CurrentLevel": 73,
+      "FacilityDescription": "03-C.Mobilità-Mobilitätsz",
+      "FacilityID": 607440,
+      "FreeLimit": 150,
+      "FreePlaces": 78,
+      "Latitude": 0,
+      "Longitude": 0,
+      "OccupancyLimit": 151,
+      "ParkNo": 2,
+      "Reservation": 0
+    },
+    {
+      "Capacity": 40,
+      "CountingCategory": "Abbonati",
+      "CountingCategoryNo": 2,
+      "CurrentLevel": 9,
+      "FacilityDescription": "03-C.Mobilità-Mobilitätsz",
+      "FacilityID": 607440,
+      "FreeLimit": 40,
+      "FreePlaces": 31,
+      "Latitude": 0,
+      "Longitude": 0,
+      "OccupancyLimit": 40,
+      "ParkNo": 2,
+      "Reservation": 0
+    },
+    {
+      "Capacity": 191,
+      "CountingCategory": "Totale",
+      "CountingCategoryNo": 3,
+      "CurrentLevel": 82,
+      "FacilityDescription": "03-C.Mobilità-Mobilitätsz",
+      "FacilityID": 607440,
+      "FreeLimit": 190,
+      "FreePlaces": 109,
+      "Latitude": 0,
+      "Longitude": 0,
+      "OccupancyLimit": 191,
+      "ParkNo": 2,
+      "Reservation": 0
+    }
+  ],
+  "Context": {
+    "Data": {
+      "Address": null,
+      "City": null,
+      "Description": "Parcheggio Centro Mobilità Park",
+      "FacilityId": 607440,
+      "IdCompany": 19,
+      "ParkNo": 2,
+      "PostNumber": 500,
+      "ReceiptMerchant": "STA – Strutture Trasporto Alto Adige SpA Via dei Conciapelli, 60 39100  Bolzano UID: 00586190217",
+      "Telephone1": null,
+      "Telephone2": null,
+      "Web": null,
+      "ZIPCode": null
+    },
+    "ParentContext": "root"
+  }
+}

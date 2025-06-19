@@ -3,6 +3,7 @@ package crawler
 import (
 	"bytes"
 	"context"
+	"encoding/gob"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -16,11 +17,12 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type StepData struct {
+type StepProfilerData struct {
 	Name    string
 	Config  Step
 	Data    any
 	Context Context
+	Extra   map[string]any
 }
 
 type Logger interface {
@@ -59,34 +61,34 @@ func (l *stdLogger) Error(msg string, args ...any) {
 const RES_KEY = "$res"
 
 type Config struct {
-	Steps          []Step               `yaml:"steps"`
-	RootContext    interface{}          `yaml:"rootContext"`
-	Authentication *AuthenticatorConfig `yaml:"auth,omitempty"`
-	Headers        map[string]string    `yaml:"headers,omitempty"`
-	Stream         bool                 `yaml:"stream,omitempty"`
+	Steps          []Step               `yaml:"steps" json:"steps"`
+	RootContext    interface{}          `yaml:"rootContext" json:"rootContext"`
+	Authentication *AuthenticatorConfig `yaml:"auth,omitempty" json:"auth,omitempty"`
+	Headers        map[string]string    `yaml:"headers,omitempty" json:"headers,omitempty"`
+	Stream         bool                 `yaml:"stream,omitempty" json:"stream,omitempty"`
 }
 
 type Step struct {
-	Type              string                `yaml:"type"`
-	Name              string                `yaml:"name,omitempty"`
-	Path              string                `yaml:"path,omitempty"`
-	As                string                `yaml:"as,omitempty"`
-	Values            []interface{}         `yaml:"values,omitempty"`
-	Steps             []Step                `yaml:"steps,omitempty"`
-	Request           *RequestConfig        `yaml:"request,omitempty"`
-	ResultTransformer string                `yaml:"resultTransformer,omitempty"`
-	MergeWithParentOn string                `yaml:"mergeWithParentOn,omitempty"`
-	MergeOn           string                `yaml:"mergeOn,omitempty"`
-	MergeWithContext  *MergeWithContextRule `yaml:"mergeWithContext,omitempty"`
+	Type              string                `yaml:"type" json:"type"`
+	Name              string                `yaml:"name,omitempty" json:"name,omitempty"`
+	Path              string                `yaml:"path,omitempty" json:"path,omitempty"`
+	As                string                `yaml:"as,omitempty" json:"as,omitempty"`
+	Values            []interface{}         `yaml:"values,omitempty" json:"values,omitempty"`
+	Steps             []Step                `yaml:"steps,omitempty" json:"steps,omitempty"`
+	Request           *RequestConfig        `yaml:"request,omitempty" json:"request,omitempty"`
+	ResultTransformer string                `yaml:"resultTransformer,omitempty" json:"resultTransformer,omitempty"`
+	MergeWithParentOn string                `yaml:"mergeWithParentOn,omitempty" json:"mergeWithParentOn,omitempty"`
+	MergeOn           string                `yaml:"mergeOn,omitempty" json:"mergeOn,omitempty"`
+	MergeWithContext  *MergeWithContextRule `yaml:"mergeWithContext,omitempty" json:"mergeWithContext,omitempty"`
 }
 
 type RequestConfig struct {
-	URL            string               `yaml:"url"`
-	Method         string               `yaml:"method"`
-	Headers        map[string]string    `yaml:"headers,omitempty"`
-	Body           string               `yaml:"body,omitempty"`
-	Pagination     Pagination           `yaml:"pagination,omitempty"`
-	Authentication *AuthenticatorConfig `yaml:"auth,omitempty"`
+	URL            string               `yaml:"url" json:"url"`
+	Method         string               `yaml:"method" json:"method"`
+	Headers        map[string]string    `yaml:"headers,omitempty" json:"headers,omitempty"`
+	Body           string               `yaml:"body,omitempty" json:"body,omitempty"`
+	Pagination     Pagination           `yaml:"pagination,omitempty" json:"pagination,omitempty"`
+	Authentication *AuthenticatorConfig `yaml:"auth,omitempty" json:"auth,omitempty"`
 }
 
 type MergeWithContextRule struct {
@@ -115,7 +117,8 @@ type ApiCrawler struct {
 	globalAuthenticator Authenticator
 	DataStream          chan any
 	logger              Logger
-	profiler            chan StepData
+	profiler            chan StepProfilerData
+	enableProfilation   bool
 }
 
 func NewApiCrawler(configPath string) *ApiCrawler {
@@ -176,21 +179,57 @@ func (a *ApiCrawler) SetClientRoundTripper(rt http.RoundTripper) {
 	a.clientRoundtripper = rt
 }
 
-func (a *ApiCrawler) EnableProfiler() chan StepData {
-	a.profiler = make(chan StepData)
+func (a *ApiCrawler) EnableProfiler() chan StepProfilerData {
+	a.enableProfilation = true
+	a.profiler = make(chan StepProfilerData)
 	return a.profiler
 }
 
-func (a *ApiCrawler) pushProfilerData(name string, exec *stepExecution, Data any) {
-	if nil == a.profiler {
+func deepCopy[T any](src T) (T, error) {
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+	dec := gob.NewDecoder(&buf)
+
+	if err := enc.Encode(src); err != nil {
+		var zero T
+		return zero, err
+	}
+
+	var dst T
+	if err := dec.Decode(&dst); err != nil {
+		return dst, err
+	}
+
+	return dst, nil
+}
+
+func (a *ApiCrawler) pushProfilerData(name string, exec *stepExecution, Data any, extra ...any) {
+	if a.profiler == nil {
 		return
 	}
-	d := StepData{
+
+	// Defensive copy of step, with Steps cleared
+	cleanConfig, _ := deepCopy(exec.step)
+	cleanConfig.Steps = make([]Step, 0)
+
+	// Convert variadic args into map[string]any
+	extraMap := make(map[string]any)
+	for i := 0; i+1 < len(extra); i += 2 {
+		key, ok := extra[i].(string)
+		if !ok {
+			continue // skip invalid key
+		}
+		extraMap[key] = extra[i+1]
+	}
+
+	d := StepProfilerData{
 		Name:    name,
 		Context: *exec.currentContext,
 		Data:    Data,
-		Config:  exec.step,
+		Config:  cleanConfig,
+		Extra:   extraMap,
 	}
+
 	a.profiler <- d
 }
 
@@ -235,6 +274,8 @@ func (c *ApiCrawler) ExecuteStep(ctx context.Context, exec *stepExecution) error
 }
 
 func (c *ApiCrawler) handleRequest(ctx context.Context, exec *stepExecution) error {
+	c.logger.Info("[Request] Preparing %s", exec.step.Name)
+
 	// 1. Expand URL using Go template
 	tmpl, err := template.New("url").Parse(exec.step.Request.URL)
 	if err != nil {
@@ -246,7 +287,6 @@ func (c *ApiCrawler) handleRequest(ctx context.Context, exec *stepExecution) err
 		return fmt.Errorf("error executing URL template: %w", err)
 	}
 	_url := urlBuf.String()
-	c.logger.Info("[Request] Fetching: %s", _url)
 
 	// instantiate authenticator
 	authenticator := c.globalAuthenticator
@@ -313,6 +353,9 @@ func (c *ApiCrawler) handleRequest(ctx context.Context, exec *stepExecution) err
 			authenticator.PrepareRequest(req)
 
 			client := &http.Client{Transport: c.clientRoundtripper}
+
+			c.logger.Info("[Request] %s", urlObj.String())
+
 			resp, err := client.Do(req)
 			if err != nil {
 				return fmt.Errorf("error performing HTTP request: %w", err)
@@ -331,12 +374,16 @@ func (c *ApiCrawler) handleRequest(ctx context.Context, exec *stepExecution) err
 				return fmt.Errorf("error decoding JSON: %w", err)
 			}
 
-			profileStepName := fmt.Sprintf("Request %s - %s", exec.step.Name, urlObj.String())
-			c.pushProfilerData(profileStepName, exec, raw)
+			profileStepName := fmt.Sprintf("Request '%s'", exec.step.Name)
+			c.pushProfilerData(profileStepName, exec, raw, "url", urlObj.String())
 
 			// 4. Apply JQ transformer
 			transformed := raw
+			c.logger.Debug("[Request] Got response: status %s", resp.Status)
+
 			if exec.step.ResultTransformer != "" {
+				c.logger.Debug("[Request] transforming with expression: %s", exec.step.ResultTransformer)
+
 				query, err := gojq.Parse(exec.step.ResultTransformer)
 				if err != nil {
 					return fmt.Errorf("invalid resultTransformer JQ: %w", err)
@@ -364,13 +411,13 @@ func (c *ApiCrawler) handleRequest(ctx context.Context, exec *stepExecution) err
 				transformed = singleResult
 			}
 
-			profileStepName = fmt.Sprintf("Request Transfomerd %s - %s", exec.step.Name, urlObj.String())
-			c.pushProfilerData(profileStepName, exec, transformed)
-
-			c.logger.Info("[Request] Got response (transformed): %+v", transformed)
+			profileStepName = fmt.Sprintf("Request Transfomerd '%s'", exec.step.Name)
+			c.pushProfilerData(profileStepName, exec, transformed, "url", urlObj.String())
 
 			// 1. Explicit merge rule (advanced use)
 			if exec.step.MergeOn != "" {
+				c.logger.Debug("[Request] merging-on with expression: %s", exec.step.MergeOn)
+
 				// Simple jq merge on current context
 				updated, err := applyMergeRule(exec.currentContext.Data, exec.step.MergeOn, transformed)
 				if err != nil {
@@ -378,6 +425,8 @@ func (c *ApiCrawler) handleRequest(ctx context.Context, exec *stepExecution) err
 				}
 				exec.currentContext.Data = updated
 			} else if exec.step.MergeWithParentOn != "" {
+				c.logger.Debug("[Request] merging-with-parent with expression: %s", exec.step.MergeWithParentOn)
+
 				parentCtx := exec.contextMap[exec.currentContext.ParentContext]
 				// Simple jq merge on current context
 				updated, err := applyMergeRule(parentCtx.Data, exec.step.MergeWithParentOn, transformed)
@@ -386,6 +435,9 @@ func (c *ApiCrawler) handleRequest(ctx context.Context, exec *stepExecution) err
 				}
 				parentCtx.Data = updated
 			} else if exec.step.MergeWithContext != nil {
+				c.logger.Debug("[Request] merging-with-context with expression: %s:%s",
+					exec.step.MergeWithContext.Name, exec.step.MergeWithContext.Rule)
+
 				// 2. Named context merge (cross-scope update)
 				targetCtx, ok := exec.contextMap[exec.step.MergeWithContext.Name]
 				if !ok {
@@ -397,6 +449,8 @@ func (c *ApiCrawler) handleRequest(ctx context.Context, exec *stepExecution) err
 				}
 				targetCtx.Data = updated
 			} else {
+				c.logger.Debug("[Request] default merge")
+
 				// 3. Simple assignment (shallow)
 				switch data := exec.currentContext.Data.(type) {
 				case []interface{}:
@@ -412,8 +466,8 @@ func (c *ApiCrawler) handleRequest(ctx context.Context, exec *stepExecution) err
 				}
 			}
 
-			profileStepName = fmt.Sprintf("Request Merged %s - %s", exec.step.Name, urlObj.String())
-			c.pushProfilerData(profileStepName, exec, exec.currentContext.Data)
+			profileStepName = fmt.Sprintf("Request Merged '%s'", exec.step.Name)
+			c.pushProfilerData(profileStepName, exec, exec.currentContext.Data, "url", urlObj.String())
 
 			for _, step := range exec.step.Steps {
 				newExec := newStepExecution(step, exec.currentContextKey, exec.contextMap)
@@ -442,9 +496,13 @@ func (c *ApiCrawler) handleRequest(ctx context.Context, exec *stepExecution) err
 }
 
 func (c *ApiCrawler) handleForEach(ctx context.Context, exec *stepExecution) error {
+	c.logger.Info("[Foreach] Preparing %s", exec.step.Name)
+
 	results := []interface{}{}
 
 	if len(exec.step.Path) != 0 && exec.step.Values == nil {
+		c.logger.Debug("[Foreach] Extracting from parent context with rule: %s", exec.step.Path)
+
 		query, err := gojq.Parse(exec.step.Path)
 		if err != nil {
 			return fmt.Errorf("invalid jq path '%s': %w", exec.step.Path, err)
@@ -469,14 +527,15 @@ func (c *ApiCrawler) handleForEach(ctx context.Context, exec *stepExecution) err
 			}
 		}
 	} else if exec.step.Values != nil {
+		c.logger.Debug("[Foreach] using values over path: %s, values %+v", exec.step.Path, exec.step.Values)
+
 		for _, v := range exec.step.Values {
 			results = append(results, map[string]interface{}{"value": v})
 		}
 	}
 
-	rj, _ := json.MarshalIndent(results, "", "   ")
-	profileStepName := fmt.Sprintf("Foreach %s", exec.step.Name)
-	c.pushProfilerData(profileStepName, exec, rj)
+	profileStepName := fmt.Sprintf("Foreach Extract '%s'", exec.step.Name)
+	c.pushProfilerData(profileStepName, exec, results)
 
 	executionResults := make([]interface{}, 0)
 	for i, item := range results {
@@ -485,12 +544,12 @@ func (c *ApiCrawler) handleForEach(ctx context.Context, exec *stepExecution) err
 		case <-ctx.Done():
 			return ctx.Err()
 		default:
-			c.logger.Info("[ForEach] Iteration %d as '%s': %v", i, exec.step.As, item)
+			c.logger.Info("[ForEach] Iteration %d as '%s'", i, exec.step.As, "item", item)
+
 			childContextMap := childMapWith(exec.contextMap, exec.currentContext, exec.step.As, item)
 
-			ij, _ := json.MarshalIndent(item, "", "   ")
-			profileStepName := fmt.Sprintf("Foreach [%d] %s", i, exec.step.Name)
-			c.pushProfilerData(profileStepName, exec, ij)
+			profileStepName := fmt.Sprintf("Foreach [%d] '%s'", i, exec.step.Name)
+			c.pushProfilerData(profileStepName, exec, item)
 
 			for _, nested := range exec.step.Steps {
 				newExec := newStepExecution(nested, exec.step.As, childContextMap)
@@ -499,7 +558,7 @@ func (c *ApiCrawler) handleForEach(ctx context.Context, exec *stepExecution) err
 				}
 			}
 
-			profileStepName = fmt.Sprintf("Foreach [%d] %s Result", i, exec.step.Name)
+			profileStepName = fmt.Sprintf("Foreach [%d] Result '%s'", i, exec.step.Name)
 			c.pushProfilerData(profileStepName, exec, childContextMap[exec.step.As].Data)
 
 			executionResults = append(executionResults, childContextMap[exec.step.As].Data)
@@ -531,7 +590,7 @@ func (c *ApiCrawler) handleForEach(ctx context.Context, exec *stepExecution) err
 	// Assign new patched data
 	exec.currentContext.Data = v
 
-	profileStepName = fmt.Sprintf("Foreach Merged %s", exec.step.Name)
+	profileStepName = fmt.Sprintf("Foreach Merged '%s'", exec.step.Name)
 	c.pushProfilerData(profileStepName, exec, exec.currentContext.Data)
 
 	// at this point all inner steps have been executed for all entries in this call
