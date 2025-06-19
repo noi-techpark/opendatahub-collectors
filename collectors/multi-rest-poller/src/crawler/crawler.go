@@ -2,10 +2,12 @@ package crawler
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"html/template"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -13,6 +15,46 @@ import (
 	"github.com/itchyny/gojq"
 	"gopkg.in/yaml.v3"
 )
+
+type StepData struct {
+	Name    string
+	Config  Step
+	Data    any
+	Context Context
+}
+
+type Logger interface {
+	Debug(msg string, args ...any)
+	Info(msg string, args ...any)
+	Warning(msg string, args ...any)
+	Error(msg string, args ...any)
+}
+
+type stdLogger struct {
+	logger *log.Logger
+}
+
+func NewDefaultLogger() Logger {
+	return &stdLogger{
+		logger: log.New(os.Stdout, "", log.LstdFlags),
+	}
+}
+
+func (l *stdLogger) Info(msg string, args ...any) {
+	l.logger.Println("[INFO]", fmt.Sprintf(msg, args...)+"\n")
+}
+
+func (l *stdLogger) Debug(msg string, args ...any) {
+	l.logger.Println("[DEBUG]", fmt.Sprintf(msg, args...)+"\n")
+}
+
+func (l *stdLogger) Warning(msg string, args ...any) {
+	l.logger.Println("[WARN]", fmt.Sprintf(msg, args...)+"\n")
+}
+
+func (l *stdLogger) Error(msg string, args ...any) {
+	l.logger.Println("[ERROR]", fmt.Sprintf(msg, args...)+"\n")
+}
 
 const RES_KEY = "$res"
 
@@ -59,12 +101,21 @@ type Context struct {
 	depth         int
 }
 
+type stepExecution struct {
+	step              Step
+	currentContextKey string
+	currentContext    *Context
+	contextMap        map[string]*Context
+}
+
 type ApiCrawler struct {
 	clientRoundtripper  http.RoundTripper
 	Config              Config
 	ContextMap          map[string]*Context
 	globalAuthenticator Authenticator
 	DataStream          chan any
+	logger              Logger
+	profiler            chan StepData
 }
 
 func NewApiCrawler(configPath string) *ApiCrawler {
@@ -91,6 +142,8 @@ func NewApiCrawler(configPath string) *ApiCrawler {
 		clientRoundtripper: http.DefaultTransport,
 		Config:             cfg,
 		ContextMap:         map[string]*Context{},
+		logger:             NewDefaultLogger(),
+		profiler:           nil,
 	}
 
 	// handle stream channel
@@ -115,11 +168,42 @@ func (a *ApiCrawler) GetData() interface{} {
 	return a.ContextMap["root"].Data
 }
 
+func (a *ApiCrawler) SetLogger(logger Logger) {
+	a.logger = logger
+}
+
 func (a *ApiCrawler) SetClientRoundTripper(rt http.RoundTripper) {
 	a.clientRoundtripper = rt
 }
 
-func (c *ApiCrawler) Run() error {
+func (a *ApiCrawler) EnableProfiler() chan StepData {
+	a.profiler = make(chan StepData)
+	return a.profiler
+}
+
+func (a *ApiCrawler) pushProfilerData(name string, exec *stepExecution, Data any) {
+	if nil == a.profiler {
+		return
+	}
+	d := StepData{
+		Name:    name,
+		Context: *exec.currentContext,
+		Data:    Data,
+		Config:  exec.step,
+	}
+	a.profiler <- d
+}
+
+func newStepExecution(step Step, currentContextKey string, contextMap map[string]*Context) *stepExecution {
+	return &stepExecution{
+		step:              step,
+		currentContextKey: currentContextKey,
+		contextMap:        contextMap,
+		currentContext:    contextMap[currentContextKey],
+	}
+}
+
+func (c *ApiCrawler) Run(ctx context.Context) error {
 	rootCtx := &Context{
 		Data:          c.Config.RootContext,
 		ParentContext: "",
@@ -131,47 +215,47 @@ func (c *ApiCrawler) Run() error {
 	currentContext := "root"
 
 	for _, step := range c.Config.Steps {
-		if err := c.ExecuteStep(step, currentContext, c.ContextMap); err != nil {
+		ecxec := newStepExecution(step, currentContext, c.ContextMap)
+		if err := c.ExecuteStep(ctx, ecxec); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (c *ApiCrawler) ExecuteStep(step Step, currentContext string, contextMap map[string]*Context) error {
-	switch step.Type {
+func (c *ApiCrawler) ExecuteStep(ctx context.Context, exec *stepExecution) error {
+	switch exec.step.Type {
 	case "request":
-		return c.handleRequest(step, currentContext, contextMap)
+		return c.handleRequest(ctx, exec)
 	case "forEach":
-		return c.handleForEach(step, currentContext, contextMap)
+		return c.handleForEach(ctx, exec)
 	default:
-		return fmt.Errorf("unknown step type: %s", step.Type)
+		return fmt.Errorf("unknown step type: %s", exec.step.Type)
 	}
 }
 
-func (c *ApiCrawler) handleRequest(step Step, currentContext string, contextMap map[string]*Context) error {
-	_ctx := contextMap[currentContext]
+func (c *ApiCrawler) handleRequest(ctx context.Context, exec *stepExecution) error {
 	// 1. Expand URL using Go template
-	tmpl, err := template.New("url").Parse(step.Request.URL)
+	tmpl, err := template.New("url").Parse(exec.step.Request.URL)
 	if err != nil {
 		return fmt.Errorf("error parsing URL template: %w", err)
 	}
 	var urlBuf bytes.Buffer
-	templateCtx := contextMapToTemplate(contextMap)
+	templateCtx := contextMapToTemplate(exec.contextMap)
 	if err := tmpl.Execute(&urlBuf, templateCtx); err != nil {
 		return fmt.Errorf("error executing URL template: %w", err)
 	}
 	_url := urlBuf.String()
-	fmt.Printf("[Request] Fetching: %s\n", _url)
+	c.logger.Info("[Request] Fetching: %s", _url)
 
 	// instantiate authenticator
 	authenticator := c.globalAuthenticator
-	if step.Request.Authentication != nil {
-		authenticator = NewAuthenticator(*step.Request.Authentication)
+	if exec.step.Request.Authentication != nil {
+		authenticator = NewAuthenticator(*exec.step.Request.Authentication)
 	}
 
 	// instantiate paginator
-	paginator, err := NewPaginator(ConfigP{step.Request.Pagination})
+	paginator, err := NewPaginator(ConfigP{exec.step.Request.Pagination})
 	if err != nil {
 		return fmt.Errorf("error creating request paginator: %w", err)
 	}
@@ -179,178 +263,194 @@ func (c *ApiCrawler) handleRequest(step Step, currentContext string, contextMap 
 	next := paginator.NextFromCtx()
 
 	for !stop {
-		// 1. Inject query params
-		urlObj, err := url.Parse(_url)
-		if err != nil {
-			return fmt.Errorf("invalid URL: %w", err)
-		}
-		query := urlObj.Query()
-		for k, v := range next.QueryParams {
-			query.Set(k, v)
-		}
-		urlObj.RawQuery = query.Encode()
-
-		// 2. Encode body if needed
-		var reqBody io.Reader
-		if len(next.BodyParams) > 0 {
-			bodyJSON, err := json.Marshal(next.BodyParams)
+		// context cancelation handling
+		select {
+		case <-ctx.Done():
+			return ctx.Err() // Context cancelled
+		default:
+			// 1. Inject query params
+			urlObj, err := url.Parse(_url)
 			if err != nil {
-				return fmt.Errorf("error encoding body params: %w", err)
+				return fmt.Errorf("invalid URL: %w", err)
 			}
-			reqBody = bytes.NewReader(bodyJSON)
-		}
-
-		// 2. Create and send HTTP request
-		req, err := http.NewRequest(step.Request.Method, urlObj.String(), reqBody)
-		if err != nil {
-			return fmt.Errorf("error creating HTTP request: %w", err)
-		}
-		// Apply headers from both config and paginator
-		// priority is (ascending order)
-		// 1. Global
-		// 2. Request
-		// 3. Pagination
-		for k, v := range c.Config.Headers {
-			req.Header.Set(k, v)
-		}
-		for k, v := range step.Request.Headers {
-			req.Header.Set(k, v)
-		}
-		for k, v := range next.Headers {
-			req.Header.Set(k, v)
-		}
-
-		// apply authentication
-		authenticator.PrepareRequest(req)
-
-		client := &http.Client{Transport: c.clientRoundtripper}
-		resp, err := client.Do(req)
-		if err != nil {
-			return fmt.Errorf("error performing HTTP request: %w", err)
-		}
-		defer resp.Body.Close()
-
-		// run next
-		next, stop, err = paginator.Next(resp)
-		if err != nil {
-			return fmt.Errorf("paginator update error: %w", err)
-		}
-
-		// 3. Decode JSON response into interface{}
-		var raw interface{}
-		if err := json.NewDecoder(resp.Body).Decode(&raw); err != nil {
-			return fmt.Errorf("error decoding JSON: %w", err)
-		}
-
-		// 4. Apply JQ transformer
-		transformed := raw
-		if step.ResultTransformer != "" {
-			query, err := gojq.Parse(step.ResultTransformer)
-			if err != nil {
-				return fmt.Errorf("invalid resultTransformer JQ: %w", err)
+			query := urlObj.Query()
+			for k, v := range next.QueryParams {
+				query.Set(k, v)
 			}
-			iter := query.Run(raw)
-			var singleResult interface{}
-			count := 0
+			urlObj.RawQuery = query.Encode()
 
-			for {
-				v, ok := iter.Next()
-				if !ok {
-					break
+			// 2. Encode body if needed
+			var reqBody io.Reader
+			if len(next.BodyParams) > 0 {
+				bodyJSON, err := json.Marshal(next.BodyParams)
+				if err != nil {
+					return fmt.Errorf("error encoding body params: %w", err)
 				}
-				if err, isErr := v.(error); isErr {
-					return fmt.Errorf("jq error: %w", err)
+				reqBody = bytes.NewReader(bodyJSON)
+			}
+
+			// 2. Create and send HTTP request
+			req, err := http.NewRequest(exec.step.Request.Method, urlObj.String(), reqBody)
+			if err != nil {
+				return fmt.Errorf("error creating HTTP request: %w", err)
+			}
+			// Apply headers from both config and paginator
+			// priority is (ascending order)
+			// 1. Global
+			// 2. Request
+			// 3. Pagination
+			for k, v := range c.Config.Headers {
+				req.Header.Set(k, v)
+			}
+			for k, v := range exec.step.Request.Headers {
+				req.Header.Set(k, v)
+			}
+			for k, v := range next.Headers {
+				req.Header.Set(k, v)
+			}
+
+			// apply authentication
+			authenticator.PrepareRequest(req)
+
+			client := &http.Client{Transport: c.clientRoundtripper}
+			resp, err := client.Do(req)
+			if err != nil {
+				return fmt.Errorf("error performing HTTP request: %w", err)
+			}
+			defer resp.Body.Close()
+
+			// run next
+			next, stop, err = paginator.Next(resp)
+			if err != nil {
+				return fmt.Errorf("paginator update error: %w", err)
+			}
+
+			// 3. Decode JSON response into interface{}
+			var raw interface{}
+			if err := json.NewDecoder(resp.Body).Decode(&raw); err != nil {
+				return fmt.Errorf("error decoding JSON: %w", err)
+			}
+
+			profileStepName := fmt.Sprintf("Request %s - %s", exec.step.Name, urlObj.String())
+			c.pushProfilerData(profileStepName, exec, raw)
+
+			// 4. Apply JQ transformer
+			transformed := raw
+			if exec.step.ResultTransformer != "" {
+				query, err := gojq.Parse(exec.step.ResultTransformer)
+				if err != nil {
+					return fmt.Errorf("invalid resultTransformer JQ: %w", err)
 				}
+				iter := query.Run(raw)
+				var singleResult interface{}
+				count := 0
 
-				count++
-				if count > 1 {
-					return fmt.Errorf("resultTransformer yielded more than one value")
-				}
-
-				singleResult = v
-			}
-			transformed = singleResult
-		}
-
-		fmt.Printf("[Request] Got response (transformed): %+v\n", transformed)
-
-		// 1. Explicit merge rule (advanced use)
-		if step.MergeOn != "" {
-			// Simple jq merge on current context
-			updated, err := applyMergeRule(_ctx.Data, step.MergeOn, transformed)
-			if err != nil {
-				return fmt.Errorf("mergeOn failed: %w", err)
-			}
-			_ctx.Data = updated
-		} else if step.MergeWithParentOn != "" {
-			parentCtx := contextMap[_ctx.ParentContext]
-			// Simple jq merge on current context
-			updated, err := applyMergeRule(parentCtx.Data, step.MergeWithParentOn, transformed)
-			if err != nil {
-				return fmt.Errorf("mergeWithParentOn failed: %w", err)
-			}
-			parentCtx.Data = updated
-		} else if step.MergeWithContext != nil {
-			// 2. Named context merge (cross-scope update)
-			targetCtx, ok := contextMap[step.MergeWithContext.Name]
-			if !ok {
-				return fmt.Errorf("context '%s' not found", step.MergeWithContext.Name)
-			}
-			updated, err := applyMergeRule(targetCtx.Data, step.MergeWithContext.Rule, transformed)
-			if err != nil {
-				return fmt.Errorf("mergeWithContext failed: %w", err)
-			}
-			targetCtx.Data = updated
-		} else {
-			// 3. Simple assignment (shallow)
-			switch data := _ctx.Data.(type) {
-			case []interface{}:
-				_ctx.Data = append(data, transformed.([]interface{})...) // Reassigns to field of original struct
-			case map[string]interface{}:
-				if transformedMap, ok := transformed.(map[string]interface{}); ok {
-					for k, v := range transformedMap {
-						data[k] = v // Modifies in-place
+				for {
+					v, ok := iter.Next()
+					if !ok {
+						break
 					}
+					if err, isErr := v.(error); isErr {
+						return fmt.Errorf("jq error: %w", err)
+					}
+
+					count++
+					if count > 1 {
+						return fmt.Errorf("resultTransformer yielded more than one value")
+					}
+
+					singleResult = v
 				}
-			default:
-				_ctx.Data = transformed
-			}
-		}
-
-		for _, step := range step.Steps {
-			if err := c.ExecuteStep(step, currentContext, c.ContextMap); err != nil {
-				return err
-			}
-		}
-
-		// at this point all inner steps have been executed for all entries in this call
-		// the tree has been completely retrieved and we can check the stream
-		if _ctx.depth == 0 && c.Config.Stream {
-			// No need to check conversion since rootContext is enforced to be an array
-			array_data := _ctx.Data.([]interface{})
-			for _, d := range array_data {
-				c.DataStream <- d
+				transformed = singleResult
 			}
 
-			// reset data
-			_ctx.Data = []interface{}{}
+			profileStepName = fmt.Sprintf("Request Transfomerd %s - %s", exec.step.Name, urlObj.String())
+			c.pushProfilerData(profileStepName, exec, transformed)
+
+			c.logger.Info("[Request] Got response (transformed): %+v", transformed)
+
+			// 1. Explicit merge rule (advanced use)
+			if exec.step.MergeOn != "" {
+				// Simple jq merge on current context
+				updated, err := applyMergeRule(exec.currentContext.Data, exec.step.MergeOn, transformed)
+				if err != nil {
+					return fmt.Errorf("mergeOn failed: %w", err)
+				}
+				exec.currentContext.Data = updated
+			} else if exec.step.MergeWithParentOn != "" {
+				parentCtx := exec.contextMap[exec.currentContext.ParentContext]
+				// Simple jq merge on current context
+				updated, err := applyMergeRule(parentCtx.Data, exec.step.MergeWithParentOn, transformed)
+				if err != nil {
+					return fmt.Errorf("mergeWithParentOn failed: %w", err)
+				}
+				parentCtx.Data = updated
+			} else if exec.step.MergeWithContext != nil {
+				// 2. Named context merge (cross-scope update)
+				targetCtx, ok := exec.contextMap[exec.step.MergeWithContext.Name]
+				if !ok {
+					return fmt.Errorf("context '%s' not found", exec.step.MergeWithContext.Name)
+				}
+				updated, err := applyMergeRule(targetCtx.Data, exec.step.MergeWithContext.Rule, transformed)
+				if err != nil {
+					return fmt.Errorf("mergeWithContext failed: %w", err)
+				}
+				targetCtx.Data = updated
+			} else {
+				// 3. Simple assignment (shallow)
+				switch data := exec.currentContext.Data.(type) {
+				case []interface{}:
+					exec.currentContext.Data = append(data, transformed.([]interface{})...) // Reassigns to field of original struct
+				case map[string]interface{}:
+					if transformedMap, ok := transformed.(map[string]interface{}); ok {
+						for k, v := range transformedMap {
+							data[k] = v // Modifies in-place
+						}
+					}
+				default:
+					exec.currentContext.Data = transformed
+				}
+			}
+
+			profileStepName = fmt.Sprintf("Request Merged %s - %s", exec.step.Name, urlObj.String())
+			c.pushProfilerData(profileStepName, exec, exec.currentContext.Data)
+
+			for _, step := range exec.step.Steps {
+				newExec := newStepExecution(step, exec.currentContextKey, exec.contextMap)
+				// newExec := newStepExecution(step, exec.currentContextKey, c.ContextMap)
+				if err := c.ExecuteStep(ctx, newExec); err != nil {
+					return err
+				}
+			}
+
+			// at this point all inner steps have been executed for all entries in this call
+			// the tree has been completely retrieved and we can check the stream
+			if exec.currentContext.depth == 0 && c.Config.Stream {
+				// No need to check conversion since rootContext is enforced to be an array
+				array_data := exec.currentContext.Data.([]interface{})
+				for _, d := range array_data {
+					c.DataStream <- d
+				}
+
+				// reset data
+				exec.currentContext.Data = []interface{}{}
+			}
 		}
 	}
 
 	return nil
 }
 
-func (c *ApiCrawler) handleForEach(step Step, currentContext string, contextMap map[string]*Context) error {
-	_ctx := contextMap[currentContext]
+func (c *ApiCrawler) handleForEach(ctx context.Context, exec *stepExecution) error {
 	results := []interface{}{}
 
-	if len(step.Path) != 0 && step.Values == nil {
-		query, err := gojq.Parse(step.Path)
+	if len(exec.step.Path) != 0 && exec.step.Values == nil {
+		query, err := gojq.Parse(exec.step.Path)
 		if err != nil {
-			return fmt.Errorf("invalid jq path '%s': %w", step.Path, err)
+			return fmt.Errorf("invalid jq path '%s': %w", exec.step.Path, err)
 		}
 
-		iter := query.Run(_ctx.Data)
+		iter := query.Run(exec.currentContext.Data)
 		for {
 			v, ok := iter.Next()
 			if !ok {
@@ -368,28 +468,47 @@ func (c *ApiCrawler) handleForEach(step Step, currentContext string, contextMap 
 				results = arr
 			}
 		}
-	} else if step.Values != nil {
-		for _, v := range step.Values {
+	} else if exec.step.Values != nil {
+		for _, v := range exec.step.Values {
 			results = append(results, map[string]interface{}{"value": v})
 		}
 	}
 
+	rj, _ := json.MarshalIndent(results, "", "   ")
+	profileStepName := fmt.Sprintf("Foreach %s", exec.step.Name)
+	c.pushProfilerData(profileStepName, exec, rj)
+
 	executionResults := make([]interface{}, 0)
 	for i, item := range results {
-		fmt.Printf("[ForEach] Iteration %d as '%s': %v\n", i, step.As, item)
+		// context cancelation handling
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+			c.logger.Info("[ForEach] Iteration %d as '%s': %v", i, exec.step.As, item)
+			childContextMap := childMapWith(exec.contextMap, exec.currentContext, exec.step.As, item)
 
-		childContextMap := childMapWith(contextMap, _ctx, step.As, item)
-		for _, nested := range step.Steps {
-			if err := c.ExecuteStep(nested, step.As, childContextMap); err != nil {
-				return err
+			ij, _ := json.MarshalIndent(item, "", "   ")
+			profileStepName := fmt.Sprintf("Foreach [%d] %s", i, exec.step.Name)
+			c.pushProfilerData(profileStepName, exec, ij)
+
+			for _, nested := range exec.step.Steps {
+				newExec := newStepExecution(nested, exec.step.As, childContextMap)
+				if err := c.ExecuteStep(ctx, newExec); err != nil {
+					return err
+				}
 			}
+
+			profileStepName = fmt.Sprintf("Foreach [%d] %s Result", i, exec.step.Name)
+			c.pushProfilerData(profileStepName, exec, childContextMap[exec.step.As].Data)
+
+			executionResults = append(executionResults, childContextMap[exec.step.As].Data)
 		}
-		executionResults = append(executionResults, childContextMap[step.As].Data)
 	}
 
 	// We need to path the context with the result of the nested data.
 	// This has to be done only if we are using path selector, foreach with hadcoded values already merge with some othe context
-	query, err := gojq.Parse(step.Path + " = $new")
+	query, err := gojq.Parse(exec.step.Path + " = $new")
 	if err != nil {
 		return fmt.Errorf("invalid merge rule JQ: %w", err)
 	}
@@ -399,7 +518,7 @@ func (c *ApiCrawler) handleForEach(step Step, currentContext string, contextMap 
 	}
 
 	// Run the query against contextData, passing $new as a variable
-	iter := code.Run(_ctx.Data, executionResults)
+	iter := code.Run(exec.currentContext.Data, executionResults)
 
 	v, ok := iter.Next()
 	if !ok {
@@ -410,19 +529,22 @@ func (c *ApiCrawler) handleForEach(step Step, currentContext string, contextMap 
 	}
 
 	// Assign new patched data
-	_ctx.Data = v
+	exec.currentContext.Data = v
+
+	profileStepName = fmt.Sprintf("Foreach Merged %s", exec.step.Name)
+	c.pushProfilerData(profileStepName, exec, exec.currentContext.Data)
 
 	// at this point all inner steps have been executed for all entries in this call
 	// the tree has been completely retrieved and we can check the stream
-	if _ctx.depth == 0 && c.Config.Stream {
+	if exec.currentContext.depth == 0 && c.Config.Stream {
 		// No need to check conversion since rootContext is enforced to be an array
-		array_data := _ctx.Data.([]interface{})
+		array_data := exec.currentContext.Data.([]interface{})
 		for _, d := range array_data {
 			c.DataStream <- d
 		}
 
 		// reset data
-		_ctx.Data = []interface{}{}
+		exec.currentContext.Data = []interface{}{}
 	}
 
 	return nil

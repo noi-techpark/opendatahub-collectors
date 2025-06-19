@@ -1,6 +1,7 @@
 package crawler
 
 import (
+	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -18,7 +19,7 @@ func TestExampleForeachValue(t *testing.T) {
 	craw := NewApiCrawler("testing/example_foreach_value.yaml")
 	craw.SetClientRoundTripper(mockTransport)
 
-	err := craw.Run()
+	err := craw.Run(context.TODO())
 	require.Nil(t, err)
 
 	data := craw.GetData()
@@ -49,7 +50,7 @@ func TestExampleForeachValueStream(t *testing.T) {
 		}
 	}()
 
-	err := craw.Run()
+	err := craw.Run(context.TODO())
 	require.Nil(t, err)
 
 	var expected interface{}
@@ -68,7 +69,7 @@ func TestExampleSingle(t *testing.T) {
 	craw := NewApiCrawler("testing/example_single.yaml")
 	craw.SetClientRoundTripper(mockTransport)
 
-	err := craw.Run()
+	err := craw.Run(context.TODO())
 	require.Nil(t, err)
 
 	data := craw.GetData()
@@ -94,7 +95,7 @@ func TestExample2(t *testing.T) {
 	craw := NewApiCrawler("testing/example2.yaml")
 	craw.SetClientRoundTripper(mockTransport)
 
-	err := craw.Run()
+	err := craw.Run(context.TODO())
 	require.Nil(t, err)
 
 	data := craw.GetData()
@@ -115,7 +116,7 @@ func TestPaginatedIncrement(t *testing.T) {
 	craw := NewApiCrawler("testing/example_pagination_increment.yaml")
 	craw.SetClientRoundTripper(mockTransport)
 
-	err := craw.Run()
+	err := craw.Run(context.TODO())
 	require.Nil(t, err)
 
 	data := craw.GetData()
@@ -140,7 +141,7 @@ func TestPaginatedIncrementNested(t *testing.T) {
 	craw := NewApiCrawler("testing/example_pagination_increment_nested.yaml")
 	craw.SetClientRoundTripper(mockTransport)
 
-	err := craw.Run()
+	err := craw.Run(context.TODO())
 	require.Nil(t, err)
 
 	data := craw.GetData()
@@ -175,7 +176,7 @@ func TestPaginatedIncrementStream(t *testing.T) {
 		}
 	}()
 
-	err := craw.Run()
+	err := craw.Run(context.TODO())
 	require.Nil(t, err)
 
 	var expected interface{}
