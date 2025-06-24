@@ -56,7 +56,8 @@ services:
       interval: 5s
       timeout: 10s
       retries: 20
-      start_interval: 10s
+      start_interval: 2s
+      start_period: 10s
     volumes:
       # If you need to recreate the realm json file, you must export it via command line
       # Attach to the docker container of your keycloak instance

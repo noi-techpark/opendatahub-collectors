@@ -14,7 +14,7 @@ env:
 
 jobs:
   test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     concurrency: dc-rest-push-test
     steps:
     - name: Checkout source code
@@ -25,7 +25,7 @@ jobs:
       working-directory: ${{env.WORKING_DIRECTORY}}/test
 
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     concurrency: dc-rest-push-build
     permissions:
       packages: write
@@ -45,7 +45,7 @@ jobs:
     needs: 
       - test
       - build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     concurrency: dc-rest-push-deploy-test
     environment: test
     env:
@@ -91,7 +91,7 @@ jobs:
     needs: 
       - test
       - build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     concurrency: dc-rest-push-deploy-prod
     environment: prod
     env:

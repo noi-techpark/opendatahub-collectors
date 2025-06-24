@@ -23,7 +23,7 @@ ENTRYPOINT [ "./main"]
 FROM base AS dev
 WORKDIR /code
 # Air for auto rebuild on changes
-RUN go install github.com/cosmtrek/air@latest
+RUN go install github.com/air-verse/air@latest
 RUN air init
 CMD ["air"]
 
