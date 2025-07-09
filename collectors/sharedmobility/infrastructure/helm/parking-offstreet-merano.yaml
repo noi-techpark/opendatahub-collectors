@@ -1,0 +1,17 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/rest-poller
+  pullPolicy: IfNotPresent
+  tag: "0.2.0" # Set this when upgrading chart with --set-value
+
+env:
+  MQ_CLIENT: dc-parking-offstreet-merano
+  PROVIDER: parking-offstreet/merano
+
+  CRON: "0 */2 * * * *"
+  HTTP_URL: "http://84.18.132.129/trafficstudiorestwebservice/getParkingAreasSituation"
+  HTTP_HEADERS_ACCEPT: "Accept: application/json"
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
