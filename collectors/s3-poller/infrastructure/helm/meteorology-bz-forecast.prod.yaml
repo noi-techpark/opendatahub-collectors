@@ -13,6 +13,9 @@ env:
   AWS_S3_FILE_NAME: "SMOS_MCPL-WX_EXP_SIAG.JSON"
   AWS_S3_BUCKET_NAME: dc-meteorology-province-forecast
 
+  SERVICE_NAME: dc-meteorology-bz-forecast
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
 envSecretRef:
   - name: MQ_URI
     secret: rabbitmq-svcbind
