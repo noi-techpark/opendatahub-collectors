@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+SPDX-FileCopyrightText: 2025 NOI Techpark <digital@noi.bz.it>
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
+<methodResponse>
+    <params>
+        <param>
+            <value>
+                <array>
+                    <data>
+                        <value>
+                            <int>103</int>
+                        </value>
+                        <value>
+                            <int>104</int>
+                        </value>
+                        <value>
+                            <int>105</int>
+                        </value>
+                        <value>
+                            <int>106</int>
+                        </value>
+                        <value>
+                            <int>107</int>
+                        </value>
+                        <value>
+                            <int>108</int>
+                        </value>
+                        <value>
+                            <int>115</int>
+                        </value>
+                        <value>
+                            <int>116</int>
+                        </value>
+                    </data>
+                </array>
+            </value>
+        </param>
+    </params>
+</methodResponse>

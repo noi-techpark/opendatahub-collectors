@@ -1,0 +1,46 @@
+# SPDX-FileCopyrightText: 2025 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+###  get list of stations
+POST {{$dotenv RPC_URL}}
+Content-Type: text/text/xml
+
+<?xml version="1.0"?>
+<methodCall>
+    <methodName>pGuide.getElencoIdentificativiParcheggi</methodName>
+    <params>
+    </params>
+</methodCall>
+
+### get station metadata
+POST {{$dotenv RPC_URL}}
+Content-Type: text/text/xml
+
+<?xml version="1.0"?>
+<methodCall>
+    <methodName>pGuide.getCaratteristicheParcheggio</methodName>
+    <params>
+        <param>
+            <value>
+                <int>105</int>
+            </value>
+        </param>
+    </params>
+</methodCall>
+
+### get station occupancy
+POST {{$dotenv RPC_URL}}
+Content-Type: text/text/xml
+
+<?xml version="1.0"?>
+<methodCall>
+    <methodName>pGuide.getPostiLiberiParcheggioExt</methodName>
+    <params>
+        <param>
+            <value>
+                <int>105</int>
+            </value>
+        </param>
+    </params>
+</methodCall>
