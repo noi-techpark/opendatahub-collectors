@@ -48,6 +48,8 @@ const (
 	DataTypeAvgFlow            = "Average Flow"
 	DataTypeEuroPct            = "EURO Category Pct"
 	DataTypeNationalityCount   = "Plate Nationality Count"
+	DataTypeDirection          = "Traffic Normal Direction"
+	DataTypeDirectionScore     = "Traffic Direction Score"
 
 	MeasurementPeriod uint64 = 600
 )
@@ -79,6 +81,8 @@ var allDataTypes = []string{
 	DataTypeAvgFlow,
 	DataTypeEuroPct,
 	DataTypeNationalityCount,
+	DataTypeDirection,
+	DataTypeDirectionScore,
 }
 
 var dataTypes []bdplib.DataType
@@ -385,6 +389,10 @@ func SyncDataTypes(bdp bdplib.Bdp) {
 
 	// Plate nationality
 	dataTypes = append(dataTypes, bdplib.CreateDataType(DataTypeNationalityCount, "", "Vehicle Count by License Plate Nationality", "Count"))
+
+	// Direction flow
+	dataTypes = append(dataTypes, bdplib.CreateDataType(DataTypeDirection, "", "Majority of the vehicles are following the normal direction (1 = normal, 0 = inverse)", "Count"))
+	dataTypes = append(dataTypes, bdplib.CreateDataType(DataTypeDirectionScore, "", "Score defined by how many vehicles are traveling in the inverse direction (1 = normal, 0 = inverse)", "Count"))
 
 	// Sync
 	err := bdp.SyncDataTypes(sensorStationType, dataTypes)
