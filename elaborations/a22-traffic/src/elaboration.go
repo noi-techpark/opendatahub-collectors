@@ -79,31 +79,31 @@ func elaborate(ctx context.Context, dataMap *bdplib.DataMap, existingMeasurement
 	}
 
 	// Direction
-	{
-		var normalCount int
-		for _, v := range vehicles {
-			if v.Direction == 0 {
-				normalCount++
-			}
-		}
-		total := len(vehicles)
+	// {
+	// 	var normalCount int
+	// 	for _, v := range vehicles {
+	// 		if v.Direction == 0 {
+	// 			normalCount++
+	// 		}
+	// 	}
+	// 	total := len(vehicles)
 
-		var direction int = 1
-		var score float64 = 1
-		if total > 0 {
-			score = float64(normalCount) / float64(total)
-			if normalCount < total/2 {
-				direction = 0
-			}
-		}
+	// 	var direction int = 1
+	// 	var score float64 = 1
+	// 	if total > 0 {
+	// 		score = float64(normalCount) / float64(total)
+	// 		if normalCount < total/2 {
+	// 			direction = 0
+	// 		}
+	// 	}
 
-		if existingMeasurements.shouldElaborate(DataTypeDirection, t) {
-			dataMap.AddRecord(station.Id, DataTypeDirection, bdplib.CreateRecord(timestamp, direction, period))
-		}
-		if existingMeasurements.shouldElaborate(DataTypeDirectionScore, t) {
-			dataMap.AddRecord(station.Id, DataTypeDirectionScore, bdplib.CreateRecord(timestamp, score, period))
-		}
-	}
+	// 	if existingMeasurements.shouldElaborate(DataTypeDirection, t) {
+	// 		dataMap.AddRecord(station.Id, DataTypeDirection, bdplib.CreateRecord(timestamp, direction, period))
+	// 	}
+	// 	if existingMeasurements.shouldElaborate(DataTypeDirectionScore, t) {
+	// 		dataMap.AddRecord(station.Id, DataTypeDirectionScore, bdplib.CreateRecord(timestamp, score, period))
+	// 	}
+	// }
 
 	return nil
 }
