@@ -1,0 +1,17 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/rest-poller
+  pullPolicy: IfNotPresent
+  tag: "0.2.0" # Set this when upgrading chart with --set-value
+
+env:
+  MQ_CLIENT: dc-echarging-route220
+  PROVIDER: echarging/route220
+
+  CRON: "0 */5 * * * *"
+  HTTP_URL: https://platform.evway.net/api/idm/getAllRoute220Stations
+  HTTP_HEADER_CALLER: "X-Caller-ID: NOI-Techpark"
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri

@@ -1,0 +1,18 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/rest-poller
+  pullPolicy: IfNotPresent
+  tag: "0.2.0" # Set this when upgrading chart with --set-value
+
+env:
+  MQ_CLIENT: dc-matomo-noi-transparency
+  PROVIDER: matomo/noi-transparency
+
+  CRON: "0 0 0 * * *"
+  
+envSecret:
+  HTTP_URL: "<URL SET BY CICD>"
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
