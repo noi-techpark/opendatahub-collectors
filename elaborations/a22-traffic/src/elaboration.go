@@ -80,7 +80,7 @@ func elaborate(ctx context.Context, dataMap *bdplib.DataMap, existingMeasurement
 
 	// Direction
 	stationDirection := station.Direction()
-	if stationDirection != STATION_DIRECTION_UNKNOWN {
+	if len(vehicles) != 0 && stationDirection != STATION_DIRECTION_UNKNOWN {
 		var normalCount int
 		for _, v := range vehicles {
 			if v.Direction == int(stationDirection) {
