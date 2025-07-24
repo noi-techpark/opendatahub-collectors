@@ -10,6 +10,8 @@ services:
       target: dev
     env_file:
       - .env
+    environment:
+      - TELEMETRY_ENABLED=false
     volumes:
       - ./src:/code
       - pkg:/go/pkg/mod
