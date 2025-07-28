@@ -4,7 +4,7 @@ go 1.24.4
 
 require (
 	github.com/hashicorp/go-retryablehttp v0.7.8
-	github.com/noi-techpark/go-apigorowler v0.0.4
+	github.com/noi-techpark/go-apigorowler v0.0.5
 	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.3
 	github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0
 	github.com/robfig/cron/v3 v3.0.1

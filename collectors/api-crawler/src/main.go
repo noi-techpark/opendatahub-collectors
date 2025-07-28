@@ -39,14 +39,14 @@ func main() {
 
 	slog.Info("Setup complete. Starting cron scheduler")
 
+	craw, errors, err := apigorowler.NewApiCrawler(env.CONFIG_PATH)
+	ms.FailOnError(context.Background(), err, "failed to load call config", "validation", errors)
+	client := retryablehttp.NewClient()
+	craw.SetClient(client.StandardClient())
+
 	c := cron.New(cron.WithSeconds())
 	c.AddFunc(env.CRON, func() {
 		jobstart := time.Now()
-
-		craw, errors, err := apigorowler.NewApiCrawler(env.CONFIG_PATH)
-		client := retryablehttp.NewClient()
-		craw.SetClient(client.StandardClient())
-		ms.FailOnError(context.Background(), err, "failed to load call config", "validation", errors)
 
 		ctx, c := collector.StartCollection(context.Background())
 		defer c.End(ctx)

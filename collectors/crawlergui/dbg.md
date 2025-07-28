@@ -1,1 +1,0 @@
-(cd ~/git/opendatahub-collectors/collectors/crawlergui/ && dlv debug gui.go --headless=true --listen=:2345 --api-version=2 --accept-multiclient)
