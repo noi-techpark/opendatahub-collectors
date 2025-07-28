@@ -106,6 +106,8 @@ github.com/noi-techpark/go-apigorowler v0.0.4 h1:pO7gqGRKboudkwRYuuK1bqmUacl1WcS
 github.com/noi-techpark/go-apigorowler v0.0.4/go.mod h1:7laelafUBV90mCQ+S/fEGNbaXr3FbaqrgofdYMq7KAA=
 github.com/noi-techpark/go-apigorowler v0.0.5 h1:970qoFzsBflCle4/E5lVOtpCjL9OI7prXo+hG84L3no=
 github.com/noi-techpark/go-apigorowler v0.0.5/go.mod h1:7laelafUBV90mCQ+S/fEGNbaXr3FbaqrgofdYMq7KAA=
+github.com/noi-techpark/go-apigorowler v0.0.6 h1:25lTiE8sAHnzt/09/9zvkRXo4ohG1KbXRYDi7MqqFQ8=
+github.com/noi-techpark/go-apigorowler v0.0.6/go.mod h1:7laelafUBV90mCQ+S/fEGNbaXr3FbaqrgofdYMq7KAA=
 github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.3 h1:7RQ9CTRLoM4EGUcFq5ddEucAclwzLOU3WjVdVVPyGng=
 github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.3/go.mod h1:nrdL8vMSFYWzkhxCiB1mD0lD3OcnXl9K4FYzFx0M0VY=
 github.com/noi-techpark/opendatahub-go-sdk/qmill v1.0.2 h1:hVz4DnPEP7mZL5+ti1lXioanLySUQrCW3D6K0EcfKg0=
