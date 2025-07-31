@@ -6,7 +6,7 @@ image:
 env:
   LOG_LEVEL: INFO
   MQTT_CLIENTID: OpenDataHub
-  MQTT_TOPIC: people_flow/1dd13058-f04c-f011-8f7d-000d3a3a9b4a
+  MQTT_TOPIC: people_flow/1dd13058-f04c-f011-8f7d-000d3a3a9b4a/#
   MQ_CLIENT: dc-mqtt-client-people-me
   MQ_EXCHANGE: ingress
   PROVIDER: people-flow/systems-me
