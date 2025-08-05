@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-FROM golang:1.23-bookworm AS base
+FROM golang:1.24-bookworm AS base
 
 FROM base AS build-env
 WORKDIR /app
