@@ -32,13 +32,11 @@ func main() {
 	dtmap := readDataTypes("datatypes.csv")
 	ms.FailOnError(b.SyncDataTypes("", maps.Values(dtmap)), "error pushing datatypes")
 
-	scfg, err := readStationCSV("stations.csv")
+	stations, err := readStationCSV("stations.csv")
 	ms.FailOnError(err, "error loading station csv")
-	stations, err := compileHistory(scfg)
-	ms.FailOnError(err, "error compiling station history")
 	bdpStations := []bdplib.Station{}
 	for _, s := range stations {
-		bdpStations = append(bdpStations, map2Bdp(s, b.Origin))
+		bdpStations = append(bdpStations, map2Bdp(s, b.GetOrigin()))
 	}
 	ms.FailOnError(b.SyncStations(stationtype, bdpStations, true, false), "error syncing stations")
 
