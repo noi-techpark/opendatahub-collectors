@@ -7,27 +7,19 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"sort"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/noi-techpark/go-bdp-client/bdplib"
-	"golang.org/x/exp/maps"
 )
 
-type stationcfg struct {
-	station
-	sensor_id    string
-	sensor_start time.Time
-}
-
 type station struct {
-	id      string
-	name    string
-	lat     float64
-	lon     float64
-	history []Sensorhistory
+	id            string
+	name          string
+	lat           float64
+	lon           float64
+	latest_sensor string
+	history       []Sensorhistory
 }
 
 type Sensorhistory struct {
@@ -35,6 +27,15 @@ type Sensorhistory struct {
 	Sensor_start time.Time
 	Sensor_end   time.Time
 }
+
+const (
+	CSV_REFNAME      int = 0
+	CSV_STATION_CODE int = 1
+	CSV_STATION_NAME int = 2
+	CSV_LATITUDE     int = 3
+	CSV_LONGITUDE    int = 4
+	CSV_FIRST_DATE   int = 5
+)
 
 const dateOnlyFormat = "2006-01-02"
 
@@ -51,30 +52,46 @@ func (h *Sensorhistory) MarshalJSON() ([]byte, error) {
 	})
 }
 
-func readStationCSV(path string) ([]stationcfg, error) {
+func readStationCSV(path string) (map[string]station, error) {
 	stationf := readCsv(path)
-	stm := []stationcfg{}
+	stations := map[string]station{}
+	dates := []time.Time{}
+	for i := CSV_FIRST_DATE; i < len(stationf[0]); i++ {
+		dt, err := time.Parse("2006-01-02", stationf[0][i])
+		if err != nil {
+			return nil, fmt.Errorf("error parsing column header date %s: %w", stationf[0][i], err)
+		}
+		dates = append(dates, dt)
+	}
 	for _, st := range stationf[1:] {
-		// in the old data collector, for raw datatypes the unit is always null instead of using the one from CSV. Is this correct?
-
-		lat, err := strconv.ParseFloat(st[2], 64)
+		scode := st[CSV_STATION_CODE]
+		sname := st[CSV_STATION_NAME]
+		lat, err := strconv.ParseFloat(st[CSV_LATITUDE], 64)
 		if err != nil {
 			return nil, fmt.Errorf("error parsing lat float value %s: %w", st[2], err)
 		}
-		lon, err := strconv.ParseFloat(st[3], 64)
+		lon, err := strconv.ParseFloat(st[CSV_LONGITUDE], 64)
 		if err != nil {
 			return nil, fmt.Errorf("error parsing lon float value %s: %w", st[2], err)
 		}
-		sensor_start := time.Time{}
-		if strings.TrimSpace(st[5]) != "" {
-			sensor_start, err = time.Parse("2006.01.02", st[5])
-			if err != nil {
-				return nil, fmt.Errorf("error parsing sensor starting date string %s: %w", st[5], err)
+		station := station{id: scode, name: sname, lat: lat, lon: lon}
+		prev := ""
+		for i, date := range dates {
+			cur := st[CSV_FIRST_DATE+i]
+			if cur != prev {
+				if prev != "" {
+					station.history[len(station.history)-1].Sensor_end = date
+				}
+				if cur != "" {
+					station.history = append(station.history, Sensorhistory{Sensor_id: cur, Sensor_start: date})
+				}
+				prev = cur
 			}
 		}
-		stm = append(stm, stationcfg{station: station{id: st[0], name: st[1], lat: lat, lon: lon}, sensor_id: st[4], sensor_start: sensor_start})
+		station.latest_sensor = prev
+		stations[station.id] = station
 	}
-	return stm, nil
+	return stations, nil
 }
 
 func map2Bdp(s station, origin string) bdplib.Station {
@@ -82,44 +99,13 @@ func map2Bdp(s station, origin string) bdplib.Station {
 
 	mapped.MetaData = make(map[string]interface{})
 
-	if len(s.history) > 0 {
-		currentSensor := s.history[len(s.history)-1]
-		mapped.MetaData["sensor_id"] = currentSensor.Sensor_id
-	}
+	mapped.MetaData["sensor_id"] = s.latest_sensor
 	mapped.MetaData["sensor_history"] = s.history
 
 	return mapped
 }
 
-func compileHistory(cfgs []stationcfg) ([]station, error) {
-	smap := map[string]station{}
-	sort.Slice(cfgs, func(i, j int) bool {
-		l := cfgs[i]
-		r := cfgs[j]
-		if l.id < r.id {
-			return true
-		} else {
-			return l.sensor_start.Before(r.sensor_start)
-		}
-	})
-
-	for _, cfg := range cfgs {
-		s, ok := smap[cfg.id]
-		if !ok {
-			s = cfg.station
-		}
-
-		if len(s.history) > 0 {
-			s.history[len(s.history)-1].Sensor_end = cfg.sensor_start
-		}
-		s.history = append(s.history, Sensorhistory{Sensor_id: cfg.sensor_id, Sensor_start: cfg.sensor_start})
-
-		smap[cfg.id] = s
-	}
-	return maps.Values(smap), nil
-}
-
-func currentStation(sts []station, sensor string, ts time.Time) (station, error) {
+func currentStation(sts map[string]station, sensor string, ts time.Time) (station, error) {
 	var ret station
 	var latest time.Time
 	for _, s := range sts {
