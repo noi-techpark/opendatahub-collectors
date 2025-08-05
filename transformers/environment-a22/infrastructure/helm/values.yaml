@@ -16,21 +16,17 @@ env:
   MQ_QUEUE: a22.environment
   MQ_EXCHANGE: routed
   MQ_KEY: a22.environment
-  MQ_CONSUMER: tr-environment-a22
+  MQ_CLIENT: tr-environment-a22
 
   RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
 
   SERVICE_NAME: tr-environment-a22
-  # TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
   
 envSecretRef:
   - name: MQ_URI 
     secret: rabbitmq-svcbind
     key: uri
-  - name: MONGO_URI
-    secret: mongodb-collector-svcbind
-    key: uri
-
   - name: ODH_TOKEN_URL
     secret: oauth-collector
     key: tokenUri
