@@ -14,6 +14,7 @@ import (
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
+	"github.com/noi-techpark/opendatahub-go-sdk/tel"
 
 	"github.com/relvacode/iso8601"
 	"golang.org/x/exp/maps"
@@ -30,6 +31,8 @@ func main() {
 
 	b := bdplib.FromEnv()
 
+	defer tel.FlushOnPanic()
+
 	dtmap := readDataTypes("datatypes.csv")
 	ms.FailOnError(ctx, b.SyncDataTypes("", maps.Values(dtmap)), "error pushing datatypes")
 
@@ -43,7 +46,7 @@ func main() {
 
 	listener := tr.NewTr[payload](ctx, env)
 
-	listener.Start(ctx, func(ctx context.Context, r *rdb.Raw[payload]) error {
+	err = listener.Start(ctx, func(ctx context.Context, r *rdb.Raw[payload]) error {
 		payload := mqttPayload{}
 		if err := json.Unmarshal([]byte(r.Rawdata.Payload), &payload); err != nil {
 			return err
@@ -72,6 +75,7 @@ func main() {
 		}
 		return nil
 	})
+	ms.FailOnError(context.Background(), err, "error while listening to queue")
 }
 
 type bdpDataTypeMap map[string]bdplib.DataType
