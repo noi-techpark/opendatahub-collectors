@@ -9,14 +9,14 @@ import (
 	"os"
 	"testing"
 
-	"github.com/noi-techpark/go-opendatahub-ingest/dto"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	"gotest.tools/v3/assert"
 )
 
 func TestRawUnmarshal(t *testing.T) {
 	f, err := os.ReadFile("./testdata/raw_example.json")
 	assert.NilError(t, err)
-	raw := dto.Raw[payload]{}
+	raw := rdb.Raw[payload]{}
 	err = json.Unmarshal(f, &raw)
 	assert.NilError(t, err)
 }
