@@ -88,8 +88,10 @@ github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 h1:C3w9PqII01/Oq
 github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
 github.com/noi-techpark/go-bdp-client v1.2.1 h1:kiIX8jv4N9q5VNO3cQ0YrHixq3Haxq3aIDclAYOD+gg=
 github.com/noi-techpark/go-bdp-client v1.2.1/go.mod h1:aooKwED49M7Au+9Y/o8wW/4yggIvaVRHc0JJvPnS10c=
-github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.3 h1:7RQ9CTRLoM4EGUcFq5ddEucAclwzLOU3WjVdVVPyGng=
-github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.3/go.mod h1:nrdL8vMSFYWzkhxCiB1mD0lD3OcnXl9K4FYzFx0M0VY=
+github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.4-0.20250805150114-150dfe4ba755 h1:EFC83jevc6eKm19qUtZNVcTJnDdLnHNyMycMpqHh2lg=
+github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.4-0.20250805150114-150dfe4ba755/go.mod h1:nrdL8vMSFYWzkhxCiB1mD0lD3OcnXl9K4FYzFx0M0VY=
+github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.4-0.20250806115639-ef2aad503cc0 h1:giz9xPsDJFqa/pRKSNlB1fndgjlp2PZGZQJRRdolqJo=
+github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.4-0.20250806115639-ef2aad503cc0/go.mod h1:nrdL8vMSFYWzkhxCiB1mD0lD3OcnXl9K4FYzFx0M0VY=
 github.com/noi-techpark/opendatahub-go-sdk/qmill v1.0.2 h1:hVz4DnPEP7mZL5+ti1lXioanLySUQrCW3D6K0EcfKg0=
 github.com/noi-techpark/opendatahub-go-sdk/qmill v1.0.2/go.mod h1:iHTLcqZRJ21TiakPeH+eScQskx3w1KpG70GXKX+x9gE=
 github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0 h1:qZNcndXyVDNMjm97UUHY83SE/ajxFb3EG8Fy0knYJVA=

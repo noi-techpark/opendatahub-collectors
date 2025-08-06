@@ -44,9 +44,9 @@ func main() {
 	}
 	ms.FailOnError(ctx, b.SyncStations(stationtype, bdpStations, true, false), "error syncing stations")
 
-	listener := tr.NewTr[payload](ctx, env)
+	listener := tr.NewTr[payload](context.Background(), env)
 
-	err = listener.Start(ctx, func(ctx context.Context, r *rdb.Raw[payload]) error {
+	err = listener.Start(context.Background(), func(ctx context.Context, r *rdb.Raw[payload]) error {
 		payload := mqttPayload{}
 		if err := json.Unmarshal([]byte(r.Rawdata.Payload), &payload); err != nil {
 			return err
