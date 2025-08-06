@@ -12,11 +12,27 @@ services:
       - .env
     volumes:
       - ./src:/code
-      - ./resources:/res
+      - ./resources:/resources
       - ./test:/test
       - pkg:/go/pkg/mod
     working_dir: /code
-    # host mode so we can use the port forwards
-    network_mode: host 
+    
+  cluster-proxy:
+    image: alpine/k8s:1.31.11
+    volumes:
+      - ~/.kube/:/root/.kube/:r
+      - ~/.aws/:/root/.aws/:r
+    env_file:
+      - .env
+    entrypoint: >
+      sh -c " \\
+        kubectl port-forward --context $K8S_CONTEXT -n core svc/rabbitmq-headless --address 0.0.0.0 5672 & \\
+        kubectl port-forward --context $K8S_CONTEXT -n core svc/raw-data-bridge --address 0.0.0.0 2000 & \\
+        kubectl port-forward --context $K8S_CONTEXT -n core svc/bdp-core --address 0.0.0.0 8080:80 \\
+      "
+    healthcheck:
+      test: ["CMD", "curl",  "http://localhost:8080/actuator/health"]
+      interval: 2s
+    
 volumes:
   pkg:
