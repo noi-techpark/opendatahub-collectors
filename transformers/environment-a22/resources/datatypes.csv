@@ -1,7 +1,7 @@
 id,dataType,unit,description,rtype
 1,CO2_raw,,CO2,Mean
 2,temperature-external_raw,°C,Temperatura,Mean
-3,RH,,Umidità relativa_raw,Mean
+3,RH_raw,,Umidità relativa_raw,Mean
 7,temperature-internal_raw,°C,Temperatura interna,Mean
 8,O3_raw,,O3,Mean
 9,NO2_raw,,NO2,Mean
