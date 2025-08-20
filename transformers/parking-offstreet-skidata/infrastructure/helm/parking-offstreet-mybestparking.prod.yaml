@@ -20,7 +20,7 @@ env:
   MQ_KEY: multi-rest-poller.parking-mybestparking
   MQ_CLIENT: tr-parking-offstreet-mybestparking
 
-  BDP_BASE_URL: https://mobility.share.opendatahub.com
+  BDP_BASE_URL: http://bdp-core.core.svc.cluster.local
   BDP_PROVENANCE_VERSION: 
   BDP_PROVENANCE_NAME: 
   BDP_ORIGIN: skidata

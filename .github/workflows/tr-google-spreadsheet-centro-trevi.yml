@@ -84,7 +84,6 @@ jobs:
           env:
             provenance_name: ${{ env.K8S_NAME }}
             provenance_version: ${{ github.sha}} 
-            BASE_URI: https://mobility.share.opendatahub.com/json
           envSecret:
             spreadsheetId: ${{ secrets.G_SHEETS_CENTRO_TREVI_ID }}
           EOF

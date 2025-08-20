@@ -18,7 +18,7 @@ env:
   NINJA_URL: https://mobility.api.opendatahub.com
   NINJA_CONSUMER: el-a22-traffic
 
-  BDP_BASE_URL: https://mobility.share.opendatahub.com
+  BDP_BASE_URL: http://bdp-core.core.svc.cluster.local
   BDP_PROVENANCE_VERSION: 
   BDP_PROVENANCE_NAME: 
   BDP_ORIGIN: A22

@@ -15,7 +15,7 @@ env:
   MQ_KEY: $PROVIDER1.$PROVIDER2
   MQ_CLIENT: tr-$PROJECT
 
-  BDP_BASE_URL: https://mobility.share.opendatahub.com
+  BDP_BASE_URL: http://bdp-core.core.svc.cluster.local
   BDP_PROVENANCE_VERSION: 
   BDP_PROVENANCE_NAME: 
   BDP_ORIGIN: $ORIGIN
