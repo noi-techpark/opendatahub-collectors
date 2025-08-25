@@ -4,14 +4,14 @@ go 1.24.4
 
 require (
 	github.com/hashicorp/go-retryablehttp v0.7.8
-	github.com/noi-techpark/go-apigorowler v0.0.6
+	github.com/noi-techpark/go-apigorowler v0.0.7
 	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.3
 	github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0
 	github.com/robfig/cron/v3 v3.0.1
 )
 
 require (
-	github.com/expr-lang/expr v1.17.5 // indirect
+	github.com/expr-lang/expr v1.17.6 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/itchyny/gojq v0.12.17 // indirect
 	github.com/itchyny/timefmt-go v0.1.6 // indirect

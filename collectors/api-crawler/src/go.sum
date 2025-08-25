@@ -23,6 +23,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/expr-lang/expr v1.17.5 h1:i1WrMvcdLF249nSNlpQZN1S6NXuW9WaOfF5tPi3aw3k=
 github.com/expr-lang/expr v1.17.5/go.mod h1:8/vRC7+7HBzESEqt5kKpYXxrxkr31SaO8r40VO/1IT4=
+github.com/expr-lang/expr v1.17.6 h1:1h6i8ONk9cexhDmowO/A64VPxHScu7qfSl2k8OlINec=
+github.com/expr-lang/expr v1.17.6/go.mod h1:8/vRC7+7HBzESEqt5kKpYXxrxkr31SaO8r40VO/1IT4=
 github.com/fatih/color v1.16.0 h1:zmkK9Ngbjj+K0yRhTVONQh1p/HknKYSlNT+vZCzyokM=
 github.com/fatih/color v1.16.0/go.mod h1:fL2Sau1YI5c0pdGEVCbKQbLXB6edEj1ZgiY4NijnWvE=
 github.com/gabriel-vasile/mimetype v1.4.8 h1:FfZ3gj38NjllZIeJAmMhr+qKL8Wu+nOoI3GqacKw1NM=
@@ -108,6 +110,8 @@ github.com/noi-techpark/go-apigorowler v0.0.5 h1:970qoFzsBflCle4/E5lVOtpCjL9OI7p
 github.com/noi-techpark/go-apigorowler v0.0.5/go.mod h1:7laelafUBV90mCQ+S/fEGNbaXr3FbaqrgofdYMq7KAA=
 github.com/noi-techpark/go-apigorowler v0.0.6 h1:25lTiE8sAHnzt/09/9zvkRXo4ohG1KbXRYDi7MqqFQ8=
 github.com/noi-techpark/go-apigorowler v0.0.6/go.mod h1:7laelafUBV90mCQ+S/fEGNbaXr3FbaqrgofdYMq7KAA=
+github.com/noi-techpark/go-apigorowler v0.0.7 h1:vwvJj7j/5cGKGvnvX2X2J1DGf+obvmb858bYr+c+1VA=
+github.com/noi-techpark/go-apigorowler v0.0.7/go.mod h1:7laelafUBV90mCQ+S/fEGNbaXr3FbaqrgofdYMq7KAA=
 github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.3 h1:7RQ9CTRLoM4EGUcFq5ddEucAclwzLOU3WjVdVVPyGng=
 github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.3/go.mod h1:nrdL8vMSFYWzkhxCiB1mD0lD3OcnXl9K4FYzFx0M0VY=
 github.com/noi-techpark/opendatahub-go-sdk/qmill v1.0.2 h1:hVz4DnPEP7mZL5+ti1lXioanLySUQrCW3D6K0EcfKg0=
