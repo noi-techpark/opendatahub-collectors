@@ -108,7 +108,7 @@ func main() {
 			err = c.Publish(ctx, &rdb.RawAny{
 				Provider:  env.PROVIDER,
 				Timestamp: time.Now(),
-				Rawdata:   enc_data,
+				Rawdata:   string(enc_data),
 			})
 			ms.FailOnError(ctx, err, "failed to publish", "err", err)
 		}
