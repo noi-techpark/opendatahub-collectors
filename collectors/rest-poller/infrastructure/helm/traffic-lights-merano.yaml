@@ -1,0 +1,20 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/rest-poller
+  pullPolicy: IfNotPresent
+  tag: "0.2.0" # Set this when upgrading chart with --set-value
+
+env:
+  MQ_CLIENT: dc-traffic-lights-merano
+  PROVIDER: rest-poller/traffic-lights-merano
+
+  CRON: "0 0/10 * * * *"
+  HTTP_URL: "https://www.ctseng.it/Customers/Merano/GUEST/status_guest.xml"
+  HTTP_HEADER_CALLER: "X-Caller-ID: NOI-Techpark"
+
+  SERVICE_NAME: dc-rest-poller-traffic-lights-merano
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
