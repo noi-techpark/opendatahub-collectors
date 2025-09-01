@@ -47,7 +47,7 @@ jobs:
           yq -i '.image.repository = "${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML }}
           yq -i '.image.tag = "${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
           yq -i '.image.pullPolicy = "IfNotPresent"' ${{ env.VALUES_YAML }}
-          yq -i '.envSecret.HTTP_HEADER_AUTHORIZATION = "Authorization: Basic ${{ secrets.MERANO_TRAFFIC_LIGHTS_USERNAME }}:${{ secrets.MERANO_TRAFFIC_LIGHTS_PASSWORD}}"' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.HTTP_HEADER_AUTHORIZATION = "Authorization: Basic ${{ secrets.MERANO_TRAFFIC_LIGHTS_BASIC_AUTH}}"' ${{ env.VALUES_YAML }}
       
 
       - name: Deploy on cluster  
