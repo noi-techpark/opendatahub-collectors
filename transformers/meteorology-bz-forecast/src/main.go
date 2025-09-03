@@ -29,8 +29,8 @@ const (
 	PERIOD12H = 43200
 	PERIOD24H = 86400
 
-	OriginStationType = "WeatherForecast"
-	DataStationType   = "WeatherForecastService"
+	OriginStationType = "WeatherForecastService"
+	DataStationType   = "WeatherForecast"
 
 	ForecastAirTemperatureMax        = "forecast-air-temperature-max"
 	ForecastAirTemperatureMin        = "forecast-air-temperature-min"
