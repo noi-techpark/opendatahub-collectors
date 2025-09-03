@@ -13,6 +13,7 @@ imagePullSecrets:
   - name: container-registry-r
 
 env:
+
   # ODH Core Writer Connection
   LOG_LEVEL: "DEBUG"
   MQ_QUEUE: tmp-s3-poller.meteorology-bz-forecast
