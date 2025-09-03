@@ -1,6 +1,6 @@
 {
     "syncedDataTypes": {
-        "WeatherForecast": [
+        "WeatherForecastService": [
             [
                 {
                     "name": "forecast-air-temperature-max",
