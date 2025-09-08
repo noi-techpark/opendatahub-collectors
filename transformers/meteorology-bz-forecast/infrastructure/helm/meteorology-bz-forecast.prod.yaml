@@ -14,10 +14,10 @@ imagePullSecrets:
 
 env:
   # ODH Core Writer Connection
-  LOG_LEVEL: "DEBUG"
-  MQ_QUEUE: tmp-s3-poller.meteorology-bz-forecast
+  LOG_LEVEL: "INFO"
+  MQ_QUEUE: s3-poller.meteorology-bz-forecast
   MQ_EXCHANGE: routed  
-  MQ_KEY: tmp-s3-poller.meteorology-bz-forecast
+  MQ_KEY: s3-poller.meteorology-bz-forecast
   MQ_CLIENT: tr-meteorology-bz-forecast
 
   BDP_BASE_URL: http://bdp-core.core.svc.cluster.local
