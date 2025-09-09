@@ -32,7 +32,7 @@ func TestLoadStations(t *testing.T) {
 	// check if latest tracks correctly
 	assert.Equal(t, s103.latest_sensor, "AIRQ05")
 	assert.Equal(t, stations["A22_KM_107-800"].latest_sensor, "")
-	assert.Equal(t, stations["A22_KM_076-600"].latest_sensor, "")
+	assert.Equal(t, stations["A22_KM_076-600"].latest_sensor, "AIRQ21")
 }
 
 func dumpStationsHist(t *testing.T, s station) {
