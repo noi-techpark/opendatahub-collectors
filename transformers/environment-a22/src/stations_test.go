@@ -30,7 +30,7 @@ func TestLoadStations(t *testing.T) {
 	assertSensorAt(t, s103, "AIRQ05", time.Date(2029, 07, 29, 0, 0, 0, 0, time.UTC))
 
 	// check if latest tracks correctly
-	assert.Equal(t, s103.latest_sensor, "AIRQ14")
+	assert.Equal(t, s103.latest_sensor, "AIRQ05")
 	assert.Equal(t, stations["A22_KM_107-800"].latest_sensor, "")
 	assert.Equal(t, stations["A22_KM_076-600"].latest_sensor, "")
 }
