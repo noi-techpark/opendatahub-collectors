@@ -12,7 +12,7 @@ import (
 )
 
 func TestLoadStations(t *testing.T) {
-	stations, err := readStationCSV("../resources/stations.csv")
+	stations, err := readStationCSV("testdata/stations.csv")
 	if err != nil {
 		t.Error("error loading CSV", err)
 	}
