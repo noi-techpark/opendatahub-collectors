@@ -1,0 +1,81 @@
+# SPDX-FileCopyrightText: 2025 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+name: CI/CD tr-people-flow-systems-me
+
+on: 
+  push:
+    paths:
+      - "transformers/people-flow-systems-me/**"
+      - ".github/workflows/tr-people-flow-systems-me.yml"     
+
+env:
+  PROJECT_NAME: tr-people-flow-systems-me
+  WORKING_DIRECTORY: transformers/people-flow-systems-me
+  DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/tr-people-flow-systems-me
+  DOCKER_TAG: ${{ github.sha }}
+  KUBERNETES_NAMESPACE: collector
+
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    concurrency: tr-people-flow-systems-me-tests
+    
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Run tests
+        run: docker run --rm --volume ./src:/code $(docker build -q . -f infrastructure/docker/Dockerfile --target test)
+        working-directory: ${{env.WORKING_DIRECTORY}}
+
+  build:
+    runs-on: ubuntu-24.04
+    concurrency: tr-people-flow-systems-me-build
+    needs: 
+      - tests
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    - name: Build and push images
+      uses: noi-techpark/github-actions/docker-build-and-push@v2
+      with:
+        working-directory: ${{ env.WORKING_DIRECTORY }}/infrastructure
+        docker-username: ${{ github.actor }}
+        docker-password: ${{ secrets.GITHUB_TOKEN }}
+          
+  # deploy-test:
+  #   if: github.ref == 'refs/heads/main'
+  #   needs: 
+  #     - build
+  #   runs-on: ubuntu-24.04
+  #   concurrency: tr-people-flow-systems-me-deploy-test
+  #   environment: test
+  #   env:
+  #     VALUES_YAML: infrastructure/helm/systems-merano.yaml
+  #   steps:
+  #     - name: Checkout source code
+  #       uses: actions/checkout@v4
+
+  #     - name: Customize values.yaml
+  #       working-directory: ${{ env.WORKING_DIRECTORY }}
+  #       run: |
+  #           yq -i '.image.repository = "${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML }}
+  #           yq -i '.image.tag = "${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
+  #           yq -i '.image.pullPolicy = "IfNotPresent"' ${{ env.VALUES_YAML }}      
+  #           yq -i '.env.BDP_PROVENANCE_NAME="${{ env.PROJECT_NAME }}"' ${{ env.VALUES_YAML }}      
+  #           yq -i '.env.BDP_PROVENANCE_VERSION="${{github.sha}}"' ${{ env.VALUES_YAML }}      
+
+  #     - name: Deploy on cluster  
+  #       uses: noi-techpark/github-actions/helm-deploy@v2
+  #       with:
+  #         k8s-name: ${{ env.PROJECT_NAME }}
+  #         k8s-namespace: ${{ env.KUBERNETES_NAMESPACE }}
+  #         chart-path: helm/generic-collector
+  #         values-file: ${{ env.WORKING_DIRECTORY }}/${{ env.VALUES_YAML }}
+  #         aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
+  #         aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
+  #         aws-eks-cluster-name: aws-main-eu-01
+  #         aws-region: eu-west-1
