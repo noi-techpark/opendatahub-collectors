@@ -8,6 +8,8 @@ import (
 	"encoding/json"
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestUnmarshal(t *testing.T) {
@@ -34,4 +36,13 @@ func TestUnmarshal(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestReadCSV(t *testing.T) {
+	m, err := readStationCsv("testdata/stations.csv")
+	if err != nil {
+		t.Errorf("readCSV failed: %v", err)
+	}
+
+	assert.Equal(t, m["1cd5c31b-4b28-4c3e-be09-d75545e5b7b5"].Name, "KI Kamera Meran 2000")
 }
