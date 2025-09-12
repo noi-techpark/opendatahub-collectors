@@ -1,0 +1,5 @@
+{
+    "MsgId": 1,
+    "Topic": "people_flow/1dd13058-f04c-f011-8f7d-000d3a3a9b4a/1cd5c31b-4b28-4c3e-be09-d75545e5b7b5",
+    "Payload": "{\"type\":\"people_flow\",\"data\":{\"name\":\"Radarsensor 1\",\"direction\":\"In\",\"timestamp\":\"2025-08-14T11:33:16.258\"}}"
+}
