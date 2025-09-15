@@ -8,8 +8,7 @@ env:
   PROVIDER: api-crawler/carsharing-alpsgo
 
   CRON: "0 */5 * * * *"
-  HTTP_CONFIG_PATH: "/config/config.yaml"
-  AUTH_STRATEGY: bearer
+  CONFIG_PATH: "/config/config.yaml"
 
   SERVICE_NAME: dc-api-crawler-carsharing-alpsgo
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
