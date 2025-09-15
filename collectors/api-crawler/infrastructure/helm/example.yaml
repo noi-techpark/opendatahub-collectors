@@ -8,7 +8,7 @@ env:
   PROVIDER: api-crawler/carsharing-alpsgo
 
   CRON: "0 */5 * * * *"
-  HTTP_CONFIG_PATH: "/config/http-config.yaml"
+  HTTP_CONFIG_PATH: "/config/config.yaml"
   AUTH_STRATEGY: bearer
 
   SERVICE_NAME: dc-api-crawler-carsharing-alpsgo
