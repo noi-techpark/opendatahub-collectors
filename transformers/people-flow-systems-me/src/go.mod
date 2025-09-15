@@ -3,7 +3,7 @@ module opendatahub.com/tr-people-flow-systems-me
 go 1.24.6
 
 require (
-	github.com/noi-techpark/go-bdp-client v1.3.1
+	github.com/noi-techpark/go-bdp-client v1.3.2-0.20250915090306-477e178e4a32
 	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.7
 	github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0
 	github.com/stretchr/testify v1.10.0

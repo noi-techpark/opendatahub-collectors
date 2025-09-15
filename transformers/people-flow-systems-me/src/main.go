@@ -22,7 +22,10 @@ import (
 	"github.com/noi-techpark/opendatahub-go-sdk/tel"
 )
 
-var env tr.Env
+var env struct {
+	tr.Env
+	bdplib.BdpEnv
+}
 
 type SensorPayload struct {
 	Type string
@@ -93,7 +96,7 @@ type RawType struct {
 const STATIONTYPE = "PeopleCounter"
 const PERIOD = 600
 
-var datatype = bdplib.CreateDataType("countPeople", "", "Number of people passing by", "sum")
+var datatype = bdplib.CreateDataType("countPeople", "people", "Number of people passing by", "sum")
 
 func main() {
 	ms.InitWithEnv(context.Background(), "", &env)
@@ -101,12 +104,12 @@ func main() {
 
 	defer tel.FlushOnPanic()
 
-	b := bdplib.FromEnv()
+	b := bdplib.FromEnv(env.BdpEnv)
 
 	b.SyncDataTypes([]bdplib.DataType{datatype})
 	ms.FailOnError(context.Background(), b.SyncStations(STATIONTYPE, []bdplib.Station{}, true, false), "could not sync stations")
 
-	listener := tr.NewTr[RawType](context.Background(), env)
+	listener := tr.NewTr[RawType](context.Background(), env.Env)
 	err := listener.Start(context.Background(), func(ctx context.Context, r *rdb.Raw[RawType]) error {
 		recs := b.CreateDataMap()
 		recs.AddRecord("stationcode", datatype.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), -999, PERIOD))
@@ -126,6 +129,10 @@ type SensorData struct {
 	Name   string  `csv:"name"`
 	Lat    float64 `csv:"lat"`
 	Lon    float64 `csv:"lon"`
+}
+
+func mapStation(sd SensorData) bdplib.Station {
+	return bdplib.CreateStation(sd.ID, sd.Name, STATIONTYPE, sd.Lat, sd.Lon, env.BDP_ORIGIN)
 }
 
 func readStationCsv(filename string) (map[string]SensorData, error) {
