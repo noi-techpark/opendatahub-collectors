@@ -11,7 +11,7 @@ on:
 
 env:
   WORKING_DIRECTORY: collectors/api-crawler
-  HTTP_CONFIG_PATH: infrastructure/http_config/euregio-weather-forecast.yaml
+  HTTP_CONFIG_PATH: infrastructure/crawler-config/euregio-weather-forecast.yaml
   DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/dc-api-crawler
   DOCKER_TAG: ${{ github.sha }}
   KUBERNETES_NAMESPACE: collector
@@ -50,7 +50,7 @@ jobs:
           yq -i '.image.repository="${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML}}
           yq -i '.image.tag="${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
           yq -i '.image.pullPolicy="IfNotPresent"' ${{ env.VALUES_YAML }}
-          yq -i '.configMap.files["http-config.yaml"] = load_str("${{ env.HTTP_CONFIG_PATH }}")' ${{ env.VALUES_YAML }}
+          yq -i '.configMap.files["config.yaml"] = load_str("${{ env.HTTP_CONFIG_PATH }}")' ${{ env.VALUES_YAML }}
 
       - name: Deploy on cluster  
         uses: noi-techpark/github-actions/helm-deploy@v2
