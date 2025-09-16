@@ -30,7 +30,7 @@ jobs:
         docker-password: ${{ secrets.GITHUB_TOKEN }}
           
   deploy-test:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev/tr-matomo' 
     needs: 
       - build
     runs-on: ubuntu-24.04
