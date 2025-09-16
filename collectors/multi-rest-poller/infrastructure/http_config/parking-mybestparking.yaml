@@ -7,7 +7,7 @@ http_call:
   method: GET
   headers:
     Accept: application/json
-  data_selector: "$.Facilities[?(@.FacilityID == 406983 || @.FacilityID == 609883))]"
+  data_selector: "$.Facilities[?(@.FacilityID == 406983 || @.FacilityID == 609883)]"
   data_selector_type: json
   nested_calls:
     - url: https://www.mybestinparking.it/api/Facility/GetFreePlaces?FacilityID=%s
