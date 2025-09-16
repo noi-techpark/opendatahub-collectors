@@ -19,6 +19,11 @@ env:
   PERIOD: 72000
   REPORT_ID: noi.bz.it/transparency
   REPORT_NAME: noi.bz.it/transparency
+
+  RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
+
+  SERVICE_NAME: tr-matomo-noi-transparency
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
   
 envSecretRef:
   - name: MQ_URI 
