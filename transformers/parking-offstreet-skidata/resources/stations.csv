@@ -7,3 +7,5 @@ id,facility_id,name,municipality,name_en,name_it,name_de,standard_name,netex_typ
 607440_0,607440_0,Parcheggio Stazione Bressanone 01-Priel,Bressanone,,,,Parcheggio Stazione Bressanone 01-Priel,,,,,,,,46.713708199562525,11.650497804658093
 607440_1,607440_1,Parcheggio Stazione Bressanone 02-Rosslauf,Bressanone,,,,Parcheggio Stazione Bressanone 02-Rosslauf,,,,,,,,46.713708199562525,11.650497804658093
 607440_2,607440_2,Parcheggio Stazione Bressanone 03-C.Mobilità-Mobilitätsz,Bressanone,,,,Parcheggio Stazione Bressanone 03-C.Mobilità-Mobilitätsz,,,,,,,,46.713708199562525,11.650497804658093
+609883,609883,Parcheggio Waltherpark,Bolzano - Bozen,Waltherpark,Waltherpark,Waltherpark,Parcheggio Waltherpark,urbanParking,allPassengerVehicles,covered,true,true,true,noReservations,46.49458,11.35497
+609883_0,609883_0,Parcheggio Waltherpark,Bolzano - Bozen,Waltherpark,Waltherpark,Waltherpark,Parcheggio Waltherpark,urbanParking,allPassengerVehicles,covered,true,true,true,noReservations,46.49458,11.35497

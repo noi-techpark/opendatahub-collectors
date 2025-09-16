@@ -127,7 +127,7 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[FacilityDat
 				occupiedSubscribersSum += freePlace.CurrentLevel
 				capacitySubscribers += freePlace.Capacity
 			// Total
-			default:
+			case 3:
 				station.MetaData["free_limit"] = freePlace.FreeLimit
 				station.MetaData["occupancy_limit"] = freePlace.OccupancyLimit
 				station.MetaData["capacity"] = freePlace.Capacity
