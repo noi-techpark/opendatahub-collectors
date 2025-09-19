@@ -16,5 +16,8 @@ services:
     working_dir: /code
     # host mode so we can use the port forwards
     network_mode: host 
+  valkey:
+    image: valkey/valkey:8-alpine
+
 volumes:
   pkg:

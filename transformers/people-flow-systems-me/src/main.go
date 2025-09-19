@@ -25,6 +25,10 @@ import (
 var env struct {
 	tr.Env
 	bdplib.BdpEnv
+	VALKEY_ADDR   string
+	VALKEY_PASS   string
+	VALKEY_DB     int
+	VALKEY_PREFIX string
 }
 
 type SensorPayload struct {
@@ -98,8 +102,11 @@ const PERIOD = 600
 
 var datatype = bdplib.CreateDataType("countPeople", "people", "Number of people passing by", "sum")
 
+const WINDOW_START_KEY = "current_window"
+
 func main() {
-	ms.InitWithEnv(context.Background(), "", &env)
+	ctx := context.Background()
+	ms.InitWithEnv(ctx, "", &env)
 	slog.Info("Starting data transformer...")
 
 	defer tel.FlushOnPanic()
@@ -107,19 +114,43 @@ func main() {
 	b := bdplib.FromEnv(env.BdpEnv)
 
 	b.SyncDataTypes([]bdplib.DataType{datatype})
-	ms.FailOnError(context.Background(), b.SyncStations(STATIONTYPE, []bdplib.Station{}, true, false), "could not sync stations")
 
-	listener := tr.NewTr[RawType](context.Background(), env.Env)
-	err := listener.Start(context.Background(), func(ctx context.Context, r *rdb.Raw[RawType]) error {
+	stations, err := readStationCsv("stations.csv")
+	ms.FailOnError(ctx, err, "could not read stations csv")
+
+	bdpStations := []bdplib.Station{}
+	for _, sd := range stations {
+		bdpStations = append(bdpStations, bdplib.CreateStation(sd.ID, sd.Name, STATIONTYPE, sd.Lat, sd.Lon, env.BDP_ORIGIN))
+	}
+	ms.FailOnError(ctx, b.SyncStations(STATIONTYPE, bdpStations, true, false), "could not sync stations")
+
+	// vk := redis.NewClient(&redis.Options{Addr: env.VALKEY_ADDR, Password: env.VALKEY_PASS, DB: env.VALKEY_DB})
+
+	listener := tr.NewTr[RawType](ctx, env.Env)
+	err = listener.Start(ctx, func(ctx context.Context, r *rdb.Raw[RawType]) error {
+
+		// check if current msg beyond window range
+		// if it is, flush the current window
+		// - make the measurement and push it
+		// - reset the counter and window start for station
+
 		recs := b.CreateDataMap()
-		recs.AddRecord("stationcode", datatype.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), -999, PERIOD))
+
+		// last part of topic is the sensor ID used to map metadata in csv
+		parts := strings.Split(r.Rawdata.Topic, "/")
+		sensorId := parts[len(parts)-1]
+		station, found := stations[sensorId]
+		if !found {
+			return fmt.Errorf("could not find station metadata for topic %s", r.Rawdata.Topic)
+		}
+		recs.AddRecord(station.ID, datatype.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), 1, PERIOD))
 		err := b.PushData(STATIONTYPE, recs)
 		if err != nil {
 			return err
 		}
 		return nil
-	})
 
+	})
 	ms.FailOnError(context.Background(), err, "error while listening to queue")
 }
 
@@ -129,10 +160,6 @@ type SensorData struct {
 	Name   string  `csv:"name"`
 	Lat    float64 `csv:"lat"`
 	Lon    float64 `csv:"lon"`
-}
-
-func mapStation(sd SensorData) bdplib.Station {
-	return bdplib.CreateStation(sd.ID, sd.Name, STATIONTYPE, sd.Lat, sd.Lon, env.BDP_ORIGIN)
 }
 
 func readStationCsv(filename string) (map[string]SensorData, error) {
