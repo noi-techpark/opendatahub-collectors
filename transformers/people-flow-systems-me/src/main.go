@@ -32,7 +32,7 @@ var env struct {
 
 	// Set this date to enable catchup mode and faster re-elaborate history.
 	// Don't use in production
-	CATCHUP_UNTIL time.Time
+	CATCHUP_UNTIL time.Time `default:"2025-01-01T00:00:00+00:00"`
 }
 
 const STATIONTYPE = "PeopleCounter"
