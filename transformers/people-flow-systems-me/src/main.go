@@ -23,22 +23,25 @@ import (
 var env struct {
 	tr.Env
 	bdplib.BdpEnv
-	CRON_AGGR         string
-	TS_API_BASE_URL   string
-	TS_API_REFERER    string
-	ODH_TOKEN_URL     string
-	ODH_CLIENT_ID     string
-	ODH_CLIENT_SECRET string
+	CRON_AGGR            string
+	TS_API_BASE_URL      string
+	TS_API_REFERER       string
+	TS_API_TOKEN_URL     string
+	TS_API_CLIENT_ID     string
+	TS_API_CLIENT_SECRET string
+
+	// Set this date to enable catchup mode and faster re-elaborate history.
+	// Don't use in production
+	CATCHUP_UNTIL time.Time
 }
 
 const STATIONTYPE = "PeopleCounter"
 const AGGR_PERIOD = 600
 const BASE_PERIOD = 1
-const AGGR_LAG = time.Minute * 10 // only sum records older than 10 minutes to avoid incomplete windows
 
-var dtCount = bdplib.CreateDataType("countPeople", "people", "Number of people passing by", "sum")
-var dtIn = bdplib.CreateDataType("countPeople", "people", "Person passing in direction In", "instantaneous")
-var dtOut = bdplib.CreateDataType("countPeople", "people", "Person passing in direction Out", "instantaneous")
+var dtCount = bdplib.CreateDataType("countPeople", "people", "Number of people passing by within the last PERIOD seconds", "count")
+var dtIn = bdplib.CreateDataType("sense_in", "people", "Sensing direction In", "instantaneous")
+var dtOut = bdplib.CreateDataType("sense_out", "people", "Sensing direction Out", "instantaneous")
 
 func main() {
 	ctx := context.Background()
@@ -49,24 +52,31 @@ func main() {
 
 	b := bdplib.FromEnv(env.BdpEnv)
 
-	n := odhts.NewCustomClient(env.TS_API_BASE_URL, env.ODH_TOKEN_URL, env.TS_API_REFERER)
-	n.UseAuth(env.ODH_CLIENT_ID, env.ODH_CLIENT_SECRET)
+	n := odhts.NewCustomClient(env.TS_API_BASE_URL, env.TS_API_TOKEN_URL, env.TS_API_REFERER)
+	n.UseAuth(env.TS_API_CLIENT_ID, env.TS_API_CLIENT_SECRET)
 
 	b.SyncDataTypes([]bdplib.DataType{dtCount, dtIn, dtOut})
 
 	stations, err := syncStations(b)
 	ms.FailOnError(ctx, err, "could not sync stations")
 
-	// start cron for aggregation job
-	c := cron.New(cron.WithSeconds())
-	c.AddFunc(env.CRON_AGGR, func() {
-		ms.FailOnError(ctx, aggregate(ctx, b, n), "aggregation job failed")
-	})
-	c.Start()
+	if env.CRON_AGGR != "" {
+		slog.Info("Starting cron scheduler for aggregation. To disable, set schedule to empty", "schedule", env.CRON_AGGR)
+		c := cron.New(cron.WithSeconds())
+		c.AddFunc(env.CRON_AGGR, func() {
+			slog.Info("Starting aggregation job")
+			ms.FailOnError(ctx, aggregate(ctx, b, n), "aggregation job failed")
+			slog.Info("Aggregation job done")
+		})
+		c.Start()
+	} else {
+		slog.Info("Aggregation job diabled. Set a cron schedule to enable")
+	}
 
 	listener := tr.NewTr[RawType](ctx, env.Env)
+	recs := b.CreateDataMap()
+	recs_cnt := 0
 	err = listener.Start(ctx, func(ctx context.Context, r *rdb.Raw[RawType]) error {
-		recs := b.CreateDataMap()
 		// last part of topic is the sensor ID used to map metadata in csv
 		parts := strings.Split(r.Rawdata.Topic, "/")
 		sensorId := parts[len(parts)-1]
@@ -84,14 +94,21 @@ func main() {
 		default:
 			return fmt.Errorf("unknown direction %s", r.Rawdata.Payload.Data.Direction)
 		}
-		recs.AddRecord(station.ID, dt, bdplib.CreateRecord(r.Rawdata.Payload.Data.Timestamp.UnixMilli(), 1, BASE_PERIOD))
 
-		err := b.PushData(STATIONTYPE, recs)
-		if err != nil {
-			return err
+		ts := r.Rawdata.Payload.Data.Timestamp
+		recs.AddRecord(station.ID, dt, bdplib.CreateRecord(ts.UnixMilli(), 1, BASE_PERIOD))
+		recs_cnt += 1
+
+		if ts.After(env.CATCHUP_UNTIL) || recs_cnt > 5000 {
+			err := b.PushData(STATIONTYPE, recs)
+			if err != nil {
+				return err
+			}
+			recs = b.CreateDataMap()
+			recs_cnt = 0
 		}
-		return nil
 
+		return nil
 	})
 	ms.FailOnError(context.Background(), err, "error while listening to queue")
 }

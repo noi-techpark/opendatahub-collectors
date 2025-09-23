@@ -11,7 +11,7 @@ require (
 
 require (
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
-	github.com/noi-techpark/go-timeseries-client v0.0.0-20250822084439-8aae699d91e0 // indirect
+	github.com/noi-techpark/go-timeseries-client v0.3.2 // indirect
 )
 
 require (

@@ -8,7 +8,6 @@ image:
   tag: latest
 
 env:
-  # ODH Core Writer Connection
   LOG_LEVEL: "INFO"
   MQ_QUEUE: people-flow.systems-me
   MQ_EXCHANGE: routed
@@ -20,6 +19,12 @@ env:
   BDP_PROVENANCE_NAME: 
   BDP_ORIGIN: systems-merano
 
+  TS_API_BASE_URL: http://ninja-api.core.svc.cluster.local
+  TS_API_REFERER: tr-people-flow-systems-me
+
+  CRON_AGGR: '0 */5 * * * *'
+  CATCHUP_UNTIL:
+
   RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
 
   SERVICE_NAME: tr-people-flow-systems-me
@@ -29,12 +34,21 @@ envSecretRef:
   - name: MQ_URI 
     secret: rabbitmq-svcbind
     key: uri
-  - name: ODH_TOKEN_URL
+  - name: BDP_TOKEN_URL
     secret: oauth-collector
     key: tokenUri
-  - name: ODH_CLIENT_ID
+  - name: BDP_CLIENT_ID
     secret: oauth-collector
     key: clientId
-  - name: ODH_CLIENT_SECRET
+  - name: BDP_CLIENT_SECRET
+    secret: oauth-collector
+    key: clientSecret
+  - name: TS_API_TOKEN_URL
+    secret: oauth-collector
+    key: tokenUri
+  - name: TS_API_CLIENT_ID
+    secret: oauth-collector
+    key: clientId
+  - name: TS_API_CLIENT_SECRET
     secret: oauth-collector
     key: clientSecret

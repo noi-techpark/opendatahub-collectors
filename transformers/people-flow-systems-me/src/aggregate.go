@@ -7,6 +7,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/noi-techpark/go-bdp-client/bdplib"
@@ -36,13 +37,20 @@ func aggregate(ctx context.Context, b bdplib.Bdp, n odhts.C) error {
 	res := []elab.ElabResult{}
 
 	for scode, st := range is[STATIONTYPE].Stations {
+		// latest elaborated data
 		start := st.Datatypes[dtCount.Name].Periods[AGGR_PERIOD]
 		if start.IsZero() {
 			start = e.StartingPoint
 		}
-		end := time.Now().Add(-AGGR_LAG)
 
-		measures, err := e.RequestHistory([]string{STATIONTYPE}, e.StationTypes, []string{dtIn.Name, dtOut.Name}, []elab.Period{BASE_PERIOD}, start, end)
+		// latest base data
+		end := st.Datatypes[dtIn.Name].Periods[BASE_PERIOD]
+		if max := st.Datatypes[dtOut.Name].Periods[BASE_PERIOD]; max.After(end) {
+			end = max
+		}
+		end = end.Add(time.Second) // go beyond interval boundary and include latest record
+
+		measures, err := e.RequestHistory([]string{STATIONTYPE}, []string{scode}, []string{dtIn.Name, dtOut.Name}, []elab.Period{BASE_PERIOD}, start, end)
 		if err != nil {
 			return fmt.Errorf("failed requesting history for count elaboration station %s from %s to %s: %w", scode, start.String(), end.String(), err)
 		}
@@ -51,29 +59,32 @@ func aggregate(ctx context.Context, b bdplib.Bdp, n odhts.C) error {
 		// Windows may also be empty, we still have to count them as 0
 		idx := 0
 		curWin := start
-		for {
+		slog.Debug("Starting elaboration", "curWin", curWin, "end", end, "measures", len(measures))
+		for curWin.Before(end) {
 			curWin = curWin.Add(time.Second * AGGR_PERIOD)
+			slog.Debug("Current window", "curWin", curWin)
 			cnt := 0
 			for idx < len(measures) {
 				meas := measures[idx]
 				win := windowTs(meas.Timestamp.Time)
+				slog.Debug("Trying to match record", "win", win, "ts", meas.Timestamp.Time)
 				if win.Equal(curWin) {
 					cnt += 1
 					idx += 1
+					slog.Debug("adding record to bucket", "cnt", cnt)
 				} else if win.After(curWin) {
-					// measurement belongs to one of the next windows
+					slog.Debug("Record belongs to next window", "win", win, "curWin", curWin)
 					break
 				} else {
 					return fmt.Errorf("tried to elaborate record at %s before current window %s. This should not be possible", win.String(), curWin.String())
 				}
 			}
-			// To be sure that the data for a window is complete, the end date lags behind Now().
-			// But, if we see that there are still measurements left to elaborate for the following windows,
-			// we can also assume the window is complete and don't have to respect the lag
-			if curWin.After(end) && idx >= len(measures) {
+			// There is no data beyond this point, so we assume that the current window is incomplete and abort
+			if idx >= len(measures) {
 				break
 			}
-			res = append(res, elab.ElabResult{StationType: STATIONTYPE, StationCode: scode, Timestamp: start, Period: AGGR_PERIOD, DataType: dtCount.Name, Value: cnt})
+			res = append(res, elab.ElabResult{StationType: STATIONTYPE, StationCode: scode, Timestamp: curWin, Period: AGGR_PERIOD, DataType: dtCount.Name, Value: cnt})
+			slog.Debug("Determined count for window", "curWin", curWin, "cnt", cnt)
 		}
 	}
 	if err := e.PushResults(STATIONTYPE, res); err != nil {

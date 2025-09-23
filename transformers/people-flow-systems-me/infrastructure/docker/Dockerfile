@@ -19,7 +19,7 @@ ENTRYPOINT [ "./main"]
 # LOCAL DEVELOPMENT
 FROM base AS dev
 WORKDIR /code
-CMD ["go", "run", "main.go"]
+CMD ["go", "run", "./..."]
 
 # TESTS
 FROM base AS test
