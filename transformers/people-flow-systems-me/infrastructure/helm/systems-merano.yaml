@@ -23,7 +23,6 @@ env:
   TS_API_REFERER: tr-people-flow-systems-me
 
   CRON_AGGR: '0 */5 * * * *'
-  CATCHUP_UNTIL:
 
   RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
 
