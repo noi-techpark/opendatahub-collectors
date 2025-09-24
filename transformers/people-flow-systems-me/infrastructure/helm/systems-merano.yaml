@@ -9,9 +9,9 @@ image:
 
 env:
   LOG_LEVEL: "INFO"
-  MQ_QUEUE: people-flow.systems-me
+  MQ_QUEUE: people-flow.systems-me-dev
   MQ_EXCHANGE: routed
-  MQ_KEY: people-flow.systems-me
+  MQ_KEY: people-flow.systems-me-dev
   MQ_CLIENT: tr-people-flow-systems-me
 
   BDP_BASE_URL: http://bdp-core.core.svc.cluster.local
@@ -23,6 +23,7 @@ env:
   TS_API_REFERER: tr-people-flow-systems-me
 
   CRON_AGGR: '0 */5 * * * *'
+  CATCHUP_UNTIL: "2025-09-22T00:00:00+00:00"
 
   RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
 
