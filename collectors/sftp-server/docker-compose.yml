@@ -1,0 +1,20 @@
+# SPDX-FileCopyrightText: 2025 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+services:
+  sftp:
+    # https://hub.docker.com/r/atmoz/sftp/
+    image: atmoz/sftp:alpine
+    env_file: .env
+    volumes: 
+      - ${SHARED_DIR}/home:/home
+        # create ssh keys:
+        # ssh-keygen -t ed25519 -f ssh_host_ed25519_key < /dev/null
+        # ssh-keygen -t rsa -b 4096 -f ssh_host_rsa_key < /dev/null
+      - ${SHARED_DIR}/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key:ro
+      - ${SHARED_DIR}/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key:ro
+    ports:
+      - ${SERVER_PORT}:22
+
+
