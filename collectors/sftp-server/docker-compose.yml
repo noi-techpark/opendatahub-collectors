@@ -12,9 +12,13 @@ services:
         # create ssh keys:
         # ssh-keygen -t ed25519 -f ssh_host_ed25519_key < /dev/null
         # ssh-keygen -t rsa -b 4096 -f ssh_host_rsa_key < /dev/null
-      - ${SHARED_DIR}/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key:ro
-      - ${SHARED_DIR}/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key:ro
+      - ${SHARED_DIR}/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key
+      - ${SHARED_DIR}/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key
     ports:
       - ${SERVER_PORT}:22
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
 
 
