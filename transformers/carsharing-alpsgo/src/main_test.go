@@ -7,6 +7,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
 	"sort"
 	"testing"
 	"time"
@@ -22,20 +23,19 @@ import (
 // so that comparisons between expected and actual calls are order-independent.
 func NormalizeBdpMockCalls(calls *bdpmock.BdpMockCalls) {
 	// Normalize SyncedDataTypes: map[string][][]bdplib.DataType
-	for key, dataTypesCalls := range calls.SyncedDataTypes {
-		// For each call (a slice of DataType slices)
-		for i := range dataTypesCalls {
-			// Sort each inner slice by a string representation.
-			sort.Slice(dataTypesCalls[i], func(a, b int) bool {
-				return fmt.Sprintf("%v", dataTypesCalls[i][a]) < fmt.Sprintf("%v", dataTypesCalls[i][b])
-			})
-		}
-		// Sort the outer slice by comparing the string representation of each inner slice.
-		sort.Slice(dataTypesCalls, func(i, j int) bool {
-			return dataTypeSliceToString(dataTypesCalls[i]) < dataTypeSliceToString(dataTypesCalls[j])
+	dataTypesCalls := calls.SyncedDataTypes
+	// For each call (a slice of DataType slices)
+	for i := range dataTypesCalls {
+		// Sort each inner slice by a string representation.
+		sort.Slice(dataTypesCalls[i], func(a, b int) bool {
+			return fmt.Sprintf("%v", dataTypesCalls[i][a]) < fmt.Sprintf("%v", dataTypesCalls[i][b])
 		})
-		calls.SyncedDataTypes[key] = dataTypesCalls
 	}
+	// Sort the outer slice by comparing the string representation of each inner slice.
+	sort.Slice(dataTypesCalls, func(i, j int) bool {
+		return dataTypeSliceToString(dataTypesCalls[i]) < dataTypeSliceToString(dataTypesCalls[j])
+	})
+	calls.SyncedDataTypes = dataTypesCalls
 
 	// Normalize SyncedData: map[string][]bdplib.DataMap
 	for key, dataMaps := range calls.SyncedData {
@@ -114,7 +114,15 @@ func Test(t *testing.T) {
 
 	req := mock.Requests()
 	NormalizeBdpMockCalls(&req)
-	testsuite.DeepEqualFromFile(t, out, req)
 
-	// bdpmock.WriteOutput(actual, "../testdata/output/out.json")
+	// save and reload from file because otherwise we get issues with metadata ordering
+	tmp, err := os.CreateTemp("", "req-*.json")
+	require.Nil(t, err)
+	defer os.Remove(tmp.Name())
+	defer tmp.Close()
+	bdpmock.WriteOutput(req, tmp.Name())
+	err = bdpmock.LoadOutput(&req, tmp.Name())
+	require.Nil(t, err)
+
+	testsuite.DeepEqualFromFile(t, out, req)
 }
