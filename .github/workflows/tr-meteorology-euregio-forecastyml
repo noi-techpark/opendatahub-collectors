@@ -47,7 +47,7 @@ jobs:
         docker-password: ${{ secrets.GITHUB_TOKEN }}
           
   deploy-test:
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev/meteorology-euregio-forecast'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev/euregio-weather-forecast'
     needs: 
       - build
     runs-on: ubuntu-24.04
