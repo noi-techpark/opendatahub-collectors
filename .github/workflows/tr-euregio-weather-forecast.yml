@@ -25,10 +25,19 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-
-      - name: Run tests
-        run: docker run --rm --volume ./src:/code $(docker build -q . -f infrastructure/docker/Dockerfile --target test)
-        working-directory: ${{env.WORKING_DIRECTORY}}
+      
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.23.4
+          
+      - name: Install Dependencies
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: cd src && go mod tidy
+        
+      - name: Run Tests
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: cd src && go test -v ./...
 
   build:
     runs-on: ubuntu-24.04
