@@ -2843,7 +2843,7 @@
             {
                 "Stations": [
                     {
-                        "id": "000d29ea-0af4-45bd-8bf0-2f487784589d",
+                        "id": "EUREGIO:000d29ea-0af4-45bd-8bf0-2f487784589d",
                         "name": "EUREGIO:000d29ea-0af4-45bd-8bf0-2f487784589d",
                         "stationType": "WeatherForecast",
                         "latitude": 47.148,

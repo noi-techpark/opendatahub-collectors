@@ -42,8 +42,8 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     concurrency: tr-meteorology-euregio-forecast-build
-    # needs: 
-    #   - tests
+    needs: 
+      - tests
     steps:
     - name: Checkout source code
       uses: actions/checkout@v4
