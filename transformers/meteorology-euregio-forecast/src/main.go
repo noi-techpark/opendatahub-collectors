@@ -15,6 +15,8 @@ import (
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
 	"github.com/noi-techpark/opendatahub-go-sdk/tel"
+
+	_ "time/tzdata"
 )
 
 var env tr.Env
