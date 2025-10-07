@@ -21,11 +21,9 @@ ENTRYPOINT [ "./main"]
 # LOCAL DEVELOPMENT
 FROM base AS dev
 WORKDIR /code
-COPY --from=build-env /app/resources /resources
 CMD ["go", "run", "main.go"]
 
 # TESTS
 FROM base AS test
 WORKDIR /code
-COPY --from=build-env /app/resources /resources
 CMD ["go", "test", "."]
