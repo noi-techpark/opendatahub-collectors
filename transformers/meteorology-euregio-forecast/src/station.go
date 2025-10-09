@@ -81,10 +81,17 @@ func (f *Station) ToBdp(bdp bdplib.Bdp) bdplib.Station {
 
 // StationJSON is a helper struct for unmarshalling the JSON files.
 type StationJSON struct {
-	ID   string  `json:"id"`
-	Lat  float64 `json:"lat"`
-	Lon  float64 `json:"lon"`
-	Name string  `json:"name"`
+	ID           string  `json:"id"`
+	Lat          float64 `json:"lat"`
+	Lon          float64 `json:"lon"`
+	Elevation    float64
+	Name         string `json:"name"`
+	Webcam       *string
+	Webcams      map[string]any
+	Neighbors    map[string]any
+	Weight       float64
+	IdAvenueType string `json:"id_venue_type"`
+	IdRegion     string `json:"id_region"`
 }
 
 // LoadAllStations loads and combines station data from all language-specific JSON files.
@@ -114,11 +121,18 @@ func LoadAllStations() (Stations, error) {
 	}
 	for _, s := range enStations {
 		stationMap[s.ID] = &Station{
-			ID:     s.ID,
-			Name:   fmt.Sprintf("EUREGIO:%s", s.ID),
-			Lat:    s.Lat,
-			Lon:    s.Lon,
-			NameEn: s.Name,
+			ID:           s.ID,
+			Name:         fmt.Sprintf("EUREGIO:%s", s.ID),
+			Lat:          s.Lat,
+			Lon:          s.Lon,
+			Elevation:    s.Elevation,
+			Weight:       s.Weight,
+			NameEn:       s.Name,
+			Webcam:       s.Webcam,
+			Webcams:      s.Webcams,
+			Neighbors:    s.Neighbors,
+			IdAvenueType: s.IdAvenueType,
+			IdRegion:     s.IdRegion,
 		}
 	}
 
