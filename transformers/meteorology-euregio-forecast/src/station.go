@@ -15,14 +15,21 @@ import (
 
 // Station represents one record from the json.
 type Station struct {
-	ID     string
-	Name   string
-	Lat    float64
-	Lon    float64
-	NameDe string
-	NameEn string
-	NameIt string
-	Type   string
+	ID           string
+	Name         string
+	Lat          float64
+	Lon          float64
+	Elevation    float64
+	NameDe       string
+	NameEn       string
+	NameIt       string
+	Type         string
+	Webcam       *string
+	Webcams      map[string]any
+	Neighbors    map[string]any
+	Weight       float64
+	IdAvenueType string `json:"id_venue_type"`
+	IdRegion     string `json:"id_region"`
 }
 
 // Stations represents a slice of Station.
@@ -54,6 +61,14 @@ func (f *Station) toMetadata() map[string]any {
 	}
 	result["lat"] = f.Lat
 	result["lon"] = f.Lon
+	result["elevation"] = f.Elevation
+	result["weight"] = f.Weight
+	result["id_venue_type"] = f.IdAvenueType
+	result["id_region"] = f.IdRegion
+	result["neighbors"] = f.Neighbors
+	if f.Webcam != nil {
+		result["webcam"] = *f.Webcam
+	}
 	return result
 }
 

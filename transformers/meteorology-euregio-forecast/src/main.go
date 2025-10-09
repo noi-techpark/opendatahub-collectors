@@ -54,6 +54,16 @@ func TransformWithBdp(bdp bdplib.Bdp) tr.Handler[ForecastData] {
 var stationsMap Stations
 var err error
 
+func createStationsFromLookup(bdp bdplib.Bdp, lookup Stations, origin string) []bdplib.Station {
+	stations := make([]bdplib.Station, 0, len(lookup))
+
+	for _, stationData := range lookup {
+		stations = append(stations, stationData.ToBdp(bdp))
+	}
+
+	return stations
+}
+
 func main() {
 	ms.InitWithEnv(context.Background(), "", &env)
 	slog.Info("Starting data transformer...")
@@ -82,6 +92,11 @@ func main() {
 		ForecastFreezingLevel,
 	})
 	ms.FailOnError(context.Background(), err, "failed to sync datatypes")
+
+	// station sync
+	stations := createStationsFromLookup(b, stationsMap, b.GetOrigin())
+	err = b.SyncStations(DataStationType, stations, true, false)
+	ms.FailOnError(context.Background(), err, "failed to sync stations")
 
 	listener := tr.NewTr[string](context.Background(), env)
 	err = listener.Start(context.Background(), tr.RawString2JsonMiddleware(TransformWithBdp(b)))
@@ -170,7 +185,6 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, data *rdb.Raw[ForecastData])
 		meas1440.AddRecord(bdpStation.Name, ForecastPrecipitationSum.Name, bdplib.CreateRecord(timestampMilli, dailyData.RainFall, PERIOD24H))
 	}
 
-	bdp.SyncStations(DataStationType, []bdplib.Station{bdpStation}, false, false)
 	// Push the created data maps to the mocked BDPLib
 	bdp.PushData(DataStationType, meas180)
 	bdp.PushData(DataStationType, meas1440)
