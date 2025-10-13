@@ -1,0 +1,2 @@
+GET https://www.ctseng.it/Customers/Merano/GUEST/status_guest.xml
+Authorization: Basic {{$dotenv AUTHORIZATION_HEADER}}
