@@ -4,13 +4,13 @@ image:
   tag: "0.2.0" # Set this when upgrading chart with --set-value
 
 env:
-  MQ_CLIENT: dc-api-crawler-carsharing-alpsgo
-  PROVIDER: api-crawler/carsharing-alpsgo
+  MQ_CLIENT: dc-api-crawler-euregio-weather-forecast
+  PROVIDER: api-crawler/euregio-weather-forecast
 
-  CRON: "0 */5 * * * *"
+  CRON: "0 10 0 * * *"
   CONFIG_PATH: "/config/config.yaml"
 
-  SERVICE_NAME: dc-api-crawler-carsharing-alpsgo
+  SERVICE_NAME: dc-api-crawler-euregio-weather-forecast
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 
 envSecretRef:

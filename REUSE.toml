@@ -14,7 +14,7 @@ SPDX-FileCopyrightText = "(c) NOI Techpark <digital@noi.bz.it>"
 SPDX-License-Identifier = "CC0-1.0"
 
 [[annotations]]
-path = ["**helm/**.yaml", "**helm/**.tpl", "**helm/**/NOTES.txt", "**.helmignore"]
+path = ["**helm/**.yaml", "**crawler-config/**.yaml", "**helm/**.tpl", "**helm/**/NOTES.txt", "**.helmignore"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "(c) NOI Techpark <digital@noi.bz.it>"
 SPDX-License-Identifier = "CC0-1.0"
