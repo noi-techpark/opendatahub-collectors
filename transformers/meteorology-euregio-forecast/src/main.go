@@ -130,7 +130,7 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, data *rdb.Raw[ForecastData])
 	meas1440 := bdp.CreateDataMap()
 
 	// Process HourlyData (180 minutes)
-	slog.Info("Processing hourly data (180 minutes)...", "station_id", bdpStation.Name)
+	slog.Info("Processing hourly data (180 minutes)...", "station_id", bdpStation.Id)
 	for key, hourlyData := range forecast.HourlyData {
 
 		forecastStart, _, err := calculateForecastTimes(baseStart, key)
@@ -140,21 +140,21 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, data *rdb.Raw[ForecastData])
 		}
 		timestampMilli := forecastStart.UnixMilli()
 
-		meas180.AddRecord(bdpStation.Name, ForecastWindGust.Name, bdplib.CreateRecord(timestampMilli, hourlyData.WindGust, PERIOD3H))
-		meas180.AddRecord(bdpStation.Name, ForecastFreshSnow.Name, bdplib.CreateRecord(timestampMilli, hourlyData.FreshSnow, PERIOD3H))
-		meas180.AddRecord(bdpStation.Name, ForecastSnowLevel.Name, bdplib.CreateRecord(timestampMilli, hourlyData.SnowLevel, PERIOD3H))
-		meas180.AddRecord(bdpStation.Name, ForecastWindSpeed.Name, bdplib.CreateRecord(timestampMilli, hourlyData.WindSpeed, PERIOD3H))
-		meas180.AddRecord(bdpStation.Name, ForecastAirTemperature.Name, bdplib.CreateRecord(timestampMilli, hourlyData.Temperature, PERIOD3H))
-		meas180.AddRecord(bdpStation.Name, QualitativeForecast.Name, bdplib.CreateRecord(timestampMilli, hourlyData.SkyCondition, PERIOD3H))
-		meas180.AddRecord(bdpStation.Name, ForecastFreezingLevel.Name, bdplib.CreateRecord(timestampMilli, hourlyData.FreezingLevel, PERIOD3H))
-		meas180.AddRecord(bdpStation.Name, ForecastWindDirection.Name, bdplib.CreateRecord(timestampMilli, hourlyData.WindDirection, PERIOD3H))
-		meas180.AddRecord(bdpStation.Name, ForecastPrecipitationProbability.Name, bdplib.CreateRecord(timestampMilli, hourlyData.RainProbability, PERIOD3H))
-		meas180.AddRecord(bdpStation.Name, ForecastSunshineDuration.Name, bdplib.CreateRecord(timestampMilli, hourlyData.SunshineDuration, PERIOD3H))
-		meas180.AddRecord(bdpStation.Name, ForecastPrecipitationSum.Name, bdplib.CreateRecord(timestampMilli, hourlyData.RainFall, PERIOD3H))
+		meas180.AddRecord(bdpStation.Id, ForecastWindGust.Name, bdplib.CreateRecord(timestampMilli, hourlyData.WindGust, PERIOD3H))
+		meas180.AddRecord(bdpStation.Id, ForecastFreshSnow.Name, bdplib.CreateRecord(timestampMilli, hourlyData.FreshSnow, PERIOD3H))
+		meas180.AddRecord(bdpStation.Id, ForecastSnowLevel.Name, bdplib.CreateRecord(timestampMilli, hourlyData.SnowLevel, PERIOD3H))
+		meas180.AddRecord(bdpStation.Id, ForecastWindSpeed.Name, bdplib.CreateRecord(timestampMilli, hourlyData.WindSpeed, PERIOD3H))
+		meas180.AddRecord(bdpStation.Id, ForecastAirTemperature.Name, bdplib.CreateRecord(timestampMilli, hourlyData.Temperature, PERIOD3H))
+		meas180.AddRecord(bdpStation.Id, QualitativeForecast.Name, bdplib.CreateRecord(timestampMilli, hourlyData.SkyCondition, PERIOD3H))
+		meas180.AddRecord(bdpStation.Id, ForecastFreezingLevel.Name, bdplib.CreateRecord(timestampMilli, hourlyData.FreezingLevel, PERIOD3H))
+		meas180.AddRecord(bdpStation.Id, ForecastWindDirection.Name, bdplib.CreateRecord(timestampMilli, hourlyData.WindDirection, PERIOD3H))
+		meas180.AddRecord(bdpStation.Id, ForecastPrecipitationProbability.Name, bdplib.CreateRecord(timestampMilli, hourlyData.RainProbability, PERIOD3H))
+		meas180.AddRecord(bdpStation.Id, ForecastSunshineDuration.Name, bdplib.CreateRecord(timestampMilli, hourlyData.SunshineDuration, PERIOD3H))
+		meas180.AddRecord(bdpStation.Id, ForecastPrecipitationSum.Name, bdplib.CreateRecord(timestampMilli, hourlyData.RainFall, PERIOD3H))
 	}
 
 	// Process DailyData (1440 minutes) - only for tomorrow.
-	slog.Info("Processing daily data for 'tomorrow' (1440 minutes)...", "station_id", bdpStation.Name)
+	slog.Info("Processing daily data for 'tomorrow' (1440 minutes)...", "station_id", bdpStation.Id)
 	tomorrow := baseStart.Truncate(24 * time.Hour).Add(24 * time.Hour)
 	for key, dailyData := range forecast.DailyData {
 		forecastStart, _, err := calculateForecastTimes(baseStart, key)
@@ -171,18 +171,18 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, data *rdb.Raw[ForecastData])
 
 		timestampMilli := forecastStart.UnixMilli()
 
-		meas1440.AddRecord(bdpStation.Name, ForecastWindGust.Name, bdplib.CreateRecord(timestampMilli, dailyData.WindGust, PERIOD24H))
-		meas1440.AddRecord(bdpStation.Name, ForecastFreshSnow.Name, bdplib.CreateRecord(timestampMilli, dailyData.FreshSnow, PERIOD24H))
-		meas1440.AddRecord(bdpStation.Name, ForecastSnowLevel.Name, bdplib.CreateRecord(timestampMilli, dailyData.SnowLevel, PERIOD24H))
-		meas1440.AddRecord(bdpStation.Name, ForecastWindSpeed.Name, bdplib.CreateRecord(timestampMilli, dailyData.WindSpeed, PERIOD24H))
-		meas1440.AddRecord(bdpStation.Name, QualitativeForecast.Name, bdplib.CreateRecord(timestampMilli, dailyData.SkyCondition, PERIOD24H))
-		meas1440.AddRecord(bdpStation.Name, ForecastFreezingLevel.Name, bdplib.CreateRecord(timestampMilli, dailyData.FreezingLevel, PERIOD24H))
-		meas1440.AddRecord(bdpStation.Name, ForecastWindDirection.Name, bdplib.CreateRecord(timestampMilli, dailyData.WindDirection, PERIOD24H))
-		meas1440.AddRecord(bdpStation.Name, ForecastPrecipitationProbability.Name, bdplib.CreateRecord(timestampMilli, dailyData.RainProbability, PERIOD24H))
-		meas1440.AddRecord(bdpStation.Name, ForecastSunshineDuration.Name, bdplib.CreateRecord(timestampMilli, dailyData.SunshineDuration, PERIOD24H))
-		meas1440.AddRecord(bdpStation.Name, ForecastAirTemperatureMax.Name, bdplib.CreateRecord(timestampMilli, dailyData.TemperatureMaximum, PERIOD24H))
-		meas1440.AddRecord(bdpStation.Name, ForecastAirTemperatureMin.Name, bdplib.CreateRecord(timestampMilli, dailyData.TemperatureMinimum, PERIOD24H))
-		meas1440.AddRecord(bdpStation.Name, ForecastPrecipitationSum.Name, bdplib.CreateRecord(timestampMilli, dailyData.RainFall, PERIOD24H))
+		meas1440.AddRecord(bdpStation.Id, ForecastWindGust.Name, bdplib.CreateRecord(timestampMilli, dailyData.WindGust, PERIOD24H))
+		meas1440.AddRecord(bdpStation.Id, ForecastFreshSnow.Name, bdplib.CreateRecord(timestampMilli, dailyData.FreshSnow, PERIOD24H))
+		meas1440.AddRecord(bdpStation.Id, ForecastSnowLevel.Name, bdplib.CreateRecord(timestampMilli, dailyData.SnowLevel, PERIOD24H))
+		meas1440.AddRecord(bdpStation.Id, ForecastWindSpeed.Name, bdplib.CreateRecord(timestampMilli, dailyData.WindSpeed, PERIOD24H))
+		meas1440.AddRecord(bdpStation.Id, QualitativeForecast.Name, bdplib.CreateRecord(timestampMilli, dailyData.SkyCondition, PERIOD24H))
+		meas1440.AddRecord(bdpStation.Id, ForecastFreezingLevel.Name, bdplib.CreateRecord(timestampMilli, dailyData.FreezingLevel, PERIOD24H))
+		meas1440.AddRecord(bdpStation.Id, ForecastWindDirection.Name, bdplib.CreateRecord(timestampMilli, dailyData.WindDirection, PERIOD24H))
+		meas1440.AddRecord(bdpStation.Id, ForecastPrecipitationProbability.Name, bdplib.CreateRecord(timestampMilli, dailyData.RainProbability, PERIOD24H))
+		meas1440.AddRecord(bdpStation.Id, ForecastSunshineDuration.Name, bdplib.CreateRecord(timestampMilli, dailyData.SunshineDuration, PERIOD24H))
+		meas1440.AddRecord(bdpStation.Id, ForecastAirTemperatureMax.Name, bdplib.CreateRecord(timestampMilli, dailyData.TemperatureMaximum, PERIOD24H))
+		meas1440.AddRecord(bdpStation.Id, ForecastAirTemperatureMin.Name, bdplib.CreateRecord(timestampMilli, dailyData.TemperatureMinimum, PERIOD24H))
+		meas1440.AddRecord(bdpStation.Id, ForecastPrecipitationSum.Name, bdplib.CreateRecord(timestampMilli, dailyData.RainFall, PERIOD24H))
 	}
 
 	// Push the created data maps to the mocked BDPLib

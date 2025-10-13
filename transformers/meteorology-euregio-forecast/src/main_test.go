@@ -247,8 +247,8 @@ func TestStations(t *testing.T) {
 
 	s = stations.GetStationByID("000d29ea-0af4-45bd-8bf0-2f487784589d")
 	require.NotNil(t, s)
-	assert.Equal(t, "000d29ea-0af4-45bd-8bf0-2f487784589d", s.ID)
-	assert.Equal(t, "EUREGIO:000d29ea-0af4-45bd-8bf0-2f487784589d", s.Name)
+	assert.Equal(t, "000d29ea-0af4-45bd-8bf0-2f487784589d", s.ProviderId)
+	assert.Equal(t, "EUREGIO:000d29ea-0af4-45bd-8bf0-2f487784589d", s.ID)
 
 	m := s.toMetadata()
 	assert.Equal(t, m["name_de"], "Pettneu am Arlberg")

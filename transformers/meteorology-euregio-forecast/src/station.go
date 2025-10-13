@@ -15,8 +15,8 @@ import (
 
 // Station represents one record from the json.
 type Station struct {
+	ProviderId   string
 	ID           string
-	Name         string
 	Lat          float64
 	Lon          float64
 	Elevation    float64
@@ -39,7 +39,7 @@ type Stations []Station
 // Returns nil if no matching record is found.
 func (s Stations) GetStationByID(id string) *Station {
 	for i := range s {
-		if s[i].ID == id {
+		if s[i].ProviderId == id {
 			return &s[i]
 		}
 	}
@@ -73,7 +73,7 @@ func (f *Station) toMetadata() map[string]any {
 }
 
 func (f *Station) ToBdp(bdp bdplib.Bdp) bdplib.Station {
-	s := bdplib.CreateStation(f.Name, f.Name,
+	s := bdplib.CreateStation(f.ID, fmt.Sprintf("%s | %s", f.NameEn, f.NameIt),
 		DataStationType, f.Lat, f.Lon, bdp.GetOrigin())
 	s.MetaData = f.toMetadata()
 	return s
@@ -121,8 +121,8 @@ func LoadAllStations() (Stations, error) {
 	}
 	for _, s := range enStations {
 		stationMap[s.ID] = &Station{
-			ID:           s.ID,
-			Name:         fmt.Sprintf("EUREGIO:%s", s.ID),
+			ProviderId:   s.ID,
+			ID:           fmt.Sprintf("EUREGIO:%s", s.ID),
 			Lat:          s.Lat,
 			Lon:          s.Lon,
 			Elevation:    s.Elevation,
