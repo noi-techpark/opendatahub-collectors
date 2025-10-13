@@ -1,0 +1,99 @@
+name: CI/CD dc-api-crawler-euregio-weather-forecast
+
+on: 
+  push:
+    paths:
+      - "collectors/api-crawler/**"
+      - "!collectors/api-crawler/infrastructure/helm/*"
+      - "collectors/api-crawler/infrastructure/helm/euregio-weather-forecast.*.yaml"
+      - "collectors/api-crawler/infrastructure/crawler-config/euregio-weather-forecast.yaml"
+      - ".github/workflows/dc-api-crawler-euregio-weather-forecast.yml"
+
+env:
+  WORKING_DIRECTORY: collectors/api-crawler
+  HTTP_CONFIG_PATH: infrastructure/crawler-config/euregio-weather-forecast.yaml
+  DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/dc-api-crawler
+  DOCKER_TAG: ${{ github.sha }}
+  KUBERNETES_NAMESPACE: collector
+  K8S_NAME: dc-api-crawler-euregio-weather-forecast
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    concurrency: dc-api-crawler-euregio-weather-forecast-build
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    - name: Build and push images
+      uses: noi-techpark/github-actions/docker-build-and-push@v2
+      with:
+        working-directory: ${{ env.WORKING_DIRECTORY }}/infrastructure
+        docker-username: ${{ github.actor }}
+        docker-password: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy-euregio-weather-forecast-test:
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev/euregio-weather-forecast'
+    needs: build
+    runs-on: ubuntu-24.04
+    concurrency: dc-api-crawler-euregio-weather-forecast-test
+    environment: test
+    env:
+      VALUES_YAML: infrastructure/helm/euregio-weather-forecast.test.yaml
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Customize values.yaml
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          yq -i '.image.repository="${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML}}
+          yq -i '.image.tag="${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
+          yq -i '.image.pullPolicy="IfNotPresent"' ${{ env.VALUES_YAML }}
+          yq -i '.configMap.files["config.yaml"] = load_str("${{ env.HTTP_CONFIG_PATH }}")' ${{ env.VALUES_YAML }}
+
+      - name: Deploy on cluster  
+        uses: noi-techpark/github-actions/helm-deploy@v2
+        with:
+          k8s-name: dc-api-crawler-euregio-weather-forecast
+          k8s-namespace: collector
+          chart-path: helm/generic-collector
+          values-file: ${{ env.WORKING_DIRECTORY}}/${{ env.VALUES_YAML }}
+          aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
+          aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
+          aws-eks-cluster-name: aws-main-eu-01
+          aws-region: eu-west-1
+    
+  deploy-euregio-weather-forecast-prod:
+    if: github.ref == 'refs/heads/prod'
+    needs: build
+    runs-on: ubuntu-24.04
+    concurrency: dc-api-crawler-euregio-weather-forecast-prod
+    environment: prod
+    env:
+      VALUES_YAML: infrastructure/helm/euregio-weather-forecast.prod.yaml
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Customize values.yaml
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          yq -i '.image.repository="${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML}}
+          yq -i '.image.tag="${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
+          yq -i '.image.pullPolicy="IfNotPresent"' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.AUTH_BEARER_TOKEN = "${{ secrets.ALPSGO_AUTH_TOKEN }}"' ${{ env.VALUES_YAML }}
+          yq -i '.configMap.files["http-config.yaml"] = load_str("${{ env.HTTP_CONFIG_PATH }}")' ${{ env.VALUES_YAML }}
+          yq -i '.env.LOG_LEVEL="INFO"' ${{ env.VALUES_YAML }}      
+
+      - name: Deploy on cluster  
+        uses: noi-techpark/github-actions/helm-deploy@v2
+        with:
+          k8s-name: dc-api-crawler-euregio-weather-forecast
+          k8s-namespace: collector
+          chart-path: helm/generic-collector
+          values-file: ${{ env.WORKING_DIRECTORY}}/${{ env.VALUES_YAML }}
+          aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
+          aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
+          aws-eks-cluster-name: aws-main-eu-01
+          aws-region: eu-west-1
