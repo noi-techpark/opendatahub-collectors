@@ -1,0 +1,70 @@
+# SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+http_calls:
+  data_selector_type: json
+  nested_calls:
+    - url: https://sharedmobility.ch/providers.json
+      method: GET
+      headers:
+        Accept: application/json
+      data_selector_type: json
+      data_selector: $.data.providers
+      data_destination_field: providers
+    - url: https://sharedmobility.ch/system_information.json
+      method: GET
+      headers:
+        Accept: application/json
+      data_selector_type: json
+      data_selector: $.data
+      data_destination_field: system_information
+    - url: https://sharedmobility.ch/station_information.json
+      method: GET
+      headers:
+        Accept: application/json
+      data_selector_type: json
+      data_selector: $.data.stations
+      data_destination_field: station_information
+    - url: https://sharedmobility.ch/free_bike_status.json
+      method: GET
+      headers:
+        Accept: application/json
+      data_selector_type: json
+      data_selector: $.data.bikes
+      data_destination_field: free_bike_status
+    - url: https://sharedmobility.ch/station_status.json
+      method: GET
+      headers:
+        Accept: application/json
+      data_selector_type: json
+      data_selector: $.data.stations
+      data_destination_field: station_status
+    - url: https://sharedmobility.ch/system_hours.json
+      method: GET
+      headers:
+        Accept: application/json
+      data_selector_type: json
+      data_selector: $.data.rental_hours
+      data_destination_field: system_hours
+    - url: https://sharedmobility.ch/system_regions.json
+      method: GET
+      headers:
+        Accept: application/json
+      data_selector_type: json
+      data_selector: $.data.regions
+      data_destination_field: system_regions
+    - url: https://sharedmobility.ch/system_pricing_plans.json
+      method: GET
+      headers:
+        Accept: application/json
+      data_selector_type: json
+      data_selector: $.data.plans
+      data_destination_field: plans
+    - url: https://www.uvek-gis.admin.ch/BFE/disharing/geofences/geofencing_zones.json
+      method: GET
+      headers:
+        Accept: application/json
+      data_selector_type: json
+      data_selector: $.data.geofencing_zones
+      data_destination_field: geofencing_zones

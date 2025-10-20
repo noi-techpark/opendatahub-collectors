@@ -3,7 +3,7 @@ module opendatahub.com/multi-rest-poller
 go 1.23.7
 
 require (
-	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.3
+	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.7
 	github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0
 	github.com/oliveagle/jsonpath v0.0.0-20180606110733-2e52cf6e6852
 	github.com/robfig/cron/v3 v3.0.1
@@ -43,7 +43,7 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
-	github.com/noi-techpark/opendatahub-go-sdk/qmill v1.0.2 // indirect
+	github.com/noi-techpark/opendatahub-go-sdk/qmill v1.0.4 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
