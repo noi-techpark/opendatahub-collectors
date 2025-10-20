@@ -1,0 +1,22 @@
+# SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+http_call:
+  url: https://www.mybestinparking.it/api/Facility/GetFacilities
+  method: GET
+  headers:
+    Accept: application/json
+  data_selector: "$.Facilities[?(@.FacilityID == 609883)]"
+  data_selector_type: json
+  nested_calls:
+    - url: https://www.mybestinparking.it/api/Facility/GetFreePlaces?FacilityID=%s
+      method: GET
+      headers:
+        Accept: application/json
+      param_selector_type: json
+      param_selectors:
+        - '$.FacilityID'
+      data_destination_field: FacilityDetails
+      data_selector: "$.FreePlaces[*]"
+      data_selector_type: json

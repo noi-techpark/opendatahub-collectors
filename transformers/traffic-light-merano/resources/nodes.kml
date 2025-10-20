@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>Merano.kml</name>
+	<Folder>
+		<name>Merano</name>
+		<open>1</open>
+		<Placemark>
+			<code>152</code>
+			<name>Sinigo - Fermi</name>
+			<description></description> 
+			<Point><coordinates>46.637115, 11.175916,0</coordinates><gx:drawOrder>0</gx:drawOrder></Point>
+		</Placemark>
+		<Placemark>
+			<code>102</code>
+			<name>CastelTirolo</name>
+			<description></description>
+			<Point><coordinates>46.694842, 11.147829,0</coordinates><gx:drawOrder>0</gx:drawOrder></Point>
+		</Placemark>
+		<Placemark>
+			<code>151</code>
+			<name>Maia Alta - SS44</name>
+			<description></description>
+			<Point><coordinates>46.670352, 11.169406,0</coordinates><gx:drawOrder>0</gx:drawOrder></Point>
+		</Placemark>
+		<Placemark>
+			<code>153</code>
+			<name>Scena - Ivigna</name>
+			<description></description>
+			<Point><coordinates>46.668827, 11.181278,0</coordinates><gx:drawOrder>0</gx:drawOrder></Point>
+			<Sensors>
+				<Sensor id="1531" type="0"><coordinates>46.668873449101845,11.181814023313503,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1532" type="0"><coordinates>46.66881640570621,11.180800247850406,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1533" type="0"><coordinates>46.66874906496734,11.18154251901434,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1534" type="0"><coordinates>46.669088318878046,11.181129472387319,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+			</Sensors>
+		</Placemark>
+		<Placemark>
+			<code>154</code>
+			<name>via Roma - Interspar</name>
+			<description></description>
+			<Point><coordinates>46.656877, 11.167960,0</coordinates><gx:drawOrder>0</gx:drawOrder></Point>
+			<Sensors>
+				<Sensor id="1541" type="0"><coordinates>46.656684, 11.168209,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1542" type="0"><coordinates>46.657121, 11.167682,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1543" type="0"><coordinates>46.656858024456426,11.167819752149576,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+			</Sensors>
+		</Placemark>
+		<Placemark>
+			<code>155</code>
+			<name>via delle Corse</name>
+			<description></description>
+			<Point><coordinates>46.672241, 11.159427,0</coordinates><gx:drawOrder>0</gx:drawOrder></Point>
+			<Sensors>
+				<Sensor id="1551" type="0"><coordinates>46.67199531907602,11.159410355819688,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+			</Sensors>
+		</Placemark>
+		<Placemark>
+			<code>156</code>
+			<name>Ponte Teatro</name>
+			<description></description>
+			<Point><coordinates>46.669571, 11.159527,0</coordinates><gx:drawOrder>0</gx:drawOrder></Point>
+		</Placemark>		
+		<Placemark>
+			<code>157</code>
+			<name>Ponte Posta</name>
+			<description></description>
+			<Point><coordinates>46.669205, 11.164063,0</coordinates><gx:drawOrder>0</gx:drawOrder></Point>
+		</Placemark>		
+		<Placemark>
+			<code>158</code>
+			<name>Petrarca - Leopardi</name>
+			<description></description> 
+			<Point><coordinates>46.666843, 11.156441,0</coordinates><gx:drawOrder>0</gx:drawOrder></Point>
+			<Sensors>
+				<Sensor id="1581" type="0"><coordinates>46.66692688444407,11.155899236770622,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1582" type="0"><coordinates>46.66720495625006,11.156368953372956,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1583" type="0"><coordinates>46.66683067330527,11.156766612268449,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1584" type="0"><coordinates>46.66683999203484,11.15689958895491,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1585" type="0"><coordinates>46.666677, 11.156071,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor> 
+			</Sensors>
+		</Placemark>
+		<Placemark>
+			<code>159</code>
+			<name>Ponte Rezia</name>
+			<description></description>
+			<Point><coordinates>46.66851156561314,11.1532916294651,0</coordinates><gx:drawOrder>0</gx:drawOrder></Point>
+		</Placemark>		
+		<Placemark>
+			<code>160</code>
+			<name>3P</name>
+			<description></description>
+			<Point><coordinates>46.66182660202095,11.161371824571628,0</coordinates><gx:drawOrder>0</gx:drawOrder></Point>
+		</Placemark>		
+		<Placemark>
+			<code>161</code>
+			<name>Ponte Rezia2</name>
+			<description></description>
+			<Point><coordinates>46.669970, 11.152820,0</coordinates><gx:drawOrder>0</gx:drawOrder></Point>
+		</Placemark>
+		<Placemark>
+			<code>XFERMI</code>
+			<name>Sinigo - Fermi</name>
+			<description></description> 
+			<Point><coordinates>46.636868218401446,11.175915999999999,0</coordinates><gx:drawOrder>0</gx:drawOrder></Point>
+			<Sensors>
+				<Sensor id="1529" type="8"><coordinates>46.636634, 11.176111,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1522" type="8"><coordinates>46.636006, 11.176373,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1521" type="8"><coordinates>46.638227, 11.175654,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1523" type="8"><coordinates>46.63709529944756,11.17581573743439,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1528" type="8"><coordinates>46.63744500281354,11.175789766864774,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor> 
+				<Sensor id="1529" type="8"><coordinates>46.63744500281354,11.175789766864774,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor> 
+			</Sensors>
+		</Placemark>
+		<Placemark>
+			<code>XPONTE_POSTA</code>
+			<name>Ponte Posta</name>
+			<description></description>
+			<Point><coordinates>46.66935592546929,11.16402813128282,0</coordinates><gx:drawOrder>0</gx:drawOrder></Point>
+			<Sensors>
+				<Sensor id="1571" type="8"><coordinates>46.668950682236506,11.164411640544886,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1572" type="8"><coordinates>46.66893170945333,11.164392911708845,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1573" type="8"><coordinates>46.668964687228915,11.16427035524275,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1574" type="8"><coordinates>46.668962859880125,11.163771102429378,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1575" type="8"><coordinates>46.66894237449854,11.16381257175827,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1576" type="8"><coordinates>46.668931153485424,11.163850370534897,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+			</Sensors>
+		</Placemark>
+		<Placemark>
+			<code>XPONTE_REZIA</code>
+			<name>PONTE REZIA</name>
+			<description></description>
+			<Point><coordinates>46.668749, 11.153183,0</coordinates><gx:drawOrder>0</gx:drawOrder></Point>
+			<Sensors>
+				<Sensor id="1591" type="8"><coordinates>46.669008419770265,11.152960758266461,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1592" type="8"><coordinates>46.66901341976428,11.153027379133205,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1593" type="8"><coordinates>46.66859860867288,11.15348656564142,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1594" type="8"><coordinates>46.6682442239609,11.153454947256071,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1595" type="8"><coordinates>46.668424188339316,11.152993213457115,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1596" type="8"><coordinates>46.66848560873063,11.153055688325875,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1597" type="8"><coordinates>46.66904654989889,11.153047495700816,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+			</Sensors>
+		</Placemark>
+		<Placemark>
+			<code>X3P</code>
+			<name>3P</name>
+			<description></description>
+			<Point><coordinates>46.661612147427626,11.160497424432773,0</coordinates><gx:drawOrder>0</gx:drawOrder></Point>
+			<Sensors>
+				<Sensor id="1601" type="8"><coordinates>46.661827, 11.160710,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1602" type="8"><coordinates>46.661763055004485,11.160667233135232,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1603" type="8"><coordinates>46.662209, 11.160024,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1604" type="8"><coordinates>46.662150, 11.160209,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1605" type="8"><coordinates>46.66167927349538,11.15959110548784,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1606" type="8"><coordinates>46.661707273503026,11.15955075578498,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1607" type="8"><coordinates>46.661787387862404,11.159659277280811,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+			</Sensors>
+		</Placemark>				
+		<Placemark>
+			<code>XPON_MAR</code>
+			<name>Rotatoria ponte Marlengo</name>
+			<description></description> 
+			<Point><coordinates>46.658906, 11.145989,0</coordinates><gx:drawOrder>0</gx:drawOrder></Point>
+			<Sensors>
+				<Sensor id="1761" type="8"><coordinates>46.658730170512094,11.1456662478504,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1762" type="8"><coordinates>46.65876609095466,11.145626495700828,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1763" type="8"><coordinates>46.65910212495685,11.146091402446729,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1764" type="8"><coordinates>46.65909217037033,11.1461474723873,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1765" type="8"><coordinates>46.658723, 11.146223,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1766" type="8"><coordinates>46.658675, 11.146210,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+			</Sensors>
+		</Placemark>
+		<Placemark>
+			<code>XNORD_OVEST</code>
+			<name>Rotatoria Nord-Ovest</name>
+			<description></description> 
+			<Point><coordinates>46.675861, 11.146456,0</coordinates><gx:drawOrder>0</gx:drawOrder></Point>
+			<Sensors>
+				<Sensor id="1771" type="8"><coordinates>46.675501, 11.147001,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1772" type="8"><coordinates>46.675481, 11.146955,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1773" type="8"><coordinates>46.676263, 11.145810,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1774" type="8"><coordinates>46.676281, 11.145872,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+			</Sensors>
+		</Placemark>
+		<Placemark>
+			<code>XME2000</code>
+			<name>Funivia Merano 2000</name>
+			<description></description> 
+			<Point><coordinates>46.671492, 11.209159,0</coordinates><gx:drawOrder>0</gx:drawOrder></Point>
+			<Sensors>
+				<Sensor id="1781" type="8"><coordinates>46.671501447669996,11.208874069940551,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1782" type="8"><coordinates>46.671535803584554,11.208866317790989,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1783" type="8"><coordinates>46.67156459523592,11.209388387731547,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1784" type="8"><coordinates>46.671532337002134,11.2093632625656,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1785" type="8"><coordinates>46.67135482840527,11.209242775463103,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+				<Sensor id="1786" type="8"><coordinates>46.671356233232714,11.209194279762249,0</coordinates><gx:drawOrder>0</gx:drawOrder></Sensor>
+			</Sensors>
+		</Placemark>
+	</Folder>
+</Document>
+</kml>
+

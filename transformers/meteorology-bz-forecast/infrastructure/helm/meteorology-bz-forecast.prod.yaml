@@ -14,18 +14,21 @@ imagePullSecrets:
 
 env:
   # ODH Core Writer Connection
-  LOG_LEVEL: "DEBUG"
+  LOG_LEVEL: "INFO"
   MQ_QUEUE: s3-poller.meteorology-bz-forecast
   MQ_EXCHANGE: routed  
   MQ_KEY: s3-poller.meteorology-bz-forecast
   MQ_CLIENT: tr-meteorology-bz-forecast
 
-  BDP_BASE_URL: https://mobility.share.opendatahub.com
+  BDP_BASE_URL: http://bdp-core.core.svc.cluster.local
   BDP_PROVENANCE_VERSION: 
   BDP_PROVENANCE_NAME: 
   BDP_ORIGIN: province-bolzano
 
   RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
+
+  SERVICE_NAME: tr-meteorology-bz-forecast
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 
 envSecretRef:
   - name: MQ_URI 

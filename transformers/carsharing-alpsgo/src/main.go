@@ -62,7 +62,7 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 		station_code := fmt.Sprintf("%d", s.ID)
 		carsharing_stations[s.ID] = s.ToBDPStation(bdp)
 
-		car_sharing_DataMap.AddRecord(station_code, dataTypeAvailableVehicles, bdplib.CreateRecord(ts, s.CapacityCurrentlyFree, 300))
+		car_sharing_DataMap.AddRecord(station_code, dataTypeAvailableVehicles, bdplib.CreateRecord(ts, s.CapacityMax-s.CapacityCurrentlyFree, 300))
 	}
 
 	for _, v := range payload.Rawdata.Vehicles {
@@ -147,7 +147,7 @@ func SyncDataTypes(bdp bdplib.Bdp) {
 	// station
 	dataTypes = append(dataTypes, bdplib.CreateDataType(dataTypeAvailableVehicles, "", "number of available vehicles / charging points", "Instantaneous"))
 
-	err := bdp.SyncDataTypes(StationTypeCarSharing, dataTypes)
+	err := bdp.SyncDataTypes(dataTypes)
 	ms.FailOnError(context.Background(), err, fmt.Sprintf("failed to sync types for station %s", StationTypeCarSharing))
 
 	dataTypes = []bdplib.DataType{}
@@ -164,7 +164,7 @@ func SyncDataTypes(bdp bdplib.Bdp) {
 	dataTypes = append(dataTypes, bdplib.CreateDataType(dataTypeVehicleFutureAvailability720, "", "Availability in 720 minutes ", "Instantaneous"))
 	dataTypes = append(dataTypes, bdplib.CreateDataType(dataTypeVehicleFutureAvailability1440, "", "Availability in 1440 minutes ", "Instantaneous"))
 
-	err = bdp.SyncDataTypes(StationTypeVechile, dataTypes)
+	err = bdp.SyncDataTypes(dataTypes)
 	ms.FailOnError(context.Background(), err, fmt.Sprintf("failed to sync types for station %s", StationTypeVechile))
 }
 

@@ -20,7 +20,7 @@ env:
   MQ_KEY: multi-rest-poller.carsharing-alpsgo
   MQ_CLIENT: tr-carsharing-alpsgo
 
-  BDP_BASE_URL: https://mobility.share.opendatahub.com
+  BDP_BASE_URL: http://bdp-core.core.svc.cluster.local
   BDP_PROVENANCE_VERSION: 
   BDP_PROVENANCE_NAME: 
   BDP_ORIGIN: AlpsGo

@@ -5,15 +5,17 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"strconv"
 
-	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-bdp-client/bdplib"
-	"github.com/noi-techpark/go-opendatahub-ingest/dto"
-	"github.com/noi-techpark/go-opendatahub-ingest/ms"
-	"github.com/noi-techpark/go-opendatahub-ingest/tr"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
+	"github.com/noi-techpark/opendatahub-go-sdk/tel"
+
 	"github.com/relvacode/iso8601"
 	"golang.org/x/exp/maps"
 )
@@ -24,25 +26,27 @@ const stationtype = "EnvironmentStation"
 var env tr.Env
 
 func main() {
-	envconfig.MustProcess("", &env)
-	ms.InitLog(env.LOG_LEVEL)
+	ctx := context.Background()
+	ms.InitWithEnv(ctx, "", &env)
 
 	b := bdplib.FromEnv()
 
-	dtmap := readDataTypes("datatypes.csv")
-	ms.FailOnError(b.SyncDataTypes("", maps.Values(dtmap)), "error pushing datatypes")
+	defer tel.FlushOnPanic()
 
-	scfg, err := readStationCSV("stations.csv")
-	ms.FailOnError(err, "error loading station csv")
-	stations, err := compileHistory(scfg)
-	ms.FailOnError(err, "error compiling station history")
+	dtmap := readDataTypes("datatypes.csv")
+	ms.FailOnError(ctx, b.SyncDataTypes("", maps.Values(dtmap)), "error pushing datatypes")
+
+	stations, err := readStationCSV("stations.csv")
+	ms.FailOnError(ctx, err, "error loading station csv")
 	bdpStations := []bdplib.Station{}
 	for _, s := range stations {
-		bdpStations = append(bdpStations, map2Bdp(s, b.Origin))
+		bdpStations = append(bdpStations, map2Bdp(s, b.GetOrigin()))
 	}
-	ms.FailOnError(b.SyncStations(stationtype, bdpStations, true, false), "error syncing stations")
+	ms.FailOnError(ctx, b.SyncStations(stationtype, bdpStations, true, false), "error syncing stations")
 
-	tr.ListenFromEnv(env, func(r *dto.Raw[payload]) error {
+	listener := tr.NewTr[payload](context.Background(), env)
+
+	err = listener.Start(context.Background(), func(ctx context.Context, r *rdb.Raw[payload]) error {
 		payload := mqttPayload{}
 		if err := json.Unmarshal([]byte(r.Rawdata.Payload), &payload); err != nil {
 			return err
@@ -71,6 +75,7 @@ func main() {
 		}
 		return nil
 	})
+	ms.FailOnError(context.Background(), err, "error while listening to queue")
 }
 
 type bdpDataTypeMap map[string]bdplib.DataType

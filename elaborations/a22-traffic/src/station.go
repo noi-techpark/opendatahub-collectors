@@ -23,6 +23,25 @@ type Station struct {
 	MinTimestamp int64
 }
 
+type StationDirection int
+
+const (
+	STATION_DIRECTION_UNKNOWN StationDirection = 0
+	STATION_DIRECTION_SOUTH   StationDirection = 1
+	STATION_DIRECTION_NORTH   StationDirection = 2
+)
+
+func (s Station) Direction() StationDirection {
+	name := strings.ToLower(s.Name)
+	if strings.HasSuffix(name, "sud)") {
+		return STATION_DIRECTION_SOUTH
+	}
+	if strings.HasSuffix(name, "nord)") {
+		return STATION_DIRECTION_NORTH
+	}
+	return STATION_DIRECTION_UNKNOWN
+}
+
 func readStations(ctx context.Context, db *sqlx.DB, origin, stationType string) ([]Station, error) {
 	// without station mapping
 	// query := `

@@ -3,10 +3,10 @@ module opendatahub.com/tr-meteorology-bz-forecast
 go 1.23.7
 
 require (
-	github.com/noi-techpark/go-bdp-client v1.2.1
+	github.com/noi-techpark/go-bdp-client v1.3.1
 	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.2
 	github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0
-	github.com/noi-techpark/opendatahub-go-sdk/testsuite v1.0.0
+	github.com/noi-techpark/opendatahub-go-sdk/testsuite v1.0.1
 	github.com/stretchr/testify v1.10.0
 )
 

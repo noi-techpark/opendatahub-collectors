@@ -35,7 +35,7 @@ func main() {
 
 	b := bdplib.FromEnv()
 
-	b.SyncDataTypes(STATIONTYPE, []bdplib.DataType{datatype})
+	b.SyncDataTypes([]bdplib.DataType{datatype})
 
 	listener := tr.NewTr[RawType](context.Background(), env)
 	err := listener.Start(context.Background(), func(ctx context.Context, r *rdb.Raw[RawType]) error {

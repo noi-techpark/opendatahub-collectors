@@ -7,7 +7,7 @@ env:
   MQ_CLIENT: dc-multi-rest-poller-parking-mybestparking
   PROVIDER: multi-rest-poller/parking-mybestparking
 
-  CRON: "0 */10 * * * *"
+  CRON: "0/30 * * * * *"
   HTTP_CONFIG_PATH: "/config/http-config.yaml"
   AUTH_STRATEGY: oauth2
   OAUTH_METHOD: password

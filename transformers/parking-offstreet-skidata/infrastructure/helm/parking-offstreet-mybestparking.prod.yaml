@@ -20,12 +20,14 @@ env:
   MQ_KEY: multi-rest-poller.parking-mybestparking
   MQ_CLIENT: tr-parking-offstreet-mybestparking
 
-  BDP_BASE_URL: https://mobility.share.opendatahub.com
+  BDP_BASE_URL: http://bdp-core.core.svc.cluster.local
   BDP_PROVENANCE_VERSION: 
   BDP_PROVENANCE_NAME: 
   BDP_ORIGIN: skidata
 
   RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
+  SERVICE_NAME: tr-parking-offstreet-mybestparking
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 
 envSecretRef:
   - name: MQ_URI 

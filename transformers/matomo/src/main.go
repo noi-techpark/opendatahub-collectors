@@ -5,17 +5,18 @@
 package main
 
 import (
+	"context"
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"log/slog"
 
-	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-bdp-client/bdplib"
-	"github.com/noi-techpark/go-opendatahub-ingest/dto"
-	"github.com/noi-techpark/go-opendatahub-ingest/ms"
-	"github.com/noi-techpark/go-opendatahub-ingest/tr"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
+	"github.com/noi-techpark/opendatahub-go-sdk/tel"
 )
 
 var env struct {
@@ -28,11 +29,12 @@ var env struct {
 const STATIONTYPE = "WebStatistics"
 
 func main() {
+	ms.InitWithEnv(context.Background(), "", &env)
+	slog.Info("Starting data transformer...")
 	slog.Info("Matomo data collector starting up...")
-	envconfig.MustProcess("", &env)
-	ms.InitLog(env.LOG_LEVEL)
-
 	b := bdplib.FromEnv()
+
+	defer tel.FlushOnPanic()
 
 	// DANGER! this ordering matters, because we use it to map indices to top level array
 	// Top level array are the aggregated requests of BulkRequest function.
@@ -44,9 +46,11 @@ func main() {
 		bdplib.CreateDataType("dailyVisits", "amount", "Daily visits on a website", ""),
 	}
 
-	ms.FailOnError(b.SyncDataTypes(STATIONTYPE, dts), "could not sync data types")
+	ms.FailOnError(context.Background(), b.SyncDataTypes(STATIONTYPE, dts), "could not sync data types")
 
-	err := tr.ListenFromEnv(env.Env, func(r *dto.Raw[string]) error {
+	listener := tr.NewTr[string](context.Background(), env.Env)
+
+	err := listener.Start(context.Background(), func(ctx context.Context, r *rdb.Raw[string]) error {
 		slog.Info("New message received")
 		dto, err := unmarshalRawJson(r.Rawdata)
 		if err != nil {
@@ -91,12 +95,12 @@ func main() {
 			}
 		}
 
-		ms.FailOnError(b.SyncStations(STATIONTYPE, stations, true, false), "error syncing stations")
-		ms.FailOnError(b.PushData(STATIONTYPE, dm), "error pushing measurements")
+		ms.FailOnError(ctx, b.SyncStations(STATIONTYPE, stations, true, false), "error syncing stations")
+		ms.FailOnError(ctx, b.PushData(STATIONTYPE, dm), "error pushing measurements")
 
 		return nil
 	})
-	ms.FailOnError(err, "transformer handler failed")
+	ms.FailOnError(context.Background(), err, "transformer handler failed")
 }
 
 // since DB fields on station are limited to 255 chars, we cut the string,
