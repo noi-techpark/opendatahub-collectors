@@ -14,6 +14,7 @@ services:
         # ssh-keygen -t rsa -b 4096 -f ssh_host_rsa_key < /dev/null
       - ${SHARED_DIR}/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key
       - ${SHARED_DIR}/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key
+      - ${SHARED_DIR}/sshd_config:/etc/ssh/sshd_config:ro
     ports:
       - ${SERVER_PORT}:22
     ulimits:
