@@ -26,33 +26,6 @@ services:
       - ingestion
   
   app:
-<<<<<<< HEAD
-    build:
-      dockerfile: infrastructure/docker/Dockerfile
-      context: .
-      target: dev
-    environment:
-      - HTTP_CONFIG_PATH=/infrastructure/http_config/sharedmobility-ch.yaml
-      - MQ_CLIENT=dc-multi-rest-poller-sharedmobility
-      - PROVIDER=multi-rest-poller/sharedmobility
-      - CRON=0 */5 * * * *
-      - SERVICE_NAME=dc-multi-rest-poller-sharedmobility
-      - MQ_URI=amqp://guest:guest@host.docker.internal:5672/
-    volumes:
-      - ./src:/code
-      - ./infrastructure:/infrastructure
-      - pkg:/go/pkg/mod
-    working_dir: /code
-    network_mode: host
-
-#  rabbitmq:
-#    extends:
-#      file: ../lib/docker-compose/docker-compose.rabbitmq.yml
-#      service: rabbitmq
-#    attach: false
-volumes:
-  pkg:
-=======
     <<: *app-common
     depends_on:
       rabbitmq:
@@ -76,5 +49,3 @@ networks:
   ingestion:
     external: true
 
-
->>>>>>> main
