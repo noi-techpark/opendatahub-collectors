@@ -4,8 +4,6 @@
 
 FROM golang:1.24-bookworm AS base
 
-EXPOSE 8080
-
 FROM base AS build-env
 WORKDIR /app
 COPY src/* .
@@ -16,14 +14,22 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o main
 FROM alpine:latest AS build
 WORKDIR /app
 COPY --from=build-env /app/main .
-ENTRYPOINT [ "./main"]
+# based on https://github.com/atmoz/sftp
+# Steps done in one RUN layer:
+# - Install upgrades and new packages
+# - OpenSSH needs /var/run/sshd to run
+# - Remove generic host keys, entrypoint generates unique keys
+RUN apk update && apk upgrade && \
+    apk add bash shadow openssh-server-pam openssh-sftp-server && \
+    rm -rf /var/cache/apk/* && \
+    ln -s /usr/sbin/sshd.pam /usr/sbin/sshd && \
+    mkdir -p /var/run/sshd && \
+    rm -f /etc/ssh/ssh_host_*key*
 
-# LOCAL DEVELOPMENT
-FROM base AS dev
-WORKDIR /code
-CMD ["go", "run", "."]
+COPY files/sshd_config /etc/ssh/sshd_config
+COPY files/create-sftp-user /usr/local/bin/
+COPY files/entrypoint /
 
-# TESTS
-FROM base AS test
-WORKDIR /code
-CMD ["go", "test", "."]
+EXPOSE 22
+
+ENTRYPOINT ["/entrypoint"]

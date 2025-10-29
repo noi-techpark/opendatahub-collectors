@@ -46,20 +46,13 @@ func main() {
 	defer tel.FlushOnPanic()
 
 	collector := dc.NewDc[File](ctx, env.Env)
-	ch := collector.GetInputChannel()
-
-	go ms.FailOnError(context.Background(), collector.Start(context.Background(), func(ctx context.Context, rw File) (*rdb.RawAny, error) {
-		raw := rdb.RawAny{}
-		raw.Provider = env.PROVIDER
-		raw.Timestamp = rw.Mtime
-		raw.Rawdata = rw
-		return &raw, nil
-	}), "collection terminated unexpectedly")
-
-	ms.FailOnError(ctx, watchFiles(ctx, env.WATCH_DIR, ch), "file watcher terminated unexpectedly")
+	ms.FailOnError(ctx, watchFiles(ctx, env.WATCH_DIR, collector), "file watcher terminated unexpectedly")
 }
 
-func watchFiles(ctx context.Context, dir string, ch chan<- dc.Input[File]) error {
+func watchFiles(ctx context.Context, dir string, collector *dc.Dc[File]) error {
+	ctx, collection := collector.StartCollection(ctx)
+	defer collection.End(ctx)
+
 	// Setup filewatcher
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -74,6 +67,8 @@ func watchFiles(ctx context.Context, dir string, ch chan<- dc.Input[File]) error
 
 	slog.Info("Watching directory for file uploads", "dir", env.WATCH_DIR)
 
+	// To make sure that we don't post partially uploaded files, we continuously check a file's mtime and size.
+	// If it remains stable over a certain period, we assume the file has finished uploading and we publish it
 	tracked := make(map[string]*fileTracker)
 	stabilityDuration := time.Duration(env.STABILITY_SECONDS) * time.Second
 	checkInterval := time.Duration(env.CHECK_INTERVAL) * time.Second
@@ -132,20 +127,30 @@ func watchFiles(ctx context.Context, dir string, ch chan<- dc.Input[File]) error
 						return fmt.Errorf("failed to read file: %w", err)
 					}
 
-					raw := File{
-						Filename: info.Name(),
-						Dir:      filepath.Dir(filePath),
-						Mtime:    currentModTime,
-						File:     fileData,
-					}
+					raw := rdb.RawAny{
+						Provider:  env.PROVIDER,
+						Timestamp: currentModTime,
+						Rawdata: File{
+							Filename: info.Name(),
+							Dir:      filepath.Dir(filePath),
+							Mtime:    currentModTime,
+							File:     fileData,
+						}}
 
-					ch <- dc.NewInput(ctx, raw)
+					if err := collection.Publish(ctx, &raw); err != nil {
+						slog.Error("failed to publish raw payload", "payload", fmt.Sprintf("%v", raw))
+						return fmt.Errorf("failed to publish raw payload %w", err)
+					}
 
 					// Remove from tracking
 					delete(tracked, filePath)
+
+					// Delete file from filesystem
+					if err := os.Remove(filePath); err != nil {
+						return fmt.Errorf("failed to delete file: %w", err)
+					}
 				}
 			}
-
 		case <-ctx.Done():
 			return ctx.Err()
 		}
