@@ -50,3 +50,5 @@ secrets.yml
 
 go.work
 go.work.sum
+
+main
