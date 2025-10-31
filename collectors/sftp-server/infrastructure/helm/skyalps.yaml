@@ -1,19 +1,19 @@
 image:
-  repository: ghcr.io/noi-techpark/opendatahub-collectors/dc-mqtt-client
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/dc-sftp-server
   pullPolicy: IfNotPresent
-  tag: "latest" # Set this when upgrading chart with --set-value
+  tag: "latest"
 
 env:
   LOG_LEVEL: INFO
-  MQTT_CLIENTID: airQuinoRaw
-  MQTT_TOPIC: AirQuino/RawData
-  MQTT_USER: airQuino
-  MQ_CLIENT: dc-mqtt-client-env-a22
+  MQ_CLIENT: dc-sftp-server-skyalps
   MQ_EXCHANGE: ingress
-  PROVIDER: a22/environment
+  PROVIDER: sftp-server/skyalps
+  SFTP_USER: 'skyalps'
+
 envSecret:
-  MQTT_PASS:
-  MQTT_URI:
+  SFTP_PASS: '********'
+  SSH_KEY_ED25519: '*****'
+  SSH_KEY_RSA: '*****'
 envSecretRef:
   - name: MQ_URI 
     secret: rabbitmq-svcbind

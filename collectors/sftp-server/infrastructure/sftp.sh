@@ -21,13 +21,20 @@ if [ ! -d /home/sftp ]; then
     chown root:root "/home/sftp"
     chmod 755 "/home/sftp"
     chown "$uid":users "/home/sftp/upload"
-
 fi
 
+# set password
 echo "$user:$pass" | chpasswd
 
+# read host keys from env
+# NOTE: the keys have to be a single line, with literal \n encoding the newlines.
+echo $SSH_KEY_ED25519 | sed 's/\\n/\n/g' > /etc/ssh/ssh_host_ed25519_key
+echo $SSH_KEY_RSA | sed 's/\\n/\n/g' > /etc/ssh/ssh_host_rsa_key
 chmod 600 /etc/ssh/ssh_host_ed25519_key || true
 chmod 600 /etc/ssh/ssh_host_rsa_key || true
+
+cat /etc/ssh/ssh_host_ed25519_key
+cat /etc/ssh/ssh_host_rsa_key
 
 # write sshd_config
 cat << EOF > /etc/sshd_config
