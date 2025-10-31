@@ -21,9 +21,9 @@ import (
 
 var env struct {
 	dc.Env
-	WATCH_DIR         string `envDefault:"/data"`
-	STABILITY_SECONDS int    `envDefault:"5"`
-	CHECK_INTERVAL    int    `envDefault:"1"`
+	WATCH_DIR         string `default:"/home/sftp/upload"`
+	STABILITY_SECONDS int    `default:"5"`
+	CHECK_INTERVAL    int    `default:"1"`
 }
 
 type File struct {

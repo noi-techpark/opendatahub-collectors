@@ -3,23 +3,49 @@
 # SPDX-License-Identifier: CC0-1.0
 
 services:
-  sftp:
-    # https://hub.docker.com/r/atmoz/sftp/
-    image: atmoz/sftp:alpine
-    env_file: .env
-    volumes: 
-      - ${SHARED_DIR}/home:/home
-        # create ssh keys:
-        # ssh-keygen -t ed25519 -f ssh_host_ed25519_key < /dev/null
-        # ssh-keygen -t rsa -b 4096 -f ssh_host_rsa_key < /dev/null
+  # app:
+  #   # https://hub.docker.com/r/atmoz/sftp/
+  #   image: atmoz/sftp:alpine
+  #   env_file: .env
+  #   volumes: 
+  #     - ${SHARED_DIR}/home:/home
+  #       # create ssh keys:
+  #       # ssh-keygen -t ed25519 -f ssh_host_ed25519_key < /dev/null
+  #       # ssh-keygen -t rsa -b 4096 -f ssh_host_rsa_key < /dev/null
+  #     - ${SHARED_DIR}/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key
+  #     - ${SHARED_DIR}/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key
+  #     - ${SHARED_DIR}/sshd_config:/etc/ssh/sshd_config:ro
+  #   ports:
+  #     - ${SERVER_PORT}:22
+  #   ulimits:
+  #     nofile:
+  #       soft: 65536
+  #       hard: 65536
+
+  app:
+    build:
+      dockerfile: infrastructure/docker/Dockerfile
+      context: . 
+      target: dev
+    depends_on:
+      - rabbitmq
+    ports:
+     - ${SERVER_PORT}:22
+    env_file:
+      - .env
+    volumes:
+      - ./src:/code
       - ${SHARED_DIR}/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key
       - ${SHARED_DIR}/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key
-      - ${SHARED_DIR}/sshd_config:/etc/ssh/sshd_config:ro
-    ports:
-      - ${SERVER_PORT}:22
-    ulimits:
-      nofile:
-        soft: 65536
-        hard: 65536
+      - pkg:/go/pkg/mod
+    working_dir: /code
 
+  rabbitmq:
+    extends:
+      file: ../lib/docker-compose/docker-compose.rabbitmq.yml
+      service: rabbitmq
+    attach: false
+
+volumes:
+  pkg:
 

@@ -1,3 +1,4 @@
+#!/bin/bash
 # SPDX-FileCopyrightText: 2025 NOI Techpark <digital@noi.bz.it>
 # SPDX-License-Identifier: CC0-1.0
 #
@@ -11,15 +12,19 @@ set -Eeo pipefail
 user=$SFTP_USER
 pass=$SFTP_PASS
 
-useradd --no-user-group "$user"
-echo "$user:$pass" | chpasswd
-uid="$(id -u "$user")"
+if [ ! -d /home/sftp ]; then
+    useradd -m -d /home/sftp --no-user-group "$user"
+    uid="$(id -u "$user")"
 
-# create user directories
-mkdir -p "/home/sftp/upload"
-chown root:root "/home/sftp"
-chmod 755 "/home/sftp"
-chown "$uid":users "/home/sftp/upload"
+    # create user directories
+    mkdir -p "/home/sftp/upload"
+    chown root:root "/home/sftp"
+    chmod 755 "/home/sftp"
+    chown "$uid":users "/home/sftp/upload"
+
+fi
+
+echo "$user:$pass" | chpasswd
 
 chmod 600 /etc/ssh/ssh_host_ed25519_key || true
 chmod 600 /etc/ssh/ssh_host_rsa_key || true
@@ -37,8 +42,10 @@ Subsystem sftp internal-sftp
 ForceCommand internal-sftp
 ChrootDirectory %h
 HostKeyAlgorithms +ssh-rsa
+PasswordAuthentication yes
 EOF
 
 # start SSHD daemon
-exec /usr/sbin/sshd -e 
+/usr/sbin/sshd -e 
+
 
