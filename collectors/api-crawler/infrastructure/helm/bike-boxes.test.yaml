@@ -8,7 +8,7 @@ env:
   MQ_CLIENT: dc-api-crawler-bike-boxes
   PROVIDER: api-crawler/bike-boxes
 
-  CRON: "0 10 * * * *"
+  CRON: "0 0/10 * * * *"
   CONFIG_PATH: "/config/config.yaml"
 
   SERVICE_NAME: dc-api-crawler-bike-boxes
