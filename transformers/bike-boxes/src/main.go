@@ -166,13 +166,19 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[BikeBoxRawD
 		"stations", len(bikeStations),
 		"bays", len(bayStations))
 
-	bdp.SyncStations(StationTypeLocation, locationStations, true, false)
-	bdp.SyncStations(StationTypeStation, bikeStations, true, false)
-	bdp.SyncStations(StationTypeBay, bayStations, true, false)
+	err := bdp.SyncStations(StationTypeLocation, locationStations, true, false)
+	ms.FailOnError(ctx, err, "failed to push StationTypeLocation")
+	err = bdp.SyncStations(StationTypeStation, bikeStations, true, false)
+	ms.FailOnError(ctx, err, "failed to push StationTypeStation")
+	err = bdp.SyncStations(StationTypeBay, bayStations, true, false)
+	ms.FailOnError(ctx, err, "failed to push StationTypeBay")
 
-	bdp.PushData(StationTypeLocation, locationDataMap)
-	bdp.PushData(StationTypeStation, stationDataMap)
-	bdp.PushData(StationTypeBay, bayDataMap)
+	err = bdp.PushData(StationTypeLocation, locationDataMap)
+	ms.FailOnError(ctx, err, "failed to push StationTypeLocation records")
+	err = bdp.PushData(StationTypeStation, stationDataMap)
+	ms.FailOnError(ctx, err, "failed to push StationTypeStation records")
+	err = bdp.PushData(StationTypeBay, bayDataMap)
+	ms.FailOnError(ctx, err, "failed to push StationTypeBay records")
 
 	slog.Info("Bike boxes data transformation completed successfully")
 

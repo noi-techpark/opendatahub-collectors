@@ -5,8 +5,6 @@ auth:
     type: oauth
     method: client_credentials
     tokenUrl: "https://sta.api.weelo.it/connect/token"
-    clientId: "stapro.bicincitta"
-    clientSecret: "f8bebcf6-d9bb-35e2-8a45-5801769ac460"
 
 headers:
     Accept: application/json
