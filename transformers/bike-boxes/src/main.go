@@ -7,11 +7,9 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"log/slog"
 	"strconv"
 
-	"github.com/joho/godotenv"
 	"github.com/noi-techpark/go-bdp-client/bdplib"
 	ms "github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
@@ -20,9 +18,9 @@ import (
 )
 
 const (
-	StationTypeLocation = "BikeBoxLocation"
-	StationTypeStation  = "BikeBoxStation"
-	StationTypeBay      = "BikeBoxBay"
+	StationTypeLocation = "BikeParkingLocation"
+	StationTypeStation  = "BikeParking"
+	StationTypeBay      = "BikeParkingBay"
 )
 
 const (
@@ -35,14 +33,6 @@ const (
 var env tr.Env
 
 func main() {
-	err := godotenv.Load("../.env")
-	if err != nil {
-		err = godotenv.Load(".env")
-		if err != nil {
-			log.Fatal("Error loading .env file:", err)
-		}
-	}
-
 	ms.InitWithEnv(context.Background(), "", &env)
 	slog.Info("Starting data (bike boxes) transformer...")
 
@@ -50,7 +40,8 @@ func main() {
 	defer tel.FlushOnPanic()
 
 	slog.Info("Syncing data types on startup")
-	syncDataTypes(b)
+	err := syncDataTypes(b)
+	ms.FailOnError(context.Background(), err, "failed to sync types")
 
 	slog.Info("Starting transformer listener...")
 
@@ -81,48 +72,78 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[BikeBoxRawD
 
 	ts := payload.Timestamp.UnixMilli()
 
-	for _, locationData := range payload.Rawdata.Locations {
+	findByLocationId := func(locations []BikeLocation, id int) *BikeLocation {
+		for _, l := range locations {
+			if l.LocationID == id {
+				return &l
+			}
+		}
+		return nil
+	}
+
+	findStationById := func(stations []BikeLocationStation, id int) *BikeLocationStation {
+		for _, l := range stations {
+			if l.StationID == id {
+				return &l
+			}
+		}
+		return nil
+	}
+
+	for _, locationData := range payload.Rawdata.It {
 		slog.Debug("Processing location", "locationID", locationData.LocationID, "name", locationData.Name)
 
 		locationStation := createLocationStation(bdp, locationData)
-		locationStations = append(locationStations, locationStation)
+		locationEn := findByLocationId(payload.Rawdata.En, locationData.LocationID)
+		locationDe := findByLocationId(payload.Rawdata.De, locationData.LocationID)
+		locationLld := findByLocationId(payload.Rawdata.Lld, locationData.LocationID)
 
-		var locationFreeTotal int
+		// add translations
+		locationStation.MetaData["names"] = map[string]any{
+			"it":  locationData.Name,
+			"de":  locationDe.Name,
+			"en":  locationEn.Name,
+			"lld": locationLld.Name,
+		}
+
+		var locationFreeTotal, totalLocationPlaces int
 		var locationLatSum, locationLonSum float64
 		var stationCount int
 
 		for _, stationData := range locationData.Stations {
 			slog.Debug("Processing station", "stationID", stationData.StationID, "name", stationData.Name)
 
-			fullStationData := BikeStation{
-				StationID:                              stationData.StationID,
-				LocationID:                             locationData.LocationID,
-				Name:                                   stationData.Name,
-				Type:                                   stationData.Type,
-				Latitude:                               0,             
-				Longitude:                              0,             
-				State:                                  1,             
-				CountFreePlacesAvailable:               0,            
-				CountFreePlacesAvailable_MuscularBikes: 0,            
-				CountFreePlacesAvailable_AssistedBikes: 0,             
-				TotalPlaces:                            0,             
-				Places:                                 []BikePlace{}, 
-				TranslatedNames:                        make(map[string]string),
-				Addresses:                              make(map[string]string),
+			station := createBikeStation(bdp, stationData, locationStation)
+			stationEn := findStationById(locationEn.Stations, stationData.StationID)
+			stationDe := findStationById(locationDe.Stations, stationData.StationID)
+			stationLld := findStationById(locationLld.Stations, stationData.StationID)
+
+			// add names and addresses
+			station.MetaData["names"] = map[string]any{
+				"it":  stationData.Name,
+				"de":  stationDe.Name,
+				"en":  stationEn.Name,
+				"lld": stationLld.Name,
+			}
+			station.MetaData["addresses"] = map[string]any{
+				"it":  stationData.Address,
+				"de":  stationDe.Address,
+				"en":  stationEn.Address,
+				"lld": stationLld.Address,
 			}
 
-			station := createBikeStation(bdp, fullStationData, locationStation.Id)
 			bikeStations = append(bikeStations, station)
 
-			addStationMeasurements(stationDataMap, station.Id, fullStationData, ts)
+			addStationMeasurements(stationDataMap, station.Id, stationData, ts)
 
-			locationFreeTotal += fullStationData.CountFreePlacesAvailable
-			locationLatSum += fullStationData.Latitude
-			locationLonSum += fullStationData.Longitude
+			totalLocationPlaces += stationData.TotalPlaces
+			locationFreeTotal += stationData.CountFreePlacesAvailable
+			locationLatSum += stationData.Latitude
+			locationLonSum += stationData.Longitude
 			stationCount++
 
-			for _, place := range fullStationData.Places {
-				bay := createBayStation(bdp, place, fullStationData, station.Id)
+			for _, place := range stationData.Places {
+				bay := createBayStation(bdp, place, station, locationStation)
 				bayStations = append(bayStations, bay)
 
 				addBayMeasurements(bayDataMap, bay.Id, place, ts)
@@ -133,6 +154,9 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[BikeBoxRawD
 			locationStation.Latitude = locationLatSum / float64(stationCount)
 			locationStation.Longitude = locationLonSum / float64(stationCount)
 		}
+
+		locationStation.MetaData["totalPlaces"] = totalLocationPlaces
+		locationStations = append(locationStations, locationStation)
 
 		locationDataMap.AddRecord(locationStation.Id, DataTypeFree, bdplib.CreateRecord(ts, locationFreeTotal, 600))
 	}
@@ -167,8 +191,6 @@ func createLocationStation(bdp bdplib.Bdp, locationData BikeLocation) bdplib.Sta
 	)
 
 	metadata := make(map[string]interface{})
-	metadata["locationID"] = locationData.LocationID
-	metadata["names"] = locationData.TranslatedLocationNames
 	metadata["totalStations"] = len(locationData.Stations)
 
 	station.MetaData = metadata
@@ -176,28 +198,25 @@ func createLocationStation(bdp bdplib.Bdp, locationData BikeLocation) bdplib.Sta
 	return station
 }
 
-func createBikeStation(bdp bdplib.Bdp, stationData BikeStation, parentStationID string) bdplib.Station {
+func createBikeStation(bdp bdplib.Bdp, stationData BikeLocationStation, parentStation bdplib.Station) bdplib.Station {
 	stationID := strconv.Itoa(stationData.StationID)
 
 	station := bdplib.CreateStation(
 		stationID,
-		stationData.Name,
+		fmt.Sprintf("%s / %s", parentStation.Name, stationData.Name),
 		StationTypeStation,
 		stationData.Latitude,
 		stationData.Longitude,
 		bdp.GetOrigin(),
 	)
 
-	station.ParentStation = parentStationID
+	station.ParentStation = parentStation.Id
 
 	metadata := make(map[string]interface{})
 	metadata["stationID"] = stationData.StationID
 	metadata["locationID"] = stationData.LocationID
 	metadata["type"] = mapBikeStationType(stationData.Type)
 	metadata["totalPlaces"] = stationData.TotalPlaces
-	metadata["names"] = stationData.TranslatedNames
-	metadata["addresses"] = stationData.Addresses
-	metadata["state"] = mapBikeStationState(stationData.State)
 
 	var placesMetadata []map[string]interface{}
 	for _, place := range stationData.Places {
@@ -208,7 +227,7 @@ func createBikeStation(bdp bdplib.Bdp, stationData BikeStation, parentStationID 
 		}
 		placesMetadata = append(placesMetadata, placeMetadata)
 	}
-	metadata["places"] = placesMetadata
+	metadata["stationPlaces"] = placesMetadata
 
 	metadata["netex_parking"] = map[string]interface{}{
 		"type":              "other",
@@ -224,32 +243,33 @@ func createBikeStation(bdp bdplib.Bdp, stationData BikeStation, parentStationID 
 	return station
 }
 
-func createBayStation(bdp bdplib.Bdp, place BikePlace, stationData BikeStation, parentStationID string) bdplib.Station {
-	bayID := fmt.Sprintf("%s_%d", parentStationID, place.Position)
-	bayName := fmt.Sprintf("%s / Bay %d", stationData.Name, place.Position)
+func createBayStation(bdp bdplib.Bdp, place BikePlace, station, locationStation bdplib.Station) bdplib.Station {
+	bayID := fmt.Sprintf("%s_%s/%d", station.Id, station.Id, place.Position)
+
+	// station.Name already is "locationname  / stationname"
+	bayName := fmt.Sprintf("%s / %d", station.Name, place.Position)
 
 	bay := bdplib.CreateStation(
 		bayID,
 		bayName,
 		StationTypeBay,
-		stationData.Latitude,
-		stationData.Longitude,
+		station.Latitude,
+		station.Longitude,
 		bdp.GetOrigin(),
 	)
 
-	bay.ParentStation = parentStationID
+	bay.ParentStation = station.Id
 
 	metadata := make(map[string]interface{})
 	metadata["position"] = place.Position
 	metadata["type"] = mapBikeStationBayType(place.Type)
 	metadata["level"] = place.Level
-	metadata["stationID"] = stationData.StationID
 
 	bay.MetaData = metadata
 	return bay
 }
 
-func addStationMeasurements(dataMap bdplib.DataMap, stationID string, stationData BikeStation, timestamp int64) {
+func addStationMeasurements(dataMap bdplib.DataMap, stationID string, stationData BikeLocationStation, timestamp int64) {
 	dataMap.AddRecord(stationID, DataTypeUsageState, bdplib.CreateRecord(timestamp, mapBikeStationState(stationData.State), 600))
 
 	dataMap.AddRecord(stationID, DataTypeFree, bdplib.CreateRecord(timestamp, stationData.CountFreePlacesAvailable, 600))
@@ -309,18 +329,18 @@ func mapBayUsageState(state int) string {
 	}
 }
 
-func syncDataTypes(bdp bdplib.Bdp) {
+func syncDataTypes(bdp bdplib.Bdp) error {
 	var dataTypes []bdplib.DataType
 
 	dataTypes = append(dataTypes, bdplib.CreateDataType(
-		DataTypeUsageState, "state", "Usage state of the bike box", "Instantaneous"))
+		DataTypeUsageState, "state", "Usage state", "Instantaneous"))
 	dataTypes = append(dataTypes, bdplib.CreateDataType(
 		DataTypeFree, "count", "Free parking spots", "Instantaneous"))
 	dataTypes = append(dataTypes, bdplib.CreateDataType(
-		DataTypeFreeRegularBikes, "count", "Free parking spots for regular bikes", "Instantaneous"))
+		DataTypeFreeRegularBikes, "count", "Free parking spots (regular bikes)", "Instantaneous"))
 	dataTypes = append(dataTypes, bdplib.CreateDataType(
-		DataTypeFreeElectricBikes, "count", "Free parking spots for electric bikes", "Instantaneous"))
+		DataTypeFreeElectricBikes, "count", "Free parking spots (electric bikes)", "Instantaneous"))
 
 	// syncing datatypes for all stations, correct? or should do one by one and how?
-	bdp.SyncDataTypes(dataTypes)
+	return bdp.SyncDataTypes(dataTypes)
 }

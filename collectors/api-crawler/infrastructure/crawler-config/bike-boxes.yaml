@@ -1,5 +1,5 @@
-rootContext: []
-stream: true
+rootContext: {}
+stream: false
 
 auth:
     type: oauth
@@ -13,157 +13,74 @@ headers:
     Content-Type: application/json
 
 steps:
+    - type: forEach
+      name: "Fetch translations for all locations"
+      values: ["en", "de", "lld"]
+      path: .translations
+      as: language
+      steps:
+        - type: request
+          name: "Get locations in language"
+          as: locations
+          request:
+              url: "https://sta.api.weelo.it/resources/locations?languageID={{ .language.value }}"
+              method: GET
+
+          mergeWithParentOn: .[$ctx.language.value] = $res
+
+          steps:
+            - type: forEach
+              name: "Get stations details"
+              path: .
+              as: location
+              steps:
+                - type: request
+                  name: "Get Stations"
+                  request:
+                      url: "https://sta.api.weelo.it/resources/stations?languageID={{ .language.value }}&locationId={{ .location.locationID }}"
+                      method: GET
+                  
+                  mergeOn: .stations = $res
+                  resultTransformer: | 
+                    [{
+                      address: .[].address, 
+                      locationName: .[].locationName, 
+                      name: .[].name, 
+                      stationID: .[].stationID
+                    }]
+
     - type: request
       name: "Get all locations"
       request:
           url: "https://sta.api.weelo.it/resources/locations?languageID=it"
           method: GET
-      resultTransformer: |
-          .
 
-    - type: forEach
-      name: "Fetch translations for all locations"
-      values: ["en", "de", "lld"]
-      path: .
-      as: language
+      mergeOn: .it = $res
+
       steps:
-          - type: request
-            name: "Get locations in language"
-            request:
-                url: "https://sta.api.weelo.it/resources/locations?languageID={{ .language.value }}"
-                method: GET
-            resultTransformer: |
-                . as $translations |
-                {
-                  language: "{{ .language.value }}",
-                  locations: $translations
-                }
-            
-            mergeOn: |
-              if .allTranslations then
-                .allTranslations += [$res]
-              else
-                .allTranslations = [$res]
-              end
-
-    - type: forEach
-      name: "Enrich each location with translations"
-      path: .
-      as: location
-      steps:
-          - type: request
-            name: "Build location with translations"
-            request:
-                url: "data:application/json,{}"
-                method: GET
-            resultTransformer: |
-                .location as $loc |
-                ($parent.allTranslations // []) as $allTrans |
-                ($allTrans | map(.locations[] | select(.locationID == $loc.locationID)) | group_by(.locationID) | .[0]) as $locVersions |
-                
-                ($locVersions | reduce .[] as $item ({}; .[$item.language // "it"] = $item.name)) as $names |
-                
-                {
-                  locationID: $loc.locationID,
-                  name: $loc.name,
-                  translatedNames: $names,
-                  stations: ($loc.stations // [])
-                }
-            
-            mergeOn: .processedLocation = $res
-
-          - type: forEach
-            name: "Process stations"
-            path: .processedLocation.stations
-            as: station
-            steps:
+        - type: forEach
+          name: "Get stations details"
+          path: .
+          as: location
+          steps:
+            - type: request
+              name: "Get Stations"
+              request:
+                  url: "https://sta.api.weelo.it/resources/stations?languageID=it&locationId={{ .location.locationID }}"
+                  method: GET
+              
+              mergeOn: .stations = $res
+              
+              steps:
                 - type: forEach
-                  name: "Fetch station translations"
-                  values: ["en", "de", "lld"]
+                  name: "Get single station places"
                   path: .
-                  as: stationLanguage
+                  as: station
                   steps:
-                      - type: request
-                        name: "Get station details"
-                        request:
-                            url: "https://sta.api.weelo.it/resources/station?languageID={{ .stationLanguage.value }}&stationID={{ .station.stationID }}"
-                            method: GET
-                        resultTransformer: |
-                            . as $stationData |
-                            {
-                              language: "{{ .stationLanguage.value }}",
-                              stationData: $stationData
-                            }
-
-                        mergeWithContext:
-                          name: station
-                          rule: |
-                            if .stationTranslations then
-                              .stationTranslations += [$res]
-                            else
-                              .stationTranslations = [$res]
-                            end
-
-                - type: request
-                  name: "Finalize station"
-                  request:
-                      url: "data:application/json,{}"
-                      method: GET
-                  resultTransformer: |
-                      .station as $station |
-                      (.stationTranslations // []) as $allTranslations |
+                    - type: request
+                      name: "Get Station"
+                      request:
+                          url: "https://sta.api.weelo.it/resources/station?languageID=it&stationID={{ .station.stationID }}"
+                          method: GET
                       
-                      ($allTranslations | map(select(.language == "it")) | first | .stationData) as $default |
-                      
-                      ($allTranslations | reduce .[] as $t ({}; .[$t.language // "unknown"] = $t.stationData.name)) as $nameMap |
-                      ($allTranslations | reduce .[] as $t ({}; .[$t.language // "unknown"] = $t.stationData.address)) as $addressMap |
-                      
-                      {
-                        stationID: $default.stationID,
-                        locationID: $default.locationID,
-                        name: $default.name,
-                        translatedNames: $nameMap,
-                        address: $default.address,
-                        translatedAddresses: $addressMap,
-                        latitude: $default.latitude,
-                        longitude: $default.longitude,
-                        type: (if $default.type == 4 then "veloHub" elif $default.type == 5 then "bikeBoxGroup" else "unknown" end),
-                        state: $default.state,
-                        countFreePlacesAvailable_MuscularBikes: $default.countFreePlacesAvailable_MuscularBikes,
-                        countFreePlacesAvailable_AssistedBikes: $default.countFreePlacesAvailable_AssistedBikes,
-                        countFreePlacesAvailable: $default.countFreePlacesAvailable,
-                        totalPlaces: $default.totalPlaces,
-                        places: ($default.places // [])
-                      }
-
-                  mergeWithContext:
-                    name: location
-                    rule: |
-                      if .stations then
-                        .stations += [$res]
-                      else
-                        .stations = [$res]
-                      end
-
-          - type: request
-            name: "Output final location"
-            request:
-                url: "data:application/json,{}"
-                method: GET
-            resultTransformer: |
-                .processedLocation as $loc |
-                (.stations // []) as $stationDetails |
-                
-                {
-                  locationID: $loc.locationID,
-                  name: $loc.name,
-                  translatedNames: $loc.translatedNames,
-                  latitude: (if ($stationDetails | length) > 0 then ($stationDetails | map(.latitude) | add / ($stationDetails | length)) else 0 end),
-                  longitude: (if ($stationDetails | length) > 0 then ($stationDetails | map(.longitude) | add / ($stationDetails | length)) else 0 end),
-                  totalPlaces: ($stationDetails | map(.totalPlaces) | add // 0),
-                  freeSpaces: ($stationDetails | map(.countFreePlacesAvailable) | add // 0),
-                  stationCount: ($stationDetails | length),
-                  stations: $stationDetails
-                }
-
-            mergeOn: $res
+                      mergeOn: .places = $res.places
