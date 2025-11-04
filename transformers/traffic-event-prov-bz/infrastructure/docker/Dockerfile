@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-FROM golang:1.23-bookworm as base
+FROM golang:1.24-bookworm as base
 
 FROM base as build-env
 WORKDIR /app
@@ -28,4 +28,4 @@ FROM base as test
 WORKDIR /code
 COPY src/. .
 COPY resources/. ./resources
-CMD ["go", "test", "."]
+CMD ["go", "test", "./..."]
