@@ -61,10 +61,7 @@ jobs:
           yq -i '
             .image.repository="${{ env.DOCKER_IMAGE }}" |
             .image.tag="${{ env.DOCKER_TAG }}" |
-            .image.pullPolicy="IfNotPresent" |
-
-            .env.BDP_PROVENANCE_NAME="${{ env.PROJECT_NAME }}" |
-            .env.BDP_PROVENANCE_VERSION="${{ github.sha}}"
+            .image.pullPolicy="IfNotPresent" 
           ' ${{ env.VALUES_YAML }}
 
           yq -i '.envSecret.ODH_CORE_TOKEN_CLIENT_ID = "${{ secrets.CONTENT_TRAFFIC_EVENT_PROV_BZ_CLIENT_ID }}"' ${{ env.VALUES_YAML }}
