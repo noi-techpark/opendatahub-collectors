@@ -3,11 +3,12 @@ module opendatahub.com/tr-bike-boxes
 go 1.24.1
 
 require (
-	github.com/noi-techpark/go-bdp-client v1.3.1
+	github.com/noi-techpark/go-bdp-client v1.4.0
 	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.7
 	github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0
 	github.com/noi-techpark/opendatahub-go-sdk/testsuite v1.0.1
 	github.com/stretchr/testify v1.10.0
+	gotest.tools/v3 v3.5.2
 )
 
 require (
@@ -81,5 +82,4 @@ require (
 	google.golang.org/grpc v1.71.1 // indirect
 	google.golang.org/protobuf v1.36.5 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	gotest.tools/v3 v3.5.2 // indirect
 )

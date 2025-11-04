@@ -14,7 +14,6 @@ import (
 	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"github.com/noi-techpark/go-bdp-client/bdpmock"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
-	"github.com/noi-techpark/opendatahub-go-sdk/testsuite"
 	"github.com/stretchr/testify/require"
 	"gotest.tools/v3/assert"
 	"gotest.tools/v3/assert/cmp"
@@ -205,7 +204,7 @@ func Test1(t *testing.T) {
 	err = bdpmock.LoadOutput(&out, "../testdata/out.json")
 	require.Nil(t, err)
 
-	b := bdpmock.MockFromEnv()
+	b := bdpmock.MockFromEnv(bdplib.BdpEnv{})
 
 	err = Transform(context.TODO(), b, &raw)
 	require.Nil(t, err)
@@ -213,6 +212,6 @@ func Test1(t *testing.T) {
 	mock := b.(*bdpmock.BdpMock)
 
 	req := mock.Requests()
-	testsuite.WriteOutput(req, "../testdata/out.json")
+	// testsuite.WriteOutput(req, "../testdata/out.json")
 	compareBdpMockCalls(t, out, req)
 }

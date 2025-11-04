@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"os"
 	"strconv"
 
 	"github.com/noi-techpark/go-bdp-client/bdplib"
@@ -36,7 +37,15 @@ func main() {
 	ms.InitWithEnv(context.Background(), "", &env)
 	slog.Info("Starting data (bike boxes) transformer...")
 
-	b := bdplib.FromEnv()
+	b := bdplib.FromEnv(bdplib.BdpEnv{
+		BDP_BASE_URL:           os.Getenv("BDP_BASE_URL"),
+		BDP_PROVENANCE_VERSION: os.Getenv("BDP_PROVENANCE_VERSION"),
+		BDP_PROVENANCE_NAME:    os.Getenv("BDP_PROVENANCE_NAME"),
+		BDP_ORIGIN:             os.Getenv("BDP_ORIGIN"),
+		BDP_TOKEN_URL:          os.Getenv("ODH_TOKEN_URL"),
+		BDP_CLIENT_ID:          os.Getenv("ODH_CLIENT_ID"),
+		BDP_CLIENT_SECRET:      os.Getenv("ODH_CLIENT_SECRET"),
+	})
 	defer tel.FlushOnPanic()
 
 	slog.Info("Syncing data types on startup")
