@@ -16,7 +16,7 @@ env:
 
   RAW_DATA_BRIDGE_ENDPOINT: "http://raw-data-bridge.core.svc.cluster.local:2000"
 
-  SERVICE_NAME: tr-discoverswiss-lodging
+  SERVICE_NAME: tr-traffic-event-prov-bz
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 
 envSecret:
