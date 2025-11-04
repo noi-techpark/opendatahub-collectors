@@ -13,6 +13,8 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o main
 
 # BUILD published image
 FROM alpine:latest as build
+# needs timezones for quirky localtime timestamps in JSON
+RUN apk add --no-cache tzdata
 WORKDIR /app
 COPY --from=build-env /app/main .
 COPY --from=build-env /app/resources /resources
