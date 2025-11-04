@@ -8,17 +8,22 @@ env:
   # content writer
   ODH_CORE_URL: https://api.tourism.testingmachine.eu/v1
   ODH_CORE_TOKEN_URL: https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token
-  ODH_CORE_TOKEN_CLIENT_ID: 
 
   MQ_QUEUE: tmp-traffic-event.prov-bz
   MQ_EXCHANGE: routed
   MQ_KEY: tmp-traffic-event.prov-bz
   MQ_CLIENT: tr-traffic-event-prov-bz
-  
+
+  RAW_DATA_BRIDGE_ENDPOINT: "http://raw-data-bridge.core.svc.cluster.local:2000"
+
+  SERVICE_NAME: tr-discoverswiss-lodging
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+envSecret:
+  ODH_CORE_TOKEN_CLIENT_ID: ""
+  ODH_CORE_TOKEN_CLIENT_SECRET: ""
+
 envSecretRef:
   - name: MQ_URI 
     secret: rabbitmq-svcbind
-    key: uri
-  - name: MONGO_URI
-    secret: mongodb-collector-svcbind
     key: uri
