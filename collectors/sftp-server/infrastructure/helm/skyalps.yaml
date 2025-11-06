@@ -1,7 +1,3 @@
-image:
-  repository: ghcr.io/noi-techpark/opendatahub-collectors/dc-sftp-server
-  pullPolicy: IfNotPresent
-  tag: "latest"
 
 env:
   LOG_LEVEL: INFO
@@ -14,6 +10,7 @@ envSecret:
   SFTP_PASS: '********'
   SSH_KEY_ED25519: '*****'
   SSH_KEY_RSA: '*****'
+
 envSecretRef:
   - name: MQ_URI 
     secret: rabbitmq-svcbind
