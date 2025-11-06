@@ -5,9 +5,6 @@ metadata:
   labels:
     {{- include "sftp-server.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
-  {{- end }}
   selector:
     matchLabels:
       {{- include "sftp-server.selectorLabels" . | nindent 6 }}
@@ -44,7 +41,7 @@ spec:
             - name: {{ $k | quote }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "generic-collector.envSecretName" $ }}
+                  name: {{ include "sftp-server.envSecretName" $ }}
                   key: {{ $k | quote }}
             {{- end }}
             {{- range $secret := .Values.envSecretRef }}
