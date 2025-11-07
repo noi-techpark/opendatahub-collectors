@@ -48,6 +48,10 @@ jobs:
           yq -i '.image.tag="${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
           yq -i '.image.pullPolicy="IfNotPresent"' ${{ env.VALUES_YAML }}
 
+          yq -i '.env.SFTP_PASS="${{secrets.SFTP_SKYALPS_PASSWORD}}"' ${{ env.VALUES_YAML }}
+          yq -i '.env.SSH_KEY_ED25519="${{secrets.SFTP_SKYALPS_PRIVATE_KEY_ED25519}}"' ${{ env.VALUES_YAML }}
+          yq -i '.env.SSH_KEY_RSA="${{secrets.SFTP_SKYALPS_PRIVATE_KEY_RSA}}"' ${{ env.VALUES_YAML }}
+
       - name: Deploy on cluster  
         uses: noi-techpark/github-actions/helm-deploy@v2
         with:
