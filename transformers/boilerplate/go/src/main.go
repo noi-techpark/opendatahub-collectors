@@ -15,7 +15,10 @@ import (
 	"github.com/noi-techpark/opendatahub-go-sdk/tel"
 )
 
-var env tr.Env
+var env struct {
+	tr.Env
+	bdplib.BdpEnv
+}
 
 // Create your own datatype for unmarshalling the Raw Data
 type RawType struct {
@@ -33,11 +36,11 @@ func main() {
 
 	defer tel.FlushOnPanic()
 
-	b := bdplib.FromEnv()
+	b := bdplib.FromEnv(env.BdpEnv)
 
 	b.SyncDataTypes([]bdplib.DataType{datatype})
 
-	listener := tr.NewTr[RawType](context.Background(), env)
+	listener := tr.NewTr[RawType](context.Background(), env.Env)
 	err := listener.Start(context.Background(), func(ctx context.Context, r *rdb.Raw[RawType]) error {
 		err := b.SyncStations(STATIONTYPE, []bdplib.Station{}, true, false)
 		if err != nil {
