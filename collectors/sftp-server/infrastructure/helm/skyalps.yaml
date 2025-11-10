@@ -5,6 +5,8 @@ env:
   MQ_EXCHANGE: ingress
   PROVIDER: sftp-server/skyalps
   SFTP_USER: 'skyalps'
+  SERVICE_NAME: dc-sftp-server-skyalps
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 
 envSecret:
   SFTP_PASS: '********'
