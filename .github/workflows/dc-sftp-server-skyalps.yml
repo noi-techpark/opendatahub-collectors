@@ -43,14 +43,18 @@ jobs:
 
       - name: Customize values.yaml
         working-directory: ${{ env.WORKING_DIRECTORY }}
+        env: 
+          # must be passed this way + strenv, else the special characters within the secret are interpreted
+          SSH_KEY_ED25519: ${{secrets.SFTP_SKYALPS_PRIVATE_KEY_ED25519}}
+          SSH_KEY_RSA: ${{secrets.SFTP_SKYALPS_PRIVATE_KEY_RSA}}
         run: |
           yq -i '.image.repository="${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML}}
           yq -i '.image.tag="${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
           yq -i '.image.pullPolicy="IfNotPresent"' ${{ env.VALUES_YAML }}
 
           yq -i '.envSecret.SFTP_PASS="${{secrets.SFTP_SKYALPS_PASSWORD}}"' ${{ env.VALUES_YAML }}
-          yq -i '.envSecret.SSH_KEY_ED25519="${{secrets.SFTP_SKYALPS_PRIVATE_KEY_ED25519}}"' ${{ env.VALUES_YAML }}
-          yq -i '.envSecret.SSH_KEY_RSA="${{secrets.SFTP_SKYALPS_PRIVATE_KEY_RSA}}"' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.SSH_KEY_ED25519 = strenv(SSH_KEY_ED25519)' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.SSH_KEY_RSA = strenv(SSH_KEY_RSA)' ${{ env.VALUES_YAML }}
 
       - name: Deploy on cluster  
         uses: noi-techpark/github-actions/helm-deploy@v2
