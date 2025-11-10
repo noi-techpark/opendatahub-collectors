@@ -34,7 +34,7 @@ chmod 600 /etc/ssh/ssh_host_ed25519_key || true
 chmod 600 /etc/ssh/ssh_host_rsa_key || true
 
 # write sshd_config
-cat << EOF > /etc/sshd_config
+cat << EOF > /etc/ssh/sshd_config
 Protocol 2
 HostKey /etc/ssh/ssh_host_ed25519_key
 HostKey /etc/ssh/ssh_host_rsa_key
