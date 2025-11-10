@@ -1,0 +1,30 @@
+# SPDX-FileCopyrightText: 2025 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+services:
+  app:
+    build:
+      dockerfile: infrastructure/docker/Dockerfile
+      context: . 
+      target: dev
+    depends_on:
+      - rabbitmq
+    ports:
+     - ${SERVER_PORT}:22
+    env_file:
+      - .env
+    volumes:
+      - ./src:/code
+      - pkg:/go/pkg/mod
+    working_dir: /code
+
+  rabbitmq:
+    extends:
+      file: ../lib/docker-compose/docker-compose.rabbitmq.yml
+      service: rabbitmq
+    attach: false
+
+volumes:
+  pkg:
+

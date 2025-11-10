@@ -1,0 +1,19 @@
+
+env:
+  LOG_LEVEL: INFO
+  MQ_CLIENT: dc-sftp-server-skyalps
+  MQ_EXCHANGE: ingress
+  PROVIDER: sftp-server/skyalps
+  SFTP_USER: 'skyalps'
+  SERVICE_NAME: dc-sftp-server-skyalps
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+envSecret:
+  SFTP_PASS: '********'
+  SSH_KEY_ED25519: '*****'
+  SSH_KEY_RSA: '*****'
+
+envSecretRef:
+  - name: MQ_URI 
+    secret: rabbitmq-svcbind
+    key: uri
