@@ -33,9 +33,6 @@ echo $SSH_KEY_RSA | sed 's/\\n/\n/g' > /etc/ssh/ssh_host_rsa_key
 chmod 600 /etc/ssh/ssh_host_ed25519_key || true
 chmod 600 /etc/ssh/ssh_host_rsa_key || true
 
-cat /etc/ssh/ssh_host_ed25519_key
-cat /etc/ssh/ssh_host_rsa_key
-
 # write sshd_config
 cat << EOF > /etc/sshd_config
 Protocol 2
