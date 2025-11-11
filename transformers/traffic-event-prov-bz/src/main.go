@@ -71,7 +71,7 @@ func syncTags(ctx context.Context, contentClient *odhContentClient.ContentClient
 				License:    StringPtr("CC0"),
 			},
 		})
-		if err != nil {
+		if err != nil && !errors.Is(err, odhContentClient.ErrAlreadyExists) {
 			return err
 		}
 	}
