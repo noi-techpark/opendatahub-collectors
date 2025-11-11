@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -24,6 +25,13 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"
+)
+
+var (
+	ErrUnauthorized   = errors.New("unauthorized")
+	ErrAlreadyExists  = errors.New("data exists already")
+	ErrNoDataToUpdate = errors.New("data to update not found")
+	ErrNoData         = errors.New("no data")
 )
 
 // --- Custom Error Handling Structures ---
@@ -224,6 +232,12 @@ func (c *ContentClient) doRequest(ctx context.Context, method string, reqURL str
 		return nil, fmt.Errorf("error during http request: %w", err)
 	}
 
+	if resp.StatusCode == 401 || resp.StatusCode == 403 {
+		clientSpan.SetAttributes(attribute.Int("http.status_code", resp.StatusCode))
+		clientSpan.SetStatus(codes.Error, "unauthorized")
+		return nil, ErrUnauthorized
+	}
+
 	// Handle non-2xx status codes (HTTP-level errors)
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		// Read the body for error message
@@ -233,6 +247,24 @@ func (c *ContentClient) doRequest(ctx context.Context, method string, reqURL str
 			clientSpan.RecordError(readErr)
 			clientSpan.SetStatus(codes.Error, "failed to read error response body")
 			return nil, fmt.Errorf("API call failed (Status: %d) but failed to read response body: %w", resp.StatusCode, readErr)
+		}
+
+		// 400 string special handling
+		bodyString := string(bodyBytes)
+		var specialErr error = nil
+		switch bodyString {
+		case "Data exists already":
+			specialErr = ErrAlreadyExists
+		case "No Data":
+			specialErr = ErrNoData
+		case "Data to update Not Found":
+			specialErr = ErrNoDataToUpdate
+		}
+		if specialErr != nil {
+			clientSpan.SetAttributes(attribute.Int("http.status_code", resp.StatusCode))
+			clientSpan.RecordError(specialErr)
+			clientSpan.SetStatus(codes.Error, fmt.Sprintf("HTTP %d error", resp.StatusCode))
+			return nil, specialErr
 		}
 
 		// Attempt to unmarshal the error body
@@ -369,12 +401,6 @@ func (c *ContentClient) Post(ctx context.Context, apiPath string, queryParams ma
 	// doRequest now handles error deserialization, so no need for nil here.
 	resp, err := c.doRequest(ctx, http.MethodPost, resourceURL.String(), payload)
 	if err != nil {
-		// Custom check for "Data exists already" error, still works if err is a custom APIError
-		// NOTE: This check is fragile and should ideally be done by checking an error code
-		// or a specific field in the APIError.
-		if err.Error() == "Data exists already" {
-			return nil
-		}
 		return err
 	}
 	defer resp.Body.Close()
