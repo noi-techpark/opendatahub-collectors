@@ -12,7 +12,7 @@ on:
 
 env:
   PROJECT_NAME: tr-parking-bvg
-  WORKING_DIRECTORY: transformers/tr-parking-bvg
+  WORKING_DIRECTORY: transformers/parking-bvg
   DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/tr-parking-bvg
   DOCKER_TAG: ${{ github.sha }}
   KUBERNETES_NAMESPACE: collector
