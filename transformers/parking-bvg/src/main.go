@@ -289,7 +289,7 @@ func parseAreaName(name string) AreaNameComponents {
 // createParkingStation now accepts a map for capacityByType
 func createParkingStation(bdp bdplib.Bdp, area CountingArea, parsed AreaNameComponents, capacity int, capacityByType map[string]int) bdplib.Station {
 	station := bdplib.CreateStation(
-		area.ID,
+		area.Name,
 		area.Name, // Use the full name as the Station name
 		StationTypeParkingStation,
 		0, 0, // No specific lat/lon in sample data, setting to 0,0
@@ -305,6 +305,7 @@ func createParkingStation(bdp bdplib.Bdp, area CountingArea, parsed AreaNameComp
 	metadata["class_categories"] = area.AppearanceParams.ClassCategories
 	metadata["vehicle_types"] = area.AppearanceParams.VehicleTypes
 	metadata["station_type_suffix"] = parsed.Typ
+	metadata["provider_id"] = area.ID
 
 	// Required capacity fields: capacity is total
 	metadata["capacity"] = capacity
@@ -321,7 +322,7 @@ func createParkingStation(bdp bdplib.Bdp, area CountingArea, parsed AreaNameComp
 
 func createParkingFacility(bdp bdplib.Bdp, siteID, facilityName string, totalCapacity int, capacityByType map[string]int) bdplib.Station {
 	station := bdplib.CreateStation(
-		siteID,
+		facilityName,
 		facilityName, // The first part of the area name
 		StationTypeParkingFacility,
 		0, 0,
@@ -332,6 +333,7 @@ func createParkingFacility(bdp bdplib.Bdp, siteID, facilityName string, totalCap
 
 	// Required capacity fields: capacity is total
 	metadata["capacity"] = totalCapacity
+	metadata["provider_id"] = siteID
 
 	// Map of capacity by type for the metadata
 	for typ, cap := range capacityByType {
