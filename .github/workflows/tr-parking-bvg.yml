@@ -7,7 +7,7 @@ name: CI/CD tr-parking-bvg
 on: 
   push:
     paths:
-      - "transformers/tr-parking-bvg/**"
+      - "transformers/parking-bvg/**"
       - ".github/workflows/tr-parking-bvg.yml"     
 
 env:
