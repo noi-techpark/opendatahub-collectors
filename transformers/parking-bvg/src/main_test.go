@@ -18,7 +18,7 @@ import (
 
 func Test1(t *testing.T) {
 	var in = CountingAreaList{}
-	err := testsuite.LoadInputData(&in, "../testdata/in.json")
+	err := testsuite.LoadInputData(&in, "testdata/in.json")
 	require.Nil(t, err)
 
 	timestamp, err := time.Parse("2006-01-02", "2025-01-01")
@@ -30,7 +30,7 @@ func Test1(t *testing.T) {
 	}
 
 	var out = bdpmock.BdpMockCalls{}
-	err = testsuite.LoadOutput(&out, "../testdata/out.json")
+	err = testsuite.LoadOutput(&out, "testdata/out.json")
 	require.Nil(t, err)
 
 	b := bdpmock.MockFromEnv(bdplib.BdpEnv{})
@@ -41,6 +41,6 @@ func Test1(t *testing.T) {
 	mock := b.(*bdpmock.BdpMock)
 
 	req := mock.Requests()
-	// testsuite.WriteOutput(req, "../testdata/out.json")
+	// testsuite.WriteOutput(req, "testdata/out.json")
 	bdpmock.CompareBdpMockCalls(t, out, req)
 }

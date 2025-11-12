@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-FROM golang:1.23.7-bookworm as base
+FROM golang:1.24.1-bookworm as base
 
 FROM base as build-env
 WORKDIR /app
@@ -23,3 +23,7 @@ FROM base as dev
 WORKDIR /code
 CMD ["go", "run", "main.go"]
 
+# TESTS
+FROM base AS test
+WORKDIR /code
+CMD ["go", "test", "./..."]
