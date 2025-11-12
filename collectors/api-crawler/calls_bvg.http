@@ -1,0 +1,36 @@
+# SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+###
+@clientId={{$dotenv OAUTH_CLIENT_ID}}
+@clientSecret={{$dotenv OAUTH_CLIENT_SECRET}}
+
+# @name altavideo
+POST https://bvg-communication-techno.eu4.alta.avigilon.com/api/v1/dologin
+Content-type: application/json
+
+{
+    "username": "{{clientId}}",
+    "password": "{{clientSecret}}"
+}
+
+###
+
+@auth_cookie = $altavideo.headers['Set-Cookie'][/(?<=\=).*?(?=;)/]
+
+###
+GET https://bvg-communication-techno.eu4.alta.avigilon.com/api/v1/countingAreas
+Cookie: session_id={{auth_cookie}}
+
+###
+
+# @name second_call
+GET https://bvg-communication-techno.eu4.alta.avigilon.com/api/v1/countingAreas/a20966dd-ac00-447b-b357-9824a8a898e7/counts?start=0001-01-01T00%3A00%3A00Z&step=0
+Cookie: session_id={{auth_cookie}}
+
+###
+
+# @name second_call
+GET https://bvg-communication-techno.eu4.alta.avigilon.com/api/v1/deviceSites/
+Cookie: session_id={{auth_cookie}}
