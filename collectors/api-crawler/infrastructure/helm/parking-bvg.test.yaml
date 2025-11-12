@@ -1,0 +1,23 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/api-crawler
+  pullPolicy: IfNotPresent
+  tag: "0.2.0" # Set this when upgrading chart with --set-value
+
+env:
+  MQ_CLIENT: dc-api-crawler-parking-bvg
+  PROVIDER: api-crawler/parking-bvg
+
+  CRON: "0 0/5 * * * *"
+  CONFIG_PATH: "/config/config.yaml"
+
+  SERVICE_NAME: dc-api-crawler-parking-bvg
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
+
+configMap:
+  mountPath: "/config/"
+  files: {}

@@ -1,0 +1,3660 @@
+
+[
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": [
+        8,
+        7,
+        10
+      ]
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 0,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1762872564708
+        }
+      ]
+    },
+    "created": "2025-08-13T13:21:46.346256Z",
+    "id": "f5b3de84-7c43-4d84-8729-d52c8250d6be",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A004_03_DIS",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "a7755ce8-dbb7-421f-9d1c-dcf8d70bdd95",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0.26041666,
+                  "Y": 0.13981481
+                },
+                {
+                  "X": 0.5052083,
+                  "Y": 0.107407406
+                },
+                {
+                  "X": 0.41354167,
+                  "Y": 0.03888889
+                },
+                {
+                  "X": 0.21666667,
+                  "Y": 0.05277778
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "1",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": [
+        8,
+        7,
+        10
+      ]
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {
+              "BIKE": 0,
+              "BUS": 0,
+              "CAR": 0,
+              "LARGE_VEHICLE": 0,
+              "MOTORBIKE": 0,
+              "PICKUP": 0,
+              "SMALL_VEHICLE": 0,
+              "TRUCK": 0,
+              "TWO_WHEELED": 0,
+              "UNKNOWN_VEHICLE_TYPE": 0,
+              "VAN": 0
+            }
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 0,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1758860028000
+        }
+      ]
+    },
+    "created": "2025-08-04T07:16:11.266019Z",
+    "id": "ec7ed0b2-df10-4de9-befe-7df6e70aff42",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A010_09_STD",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "6d6782af-a970-4d7f-be49-10d53e48a532",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0.3075314,
+                  "Y": 0.2935185
+                },
+                {
+                  "X": 0.8389121,
+                  "Y": 0.32592592
+                },
+                {
+                  "X": 0.6366806,
+                  "Y": 0.16203703
+                },
+                {
+                  "X": 0.14993027,
+                  "Y": 0.14351852
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0.27405858,
+                  "Y": 0.9990741
+                },
+                {
+                  "X": 1,
+                  "Y": 0.7638889
+                },
+                {
+                  "X": 0.9323571,
+                  "Y": 0.42222223
+                },
+                {
+                  "X": 0.46582985,
+                  "Y": 0.41759259
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "1",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": [
+        8,
+        7,
+        10
+      ]
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {
+              "BIKE": 0,
+              "BUS": 0,
+              "CAR": 0,
+              "LARGE_VEHICLE": 0,
+              "MOTORBIKE": 0,
+              "PICKUP": 0,
+              "SMALL_VEHICLE": 0,
+              "TRUCK": 0,
+              "TWO_WHEELED": 0,
+              "UNKNOWN_VEHICLE_TYPE": 0,
+              "VAN": 0
+            }
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 0,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1758862184000
+        }
+      ]
+    },
+    "created": "2025-08-13T13:27:47.962394Z",
+    "id": "9b384c0e-b73e-4ae7-a44e-809daf389e28",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A008_04_STD",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "6d6782af-a970-4d7f-be49-10d53e48a532",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0.5365535,
+                  "Y": 0.23090278
+                },
+                {
+                  "X": 0.96736294,
+                  "Y": 0.4496528
+                },
+                {
+                  "X": 0.8570432,
+                  "Y": 0.19537038
+                },
+                {
+                  "X": 0.5966057,
+                  "Y": 0.088541664
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "2",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": [
+        8,
+        10,
+        7
+      ]
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {
+              "BIKE": 0,
+              "BUS": 0,
+              "CAR": 0,
+              "LARGE_VEHICLE": 0,
+              "MOTORBIKE": 0,
+              "PICKUP": 0,
+              "SMALL_VEHICLE": 0,
+              "TRUCK": 0,
+              "TWO_WHEELED": 0,
+              "UNKNOWN_VEHICLE_TYPE": 0,
+              "VAN": 0
+            }
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 0,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1758807397000
+        }
+      ]
+    },
+    "created": "2025-08-13T13:30:34.621038Z",
+    "id": "00859901-9358-455d-bd4e-862c2274921d",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A009_05_STD",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "6d6782af-a970-4d7f-be49-10d53e48a532",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0.06764296,
+                  "Y": 0.35092592
+                },
+                {
+                  "X": 0.5676429,
+                  "Y": 0.9990741
+                },
+                {
+                  "X": 1,
+                  "Y": 0.7212963
+                },
+                {
+                  "X": 0.2810321,
+                  "Y": 0.21574074
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "2",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": [
+        8,
+        7,
+        10
+      ]
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {
+              "SMALL_VEHICLE": 2
+            }
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 2,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1762872564708
+        }
+      ]
+    },
+    "created": "2025-05-30T07:15:34.690133Z",
+    "id": "7cad533c-0805-4e9e-a448-fa20f59eeb27",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A002_03_STD",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "a7755ce8-dbb7-421f-9d1c-dcf8d70bdd95",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0.65625,
+                  "Y": 0.38020834
+                },
+                {
+                  "X": 0.99609375,
+                  "Y": 0.7170139
+                },
+                {
+                  "X": 0.9921875,
+                  "Y": 0.36631945
+                },
+                {
+                  "X": 0.7128906,
+                  "Y": 0.2204861
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "1",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": [
+        8,
+        7,
+        10
+      ]
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {
+              "SMALL_VEHICLE": 6
+            }
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 6,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1762872564708
+        }
+      ]
+    },
+    "created": "2025-05-13T13:10:03.766921Z",
+    "id": "a20966dd-ac00-447b-b357-9824a8a898e7",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A001_07_STD",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "a7755ce8-dbb7-421f-9d1c-dcf8d70bdd95",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0.33789062,
+                  "Y": 1
+                },
+                {
+                  "X": 1,
+                  "Y": 0.9288194
+                },
+                {
+                  "X": 0.24609375,
+                  "Y": 0.053819444
+                },
+                {
+                  "X": 0.05078125,
+                  "Y": 0.09548611
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0.4140625,
+                  "Y": 0.9982639
+                },
+                {
+                  "X": 1,
+                  "Y": 0.9947917
+                },
+                {
+                  "X": 0.7246094,
+                  "Y": 0.5121528
+                },
+                {
+                  "X": 0.484375,
+                  "Y": 0.41493055
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "1",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": [
+        8,
+        7,
+        10
+      ]
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 0,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1762872564636
+        }
+      ]
+    },
+    "created": "2025-07-28T13:45:41.637325Z",
+    "id": "ce0f5975-8efc-41e0-af40-64e87deaa284",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A005_03_DIS",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "27a23636-529a-48bb-a98f-1148064088d3",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0.8668061,
+                  "Y": 0.30185187
+                },
+                {
+                  "X": 0.9853557,
+                  "Y": 0.30555558
+                },
+                {
+                  "X": 0.8577406,
+                  "Y": 0.13981481
+                },
+                {
+                  "X": 0.7440725,
+                  "Y": 0.12222222
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "2",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": [
+        8,
+        7
+      ]
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 0,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1762872564636
+        }
+      ]
+    },
+    "created": "2025-07-28T13:46:15.740778Z",
+    "id": "1fabe9ee-985d-4c33-89c4-b3e665045891",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A006_06_DIS",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "27a23636-529a-48bb-a98f-1148064088d3",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0.34073108,
+                  "Y": 0.31770834
+                },
+                {
+                  "X": 0.6227154,
+                  "Y": 0.33506945
+                },
+                {
+                  "X": 0.58856344,
+                  "Y": 0.030555556
+                },
+                {
+                  "X": 0.4832636,
+                  "Y": 0.02037037
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "2",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": [
+        8,
+        7,
+        10
+      ]
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {
+              "SMALL_VEHICLE": 2,
+              "UNKNOWN_VEHICLE_TYPE": 1
+            }
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 3,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1762872564636
+        }
+      ]
+    },
+    "created": "2025-08-01T06:55:06.763655Z",
+    "id": "4c634f49-4630-49bb-b49c-9c42583850c1",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A007_04_STD",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "27a23636-529a-48bb-a98f-1148064088d3",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0.08224543,
+                  "Y": 0.30729166
+                },
+                {
+                  "X": 0.38772845,
+                  "Y": 0.32118055
+                },
+                {
+                  "X": 0.45885634,
+                  "Y": 0.03888889
+                },
+                {
+                  "X": 0.28591353,
+                  "Y": 0.043518517
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "2",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": [
+        8,
+        7,
+        10
+      ]
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 0,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1762872565920
+        }
+      ]
+    },
+    "created": "2025-07-28T13:44:49.581983Z",
+    "id": "0730d5f6-3645-432c-b29e-7c3679023838",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A003_01_LKW",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "27a23636-529a-48bb-a98f-1148064088d3",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0.10574412,
+                  "Y": 1
+                },
+                {
+                  "X": 0.5678851,
+                  "Y": 1
+                },
+                {
+                  "X": 0.65143603,
+                  "Y": 0.7204861
+                },
+                {
+                  "X": 0.40339425,
+                  "Y": 0.5954861
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0.42689294,
+                  "Y": 0.5677083
+                },
+                {
+                  "X": 0.6984334,
+                  "Y": 0.6892361
+                },
+                {
+                  "X": 0.83942556,
+                  "Y": 0.1579861
+                },
+                {
+                  "X": 0.63577026,
+                  "Y": 0.1579861
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "1",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": [
+        8,
+        7,
+        10
+      ]
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {
+              "BIKE": 0,
+              "BUS": 0,
+              "CAR": 0,
+              "LARGE_VEHICLE": 0,
+              "MOTORBIKE": 0,
+              "PICKUP": 0,
+              "SMALL_VEHICLE": 0,
+              "TRUCK": 0,
+              "TWO_WHEELED": 0,
+              "UNKNOWN_VEHICLE_TYPE": 0,
+              "VAN": 0
+            }
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 0,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1758859464000
+        }
+      ]
+    },
+    "created": "2025-08-13T13:55:15.886825Z",
+    "id": "58c2b8d7-14ff-4361-b988-3052bd5f3b08",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A011_04_STD",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "08dc1639-d50f-4d22-be5d-1f590bda8587",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0.14490862,
+                  "Y": 0.296875
+                },
+                {
+                  "X": 0.6070496,
+                  "Y": 0.2934028
+                },
+                {
+                  "X": 0.42167103,
+                  "Y": 0.13020833
+                },
+                {
+                  "X": 0.037859008,
+                  "Y": 0.16145833
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "1",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": [
+        8,
+        7,
+        10
+      ]
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {
+              "BIKE": 0,
+              "BUS": 0,
+              "CAR": 0,
+              "LARGE_VEHICLE": 0,
+              "MOTORBIKE": 0,
+              "PICKUP": 0,
+              "SMALL_VEHICLE": 0,
+              "TRUCK": 0,
+              "TWO_WHEELED": 0,
+              "UNKNOWN_VEHICLE_TYPE": 0,
+              "VAN": 0
+            }
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 0,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1758792397000
+        }
+      ]
+    },
+    "created": "2025-08-13T14:01:23.681398Z",
+    "id": "59ea7301-30b1-46f0-86c5-9994d0d4198f",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A012_06_STD",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "08dc1639-d50f-4d22-be5d-1f590bda8587",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0,
+                  "Y": 1
+                },
+                {
+                  "X": 1,
+                  "Y": 0.8663194
+                },
+                {
+                  "X": 0.89686686,
+                  "Y": 0.35243055
+                },
+                {
+                  "X": 0.050913837,
+                  "Y": 0.4045139
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "1",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": [
+        8,
+        10,
+        7
+      ]
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 0,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1762872564311
+        }
+      ]
+    },
+    "created": "2025-08-13T14:22:34.49283Z",
+    "id": "5a9f43eb-409c-4cdd-a2f8-1064d611116b",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A017_04_STD",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "6055d6d3-80e2-428b-b5bf-3bcef16710f0",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0.22460938,
+                  "Y": 0.4045139
+                },
+                {
+                  "X": 0.43554688,
+                  "Y": 0.3107639
+                },
+                {
+                  "X": 0.26171875,
+                  "Y": 0.09201389
+                },
+                {
+                  "X": 0.111328125,
+                  "Y": 0.19270833
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "1",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": [
+        8,
+        10,
+        7
+      ]
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 0,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1762872566032
+        }
+      ]
+    },
+    "created": "2025-08-13T14:33:42.558488Z",
+    "id": "bdb67957-e50b-45f5-9da0-eaeecd79531f",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A019_04_DIS",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "f2f8f954-18dc-4a64-9eab-cdedc34e2640",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0.66796875,
+                  "Y": 0.4565972
+                },
+                {
+                  "X": 0.8984375,
+                  "Y": 0.27604166
+                },
+                {
+                  "X": 0.734375,
+                  "Y": 0.13368055
+                },
+                {
+                  "X": 0.48242188,
+                  "Y": 0.25868055
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "1",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": [
+        8,
+        7,
+        10
+      ]
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 0,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1762872566032
+        }
+      ]
+    },
+    "created": "2025-08-13T14:32:55.607855Z",
+    "id": "c42eb571-edca-42b6-907a-d1baa341c691",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A018_08_DIS",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "f2f8f954-18dc-4a64-9eab-cdedc34e2640",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0.41145834,
+                  "Y": 0.19166666
+                },
+                {
+                  "X": 0.6177083,
+                  "Y": 0.12037037
+                },
+                {
+                  "X": 0.43333334,
+                  "Y": 0
+                },
+                {
+                  "X": 0.25416666,
+                  "Y": 0.074074075
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "1",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": [
+        8,
+        7,
+        10
+      ]
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 0,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1762872564636
+        }
+      ]
+    },
+    "created": "2025-08-13T14:19:17.792586Z",
+    "id": "98b43e3c-2ba9-42b7-9b4d-52a82c13ea76",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A014_02_STD",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "27a23636-529a-48bb-a98f-1148064088d3",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0.033472802,
+                  "Y": 0.17777778
+                },
+                {
+                  "X": 0.08577406,
+                  "Y": 0.18148148
+                },
+                {
+                  "X": 0.17921896,
+                  "Y": 0.11296296
+                },
+                {
+                  "X": 0.07880056,
+                  "Y": 0.08981481
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "2",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": [
+        8,
+        10,
+        7
+      ]
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 0,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1762872566032
+        }
+      ]
+    },
+    "created": "2025-08-13T14:35:58.039352Z",
+    "id": "4f3be4a8-2ab3-46d3-8bfa-1ff01daf98e0",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A020_10_DIS",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "f2f8f954-18dc-4a64-9eab-cdedc34e2640",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0.52916664,
+                  "Y": 0.036111113
+                },
+                {
+                  "X": 0.9994792,
+                  "Y": 0.29814816
+                },
+                {
+                  "X": 0.9994792,
+                  "Y": 0.19166666
+                },
+                {
+                  "X": 0.61822915,
+                  "Y": 0.0074074073
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "1",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": [
+        8,
+        7,
+        10
+      ]
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 0,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1762872564636
+        }
+      ]
+    },
+    "created": "2025-08-21T06:58:39.945671Z",
+    "id": "29c19478-d8fd-424b-8a72-347ead6d2127",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A021_01_LKW",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "27a23636-529a-48bb-a98f-1148064088d3",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0,
+                  "Y": 1
+                },
+                {
+                  "X": 0.83420366,
+                  "Y": 1
+                },
+                {
+                  "X": 0.80287206,
+                  "Y": 0.5434028
+                },
+                {
+                  "X": 0.063968666,
+                  "Y": 0.4878472
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "2",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": [
+        8,
+        10,
+        7
+      ]
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 0,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1762872564311
+        }
+      ]
+    },
+    "created": "2025-08-13T14:21:36.66669Z",
+    "id": "c27e93e8-4f1c-464a-8995-65e1919626d6",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A015_06_STD",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "6055d6d3-80e2-428b-b5bf-3bcef16710f0",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0.76171875,
+                  "Y": 1
+                },
+                {
+                  "X": 0.99114585,
+                  "Y": 0.33425927
+                },
+                {
+                  "X": 0.8598958,
+                  "Y": 0.20925926
+                },
+                {
+                  "X": 0.5644531,
+                  "Y": 0.5017361
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0.45898438,
+                  "Y": 0.9878472
+                },
+                {
+                  "X": 0.7324219,
+                  "Y": 0.9947917
+                },
+                {
+                  "X": 0.578125,
+                  "Y": 0.515625
+                },
+                {
+                  "X": 0.44140625,
+                  "Y": 0.5329861
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "1",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": [
+        8,
+        10,
+        7
+      ]
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 0,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1762872563722
+        }
+      ]
+    },
+    "created": "2025-08-21T14:41:27.715516Z",
+    "id": "5943b5cc-0aad-4c79-8319-13d40bd05455",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A022_09_STD",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "421fa96c-7ec5-4616-ad66-d000be94af7c",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0.033203125,
+                  "Y": 0.5538194
+                },
+                {
+                  "X": 0.40625,
+                  "Y": 1
+                },
+                {
+                  "X": 0.5644531,
+                  "Y": 0.5850694
+                },
+                {
+                  "X": 0.24023438,
+                  "Y": 0.296875
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0.40234375,
+                  "Y": 0.25520834
+                },
+                {
+                  "X": 0.8925781,
+                  "Y": 0.515625
+                },
+                {
+                  "X": 1,
+                  "Y": 0.43229166
+                },
+                {
+                  "X": 0.625,
+                  "Y": 0.171875
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0.31835938,
+                  "Y": 0.9704861
+                },
+                {
+                  "X": 0.76171875,
+                  "Y": 1
+                },
+                {
+                  "X": 0.74609375,
+                  "Y": 0.7100694
+                },
+                {
+                  "X": 0.45117188,
+                  "Y": 0.5052083
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "1",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": [
+        8,
+        10,
+        7
+      ]
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 0,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1762872565408
+        }
+      ]
+    },
+    "created": "2025-08-21T14:43:42.820339Z",
+    "id": "fcf3404a-cd9f-4eb3-9a7a-07f941e5b549",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A023_19_STD",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "4a877e2b-ebfd-4990-9391-22af5d5c4245",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0.053645834,
+                  "Y": 0.42222223
+                },
+                {
+                  "X": 0.34114584,
+                  "Y": 0.9990741
+                },
+                {
+                  "X": 0.534375,
+                  "Y": 0.5175926
+                },
+                {
+                  "X": 0.15572916,
+                  "Y": 0.19629629
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0.43489584,
+                  "Y": 0.9990741
+                },
+                {
+                  "X": 0.88385415,
+                  "Y": 0.9990741
+                },
+                {
+                  "X": 0.8796875,
+                  "Y": 0.77962965
+                },
+                {
+                  "X": 0.53125,
+                  "Y": 0.52037036
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0.67291665,
+                  "Y": 0.23148148
+                },
+                {
+                  "X": 0.8072917,
+                  "Y": 0.36203703
+                },
+                {
+                  "X": 0.8723958,
+                  "Y": 0.22777778
+                },
+                {
+                  "X": 0.77708334,
+                  "Y": 0.16111112
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0.19947916,
+                  "Y": 0.11574074
+                },
+                {
+                  "X": 0.6098958,
+                  "Y": 0.32314816
+                },
+                {
+                  "X": 0.68177086,
+                  "Y": 0.2037037
+                },
+                {
+                  "X": 0.3078125,
+                  "Y": 0.075925924
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0.5932292,
+                  "Y": 0.32037038
+                },
+                {
+                  "X": 0.75989586,
+                  "Y": 0.3148148
+                },
+                {
+                  "X": 0.70885414,
+                  "Y": 0.21018519
+                },
+                {
+                  "X": 0.64479166,
+                  "Y": 0.21481481
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0.3421875,
+                  "Y": 0.9916667
+                },
+                {
+                  "X": 0.44010416,
+                  "Y": 0.9990741
+                },
+                {
+                  "X": 0.53125,
+                  "Y": 0.5212963
+                },
+                {
+                  "X": 0.3421875,
+                  "Y": 0.91018516
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "1",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": [
+        8,
+        10,
+        7
+      ]
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 0,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1762872564952
+        }
+      ]
+    },
+    "created": "2025-08-21T14:46:41.191989Z",
+    "id": "6c370ae3-4cad-4f8f-b5ca-df482f0771b4",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A024_17_STD",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "4478a000-ef65-4387-8cc0-339c5c36fb82",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0,
+                  "Y": 0.30185184
+                },
+                {
+                  "X": 0.30729166,
+                  "Y": 0.9925926
+                },
+                {
+                  "X": 0.496875,
+                  "Y": 0.47314814
+                },
+                {
+                  "X": 0.13020833,
+                  "Y": 0.15555556
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0.4015625,
+                  "Y": 0.9990741
+                },
+                {
+                  "X": 0.6723958,
+                  "Y": 0.9990741
+                },
+                {
+                  "X": 0.6723958,
+                  "Y": 0.58148146
+                },
+                {
+                  "X": 0.49010417,
+                  "Y": 0.47314814
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0.328125,
+                  "Y": 0.9990741
+                },
+                {
+                  "X": 0.4015625,
+                  "Y": 0.9990741
+                },
+                {
+                  "X": 0.48854166,
+                  "Y": 0.4962963
+                },
+                {
+                  "X": 0.30572918,
+                  "Y": 0.99351853
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0.19427083,
+                  "Y": 0.06481481
+                },
+                {
+                  "X": 0.80833334,
+                  "Y": 0.45740741
+                },
+                {
+                  "X": 0.909375,
+                  "Y": 0.35925925
+                },
+                {
+                  "X": 0.3765625,
+                  "Y": 0.03425926
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0.803125,
+                  "Y": 0.4611111
+                },
+                {
+                  "X": 0.92552084,
+                  "Y": 0.56574076
+                },
+                {
+                  "X": 0.99791664,
+                  "Y": 0.5
+                },
+                {
+                  "X": 0.9057292,
+                  "Y": 0.35833332
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0.003125,
+                  "Y": 0.30185184
+                },
+                {
+                  "X": 0.134375,
+                  "Y": 0.15555556
+                },
+                {
+                  "X": 0.084375,
+                  "Y": 0.11388889
+                },
+                {
+                  "X": 0.0010416667,
+                  "Y": 0.19259259
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "1",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": [
+        8,
+        10,
+        7
+      ]
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 0,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1762872564629
+        }
+      ]
+    },
+    "created": "2025-08-21T14:49:29.551562Z",
+    "id": "e1107d6a-de8c-43ee-a9c9-057a67bcc79e",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A025_15_STD",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "1d1c6a69-260c-4749-a187-f076c009e678",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0.040625,
+                  "Y": 0.2638889
+                },
+                {
+                  "X": 0.40625,
+                  "Y": 0.9990741
+                },
+                {
+                  "X": 0.61145836,
+                  "Y": 0.4814815
+                },
+                {
+                  "X": 0.2109375,
+                  "Y": 0.10555556
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0.40052083,
+                  "Y": 0.99351853
+                },
+                {
+                  "X": 0.78229165,
+                  "Y": 0.9953704
+                },
+                {
+                  "X": 0.7729167,
+                  "Y": 0.6398148
+                },
+                {
+                  "X": 0.6078125,
+                  "Y": 0.49166667
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0.29010418,
+                  "Y": 0.05
+                },
+                {
+                  "X": 0.8046875,
+                  "Y": 0.3824074
+                },
+                {
+                  "X": 0.8911458,
+                  "Y": 0.3074074
+                },
+                {
+                  "X": 0.42291668,
+                  "Y": 0.015740741
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "1",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": [
+        8,
+        10,
+        7
+      ]
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 0,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1762872564718
+        }
+      ]
+    },
+    "created": "2025-08-25T14:23:17.242546Z",
+    "id": "bd961e26-f256-4a5d-8375-63de13f2dafa",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A027_19_STD",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "01dda1ee-7d32-4ea1-8b9b-e8de497af6b4",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0.46875,
+                  "Y": 0.3107639
+                },
+                {
+                  "X": 0.68125,
+                  "Y": 0.3037037
+                },
+                {
+                  "X": 0.5097656,
+                  "Y": 0.105902776
+                },
+                {
+                  "X": 0.3203125,
+                  "Y": 0.12326389
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0.6640625,
+                  "Y": 0.34895834
+                },
+                {
+                  "X": 1,
+                  "Y": 0.2795139
+                },
+                {
+                  "X": 0.94140625,
+                  "Y": 0.16493055
+                },
+                {
+                  "X": 0.65234375,
+                  "Y": 0.1545139
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0.05078125,
+                  "Y": 0.5260417
+                },
+                {
+                  "X": 0.2890625,
+                  "Y": 0.359375
+                },
+                {
+                  "X": 0.2421875,
+                  "Y": 0.14409722
+                },
+                {
+                  "X": 0.13476562,
+                  "Y": 0.1892361
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "1",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": []
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {
+              "SMALL_VEHICLE": 1
+            }
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 1,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1762872565515
+        }
+      ]
+    },
+    "created": "2025-08-25T14:25:14.95167Z",
+    "id": "14da0ef9-d230-444c-b9b8-b60d154434dd",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A028_14_STD",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "0eff4337-024c-4bda-a703-467561a6cdb0",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0.35546875,
+                  "Y": 0.734375
+                },
+                {
+                  "X": 0.82421875,
+                  "Y": 0.9670139
+                },
+                {
+                  "X": 1,
+                  "Y": 0.234375
+                },
+                {
+                  "X": 0.87109375,
+                  "Y": 0.19270833
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0,
+                  "Y": 0.6579861
+                },
+                {
+                  "X": 0.6191406,
+                  "Y": 0.234375
+                },
+                {
+                  "X": 0.5097656,
+                  "Y": 0.1267361
+                },
+                {
+                  "X": 0,
+                  "Y": 0.3420139
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "1",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": []
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 0,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1762872564629
+        }
+      ]
+    },
+    "created": "2025-08-25T14:26:28.163045Z",
+    "id": "23ddea77-2dae-4f83-b7df-87ab3190e399",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A029_17_STD",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "1d1c6a69-260c-4749-a187-f076c009e678",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "1",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": [
+        8,
+        10,
+        7
+      ]
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 0,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1762872566884
+        }
+      ]
+    },
+    "created": "2025-08-21T14:55:32.182934Z",
+    "id": "e8d14f66-5651-4037-a141-d710ba103939",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A026_16_STD",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "a4b72d6a-7c9e-45d1-ae7c-a8e526859625",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0,
+                  "Y": 0.41145834
+                },
+                {
+                  "X": 0.63671875,
+                  "Y": 0.19965278
+                },
+                {
+                  "X": 0.6035156,
+                  "Y": 0.081597224
+                },
+                {
+                  "X": 0.001953125,
+                  "Y": 0.21006945
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0.73020834,
+                  "Y": 0.9990741
+                },
+                {
+                  "X": 0.96458334,
+                  "Y": 0.3537037
+                },
+                {
+                  "X": 0.8609375,
+                  "Y": 0.27222222
+                },
+                {
+                  "X": 0.17760417,
+                  "Y": 0.7111111
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0.07239583,
+                  "Y": 0.9990741
+                },
+                {
+                  "X": 0.7182292,
+                  "Y": 0.9990741
+                },
+                {
+                  "X": 0.18072917,
+                  "Y": 0.7083333
+                },
+                {
+                  "X": 0,
+                  "Y": 0.81296295
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "1",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": []
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 0,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1762872566040
+        }
+      ]
+    },
+    "created": "2025-08-27T08:58:11.104575Z",
+    "id": "b06b1d55-bee3-4acb-8a08-f680f12a79c5",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A030_07_STD",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "4a2459ff-a392-47ad-9e44-5ce523beee5e",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0,
+                  "Y": 0.34537038
+                },
+                {
+                  "X": 0.058333334,
+                  "Y": 0.33888888
+                },
+                {
+                  "X": 0.19305556,
+                  "Y": 0.21851853
+                },
+                {
+                  "X": 0.03263889,
+                  "Y": 0.2685185
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0.31805557,
+                  "Y": 0.9990741
+                },
+                {
+                  "X": 0.66875,
+                  "Y": 0.9990741
+                },
+                {
+                  "X": 0.5923611,
+                  "Y": 0.52037036
+                },
+                {
+                  "X": 0.25069445,
+                  "Y": 0.40833333
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0,
+                  "Y": 0.662963
+                },
+                {
+                  "X": 0.3125,
+                  "Y": 1
+                },
+                {
+                  "X": 0.25069445,
+                  "Y": 0.4074074
+                },
+                {
+                  "X": 0.14930555,
+                  "Y": 0.36574075
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0,
+                  "Y": 0.4027778
+                },
+                {
+                  "X": 0.0048611113,
+                  "Y": 0.6537037
+                },
+                {
+                  "X": 0.14722222,
+                  "Y": 0.36481482
+                },
+                {
+                  "X": 0.058333334,
+                  "Y": 0.3361111
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "2",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  },
+  {
+    "appearance_params": {
+      "aoi_overlap_degree": 0,
+      "bottom_colours": null,
+      "class_categories": [
+        "vehicles"
+      ],
+      "dissimilar_embeddings": null,
+      "dissimilarity_threshold": 0.1,
+      "enableObjectMotionEstimation": false,
+      "excludeStationaryObjects": false,
+      "face_watchlist_ids": [],
+      "has_face": false,
+      "has_license_plate": false,
+      "license_plate_clauses": null,
+      "minimum_attribute_score": 0,
+      "minimum_object_size": 0,
+      "minimum_object_size_override": null,
+      "per_attribute_thresholds": null,
+      "person_accessories": null,
+      "person_body_states": null,
+      "similar_embeddings": null,
+      "similar_face_embeddings": null,
+      "similarity_plates": null,
+      "similarity_threshold": 0.75,
+      "top_colours": null,
+      "vehicle_colours": [],
+      "vehicle_types": []
+    },
+    "counts": {
+      "totals": [
+        {
+          "countDetails": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsIn": {
+            "vehicleTypeCounts": {}
+          },
+          "countDetailsOut": {
+            "vehicleTypeCounts": {}
+          },
+          "countPerson": 0,
+          "countPersonIn": 0,
+          "countPersonMin": 0,
+          "countPersonOut": 0,
+          "countVehicle": 0,
+          "countVehicleIn": 0,
+          "countVehicleMin": 0,
+          "countVehicleOut": 0,
+          "received": 1762872564401
+        }
+      ]
+    },
+    "created": "2025-08-27T09:01:24.228415Z",
+    "id": "77886ba0-366e-4c59-ad88-f9adeb63da34",
+    "last_reset_time": null,
+    "multi_sg": false,
+    "name": "Bruneck-Mobilitaetszentrum_A031_12_STD",
+    "reset_day_of_week": null,
+    "reset_mode": "never",
+    "reset_time_of_day": null,
+    "reset_timezone": null,
+    "site_id": "c75a061b-d5e2-4c9e-9d21-1f4db4a0ad7f",
+    "type": "counting",
+    "where": {
+      "device_groups": null,
+      "device_sources": [
+        {
+          "device_id": "4a2459ff-a392-47ad-9e44-5ce523beee5e",
+          "loi": [],
+          "object_type_size_settings": null,
+          "paoi": [
+            {
+              "points": [
+                {
+                  "X": 0.07112971,
+                  "Y": 0.7185185
+                },
+                {
+                  "X": 0.70013946,
+                  "Y": 0.9953704
+                },
+                {
+                  "X": 0.80683404,
+                  "Y": 0.9027778
+                },
+                {
+                  "X": 0.27824268,
+                  "Y": 0.61296296
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0.33263597,
+                  "Y": 1
+                },
+                {
+                  "X": 0.69456065,
+                  "Y": 1
+                },
+                {
+                  "X": 0.7796374,
+                  "Y": 0.90555555
+                },
+                {
+                  "X": 0.06345886,
+                  "Y": 0.7212963
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0.4748954,
+                  "Y": 0.11388889
+                },
+                {
+                  "X": 0.96582985,
+                  "Y": 0.53333336
+                },
+                {
+                  "X": 0.9748954,
+                  "Y": 0.37777779
+                },
+                {
+                  "X": 0.5760112,
+                  "Y": 0.09259259
+                }
+              ]
+            },
+            {
+              "points": [
+                {
+                  "X": 0.20781033,
+                  "Y": 0.25277779
+                },
+                {
+                  "X": 0.4177127,
+                  "Y": 0.25277779
+                },
+                {
+                  "X": 0.35983264,
+                  "Y": 0.15092592
+                },
+                {
+                  "X": 0.21199442,
+                  "Y": 0.16944444
+                }
+              ]
+            }
+          ],
+          "server_group_id": "d688efd1-322a-46ed-8493-e9237ac809a6",
+          "source": "1",
+          "version": 1,
+          "within_group": false
+        }
+      ]
+    }
+  }
+]
+                

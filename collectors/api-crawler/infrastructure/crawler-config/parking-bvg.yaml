@@ -1,0 +1,39 @@
+rootContext: []
+stream: false
+
+auth:
+  type: cookie
+  loginRequest:
+    url: https://bvg-communication-techno.eu4.alta.avigilon.com/api/v1/dologin
+    method: POST
+    headers:
+      Content-Type: application/json
+    body:
+      username: 
+      password: 
+  extractSelector: va
+
+steps:
+  - type: request
+    name: countingAreas
+    request:
+        url: https://bvg-communication-techno.eu4.alta.avigilon.com/api/v1/countingAreas
+        method: GET
+
+    steps:
+      - type: forEach
+        name: getCounts
+        path: .
+        as: area
+        
+        parallelism:
+          maxConcurrency: 5
+
+        steps:
+          - type: request
+            name: details-request
+            request:
+                url: https://bvg-communication-techno.eu4.alta.avigilon.com/api/v1/countingAreas/{{ .area.id }}/counts
+                method: GET
+            mergeOn: .counts = $res
+
