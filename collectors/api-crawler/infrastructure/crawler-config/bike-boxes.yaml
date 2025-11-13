@@ -1,0 +1,78 @@
+rootContext: {}
+stream: false
+
+auth:
+    type: oauth
+    method: client_credentials
+    tokenUrl: "https://sta.api.weelo.it/connect/token"
+
+headers:
+    Accept: application/json
+    Content-Type: application/json
+
+steps:
+    - type: forEach
+      name: "Fetch translations for all locations"
+      values: ["en", "de", "lld"]
+      path: .translations
+      as: language
+      steps:
+        - type: request
+          name: "Get locations in language"
+          as: locations
+          request:
+              url: "https://sta.api.weelo.it/resources/locations?languageID={{ .language.value }}"
+              method: GET
+
+          mergeWithParentOn: .[$ctx.language.value] = $res
+
+          steps:
+            - type: forEach
+              name: "Get stations details"
+              path: .
+              as: location
+              steps:
+                - type: request
+                  name: "Get Stations"
+                  request:
+                      url: "https://sta.api.weelo.it/resources/stations?languageID={{ .language.value }}&locationId={{ .location.locationID }}"
+                      method: GET
+                  
+                  mergeOn: .stations = $res
+                  resultTransformer: "[.[] | { address, locationName, name, stationID }]"
+
+    - type: request
+      name: "Get all locations"
+      request:
+          url: "https://sta.api.weelo.it/resources/locations?languageID=it"
+          method: GET
+
+      mergeOn: .it = $res
+
+      steps:
+        - type: forEach
+          name: "Get stations details"
+          path: .
+          as: location
+          steps:
+            - type: request
+              name: "Get Stations"
+              request:
+                  url: "https://sta.api.weelo.it/resources/stations?languageID=it&locationId={{ .location.locationID }}"
+                  method: GET
+              
+              mergeOn: .stations = $res
+              
+              steps:
+                - type: forEach
+                  name: "Get single station places"
+                  path: .
+                  as: station
+                  steps:
+                    - type: request
+                      name: "Get Station"
+                      request:
+                          url: "https://sta.api.weelo.it/resources/station?languageID=it&stationID={{ .station.stationID }}"
+                          method: GET
+                      
+                      mergeOn: .places = $res.places

@@ -1,0 +1,22 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/multi-rest-poller
+  pullPolicy: IfNotPresent
+  tag: "0.2.0" # Set this when upgrading chart with --set-value
+
+env:
+  MQ_CLIENT: dc-multi-rest-poller-sharedmobility-ch
+  PROVIDER: multi-rest-poller/sharedmobility-ch
+
+  CRON: "0 */30 * * * *"
+  HTTP_CONFIG_PATH: "/config/http-config.yaml"
+  SERVICE_NAME: dc-multi-rest-poller-sharedmobility-ch
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
+
+configMap:
+  mountPath: "/config/"
+  files: {}
