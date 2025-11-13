@@ -27,8 +27,8 @@ const (
 const (
 	DataTypeUsageState        = "usageState"
 	DataTypeFree              = "free"
-	DataTypeFreeRegularBikes  = "freeSpotsRegularBikes"
-	DataTypeFreeElectricBikes = "freeSpotsElectricBikes"
+	DataTypeFreeRegularBikes  = "freeSpotsRegularBike"
+	DataTypeFreeElectricBikes = "freeSpotsElectricBike"
 )
 
 var env tr.Env
