@@ -3,10 +3,10 @@ module opendatahub.com/tr-bike-boxes
 go 1.24.1
 
 require (
-	github.com/noi-techpark/go-bdp-client v1.4.0
+	github.com/noi-techpark/go-bdp-client v1.4.4
 	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.7
 	github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0
-	github.com/noi-techpark/opendatahub-go-sdk/testsuite v1.0.1
+	github.com/noi-techpark/opendatahub-go-sdk/testsuite v1.1.1
 	github.com/stretchr/testify v1.10.0
 	gotest.tools/v3 v3.5.2
 )

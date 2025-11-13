@@ -11,90 +11,6 @@
                     "stationID": 1931
                 },
                 {
-                    "address": "Bahnhofplatz 3, Brixen",
-                    "locationName": "Brixen, Bahnhof Brixen",
-                    "name": "Einzelboxen",
-                    "stationID": 1930
-                },
-                {
-                    "address": "Bahnhofplatz 3, Brixen",
-                    "locationName": "Brixen, Bahnhof Brixen",
-                    "name": "Sammelbox",
-                    "stationID": 1931
-                },
-                {
-                    "address": "Bahnhofplatz 3, Brixen",
-                    "locationName": "Brixen, Bahnhof Brixen",
-                    "name": "Sammelbox",
-                    "stationID": 1930
-                },
-                {
-                    "address": "Bahnhofplatz 3, Brixen",
-                    "locationName": "Brixen, Bahnhof Brixen",
-                    "name": "Einzelboxen",
-                    "stationID": 1931
-                },
-                {
-                    "address": "Bahnhofplatz 3, Brixen",
-                    "locationName": "Brixen, Bahnhof Brixen",
-                    "name": "Einzelboxen",
-                    "stationID": 1930
-                },
-                {
-                    "address": "Bahnhofplatz 3, Brixen",
-                    "locationName": "Brixen, Bahnhof Brixen",
-                    "name": "Sammelbox",
-                    "stationID": 1931
-                },
-                {
-                    "address": "Bahnhofplatz 3, Brixen",
-                    "locationName": "Brixen, Bahnhof Brixen",
-                    "name": "Sammelbox",
-                    "stationID": 1930
-                },
-                {
-                    "address": "Bahnhofstraße, Brixen (Fahrrad-Tiefgarage)",
-                    "locationName": "Brixen, Bahnhof Brixen",
-                    "name": "Einzelboxen",
-                    "stationID": 1931
-                },
-                {
-                    "address": "Bahnhofstraße, Brixen (Fahrrad-Tiefgarage)",
-                    "locationName": "Brixen, Bahnhof Brixen",
-                    "name": "Einzelboxen",
-                    "stationID": 1930
-                },
-                {
-                    "address": "Bahnhofstraße, Brixen (Fahrrad-Tiefgarage)",
-                    "locationName": "Brixen, Bahnhof Brixen",
-                    "name": "Sammelbox",
-                    "stationID": 1931
-                },
-                {
-                    "address": "Bahnhofstraße, Brixen (Fahrrad-Tiefgarage)",
-                    "locationName": "Brixen, Bahnhof Brixen",
-                    "name": "Sammelbox",
-                    "stationID": 1930
-                },
-                {
-                    "address": "Bahnhofstraße, Brixen (Fahrrad-Tiefgarage)",
-                    "locationName": "Brixen, Bahnhof Brixen",
-                    "name": "Einzelboxen",
-                    "stationID": 1931
-                },
-                {
-                    "address": "Bahnhofstraße, Brixen (Fahrrad-Tiefgarage)",
-                    "locationName": "Brixen, Bahnhof Brixen",
-                    "name": "Einzelboxen",
-                    "stationID": 1930
-                },
-                {
-                    "address": "Bahnhofstraße, Brixen (Fahrrad-Tiefgarage)",
-                    "locationName": "Brixen, Bahnhof Brixen",
-                    "name": "Sammelbox",
-                    "stationID": 1931
-                },
-                {
                     "address": "Bahnhofstraße, Brixen (Fahrrad-Tiefgarage)",
                     "locationName": "Brixen, Bahnhof Brixen",
                     "name": "Sammelbox",
@@ -115,475 +31,7 @@
                 {
                     "address": "neben Busbahnhof am Bahnhof Bruneck",
                     "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
                     "name": "Einzelboxen 21-40",
-                    "stationID": 1932
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 21-40",
-                    "stationID": 1933
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Sammelbox",
-                    "stationID": 1932
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Sammelbox",
-                    "stationID": 1933
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Sammelbox",
-                    "stationID": 2081
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 1-20",
-                    "stationID": 1932
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 21-40",
-                    "stationID": 1932
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 21-40",
-                    "stationID": 1933
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Sammelbox",
-                    "stationID": 1932
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Sammelbox",
-                    "stationID": 1933
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Sammelbox",
-                    "stationID": 2081
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 1-20",
-                    "stationID": 1932
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 21-40",
-                    "stationID": 1932
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 21-40",
-                    "stationID": 1933
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Sammelbox",
-                    "stationID": 1932
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Sammelbox",
-                    "stationID": 1933
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Sammelbox",
-                    "stationID": 2081
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 1-20",
-                    "stationID": 1932
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 21-40",
-                    "stationID": 1932
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 21-40",
-                    "stationID": 1933
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Sammelbox",
-                    "stationID": 1932
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Sammelbox",
-                    "stationID": 1933
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Sammelbox",
-                    "stationID": 2081
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 1-20",
-                    "stationID": 1932
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 21-40",
-                    "stationID": 1932
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 21-40",
-                    "stationID": 1933
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Sammelbox",
-                    "stationID": 1932
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Sammelbox",
-                    "stationID": 1933
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Sammelbox",
-                    "stationID": 2081
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 1-20",
-                    "stationID": 1932
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 21-40",
-                    "stationID": 1932
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 21-40",
-                    "stationID": 1933
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Sammelbox",
-                    "stationID": 1932
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Sammelbox",
-                    "stationID": 1933
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Sammelbox",
-                    "stationID": 2081
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 1-20",
-                    "stationID": 1932
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 21-40",
-                    "stationID": 1932
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 21-40",
-                    "stationID": 1933
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Sammelbox",
-                    "stationID": 1932
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Sammelbox",
-                    "stationID": 1933
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Sammelbox",
-                    "stationID": 2081
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 1-20",
-                    "stationID": 1932
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 21-40",
-                    "stationID": 1932
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 21-40",
-                    "stationID": 1933
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Sammelbox",
-                    "stationID": 1932
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Sammelbox",
-                    "stationID": 1933
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Sammelbox",
-                    "stationID": 2081
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 1-20",
-                    "stationID": 1932
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 21-40",
-                    "stationID": 1932
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 21-40",
-                    "stationID": 1933
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Einzelboxen 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Sammelbox",
-                    "stationID": 1932
-                },
-                {
-                    "address": "neben Busbahnhof am Bahnhof Bruneck",
-                    "locationName": "Bruneck, Bahnhof Bruneck",
-                    "name": "Sammelbox",
                     "stationID": 1933
                 },
                 {
@@ -703,90 +151,6 @@
                     "stationID": 1930
                 },
                 {
-                    "address": "Bressanone/Brixen: Viale stazione/Bahnhofstraße (underground bicycle parking)",
-                    "locationName": "Bressanone/Brixen, Bressanone/Brixen train station",
-                    "name": "Bike depot",
-                    "stationID": 1931
-                },
-                {
-                    "address": "Bressanone/Brixen: Viale stazione/Bahnhofstraße (underground bicycle parking)",
-                    "locationName": "Bressanone/Brixen, Bressanone/Brixen train station",
-                    "name": "Individual box",
-                    "stationID": 1930
-                },
-                {
-                    "address": "Bressanone/Brixen: Viale stazione/Bahnhofstraße (underground bicycle parking)",
-                    "locationName": "Bressanone/Brixen, Bressanone/Brixen train station",
-                    "name": "Individual box",
-                    "stationID": 1931
-                },
-                {
-                    "address": "Bressanone/Brixen: Viale stazione/Bahnhofstraße (underground bicycle parking)",
-                    "locationName": "Bressanone/Brixen, Bressanone/Brixen train station",
-                    "name": "Bike depot",
-                    "stationID": 1930
-                },
-                {
-                    "address": "Bressanone/Brixen: Viale stazione/Bahnhofstraße (underground bicycle parking)",
-                    "locationName": "Bressanone/Brixen, Bressanone/Brixen train station",
-                    "name": "Bike depot",
-                    "stationID": 1931
-                },
-                {
-                    "address": "Bressanone/Brixen: Viale stazione/Bahnhofstraße (underground bicycle parking)",
-                    "locationName": "Bressanone/Brixen, Bressanone/Brixen train station",
-                    "name": "Individual box",
-                    "stationID": 1930
-                },
-                {
-                    "address": "Bressanone/Brixen: Viale stazione/Bahnhofstraße (underground bicycle parking)",
-                    "locationName": "Bressanone/Brixen, Bressanone/Brixen train station",
-                    "name": "Individual box",
-                    "stationID": 1931
-                },
-                {
-                    "address": "Bressanone/Brixen: Piazza stazione/Bahnhofsplatz 3",
-                    "locationName": "Bressanone/Brixen, Bressanone/Brixen train station",
-                    "name": "Bike depot",
-                    "stationID": 1930
-                },
-                {
-                    "address": "Bressanone/Brixen: Piazza stazione/Bahnhofsplatz 3",
-                    "locationName": "Bressanone/Brixen, Bressanone/Brixen train station",
-                    "name": "Bike depot",
-                    "stationID": 1931
-                },
-                {
-                    "address": "Bressanone/Brixen: Piazza stazione/Bahnhofsplatz 3",
-                    "locationName": "Bressanone/Brixen, Bressanone/Brixen train station",
-                    "name": "Individual box",
-                    "stationID": 1930
-                },
-                {
-                    "address": "Bressanone/Brixen: Piazza stazione/Bahnhofsplatz 3",
-                    "locationName": "Bressanone/Brixen, Bressanone/Brixen train station",
-                    "name": "Individual box",
-                    "stationID": 1931
-                },
-                {
-                    "address": "Bressanone/Brixen: Piazza stazione/Bahnhofsplatz 3",
-                    "locationName": "Bressanone/Brixen, Bressanone/Brixen train station",
-                    "name": "Bike depot",
-                    "stationID": 1930
-                },
-                {
-                    "address": "Bressanone/Brixen: Piazza stazione/Bahnhofsplatz 3",
-                    "locationName": "Bressanone/Brixen, Bressanone/Brixen train station",
-                    "name": "Bike depot",
-                    "stationID": 1931
-                },
-                {
-                    "address": "Bressanone/Brixen: Piazza stazione/Bahnhofsplatz 3",
-                    "locationName": "Bressanone/Brixen, Bressanone/Brixen train station",
-                    "name": "Individual box",
-                    "stationID": 1930
-                },
-                {
                     "address": "Bressanone/Brixen: Piazza stazione/Bahnhofsplatz 3",
                     "locationName": "Bressanone/Brixen, Bressanone/Brixen train station",
                     "name": "Individual box",
@@ -805,477 +169,9 @@
                     "stationID": 2081
                 },
                 {
-                    "address": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Bike depot",
-                    "stationID": 1932
-                },
-                {
-                    "address": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Bike depot",
-                    "stationID": 1933
-                },
-                {
-                    "address": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 1-20",
-                    "stationID": 1932
-                },
-                {
-                    "address": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 21-40",
-                    "stationID": 1932
-                },
-                {
-                    "address": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 21-40",
-                    "stationID": 1933
-                },
-                {
-                    "address": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Bike depot",
-                    "stationID": 2081
-                },
-                {
-                    "address": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Bike depot",
-                    "stationID": 1932
-                },
-                {
-                    "address": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Bike depot",
-                    "stationID": 1933
-                },
-                {
-                    "address": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 1-20",
-                    "stationID": 1932
-                },
-                {
-                    "address": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 21-40",
-                    "stationID": 1932
-                },
-                {
-                    "address": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 21-40",
-                    "stationID": 1933
-                },
-                {
-                    "address": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Bike depot",
-                    "stationID": 2081
-                },
-                {
-                    "address": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Bike depot",
-                    "stationID": 1932
-                },
-                {
-                    "address": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Bike depot",
-                    "stationID": 1933
-                },
-                {
-                    "address": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 1-20",
-                    "stationID": 1932
-                },
-                {
-                    "address": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 21-40",
-                    "stationID": 1932
-                },
-                {
-                    "address": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 21-40",
-                    "stationID": 1933
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Bike depot",
-                    "stationID": 2081
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Bike depot",
-                    "stationID": 1932
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Bike depot",
-                    "stationID": 1933
-                },
-                {
                     "address": "Brunico/Bruneck bus station (near the train station)",
                     "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
                     "name": "Individual box 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 1-20",
-                    "stationID": 1932
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 21-40",
-                    "stationID": 1932
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 21-40",
-                    "stationID": 1933
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Bike depot",
-                    "stationID": 2081
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Bike depot",
-                    "stationID": 1932
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Bike depot",
-                    "stationID": 1933
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 1-20",
-                    "stationID": 1932
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 21-40",
-                    "stationID": 1932
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 21-40",
-                    "stationID": 1933
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Bike depot",
-                    "stationID": 2081
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Bike depot",
-                    "stationID": 1932
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Bike depot",
-                    "stationID": 1933
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 1-20",
-                    "stationID": 1932
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 21-40",
-                    "stationID": 1932
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 21-40",
-                    "stationID": 1933
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Bike depot",
-                    "stationID": 2081
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Bike depot",
-                    "stationID": 1932
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Bike depot",
-                    "stationID": 1933
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 1-20",
-                    "stationID": 1932
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 21-40",
-                    "stationID": 1932
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 21-40",
-                    "stationID": 1933
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Bike depot",
-                    "stationID": 2081
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Bike depot",
-                    "stationID": 1932
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Bike depot",
-                    "stationID": 1933
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 1-20",
-                    "stationID": 1932
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 21-40",
-                    "stationID": 1932
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 21-40",
-                    "stationID": 1933
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Bike depot",
-                    "stationID": 2081
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Bike depot",
-                    "stationID": 1932
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Bike depot",
-                    "stationID": 1933
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 1-20",
-                    "stationID": 1932
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "Brunico/Bruneck bus station (near the train station)",
-                    "locationName": "Brunico/Bruneck, Brunico/Bruneck train station",
-                    "name": "Individual box 21-40",
                     "stationID": 1932
                 },
                 {
@@ -1390,9 +286,9 @@
             "stations": [
                 {
                     "address": "Viale stazione, Bressanone (parcheggio bici interrato)",
-                    "countFreePlacesAvailable": 145,
+                    "countFreePlacesAvailable": 146,
                     "countFreePlacesAvailable_AssistedBikes": 0,
-                    "countFreePlacesAvailable_MuscularBikes": 145,
+                    "countFreePlacesAvailable_MuscularBikes": 146,
                     "latitude": 46.7115927472588,
                     "locationID": 307,
                     "locationName": "Bressanone, stazione di Bressanone",
@@ -1588,7 +484,7 @@
                         {
                             "level": 1,
                             "position": 32,
-                            "state": 2,
+                            "state": 1,
                             "type": 1
                         },
                         {
@@ -2529,7 +1425,7 @@
                         {
                             "level": 1,
                             "position": 10,
-                            "state": 2,
+                            "state": 1,
                             "type": 1
                         },
                         {
@@ -2559,7 +1455,7 @@
                         {
                             "level": 1,
                             "position": 15,
-                            "state": 1,
+                            "state": 2,
                             "type": 1
                         },
                         {
@@ -2594,9 +1490,9 @@
             "stations": [
                 {
                     "address": "accanto all'autostazione di Brunico",
-                    "countFreePlacesAvailable": 27,
+                    "countFreePlacesAvailable": 26,
                     "countFreePlacesAvailable_AssistedBikes": 0,
-                    "countFreePlacesAvailable_MuscularBikes": 27,
+                    "countFreePlacesAvailable_MuscularBikes": 26,
                     "latitude": 46.794062811563784,
                     "locationID": 308,
                     "locationName": "Brunico, stazione di Brunico",
@@ -2612,7 +1508,7 @@
                         {
                             "level": 1,
                             "position": 2,
-                            "state": 1,
+                            "state": 2,
                             "type": 1
                         },
                         {
@@ -2916,9 +1812,9 @@
                 },
                 {
                     "address": "accanto all’autostazione di Brunico",
-                    "countFreePlacesAvailable": 20,
+                    "countFreePlacesAvailable": 19,
                     "countFreePlacesAvailable_AssistedBikes": 0,
-                    "countFreePlacesAvailable_MuscularBikes": 20,
+                    "countFreePlacesAvailable_MuscularBikes": 19,
                     "latitude": 46.79402951978319,
                     "locationID": 308,
                     "locationName": "Brunico, stazione di Brunico",
@@ -3036,7 +1932,7 @@
                         {
                             "level": 1,
                             "position": 39,
-                            "state": 1,
+                            "state": 2,
                             "type": 1
                         },
                         {
@@ -3154,7 +2050,7 @@
                         {
                             "level": 1,
                             "position": 4,
-                            "state": 1,
+                            "state": 2,
                             "type": 1
                         },
                         {
@@ -3166,7 +2062,7 @@
                         {
                             "level": 1,
                             "position": 6,
-                            "state": 2,
+                            "state": 1,
                             "type": 1
                         },
                         {
@@ -3470,7 +2366,7 @@
                             "type": 1
                         }
                     ],
-                    "state": 0,
+                    "state": 2,
                     "stationID": 1936,
                     "totalPlaces": 56,
                     "type": 4
@@ -3537,7 +2433,7 @@
                         {
                             "level": 1,
                             "position": 8,
-                            "state": 1,
+                            "state": 2,
                             "type": 1
                         },
                         {
@@ -3573,7 +2469,7 @@
                         {
                             "level": 1,
                             "position": 14,
-                            "state": 2,
+                            "state": 1,
                             "type": 1
                         }
                     ],
@@ -3637,9 +2533,9 @@
             "stations": [
                 {
                     "address": "Via Stazione 95, Magrè sulla Strada del Vino\r\n",
-                    "countFreePlacesAvailable": 14,
+                    "countFreePlacesAvailable": 1,
                     "countFreePlacesAvailable_AssistedBikes": 0,
-                    "countFreePlacesAvailable_MuscularBikes": 14,
+                    "countFreePlacesAvailable_MuscularBikes": 1,
                     "latitude": 46.287654782992824,
                     "locationID": 354,
                     "locationName": "Magrè, stazione di Magrè-Cortaccia",
@@ -3649,25 +2545,25 @@
                         {
                             "level": 2,
                             "position": 1,
-                            "state": 1,
+                            "state": 3,
                             "type": 1
                         },
                         {
                             "level": 2,
                             "position": 2,
-                            "state": 1,
+                            "state": 3,
                             "type": 1
                         },
                         {
                             "level": 2,
                             "position": 3,
-                            "state": 1,
+                            "state": 3,
                             "type": 1
                         },
                         {
                             "level": 2,
                             "position": 4,
-                            "state": 1,
+                            "state": 3,
                             "type": 1
                         },
                         {
@@ -3679,61 +2575,61 @@
                         {
                             "level": 2,
                             "position": 6,
-                            "state": 1,
+                            "state": 3,
                             "type": 1
                         },
                         {
                             "level": 2,
                             "position": 7,
-                            "state": 1,
+                            "state": 3,
                             "type": 1
                         },
                         {
                             "level": 1,
                             "position": 8,
-                            "state": 1,
+                            "state": 3,
                             "type": 1
                         },
                         {
                             "level": 1,
                             "position": 9,
-                            "state": 1,
+                            "state": 3,
                             "type": 1
                         },
                         {
                             "level": 1,
                             "position": 10,
-                            "state": 1,
+                            "state": 3,
                             "type": 1
                         },
                         {
                             "level": 1,
                             "position": 11,
-                            "state": 1,
+                            "state": 3,
                             "type": 1
                         },
                         {
                             "level": 1,
                             "position": 12,
-                            "state": 1,
+                            "state": 3,
                             "type": 1
                         },
                         {
                             "level": 1,
                             "position": 13,
-                            "state": 1,
+                            "state": 3,
                             "type": 1
                         },
                         {
                             "level": 1,
                             "position": 14,
-                            "state": 1,
+                            "state": 3,
                             "type": 1
                         }
                     ],
-                    "state": 0,
+                    "state": 2,
                     "stationID": 2114,
-                    "totalPlaces": 14,
+                    "totalPlaces": 1,
                     "type": 5
                 }
             ]
@@ -4103,9 +2999,9 @@
             "stations": [
                 {
                     "address": "ingresso parcheggio auto, stazione di Lana – Postal",
-                    "countFreePlacesAvailable": 47,
+                    "countFreePlacesAvailable": 45,
                     "countFreePlacesAvailable_AssistedBikes": 0,
-                    "countFreePlacesAvailable_MuscularBikes": 47,
+                    "countFreePlacesAvailable_MuscularBikes": 45,
                     "latitude": 46.608214788889,
                     "locationID": 309,
                     "locationName": "Postal, stazione di Lana - Postal",
@@ -4145,7 +3041,7 @@
                         {
                             "level": 1,
                             "position": 6,
-                            "state": 1,
+                            "state": 2,
                             "type": 1
                         },
                         {
@@ -4157,7 +3053,7 @@
                         {
                             "level": 1,
                             "position": 8,
-                            "state": 1,
+                            "state": 2,
                             "type": 1
                         },
                         {
@@ -4818,475 +3714,7 @@
                 {
                     "address": "dlungia la staziun dles corieres a Bornech",
                     "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda coletif",
-                    "stationID": 1932
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda coletif",
-                    "stationID": 1933
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
                     "name": "Box dla roda individual 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 1-20",
-                    "stationID": 1932
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 21-40",
-                    "stationID": 1932
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 21-40",
-                    "stationID": 1933
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda coletif",
-                    "stationID": 2081
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda coletif",
-                    "stationID": 1932
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda coletif",
-                    "stationID": 1933
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 1-20",
-                    "stationID": 1932
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 21-40",
-                    "stationID": 1932
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 21-40",
-                    "stationID": 1933
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda coletif",
-                    "stationID": 2081
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda coletif",
-                    "stationID": 1932
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda coletif",
-                    "stationID": 1933
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 1-20",
-                    "stationID": 1932
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 21-40",
-                    "stationID": 1932
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 21-40",
-                    "stationID": 1933
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda coletif",
-                    "stationID": 2081
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda coletif",
-                    "stationID": 1932
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda coletif",
-                    "stationID": 1933
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 1-20",
-                    "stationID": 1932
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 21-40",
-                    "stationID": 1932
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 21-40",
-                    "stationID": 1933
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda coletif",
-                    "stationID": 2081
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda coletif",
-                    "stationID": 1932
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda coletif",
-                    "stationID": 1933
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 1-20",
-                    "stationID": 1932
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 21-40",
-                    "stationID": 1932
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 21-40",
-                    "stationID": 1933
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda coletif",
-                    "stationID": 2081
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda coletif",
-                    "stationID": 1932
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda coletif",
-                    "stationID": 1933
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 1-20",
-                    "stationID": 1932
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 21-40",
-                    "stationID": 1932
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 21-40",
-                    "stationID": 1933
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda coletif",
-                    "stationID": 2081
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda coletif",
-                    "stationID": 1932
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda coletif",
-                    "stationID": 1933
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 1-20",
-                    "stationID": 1932
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 21-40",
-                    "stationID": 1932
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 21-40",
-                    "stationID": 1933
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda coletif",
-                    "stationID": 2081
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda coletif",
-                    "stationID": 1932
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda coletif",
-                    "stationID": 1933
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 1-20",
-                    "stationID": 1932
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 21-40",
-                    "stationID": 1932
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 21-40",
-                    "stationID": 1933
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda coletif",
-                    "stationID": 2081
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda coletif",
-                    "stationID": 1932
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda coletif",
-                    "stationID": 1933
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 1-20",
-                    "stationID": 2081
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 1-20",
-                    "stationID": 1932
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 1-20",
-                    "stationID": 1933
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 21-40",
-                    "stationID": 2081
-                },
-                {
-                    "address": "dlungia la staziun dles corieres a Bornech",
-                    "locationName": "Bornech, staziun de Bornech",
-                    "name": "Box dla roda individual 21-40",
                     "stationID": 1932
                 },
                 {
@@ -5389,90 +3817,6 @@
                     "address": "strada dla staziun, Porsenú (plaza da parché les rodes sot tera)",
                     "locationName": "Porsenú, staziun de Porsenú",
                     "name": "Box dla roda coletif",
-                    "stationID": 1930
-                },
-                {
-                    "address": "strada dla staziun, Porsenú (plaza da parché les rodes sot tera)",
-                    "locationName": "Porsenú, staziun de Porsenú",
-                    "name": "Box dla roda coletif",
-                    "stationID": 1931
-                },
-                {
-                    "address": "strada dla staziun, Porsenú (plaza da parché les rodes sot tera)",
-                    "locationName": "Porsenú, staziun de Porsenú",
-                    "name": "Box dla roda individual",
-                    "stationID": 1930
-                },
-                {
-                    "address": "strada dla staziun, Porsenú (plaza da parché les rodes sot tera)",
-                    "locationName": "Porsenú, staziun de Porsenú",
-                    "name": "Box dla roda individual",
-                    "stationID": 1931
-                },
-                {
-                    "address": "strada dla staziun, Porsenú (plaza da parché les rodes sot tera)",
-                    "locationName": "Porsenú, staziun de Porsenú",
-                    "name": "Box dla roda coletif",
-                    "stationID": 1930
-                },
-                {
-                    "address": "strada dla staziun, Porsenú (plaza da parché les rodes sot tera)",
-                    "locationName": "Porsenú, staziun de Porsenú",
-                    "name": "Box dla roda coletif",
-                    "stationID": 1931
-                },
-                {
-                    "address": "strada dla staziun, Porsenú (plaza da parché les rodes sot tera)",
-                    "locationName": "Porsenú, staziun de Porsenú",
-                    "name": "Box dla roda individual",
-                    "stationID": 1930
-                },
-                {
-                    "address": "strada dla staziun, Porsenú (plaza da parché les rodes sot tera)",
-                    "locationName": "Porsenú, staziun de Porsenú",
-                    "name": "Box dla roda individual",
-                    "stationID": 1931
-                },
-                {
-                    "address": "Plaza dla staziun 3, Porsenú",
-                    "locationName": "Porsenú, staziun de Porsenú",
-                    "name": "Box dla roda coletif",
-                    "stationID": 1930
-                },
-                {
-                    "address": "Plaza dla staziun 3, Porsenú",
-                    "locationName": "Porsenú, staziun de Porsenú",
-                    "name": "Box dla roda coletif",
-                    "stationID": 1931
-                },
-                {
-                    "address": "Plaza dla staziun 3, Porsenú",
-                    "locationName": "Porsenú, staziun de Porsenú",
-                    "name": "Box dla roda individual",
-                    "stationID": 1930
-                },
-                {
-                    "address": "Plaza dla staziun 3, Porsenú",
-                    "locationName": "Porsenú, staziun de Porsenú",
-                    "name": "Box dla roda individual",
-                    "stationID": 1931
-                },
-                {
-                    "address": "Plaza dla staziun 3, Porsenú",
-                    "locationName": "Porsenú, staziun de Porsenú",
-                    "name": "Box dla roda coletif",
-                    "stationID": 1930
-                },
-                {
-                    "address": "Plaza dla staziun 3, Porsenú",
-                    "locationName": "Porsenú, staziun de Porsenú",
-                    "name": "Box dla roda coletif",
-                    "stationID": 1931
-                },
-                {
-                    "address": "Plaza dla staziun 3, Porsenú",
-                    "locationName": "Porsenú, staziun de Porsenú",
-                    "name": "Box dla roda individual",
                     "stationID": 1930
                 },
                 {

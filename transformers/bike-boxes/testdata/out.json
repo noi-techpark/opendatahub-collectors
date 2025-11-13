@@ -14,7 +14,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": 145,
+                                        "value": 146,
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -22,7 +22,7 @@
                                 "branch": null,
                                 "provenance": ""
                             },
-                            "freeSpotsElectricBikes": {
+                            "freeSpotsElectricBike": {
                                 "name": "(default)",
                                 "data": [
                                     {
@@ -34,11 +34,11 @@
                                 "branch": null,
                                 "provenance": ""
                             },
-                            "freeSpotsRegularBikes": {
+                            "freeSpotsRegularBike": {
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": 145,
+                                        "value": 146,
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -77,7 +77,7 @@
                                 "branch": null,
                                 "provenance": ""
                             },
-                            "freeSpotsElectricBikes": {
+                            "freeSpotsElectricBike": {
                                 "name": "(default)",
                                 "data": [
                                     {
@@ -89,7 +89,7 @@
                                 "branch": null,
                                 "provenance": ""
                             },
-                            "freeSpotsRegularBikes": {
+                            "freeSpotsRegularBike": {
                                 "name": "(default)",
                                 "data": [
                                     {
@@ -132,7 +132,7 @@
                                 "branch": null,
                                 "provenance": ""
                             },
-                            "freeSpotsElectricBikes": {
+                            "freeSpotsElectricBike": {
                                 "name": "(default)",
                                 "data": [
                                     {
@@ -144,7 +144,7 @@
                                 "branch": null,
                                 "provenance": ""
                             },
-                            "freeSpotsRegularBikes": {
+                            "freeSpotsRegularBike": {
                                 "name": "(default)",
                                 "data": [
                                     {
@@ -179,7 +179,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": 20,
+                                        "value": 19,
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -187,7 +187,7 @@
                                 "branch": null,
                                 "provenance": ""
                             },
-                            "freeSpotsElectricBikes": {
+                            "freeSpotsElectricBike": {
                                 "name": "(default)",
                                 "data": [
                                     {
@@ -199,11 +199,11 @@
                                 "branch": null,
                                 "provenance": ""
                             },
-                            "freeSpotsRegularBikes": {
+                            "freeSpotsRegularBike": {
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": 20,
+                                        "value": 19,
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -234,7 +234,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": 47,
+                                        "value": 45,
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -242,7 +242,7 @@
                                 "branch": null,
                                 "provenance": ""
                             },
-                            "freeSpotsElectricBikes": {
+                            "freeSpotsElectricBike": {
                                 "name": "(default)",
                                 "data": [
                                     {
@@ -254,11 +254,11 @@
                                 "branch": null,
                                 "provenance": ""
                             },
-                            "freeSpotsRegularBikes": {
+                            "freeSpotsRegularBike": {
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": 47,
+                                        "value": 45,
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -297,7 +297,7 @@
                                 "branch": null,
                                 "provenance": ""
                             },
-                            "freeSpotsElectricBikes": {
+                            "freeSpotsElectricBike": {
                                 "name": "(default)",
                                 "data": [
                                     {
@@ -309,7 +309,7 @@
                                 "branch": null,
                                 "provenance": ""
                             },
-                            "freeSpotsRegularBikes": {
+                            "freeSpotsRegularBike": {
                                 "name": "(default)",
                                 "data": [
                                     {
@@ -352,7 +352,7 @@
                                 "branch": null,
                                 "provenance": ""
                             },
-                            "freeSpotsElectricBikes": {
+                            "freeSpotsElectricBike": {
                                 "name": "(default)",
                                 "data": [
                                     {
@@ -364,7 +364,7 @@
                                 "branch": null,
                                 "provenance": ""
                             },
-                            "freeSpotsRegularBikes": {
+                            "freeSpotsRegularBike": {
                                 "name": "(default)",
                                 "data": [
                                     {
@@ -380,7 +380,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": "unknown",
+                                        "value": "out of service",
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -407,7 +407,7 @@
                                 "branch": null,
                                 "provenance": ""
                             },
-                            "freeSpotsElectricBikes": {
+                            "freeSpotsElectricBike": {
                                 "name": "(default)",
                                 "data": [
                                     {
@@ -419,7 +419,7 @@
                                 "branch": null,
                                 "provenance": ""
                             },
-                            "freeSpotsRegularBikes": {
+                            "freeSpotsRegularBike": {
                                 "name": "(default)",
                                 "data": [
                                     {
@@ -454,7 +454,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": 27,
+                                        "value": 26,
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -462,7 +462,7 @@
                                 "branch": null,
                                 "provenance": ""
                             },
-                            "freeSpotsElectricBikes": {
+                            "freeSpotsElectricBike": {
                                 "name": "(default)",
                                 "data": [
                                     {
@@ -474,11 +474,11 @@
                                 "branch": null,
                                 "provenance": ""
                             },
-                            "freeSpotsRegularBikes": {
+                            "freeSpotsRegularBike": {
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": 27,
+                                        "value": 26,
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -517,7 +517,7 @@
                                 "branch": null,
                                 "provenance": ""
                             },
-                            "freeSpotsElectricBikes": {
+                            "freeSpotsElectricBike": {
                                 "name": "(default)",
                                 "data": [
                                     {
@@ -529,7 +529,7 @@
                                 "branch": null,
                                 "provenance": ""
                             },
-                            "freeSpotsRegularBikes": {
+                            "freeSpotsRegularBike": {
                                 "name": "(default)",
                                 "data": [
                                     {
@@ -572,7 +572,7 @@
                                 "branch": null,
                                 "provenance": ""
                             },
-                            "freeSpotsElectricBikes": {
+                            "freeSpotsElectricBike": {
                                 "name": "(default)",
                                 "data": [
                                     {
@@ -584,7 +584,7 @@
                                 "branch": null,
                                 "provenance": ""
                             },
-                            "freeSpotsRegularBikes": {
+                            "freeSpotsRegularBike": {
                                 "name": "(default)",
                                 "data": [
                                     {
@@ -619,7 +619,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": 14,
+                                        "value": 1,
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -627,7 +627,7 @@
                                 "branch": null,
                                 "provenance": ""
                             },
-                            "freeSpotsElectricBikes": {
+                            "freeSpotsElectricBike": {
                                 "name": "(default)",
                                 "data": [
                                     {
@@ -639,11 +639,11 @@
                                 "branch": null,
                                 "provenance": ""
                             },
-                            "freeSpotsRegularBikes": {
+                            "freeSpotsRegularBike": {
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": 14,
+                                        "value": 1,
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -655,7 +655,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": "unknown",
+                                        "value": "out of service",
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -682,7 +682,7 @@
                                 "branch": null,
                                 "provenance": ""
                             },
-                            "freeSpotsElectricBikes": {
+                            "freeSpotsElectricBike": {
                                 "name": "(default)",
                                 "data": [
                                     {
@@ -694,7 +694,7 @@
                                 "branch": null,
                                 "provenance": ""
                             },
-                            "freeSpotsRegularBikes": {
+                            "freeSpotsRegularBike": {
                                 "name": "(default)",
                                 "data": [
                                     {
@@ -2676,7 +2676,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": "occupied - in service",
+                                        "value": "in service",
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -4101,7 +4101,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": "occupied - in service",
+                                        "value": "in service",
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -4196,7 +4196,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": "in service",
+                                        "value": "occupied - in service",
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -5146,7 +5146,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": "in service",
+                                        "value": "occupied - in service",
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -6172,7 +6172,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": "in service",
+                                        "value": "occupied - in service",
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -6210,7 +6210,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": "in service",
+                                        "value": "occupied - in service",
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -7939,7 +7939,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": "in service",
+                                        "value": "occupied - in service",
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -8300,7 +8300,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": "occupied - in service",
+                                        "value": "in service",
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -8471,7 +8471,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": "occupied - in service",
+                                        "value": "in service",
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -8604,7 +8604,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": "in service",
+                                        "value": "occupied - in service",
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -8851,7 +8851,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": "in service",
+                                        "value": "occupied - in service",
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -9383,7 +9383,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": "in service",
+                                        "value": "out of service",
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -9402,7 +9402,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": "in service",
+                                        "value": "out of service",
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -9421,7 +9421,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": "in service",
+                                        "value": "out of service",
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -9440,7 +9440,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": "in service",
+                                        "value": "out of service",
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -9459,7 +9459,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": "in service",
+                                        "value": "out of service",
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -9478,7 +9478,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": "in service",
+                                        "value": "out of service",
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -9497,7 +9497,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": "in service",
+                                        "value": "out of service",
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -9516,7 +9516,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": "in service",
+                                        "value": "out of service",
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -9535,7 +9535,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": "in service",
+                                        "value": "out of service",
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -9573,7 +9573,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": "in service",
+                                        "value": "out of service",
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -9592,7 +9592,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": "in service",
+                                        "value": "out of service",
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -9611,7 +9611,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": "in service",
+                                        "value": "out of service",
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -9630,7 +9630,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": "in service",
+                                        "value": "out of service",
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -10684,7 +10684,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": 155,
+                                        "value": 156,
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -10703,7 +10703,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": 64,
+                                        "value": 62,
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -10722,7 +10722,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": 47,
+                                        "value": 45,
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -10836,7 +10836,7 @@
                                 "name": "(default)",
                                 "data": [
                                     {
-                                        "value": 14,
+                                        "value": 1,
                                         "period": 600,
                                         "timestamp": 1735689600000
                                     }
@@ -10885,14 +10885,14 @@
                         "parentStation": "307",
                         "metaData": {
                             "addresses": {
-                                "de": "Bahnhofplatz 3, Brixen",
+                                "de": "Bahnhofstraße, Brixen (Fahrrad-Tiefgarage)",
                                 "en": "Bressanone/Brixen: Viale stazione/Bahnhofstraße (underground bicycle parking)",
                                 "it": "Viale stazione, Bressanone (parcheggio bici interrato)",
                                 "lld": "strada dla staziun, Porsenú (plaza da parché les rodes sot tera)"
                             },
                             "locationID": 307,
                             "names": {
-                                "de": "Einzelboxen",
+                                "de": "Sammelbox",
                                 "en": "Bike depot",
                                 "it": "Bicibox collettivo",
                                 "lld": "Box dla roda coletif"
@@ -11804,16 +11804,16 @@
                         "metaData": {
                             "addresses": {
                                 "de": "Bahnhofplatz 3, Brixen",
-                                "en": "Bressanone/Brixen: Viale stazione/Bahnhofstraße (underground bicycle parking)",
+                                "en": "Bressanone/Brixen: Piazza stazione/Bahnhofsplatz 3",
                                 "it": "Piazza stazione 3, Bressanone",
-                                "lld": "strada dla staziun, Porsenú (plaza da parché les rodes sot tera)"
+                                "lld": "Plaza dla staziun 3, Porsenú"
                             },
                             "locationID": 307,
                             "names": {
                                 "de": "Einzelboxen",
-                                "en": "Bike depot",
+                                "en": "Individual box",
                                 "it": "Bicibox individuali",
-                                "lld": "Box dla roda coletif"
+                                "lld": "Box dla roda individual"
                             },
                             "netex_parking": {
                                 "charging": false,
@@ -11938,7 +11938,7 @@
                             },
                             "locationID": 308,
                             "names": {
-                                "de": "Einzelboxen 1-20",
+                                "de": "Sammelbox",
                                 "en": "Bike depot",
                                 "it": "Bicibox collettivo",
                                 "lld": "Box dla roda coletif"
@@ -12110,16 +12110,16 @@
                         "metaData": {
                             "addresses": {
                                 "de": "neben Busbahnhof am Bahnhof Bruneck",
-                                "en": "Brunico/Bruneck, Brunico/Bruneck train station",
+                                "en": "Brunico/Bruneck bus station (near the train station)",
                                 "it": "accanto all’autostazione di Brunico",
                                 "lld": "dlungia la staziun dles corieres a Bornech"
                             },
                             "locationID": 308,
                             "names": {
                                 "de": "Einzelboxen 1-20",
-                                "en": "Bike depot",
+                                "en": "Individual box 1-20",
                                 "it": "Bicibox individuali1-20",
-                                "lld": "Box dla roda coletif"
+                                "lld": "Box dla roda individual 1-20"
                             },
                             "netex_parking": {
                                 "charging": false,
@@ -12248,16 +12248,16 @@
                         "metaData": {
                             "addresses": {
                                 "de": "neben Busbahnhof am Bahnhof Bruneck",
-                                "en": "Brunico/Bruneck, Brunico/Bruneck train station",
+                                "en": "Brunico/Bruneck bus station (near the train station)",
                                 "it": "accanto all’autostazione di Brunico",
                                 "lld": "dlungia la staziun dles corieres a Bornech"
                             },
                             "locationID": 308,
                             "names": {
-                                "de": "Einzelboxen 1-20",
-                                "en": "Bike depot",
+                                "de": "Einzelboxen 21-40",
+                                "en": "Individual box 21-40",
                                 "it": "Bicibox individuali21-40",
-                                "lld": "Box dla roda coletif"
+                                "lld": "Box dla roda individual 21-40"
                             },
                             "netex_parking": {
                                 "charging": false,
@@ -13036,7 +13036,7 @@
                                     "type": "withoutRefill"
                                 }
                             ],
-                            "totalPlaces": 14,
+                            "totalPlaces": 1,
                             "type": "bikeBoxGroup"
                         }
                     },
@@ -21444,7 +21444,7 @@
                                 "it": "Magrè, stazione di Magrè-Cortaccia",
                                 "lld": "Magrè/Margreid, staziun de Magrè-Cortaccia/Margreid-Kurtatsch 95\r\n"
                             },
-                            "totalPlaces": 14,
+                            "totalPlaces": 1,
                             "totalStations": 1
                         }
                     },
