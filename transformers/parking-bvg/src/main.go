@@ -30,7 +30,7 @@ const (
 	DataTypeFree     = "free"
 	DataTypeOccupied = "occupied"
 
-	PERIOD = 30
+	PERIOD = 300
 )
 
 // Per-Type Data Types (Explicitly Declared)
