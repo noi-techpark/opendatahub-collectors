@@ -39,13 +39,7 @@ steps:
                       method: GET
                   
                   mergeOn: .stations = $res
-                  resultTransformer: | 
-                    [{
-                      address: .[].address, 
-                      locationName: .[].locationName, 
-                      name: .[].name, 
-                      stationID: .[].stationID
-                    }]
+                  resultTransformer: "[.[] | { address, locationName, name, stationID }]"
 
     - type: request
       name: "Get all locations"
