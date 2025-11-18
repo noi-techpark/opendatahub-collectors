@@ -28,7 +28,7 @@ import (
 
 const (
 	SOURCE            = "PROVINCE_BZ"
-	ID_TEMPLATE       = "urn:odh:announcements:provincebz"
+	ID_TEMPLATE       = "urn:announcements:provincebz"
 	PROVIDER_TIMEZONE = "Europe/Rome"
 )
 
