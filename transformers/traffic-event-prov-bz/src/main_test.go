@@ -4,6 +4,18 @@
 
 package main
 
+// import (
+// 	"context"
+// 	"testing"
+// 	"time"
+
+// 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
+// 	"github.com/noi-techpark/opendatahub-go-sdk/testsuite"
+// 	"github.com/stretchr/testify/require"
+// 	dto "opendatahub.com/tr-traffic-event-prov-bz/dto"
+// 	odhContentClient "opendatahub.com/tr-traffic-event-prov-bz/odh-content-client"
+// )
+
 // func Test1(t *testing.T) {
 // 	var err error
 // 	location, err = time.LoadLocation(PROVIDER_TIMEZONE)
@@ -18,7 +30,7 @@ package main
 // 	})
 
 // 	var in = []dto.TrafficEvent{}
-// 	err = bdpmock.LoadInputData(&in, "testdata/in.json")
+// 	err = testsuite.LoadInputData(&in, "testdata/in.json")
 // 	require.Nil(t, err)
 
 // 	timestamp, err := time.Parse("2006-01-02", "2025-01-01")

@@ -46,6 +46,16 @@ type ProviderProvinceBz struct {
 	SyncTime time.Time `json:"SyncTime" hash:"ignore"`
 }
 
+type GpsInfo struct {
+	Gpstype               *string  `json:"gpstype,omitempty"`
+	Latitude              *float64 `json:"latitude,omitempty"`
+	Longitude             *float64 `json:"longitude,omitempty"`
+	Altitude              *float64 `json:"altitude,omitempty"`
+	AltitudeUnitofMeasure *string  `json:"altitudeUnitofMeasure,omitempty"`
+	Geometry              *string  `json:"geometry,omitempty"`
+	Default               bool     `json:"default"`
+}
+
 // Generic corresponds to the C# Generic class.
 // It is intended to be embedded (inlined) in other structs.
 type Generic struct {
@@ -68,9 +78,9 @@ type Generic struct {
 		RoadIncidentProperties RoadIncidentProperties `json:"RoadIncidentProperties"`
 	} `json:"AdditionalProperties,omitempty"`
 
-	Source          *string  `json:"Source,omitempty" hash:"ignore"`
-	TagIds          []string `json:"TagIds,omitempty" hash:"set"`
-	WKTGeometry4326 string   `json:"WKTGeometry4326,omitempty"`
+	Source *string            `json:"Source,omitempty" hash:"ignore"`
+	TagIds []string           `json:"TagIds,omitempty" hash:"set"`
+	Geo    map[string]GpsInfo `json:"Geo,omitempty"`
 }
 
 // Announcement corresponds to the C# Announcement class, embedding Generic for inlining.

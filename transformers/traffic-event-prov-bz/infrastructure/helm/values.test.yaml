@@ -9,9 +9,9 @@ env:
   ODH_CORE_URL: https://api.tourism.testingmachine.eu/v1
   ODH_CORE_TOKEN_URL: https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token
 
-  MQ_QUEUE: traffic-event.prov-bz
+  MQ_QUEUE: tmp-traffic-event.prov-bz
   MQ_EXCHANGE: routed
-  MQ_KEY: traffic-event.prov-bz
+  MQ_KEY: tmp-traffic-event.prov-bz
   MQ_CLIENT: tr-traffic-event-prov-bz
 
   RAW_DATA_BRIDGE_ENDPOINT: "http://raw-data-bridge.core.svc.cluster.local:2000"
