@@ -96,6 +96,10 @@ github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0 h1:qZNcndXyVDNMjm97UUHY83S
 github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0/go.mod h1:UoUUz256zEhBDTyyaGbIdm9JHbDNMqUjrJArVkut4XY=
 github.com/oklog/ulid v1.3.1 h1:EGfNDEx6MqHz8B3uNV6QAib1UR2Lm97sHi3ocA6ESJ4=
 github.com/oklog/ulid v1.3.1/go.mod h1:CirwcVhetQ6Lv90oh/F+FBtV6XMibvdAFo93nm5qn4U=
+github.com/patrickbr/gtfsparser v0.0.0-20240911102057-fc74d7141f00 h1:o3DZLXaWH3CMjNmLFRNIKiMajDDyvGkgmNflE+Myozo=
+github.com/patrickbr/gtfsparser v0.0.0-20240911102057-fc74d7141f00/go.mod h1:L88c76QEIfk3Z5pr1S715jfv1EIEVZ7BvNiefxz4o3o=
+github.com/patrickbr/gtfswriter v0.0.0-20241126214321-b6c6255581e4 h1:eRhBo3W/evmQ+WUj6xKjo84CuKuWojzteIlvonjWpD4=
+github.com/patrickbr/gtfswriter v0.0.0-20241126214321-b6c6255581e4/go.mod h1:B5RQqAhVjVuyfmnugGWZAENLM0liyRWR0lbhkcXcZc8=
 github.com/pelletier/go-toml/v2 v2.2.2 h1:aYUidT7k73Pcl9nb2gScu7NSrKCSHIDE89b3+6Wq+LM=
 github.com/pelletier/go-toml/v2 v2.2.2/go.mod h1:1t835xjRzz80PqgE6HHgN2JOsmgYu/h4qDAS4n929Rs=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
@@ -131,6 +135,8 @@ github.com/twitchyliquid64/golang-asm v0.15.1 h1:SU5vSMR7hnwNxj24w34ZyCi/FmDZTkS
 github.com/twitchyliquid64/golang-asm v0.15.1/go.mod h1:a1lVb/DtPvCB8fslRZhAngC2+aY1QWCk3Cedj/Gdt08=
 github.com/ugorji/go/codec v1.2.12 h1:9LC83zGrHhuUA9l16C9AHXAqEV/2wBQ4nkvumAE65EE=
 github.com/ugorji/go/codec v1.2.12/go.mod h1:UNopzCgEMSXjBc6AOMqYvWC1ktqTAfzJZUZgYf6w6lg=
+github.com/valyala/fastjson v1.6.4 h1:uAUNq9Z6ymTgGhcm0UynUAB6tlbakBrz6CQFax3BXVQ=
+github.com/valyala/fastjson v1.6.4/go.mod h1:CLCAqky6SMuOcxStkYQvblddUtoRxhYMGLrsQns1aXY=
 go.opentelemetry.io/auto/sdk v1.1.0 h1:cH53jehLUN6UFLY71z+NDOiNJqDdPRaXzTel0sJySYA=
 go.opentelemetry.io/auto/sdk v1.1.0/go.mod h1:3wSPjt5PWp2RhlCcmmOial7AvC4DQqZb7a7wCow3W8A=
 go.opentelemetry.io/otel v1.35.0 h1:xKWKPxrxB6OtMCbmMY021CqC45J+3Onta9MqjhnusiQ=
