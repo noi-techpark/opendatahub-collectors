@@ -226,8 +226,8 @@ func MapTrafficEventToAnnouncement(tags Tags, raw dto.TrafficEvent, id string) (
 			// 4. Safely check for non-zero values using the asserted float values
 			if xFloat != 0 && yFloat != 0 {
 				announcement.Geo["position"] = odhContentModel.GpsInfo{
-					Latitude:  Float64Ptr(xFloat),
-					Longitude: Float64Ptr(yFloat),
+					Longitude: Float64Ptr(xFloat),
+					Latitude:  Float64Ptr(yFloat),
 					Default:   true,
 					Geometry:  StringPtr(fmt.Sprintf("POINT (%f %f)", xFloat, yFloat)),
 				}
