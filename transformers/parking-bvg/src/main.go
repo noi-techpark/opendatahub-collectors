@@ -67,6 +67,8 @@ type AreaNameComponents struct {
 
 // --- MAIN FUNCTION AND TRANSFORMER SETUP ---
 
+var StationProto Stations = nil
+
 func main() {
 	ms.InitWithEnv(context.Background(), "", &env)
 	slog.Info("Starting data (parking) transformer...")
@@ -81,6 +83,8 @@ func main() {
 		BDP_CLIENT_SECRET:      os.Getenv("ODH_CLIENT_SECRET"),
 	})
 	defer tel.FlushOnPanic()
+
+	StationProto = ReadStations("./resources/stations.csv")
 
 	slog.Info("Syncing data types on startup")
 	err := syncDataTypes(b)
@@ -133,8 +137,8 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CountingAre
 		areasBySite[area.SiteID] = append(areasBySite[area.SiteID], area)
 	}
 
-	var allParkingStations []bdplib.Station
-	var allParkingFacilities []bdplib.Station
+	var allParkingStations []*bdplib.Station
+	var allParkingFacilities []*bdplib.Station
 
 	for siteID, areas := range areasBySite {
 		facilityName := ""
@@ -162,8 +166,12 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CountingAre
 			// 2. Create the ParkingStation (Camera)
 			singleTypeCapacityMap := map[string]int{parsed.Typ: capacity}
 			station := createParkingStation(bdp, area, parsed, capacity, singleTypeCapacityMap)
+			if nil == station {
+				continue
+			}
+
 			allParkingStations = append(allParkingStations, station)
-			stationsByFacility[siteID] = append(stationsByFacility[siteID], station)
+			stationsByFacility[siteID] = append(stationsByFacility[siteID], *station)
 
 			// 3. Calculate and Add Measurements for the ParkingStation
 			occupancy := area.Counts.Totals[len(area.Counts.Totals)-1].CountVehicle
@@ -193,11 +201,14 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CountingAre
 			facilityOccupancyByType[parsed.Typ] += occupancy // For Facility Per-Type Measurement
 		}
 
-		// --- 3. Create Parking Facility (Site) ---
+		// --- 1. Create Parking Facility (Site) ---
 		facility := createParkingFacility(bdp, siteID, facilityName, totalCapacity, facilityCapacityByType)
+		if nil == facility {
+			continue
+		}
 		allParkingFacilities = append(allParkingFacilities, facility)
 
-		// --- 4. Push Facility Measurements --- (New Logic)
+		// --- 4. Push Facility Measurements ---
 
 		// a) Facility Aggregated Measurements
 		facilityFreeTotal := totalCapacity - facilityOccupancyTotal
@@ -236,11 +247,11 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CountingAre
 	// --- 5. Sync and Push Data ---
 
 	// Sync ParkingFacilities first (parents)
-	err := bdp.SyncStations(StationTypeParkingFacility, allParkingFacilities, true, false)
+	err := bdp.SyncStations(StationTypeParkingFacility, ptrToRef(allParkingFacilities), true, false)
 	ms.FailOnError(ctx, err, "failed to push StationTypeParkingFacility")
 
 	// Sync ParkingStations (children)
-	err = bdp.SyncStations(StationTypeParkingStation, allParkingStations, true, false)
+	err = bdp.SyncStations(StationTypeParkingStation, ptrToRef(allParkingStations), true, false)
 	ms.FailOnError(ctx, err, "failed to push StationTypeParkingStation")
 
 	// Push measurements for ParkingStations
@@ -254,6 +265,14 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CountingAre
 	slog.Info("Parking counting area data transformation completed successfully")
 
 	return nil
+}
+
+func ptrToRef(ptrs []*bdplib.Station) []bdplib.Station {
+	s := make([]bdplib.Station, len(ptrs))
+	for i, p := range ptrs {
+		s[i] = *p
+	}
+	return s
 }
 
 // --- HELPER FUNCTIONS ---
@@ -287,19 +306,25 @@ func parseAreaName(name string) AreaNameComponents {
 }
 
 // createParkingStation now accepts a map for capacityByType
-func createParkingStation(bdp bdplib.Bdp, area CountingArea, parsed AreaNameComponents, capacity int, capacityByType map[string]int) bdplib.Station {
+func createParkingStation(bdp bdplib.Bdp, area CountingArea, parsed AreaNameComponents, capacity int, capacityByType map[string]int) *bdplib.Station {
+	proto := StationProto.GetStationByID(area.ID)
+	if nil == proto {
+		slog.Warn("area not found in station.csv configuration", "id", area.ID)
+		return nil
+	}
+
 	station := bdplib.CreateStation(
 		area.Name,
-		area.Name, // Use the full name as the Station name
+		proto.StandardName,
 		StationTypeParkingStation,
-		0, 0, // No specific lat/lon in sample data, setting to 0,0
+		proto.Lat, proto.Lon,
 		bdp.GetOrigin(),
 	)
 
 	// Set Parent Station ID to the site_id (ParkingFacility)
 	station.ParentStation = area.SiteID
 
-	metadata := make(map[string]interface{})
+	metadata := proto.ToMetadata()
 
 	// METADATA fields
 	metadata["class_categories"] = area.AppearanceParams.ClassCategories
@@ -317,19 +342,25 @@ func createParkingStation(bdp bdplib.Bdp, area CountingArea, parsed AreaNameComp
 	}
 
 	station.MetaData = metadata
-	return station
+	return &station
 }
 
-func createParkingFacility(bdp bdplib.Bdp, siteID, facilityName string, totalCapacity int, capacityByType map[string]int) bdplib.Station {
+func createParkingFacility(bdp bdplib.Bdp, siteID, facilityName string, totalCapacity int, capacityByType map[string]int) *bdplib.Station {
+	proto := StationProto.GetStationByID(siteID)
+	if nil == proto {
+		slog.Warn("site not found in station.csv configuration", "id", siteID)
+		return nil
+	}
+
 	station := bdplib.CreateStation(
 		facilityName,
-		facilityName, // The first part of the area name
+		proto.StandardName,
 		StationTypeParkingFacility,
-		0, 0,
+		proto.Lat, proto.Lon,
 		bdp.GetOrigin(),
 	)
 
-	metadata := make(map[string]interface{})
+	metadata := proto.ToMetadata()
 
 	// Required capacity fields: capacity is total
 	metadata["capacity"] = totalCapacity
@@ -342,7 +373,7 @@ func createParkingFacility(bdp bdplib.Bdp, siteID, facilityName string, totalCap
 	}
 
 	station.MetaData = metadata
-	return station
+	return &station
 }
 
 // Normalizes the type suffix from the name string

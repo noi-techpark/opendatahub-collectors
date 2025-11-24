@@ -19,6 +19,7 @@ import (
 func Test1(t *testing.T) {
 	var in = CountingAreaList{}
 	err := testsuite.LoadInputData(&in, "testdata/in.json")
+	StationProto = ReadStations("./resources/stations.csv")
 	require.Nil(t, err)
 
 	timestamp, err := time.Parse("2006-01-02", "2025-01-01")
