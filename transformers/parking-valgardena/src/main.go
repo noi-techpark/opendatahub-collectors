@@ -22,7 +22,7 @@ import (
 const Station = "ParkingStation"
 const Period = 120
 const Origin = "GARDENA"
-const DataType = "occupied"
+const DataType = "free"
 
 var env struct {
 	tr.Env
@@ -77,7 +77,7 @@ func main() {
 		parkingid := stationId(payload.Uid, Origin)
 		parkingData.AddRecord(parkingid, DataType, bdplib.CreateRecord(r.Timestamp.UnixMilli(), payload.Occupancy, Period))
 		if err := b.PushData(Station, parkingData); err != nil {
-			slog.Error("error pushing parking occupancy data:","err", err)
+			slog.Error("error pushing parking occupancy data:", "err", err)
 			return err
 		}
 		slog.Info("Updated parking station occupancy")
@@ -108,6 +108,7 @@ func main() {
 			s := bdplib.CreateStation(parkingid, payload.NameIT, Station, lat, lon, Origin)
 
 			MetaData := make(map[string]interface{})
+			MetaData["name_IT"] = payload.NameIT
 			MetaData["name_DE"] = payload.NameDE
 			MetaData["capacity"] = payload.Capacity
 
@@ -118,7 +119,7 @@ func main() {
 		if err := b.SyncStations(Station, stations, true, false); err != nil {
 			slog.Error("Error syncing stations", "err", err)
 		}
-		
+
 		slog.Info("Updated parking station occupancy")
 		return nil
 	})

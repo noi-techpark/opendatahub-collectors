@@ -5,6 +5,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -17,10 +18,11 @@ import (
 	"time"
 
 	"github.com/hashicorp/go-retryablehttp"
-	"github.com/kelseyhightower/envconfig"
-	"github.com/noi-techpark/go-opendatahub-ingest/dc"
-	"github.com/noi-techpark/go-opendatahub-ingest/dto"
-	"github.com/noi-techpark/go-opendatahub-ingest/ms"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/dc"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
+	"github.com/noi-techpark/opendatahub-go-sdk/tel"
+	"github.com/noi-techpark/opendatahub-go-sdk/tel/logger"
 	"github.com/robfig/cron/v3"
 )
 
@@ -75,23 +77,29 @@ func httpRequest(url *url.URL, httpHeaders http.Header, httpMethod string) (stri
 }
 
 func main() {
+	ms.InitWithEnv(context.Background(), "", &env)
 	slog.Info("Starting data collector...")
-	envconfig.MustProcess("", &env)
-	ms.InitLog(env.LOG_LEVEL)
+
+	defer tel.FlushOnPanic()
+
+	collector := dc.NewDc[dc.EmptyData](context.Background(), env.Env)
+
+	slog.Info("Setup complete. Starting cron scheduler")
 
 	headers := customHeaders()
 	u, err := url.Parse(env.HTTP_URL)
-	ms.FailOnError(err, "failed parsing poll URL")
+	ms.FailOnError(context.Background(), err, "failed parsing poll URL")
 
 	httpMethod := env.HTTP_METHOD
 
-	mq, err := dc.PubFromEnv(env.Env)
-	ms.FailOnError(err, "failed creating mq publisher")
-
 	c := cron.New(cron.WithSeconds())
 	c.AddFunc(env.CRON, func() {
-		slog.Info("Starting poll job")
 		jobstart := time.Now()
+
+		ctx, c := collector.StartCollection(context.Background())
+		defer c.End(ctx)
+
+		logger.Get(ctx).Debug("collecting")
 
 		body, err := httpRequest(u, headers, httpMethod)
 		if err != nil {
@@ -119,11 +127,12 @@ func main() {
 				slog.Error("failed to unmarshal parking data", "err", err)
 			}
 
-			mq <- dto.RawAny{
+			err = c.Publish(ctx, &rdb.RawAny{
 				Provider:  env.PROVIDER,
 				Timestamp: time.Now(),
 				Rawdata:   body,
-			}
+			})
+			ms.FailOnError(ctx, err, "failed to publish", "err", err)
 		}
 		slog.Info("Polling job completed", "runtime_ms", time.Since(jobstart).Milliseconds())
 	})
