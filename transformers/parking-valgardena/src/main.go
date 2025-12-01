@@ -72,7 +72,7 @@ func main() {
 	// batch mode requires a valid message to be sent after batchSecond to flush the batch
 	batchParkingData := b.CreateDataMap()
 	lastBatchTime := time.Now()
-	batchSecond := time.Duration(10 * int(time.Second))
+	batchSecond := time.Duration(120 * int(time.Second))
 
 	go tr.HandleQueue(dataMQ, env.Env.MONGO_URI, func(r *dto.Raw[string]) error {
 		parkingData := b.CreateDataMap()
