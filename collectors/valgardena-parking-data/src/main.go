@@ -136,7 +136,6 @@ func main() {
 		}
 		slog.Info("Polling job completed", "runtime_ms", time.Since(jobstart).Milliseconds())
 	})
-	slog.Info("Setup complete. Starting cron scheduler")
 	c.Run()
 }
 
