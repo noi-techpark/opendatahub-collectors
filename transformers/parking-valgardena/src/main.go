@@ -72,7 +72,7 @@ func main() {
 	// batch mode requires a valid message to be sent after batchSecond to flush the batch
 	batchParkingData := b.CreateDataMap()
 	lastBatchTime := time.Now()
-	batchSecond := time.Duration(5 * int(time.Second))
+	batchSecond := time.Duration(10 * int(time.Second))
 
 	go tr.HandleQueue(dataMQ, env.Env.MONGO_URI, func(r *dto.Raw[string]) error {
 		parkingData := b.CreateDataMap()
@@ -92,7 +92,7 @@ func main() {
 		} else {
 			batchParkingData.AddRecord(parkingid, DataType, bdplib.CreateRecord(r.Timestamp.UnixMilli(), payload.Occupancy, Period))
 			if time.Since(lastBatchTime) >= batchSecond {
-				err := b.PushData(Station, parkingData)
+				err := b.PushData(Station, batchParkingData)
 				ms.FailOnError(err, "error pushing batch parking occupancy data")
 				lastBatchTime = time.Now()
 			}
