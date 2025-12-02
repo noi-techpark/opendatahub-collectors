@@ -1,7 +1,7 @@
 {
     "syncedDataTypes": [],
     "syncedData": {
-        "ParkingSpace": [
+        "ParkingSensor": [
             {
                 "name": "(default)",
                 "data": null,
@@ -15,7 +15,7 @@
                                 "data": [
                                     {
                                         "value": 1,
-                                        "period": 60,
+                                        "period": 300,
                                         "timestamp": 1764663204597
                                     }
                                 ],
@@ -27,7 +27,7 @@
                                 "data": [
                                     {
                                         "value": 0,
-                                        "period": 60,
+                                        "period": 300,
                                         "timestamp": 1764663204597
                                     }
                                 ],
@@ -43,13 +43,13 @@
         ]
     },
     "syncedStations": {
-        "ParkingSpace": [
+        "ParkingSensor": [
             {
                 "Stations": [
                     {
                         "id": "0bd4106a-ae26-4284-ae05-ff19ae202749",
                         "name": "Ospedale 7 (Sensor 20)",
-                        "stationType": "ParkingSpace",
+                        "stationType": "ParkingSensor",
                         "latitude": 46.67754450688352,
                         "longitude": 11.152352029560427,
                         "origin": "",
