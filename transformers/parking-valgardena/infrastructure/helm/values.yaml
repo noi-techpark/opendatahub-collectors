@@ -11,15 +11,15 @@ imagePullSecrets:
 env:
   # ODH Core Writer Connection
   LOG_LEVEL: "DEBUG"
-  MQ_QUEUE: tmp-parking-valgardena.data  
+  MQ_QUEUE: parking-valgardena.data  
   MQ_EXCHANGE: routed  
-  MQ_KEY: tmp-parking-valgardena.data 
+  MQ_KEY: parking-valgardena.data 
   MQ_CLIENT: parking-datacollector-valgardena-data-consumer 
 
 
-  MQ_META_QUEUE: tmp-parking-valgardena.metadata  
+  MQ_META_QUEUE: parking-valgardena.metadata  
   MQ_META_EXCHANGE: routed  
-  MQ_META_KEY: tmp-parking-valgardena.metadata 
+  MQ_META_KEY: parking-valgardena.metadata 
   MQ_META_CLIENT: parking-datacollector-valgardena-metadata-consumer 
 
   BDP_BASE_URL: http://bdp-core.core.svc.cluster.local
@@ -27,7 +27,7 @@ env:
   BDP_PROVENANCE_NAME: 
   BDP_ORIGIN: GARDENA
 
-  BATCH_MODE: true
+  BATCH_MODE: false
 
 envSecretRef:
   - name: MQ_URI 

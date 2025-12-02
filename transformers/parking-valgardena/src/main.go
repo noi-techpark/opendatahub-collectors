@@ -24,6 +24,7 @@ const Station = "ParkingStation"
 const Period = 120
 const Origin = "GARDENA"
 const DataType = "free"
+const Municipality = "gardena"
 
 var env struct {
 	tr.Env
@@ -128,6 +129,7 @@ func main() {
 			MetaData["name_IT"] = payload.NameIT
 			MetaData["name_DE"] = payload.NameDE
 			MetaData["capacity"] = payload.Capacity
+			MetaData["municipality"] = Municipality
 
 			s.MetaData = MetaData
 			stations = append(stations, s)
