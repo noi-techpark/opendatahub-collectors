@@ -6,7 +6,7 @@ image:
 env:
   LOG_LEVEL: INFO
   MQTT_CLIENTID: NOI-testing
-  MQTT_TOPIC: parking_space_occupancy/#
+  MQTT_TOPIC:
   MQTT_URI: xsona-broker.axians.it:8883
   MQ_CLIENT: dc-mqtt-client-parking-onstreet-/bz-axians
   MQ_EXCHANGE: ingress
