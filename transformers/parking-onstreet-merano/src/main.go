@@ -20,8 +20,8 @@ import (
 )
 
 // Global Configuration
-const period = 60                  // Period is 60 seconds (1 minute), as configured in the Java app
-const stationtype = "ParkingSpace" // Using a sensible type name based on the data
+const period = 300
+const stationtype = "ParkingSensor"
 const STATION_DATATYPE_FREE = "free"
 const STATION_DATATYPE_OCCUPIED = "occupied"
 
