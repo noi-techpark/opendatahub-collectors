@@ -14,7 +14,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o main
 FROM alpine:latest AS build
 WORKDIR /app
 COPY --from=build-env /app/main .
-COPY src/resources .
+COPY --from=build-env /app/resources ./resources
 ENTRYPOINT [ "./main"]
 
 # LOCAL DEVELOPMENT
