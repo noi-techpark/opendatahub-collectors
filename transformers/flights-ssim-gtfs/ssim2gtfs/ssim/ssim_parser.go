@@ -105,27 +105,31 @@ type FlightLegRecord struct {
 
 // SegmentDataRecord represents Type 4 record
 type SegmentDataRecord struct {
-	RecordType       string // Position 1
-	AirlineFlightRef string // Position 2-5
-	ItineraryLegRef  string // Position 6-11
-	BoardPoint       string // Position 12-14
-	OffPoint         string // Position 15-17
-	DataElementID    string // Position 18-20
-	SegmentData      string // Position 21-194
-	CreatorReference string // Position 195-200
+	RecordType                           string
+	OperationalSuffix                    string
+	AirlineDesignator                    string
+	FlightNumber                         string
+	ItineraryVariationIdentifier         string
+	LegSequenceNumber                    string
+	ServiceType                          string
+	ItineraryVariationIdentifierOverflow string
+	BoardPointIndicator                  string
+	OffPointIndicator                    string
+	DataElementIdentifier                string
+	SegmentBoardPoint                    string
+	SegmentOffPoint                      string
+	Data                                 string
+	RecordSerialNumber                   string
 }
 
 // TrailerRecord represents Type 5 record
 type TrailerRecord struct {
-	RecordType        string // Position 1
-	AirlineDesignator string // Position 2-6
-	ReleaseSerial     string // Position 7-11
-	Type2RecordCount  string // Position 12-16
-	Type3RecordCount  string // Position 17-21
-	Type4RecordCount  string // Position 22-26
-	PeriodStartDate   string // Position 27-31
-	PeriodEndDate     string // Position 32-36
-	CreatorReference  string // Position 195-200
+	RecordType                 string
+	AirlineDesignator          string
+	ReleaseDate                string
+	SerialNumberCheckReference string
+	ContinuationEndCode        string
+	RecordSerialNumber         string
 }
 
 // Parser handles SSIM file parsing
@@ -270,28 +274,32 @@ func (p *Parser) parseFlightLeg(line string) FlightLegRecord {
 
 func (p *Parser) parseSegmentData(line string) SegmentDataRecord {
 	return SegmentDataRecord{
-		RecordType:       p.extractField(line, 0, 1),
-		AirlineFlightRef: p.extractField(line, 1, 5),
-		ItineraryLegRef:  p.extractField(line, 5, 11),
-		BoardPoint:       p.extractField(line, 11, 14),
-		OffPoint:         p.extractField(line, 14, 17),
-		DataElementID:    p.extractField(line, 17, 20),
-		SegmentData:      p.extractField(line, 20, 194),
-		CreatorReference: p.extractField(line, 194, 200),
+		RecordType:                           p.extractField(line, 0, 1),
+		OperationalSuffix:                    p.extractField(line, 1, 2),
+		AirlineDesignator:                    p.extractField(line, 2, 5),
+		FlightNumber:                         p.extractField(line, 5, 9),
+		ItineraryVariationIdentifier:         p.extractField(line, 9, 11),
+		LegSequenceNumber:                    p.extractField(line, 11, 13),
+		ServiceType:                          p.extractField(line, 13, 14),
+		ItineraryVariationIdentifierOverflow: p.extractField(line, 27, 28),
+		BoardPointIndicator:                  p.extractField(line, 28, 29),
+		OffPointIndicator:                    p.extractField(line, 29, 30),
+		DataElementIdentifier:                p.extractField(line, 30, 33),
+		SegmentBoardPoint:                    p.extractField(line, 33, 36),
+		SegmentOffPoint:                      p.extractField(line, 36, 39),
+		Data:                                 p.extractField(line, 39, 194),
+		RecordSerialNumber:                   p.extractField(line, 194, 200),
 	}
 }
 
 func (p *Parser) parseTrailer(line string) TrailerRecord {
 	return TrailerRecord{
-		RecordType:        p.extractField(line, 0, 1),
-		AirlineDesignator: p.extractField(line, 1, 6),
-		ReleaseSerial:     p.extractField(line, 6, 11),
-		Type2RecordCount:  p.extractField(line, 11, 16),
-		Type3RecordCount:  p.extractField(line, 16, 21),
-		Type4RecordCount:  p.extractField(line, 21, 26),
-		PeriodStartDate:   p.extractField(line, 26, 31),
-		PeriodEndDate:     p.extractField(line, 31, 36),
-		CreatorReference:  p.extractField(line, 194, 200),
+		RecordType:                 p.extractField(line, 0, 1),
+		AirlineDesignator:          p.extractField(line, 2, 5),
+		ReleaseDate:                p.extractField(line, 5, 12),
+		SerialNumberCheckReference: p.extractField(line, 187, 193),
+		ContinuationEndCode:        p.extractField(line, 193, 194),
+		RecordSerialNumber:         p.extractField(line, 194, 200),
 	}
 }
 
