@@ -60,48 +60,48 @@ jobs:
           aws-eks-cluster-name: aws-main-eu-01
           aws-region: eu-west-1
 
-  # deploy-prod:
-  #   if: github.ref == 'refs/heads/prod'
-  #   needs: 
-  #     - build
-  #   runs-on: ubuntu-24.04
-  #   concurrency: dc-mqtt-client-parking-on-merano-deploy-prod
-  #   environment: prod
-  #   env:
-  #     VALUES_YAML: collectors/mqtt-client/infrastructure/helm/parking-on-bz.yaml
-  #   steps:
-  #     - name: Checkout source code
-  #       uses: actions/checkout@v4
+  deploy-prod:
+    if: github.ref == 'refs/heads/prod'
+    needs: 
+      - build
+    runs-on: ubuntu-24.04
+    concurrency: dc-mqtt-client-parking-on-merano-deploy-prod
+    environment: prod
+    env:
+      VALUES_YAML: collectors/mqtt-client/infrastructure/helm/parking-on-bz.yaml
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
 
-  #     - name: Write environment-specific Helm values
-  #       run: |
-  #         cat << "EOF" > override.yml
-  #         image:
-  #           repository:  ${{ env.DOCKER_IMAGE }}
-  #           tag:  ${{ env.DOCKER_TAG }}
-  #           pullPolicy: "IfNotPresent"
-  #         env:
-  #           LOG_LEVEL: INFO
-  #           PROVIDER: parking-onstreet/bz-axians
-  #           MQTT_URI: mqtts://xsona-broker.axians.it:8883
-  #           MQTT_CLIENTID: NOI
-  #           MQTT_TOPIC: "application/6f599389-c6b0-4a76-843d-8d493192c4c0/device/+/event/up"
-  #         envSecret:
-  #           MQTT_USER: '${{ secrets.MQTT_PARKING_ON_BZ_USER }}'
-  #           MQTT_PASS: '${{ secrets.MQTT_PARKING_ON_BZ_PASS }}'
-  #         EOF
+      - name: Write environment-specific Helm values
+        run: |
+          cat << "EOF" > override.yml
+          image:
+            repository:  ${{ env.DOCKER_IMAGE }}
+            tag:  ${{ env.DOCKER_TAG }}
+            pullPolicy: "IfNotPresent"
+          env:
+            LOG_LEVEL: INFO
+            PROVIDER: parking-onstreet/bz-axians
+            MQTT_URI: mqtts://xsona-broker.axians.it:8883
+            MQTT_CLIENTID: NOI
+            MQTT_TOPIC: "application/6f599389-c6b0-4a76-843d-8d493192c4c0/device/+/event/up"
+          envSecret:
+            MQTT_USER: '${{ secrets.MQTT_PARKING_ON_BZ_USER }}'
+            MQTT_PASS: '${{ secrets.MQTT_PARKING_ON_BZ_PASS }}'
+          EOF
 
-  #         # Merge yaml files https://mikefarah.gitbook.io/yq/operators/multiply-merge
-  #         yq -i '. *= load("override.yml")' ${{env.VALUES_YAML}}
+          # Merge yaml files https://mikefarah.gitbook.io/yq/operators/multiply-merge
+          yq -i '. *= load("override.yml")' ${{env.VALUES_YAML}}
 
-  #     - name: Deploy on cluster  
-  #       uses: noi-techpark/github-actions/helm-deploy@v2
-  #       with:
-  #         k8s-name: ${{ env.K8S_NAME }}
-  #         k8s-namespace: collector
-  #         chart-path: helm/generic-collector
-  #         values-file: ${{ env.VALUES_YAML }}
-  #         aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
-  #         aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
-  #         aws-eks-cluster-name: aws-main-eu-01
-  #         aws-region: eu-west-1
+      - name: Deploy on cluster  
+        uses: noi-techpark/github-actions/helm-deploy@v2
+        with:
+          k8s-name: ${{ env.K8S_NAME }}
+          k8s-namespace: collector
+          chart-path: helm/generic-collector
+          values-file: ${{ env.VALUES_YAML }}
+          aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
+          aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
+          aws-eks-cluster-name: aws-main-eu-01
+          aws-region: eu-west-1
