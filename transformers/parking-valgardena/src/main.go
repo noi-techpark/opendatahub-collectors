@@ -10,6 +10,7 @@ import (
 	"log/slog"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-bdp-client/bdplib"
@@ -22,7 +23,8 @@ import (
 const Station = "ParkingStation"
 const Period = 120
 const Origin = "GARDENA"
-const DataType = "occupied"
+const DataType = "free"
+const Municipality = "gardena"
 
 var env struct {
 	tr.Env
@@ -31,6 +33,7 @@ var env struct {
 	MQ_META_EXCHANGE string
 	MQ_META_KEY      string
 	MQ_META_CLIENT   string
+	BATCH_MODE       bool
 }
 
 type payloadMetaData struct {
@@ -67,6 +70,11 @@ func main() {
 	dataMQ, err := rabbit.Consume(env.Env.MQ_EXCHANGE, env.Env.MQ_QUEUE, env.Env.MQ_KEY)
 	ms.FailOnError(err, "failed creating data queue")
 
+	// batch mode requires a valid message to be sent after batchSecond to flush the batch
+	batchParkingData := b.CreateDataMap()
+	lastBatchTime := time.Now()
+	batchSecond := time.Duration(120 * int(time.Second))
+
 	go tr.HandleQueue(dataMQ, env.Env.MONGO_URI, func(r *dto.Raw[string]) error {
 		parkingData := b.CreateDataMap()
 		payload, err := unmarshalRawdata[payloadData](r.Rawdata)
@@ -75,10 +83,20 @@ func main() {
 			return err
 		}
 		parkingid := stationId(payload.Uid, Origin)
-		parkingData.AddRecord(parkingid, DataType, bdplib.CreateRecord(r.Timestamp.UnixMilli(), payload.Occupancy, Period))
-		if err := b.PushData(Station, parkingData); err != nil {
-			slog.Error("error pushing parking occupancy data:","err", err)
-			return err
+
+		if !env.BATCH_MODE {
+			parkingData.AddRecord(parkingid, DataType, bdplib.CreateRecord(r.Timestamp.UnixMilli(), payload.Occupancy, Period))
+			if err := b.PushData(Station, parkingData); err != nil {
+				slog.Error("error pushing parking occupancy data:", "err", err)
+				return err
+			}
+		} else {
+			batchParkingData.AddRecord(parkingid, DataType, bdplib.CreateRecord(r.Timestamp.UnixMilli(), payload.Occupancy, Period))
+			if time.Since(lastBatchTime) >= batchSecond {
+				err := b.PushData(Station, batchParkingData)
+				ms.FailOnError(err, "error pushing batch parking occupancy data")
+				lastBatchTime = time.Now()
+			}
 		}
 		slog.Info("Updated parking station occupancy")
 		return nil
@@ -108,8 +126,10 @@ func main() {
 			s := bdplib.CreateStation(parkingid, payload.NameIT, Station, lat, lon, Origin)
 
 			MetaData := make(map[string]interface{})
+			MetaData["name_IT"] = payload.NameIT
 			MetaData["name_DE"] = payload.NameDE
 			MetaData["capacity"] = payload.Capacity
+			MetaData["municipality"] = Municipality
 
 			s.MetaData = MetaData
 			stations = append(stations, s)
@@ -118,7 +138,7 @@ func main() {
 		if err := b.SyncStations(Station, stations, true, false); err != nil {
 			slog.Error("Error syncing stations", "err", err)
 		}
-		
+
 		slog.Info("Updated parking station occupancy")
 		return nil
 	})

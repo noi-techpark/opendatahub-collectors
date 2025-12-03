@@ -1,0 +1,5 @@
+{
+    "MsgId": 1,
+    "Topic": "parking_space_occupancy/0bd4106a-ae26-4284-ae05-ff19ae202749",
+    "Payload": "{\"type\":\"parking_space_state\",\"data\":{\"guid\":\"0bd4106a-ae26-4284-ae05-ff19ae202749\",\"name\":\"Ospedale 7 (Sensor 20)\",\"position\":{\"latitude\":46.67754450688352,\"longitude\":11.152352029560427},\"state\":\"free\",\"last_change\":\"2025-12-02T08:13:24.5971176Z\"}}"
+}

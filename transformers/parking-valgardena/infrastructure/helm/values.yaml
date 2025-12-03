@@ -27,6 +27,8 @@ env:
   BDP_PROVENANCE_NAME: 
   BDP_ORIGIN: GARDENA
 
+  BATCH_MODE: false
+
 envSecretRef:
   - name: MQ_URI 
     secret: rabbitmq-svcbind

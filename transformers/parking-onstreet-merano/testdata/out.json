@@ -1,0 +1,67 @@
+{
+    "syncedDataTypes": [],
+    "syncedData": {
+        "ParkingSensor": [
+            {
+                "name": "(default)",
+                "data": null,
+                "branch": {
+                    "0bd4106a-ae26-4284-ae05-ff19ae202749": {
+                        "name": "(default)",
+                        "data": null,
+                        "branch": {
+                            "free": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 1,
+                                        "period": 300,
+                                        "timestamp": 1764663204597
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            },
+                            "occupied": {
+                                "name": "(default)",
+                                "data": [
+                                    {
+                                        "value": 0,
+                                        "period": 300,
+                                        "timestamp": 1764663204597
+                                    }
+                                ],
+                                "branch": null,
+                                "provenance": ""
+                            }
+                        },
+                        "provenance": ""
+                    }
+                },
+                "provenance": ""
+            }
+        ]
+    },
+    "syncedStations": {
+        "ParkingSensor": [
+            {
+                "Stations": [
+                    {
+                        "id": "0bd4106a-ae26-4284-ae05-ff19ae202749",
+                        "name": "Ospedale 7 (Sensor 20)",
+                        "stationType": "ParkingSensor",
+                        "latitude": 46.67754450688352,
+                        "longitude": 11.152352029560427,
+                        "origin": "",
+                        "metaData": {
+                            "group": "Parcheggi zona ospedale Merano",
+                            "municipality": "Meran - Merano"
+                        }
+                    }
+                ],
+                "SyncState": true,
+                "OnlyActivate": true
+            }
+        ]
+    }
+}
