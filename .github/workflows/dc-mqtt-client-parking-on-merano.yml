@@ -68,7 +68,7 @@ jobs:
     concurrency: dc-mqtt-client-parking-on-merano-deploy-prod
     environment: prod
     env:
-      VALUES_YAML: collectors/mqtt-client/infrastructure/helm/parking-on-bz.yaml
+      VALUES_YAML: collectors/mqtt-client/infrastructure/helm/parking-on-merano.yaml
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
