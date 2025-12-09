@@ -8,6 +8,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -60,9 +61,7 @@ type SSIMToGTFSConverter struct {
 	agencyURL      string
 	agencyTimezone string
 	writer         *gtfswriter.Writer
-	stopCache      map[string]*gtfs.Stop
-	routeCache     map[string]*gtfs.Route
-	serviceCache   map[string]*gtfs.Service
+	feed           *gtfsparser.Feed
 }
 
 func NewSSIMToGTFSConverter(agencyName, agencyURL, timezone string) *SSIMToGTFSConverter {
@@ -70,9 +69,6 @@ func NewSSIMToGTFSConverter(agencyName, agencyURL, timezone string) *SSIMToGTFSC
 		agencyName:     agencyName,
 		agencyURL:      agencyURL,
 		agencyTimezone: timezone,
-		stopCache:      make(map[string]*gtfs.Stop),
-		routeCache:     make(map[string]*gtfs.Route),
-		serviceCache:   make(map[string]*gtfs.Service),
 	}
 }
 
@@ -84,20 +80,31 @@ func (c *SSIMToGTFSConverter) Convert(ssimData *ssim.SSIM, outputDir string) err
 
 	// Initialize GTFS writer
 	c.writer = &gtfswriter.Writer{}
+	c.feed = gtfsparser.NewFeed()
 
 	// Create agency
 	agencyName := c.agencyName
 	if agencyName == "" {
 		agencyName = ssimData.Header.AirlineDesignator
 	}
+	url, err := url.Parse(c.agencyURL)
+	if err != nil {
+		return err
+	}
+
+	tz, err := gtfs.NewTimezone(c.agencyTimezone)
+	if err != nil {
+		return err
+	}
 
 	agency := &gtfs.Agency{
 		Id:       ssimData.Header.AirlineDesignator,
 		Name:     agencyName,
-		Url:      c.agencyURL,
-		Timezone: c.agencyTimezone,
+		Url:      url,
+		Timezone: tz,
 	}
-	c.writer.AddAgency(agency)
+
+	c.feed.Agencies[agency.Id] = agency
 
 	// Process flights
 	for _, flight := range ssimData.Flights {
@@ -111,7 +118,7 @@ func (c *SSIMToGTFSConverter) Convert(ssimData *ssim.SSIM, outputDir string) err
 	}
 
 	// Write GTFS files
-	if err := c.writer.Write(outputDir); err != nil {
+	if err := c.writer.Write(c.feed, outputDir); err != nil {
 		return fmt.Errorf("failed to write GTFS: %w", err)
 	}
 
@@ -143,76 +150,73 @@ func (c *SSIMToGTFSConverter) processFlight(flight ssim.Flight, airlineCode stri
 
 	// Create trip
 	tripID := fmt.Sprintf("%s_%s_%s", routeID, flight.Leg.PeriodStart, flight.Leg.LegSequence)
-	trip := &gtfsparser.Trip{
+	trip := &gtfs.Trip{
 		Id:         tripID,
 		Route:      route,
-		Service:    c.serviceCache[serviceID],
-		Headsign:   flight.Leg.ArrivalStation,
-		Short_name: flight.Leg.FlightNumber,
+		Service:    c.feed.Services[serviceID],
+		Headsign:   &flight.Leg.ArrivalStation,
+		Short_name: &flight.Leg.FlightNumber,
 	}
-	c.writer.AddTrip(trip)
 
 	// Create stop times
-	depStopTime := &gtfsparser.StopTime{
-		Trip:           trip,
-		Stop:           depStop,
-		Arrival_time:   depTime,
-		Departure_time: depTime,
-		Sequence:       1,
-		Pickup_type:    0,
-		Drop_off_type:  1,
-		Timepoint:      true,
-	}
-	c.writer.AddStopTime(depStopTime)
+	depStopTime := gtfs.StopTime{}
+	depStopTime.SetStop(depStop)
+	depStopTime.SetArrival_time(depTime)
+	depStopTime.SetDeparture_time(depTime)
+	depStopTime.SetSequence(1)
+	depStopTime.SetPickup_type(0)
+	depStopTime.SetDrop_off_type(1)
+	depStopTime.SetTimepoint(true)
 
-	arrStopTime := &gtfsparser.StopTime{
-		Trip:           trip,
-		Stop:           arrStop,
-		Arrival_time:   arrTime,
-		Departure_time: arrTime,
-		Sequence:       2,
-		Pickup_type:    1,
-		Drop_off_type:  0,
-		Timepoint:      true,
-	}
-	c.writer.AddStopTime(arrStopTime)
+	trip.StopTimes = append(trip.StopTimes, depStopTime)
+
+	arrStopTime := gtfs.StopTime{}
+	arrStopTime.SetStop(arrStop)
+	arrStopTime.SetArrival_time(arrTime)
+	arrStopTime.SetDeparture_time(arrTime)
+	arrStopTime.SetSequence(2)
+	arrStopTime.SetPickup_type(1)
+	arrStopTime.SetDrop_off_type(0)
+	arrStopTime.SetTimepoint(true)
+
+	trip.StopTimes = append(trip.StopTimes, arrStopTime)
+
+	c.feed.Trips[tripID] = trip
 
 	return nil
 }
 
-func (c *SSIMToGTFSConverter) getOrCreateStop(stationCode string) *gtfsparser.Stop {
-	if stop, exists := c.stopCache[stationCode]; exists {
+func (c *SSIMToGTFSConverter) getOrCreateStop(stationCode string) *gtfs.Stop {
+	if stop, exists := c.feed.Stops[stationCode]; exists {
 		return stop
 	}
 
-	stop := &gtfsparser.Stop{
+	stop := &gtfs.Stop{
 		Id:            stationCode,
 		Name:          stationCode + " Airport",
 		Lat:           0.0, // You would need to look up actual coordinates
 		Lon:           0.0,
 		Location_type: 0,
 	}
-	c.writer.AddStop(stop)
-	c.stopCache[stationCode] = stop
+	c.feed.Stops[stop.Id] = stop
 	return stop
 }
 
-func (c *SSIMToGTFSConverter) getOrCreateRoute(routeID, airlineCode string) *gtfsparser.Route {
-	if route, exists := c.routeCache[routeID]; exists {
+func (c *SSIMToGTFSConverter) getOrCreateRoute(routeID, airlineCode string) *gtfs.Route {
+	if route, exists := c.feed.Routes[routeID]; exists {
 		return route
 	}
 
-	route := &gtfsparser.Route{
+	route := &gtfs.Route{
 		Id:         routeID,
-		Agency:     c.writer.Agencies[0], // First (and only) agency
+		Agency:     c.feed.Agencies[airlineCode],
 		Short_name: routeID,
 		Long_name:  fmt.Sprintf("Flight %s", routeID),
 		Type:       1100, // Air service
 		Color:      "0178BC",
 		Text_color: "FFFFFF",
 	}
-	c.writer.AddRoute(route)
-	c.routeCache[routeID] = route
+	c.feed.Routes[route.Id] = route
 	return route
 }
 
@@ -223,7 +227,7 @@ func (c *SSIMToGTFSConverter) createService(flight ssim.Flight) string {
 		flight.Leg.PeriodStart,
 		flight.Leg.DaysOfOperation)
 
-	if _, exists := c.serviceCache[serviceID]; exists {
+	if _, exists := c.feed.Services[serviceID]; exists {
 		return serviceID
 	}
 
@@ -247,43 +251,40 @@ func (c *SSIMToGTFSConverter) createService(flight ssim.Flight) string {
 		daysOfWeek[i] = daysStr[i] != ' ' && daysStr[i] != '0'
 	}
 
-	service := &gtfsparser.Service{
-		Id: serviceID,
-		Daymap: [7]bool{
-			daysOfWeek[0], // Monday
-			daysOfWeek[1], // Tuesday
-			daysOfWeek[2], // Wednesday
-			daysOfWeek[3], // Thursday
-			daysOfWeek[4], // Friday
-			daysOfWeek[5], // Saturday
-			daysOfWeek[6], // Sunday
-		},
-		Start_date: gtfsparser.Date{Day: int8(startDate.Day()), Month: int8(startDate.Month()), Year: int16(startDate.Year())},
-		End_date:   gtfsparser.Date{Day: int8(endDate.Day()), Month: int8(endDate.Month()), Year: int16(endDate.Year())},
-	}
+	service := gtfs.EmptyService()
+	service.SetId(serviceID)
+	service.SetDaymap(0, daysOfWeek[0]) //monday
+	service.SetDaymap(1, daysOfWeek[1])
+	service.SetDaymap(2, daysOfWeek[2])
+	service.SetDaymap(3, daysOfWeek[3])
+	service.SetDaymap(4, daysOfWeek[4])
+	service.SetDaymap(5, daysOfWeek[5])
+	service.SetDaymap(6, daysOfWeek[6])
 
-	c.writer.AddService(service)
-	c.serviceCache[serviceID] = service
+	service.SetStart_date(gtfs.NewDate(uint8(startDate.Day()), uint8(startDate.Month()), uint16(startDate.Year())))
+	service.SetEnd_date(gtfs.NewDate(uint8(endDate.Day()), uint8(endDate.Month()), uint16(endDate.Year())))
+
+	c.feed.Services[service.Id()] = service
 	return serviceID
 }
 
-func parseSSIMTime(timeStr string) (gtfsparser.Time, error) {
+func parseSSIMTime(timeStr string) (gtfs.Time, error) {
 	timeStr = strings.TrimSpace(timeStr)
 	if len(timeStr) < 4 {
-		return gtfsparser.Time{}, fmt.Errorf("invalid time format: %s", timeStr)
+		return gtfs.Time{}, fmt.Errorf("invalid time format: %s", timeStr)
 	}
 
 	hours, err := strconv.Atoi(timeStr[0:2])
 	if err != nil {
-		return gtfsparser.Time{}, err
+		return gtfs.Time{}, err
 	}
 
 	minutes, err := strconv.Atoi(timeStr[2:4])
 	if err != nil {
-		return gtfsparser.Time{}, err
+		return gtfs.Time{}, err
 	}
 
-	return gtfsparser.Time{
+	return gtfs.Time{
 		Hour:   int8(hours),
 		Minute: int8(minutes),
 		Second: 0,
