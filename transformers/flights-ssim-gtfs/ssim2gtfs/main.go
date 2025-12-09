@@ -8,6 +8,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"net/mail"
 	"net/url"
 	"os"
 	"strconv"
@@ -72,20 +73,18 @@ func NewSSIMToGTFSConverter(agencyName, agencyURL, timezone string) *SSIMToGTFSC
 	}
 }
 
-func (c *SSIMToGTFSConverter) Convert(ssimData *ssim.SSIM, outputDir string) error {
-	// Create output directory
-	if err := os.MkdirAll(outputDir, 0755); err != nil {
-		return fmt.Errorf("failed to create output directory: %w", err)
+func (c *SSIMToGTFSConverter) Convert(ssimData *ssim.SSIM, output string) error {
+	if err := createOutputPath(output); err != nil {
+		return err
 	}
 
-	// Initialize GTFS writer
 	c.writer = &gtfswriter.Writer{}
 	c.feed = gtfsparser.NewFeed()
 
 	// Create agency
 	agencyName := c.agencyName
 	if agencyName == "" {
-		agencyName = ssimData.Header.AirlineDesignator
+		agencyName = ssimData.Carriers[0].AirlineDesignator // TODO: handle multiple agencies
 	}
 	url, err := url.Parse(c.agencyURL)
 	if err != nil {
@@ -97,18 +96,28 @@ func (c *SSIMToGTFSConverter) Convert(ssimData *ssim.SSIM, outputDir string) err
 		return err
 	}
 
+	lang, err := gtfs.NewLanguageISO6391("en")
+	if err != nil {
+		return err
+	}
 	agency := &gtfs.Agency{
-		Id:       ssimData.Header.AirlineDesignator,
+		Id:       agencyName, // TODO: handle multiple
 		Name:     agencyName,
 		Url:      url,
 		Timezone: tz,
+		Lang:     lang,
 	}
 
 	c.feed.Agencies[agency.Id] = agency
 
+	// Create feed info
+	if err := createFeedInfo(c); err != nil {
+		return err
+	}
+
 	// Process flights
 	for _, flight := range ssimData.Flights {
-		if err := c.processFlight(flight, ssimData.Header.AirlineDesignator); err != nil {
+		if err := c.processFlight(flight, c.agencyName); err != nil {
 			log.Printf("Warning: error processing flight %s%s: %v",
 				flight.Leg.AirlineDesignator,
 				flight.Leg.FlightNumber,
@@ -118,10 +127,43 @@ func (c *SSIMToGTFSConverter) Convert(ssimData *ssim.SSIM, outputDir string) err
 	}
 
 	// Write GTFS files
-	if err := c.writer.Write(c.feed, outputDir); err != nil {
+	if err := c.writer.Write(c.feed, output); err != nil {
 		return fmt.Errorf("failed to write GTFS: %w", err)
 	}
 
+	return nil
+}
+
+func createFeedInfo(c *SSIMToGTFSConverter) error {
+	publisherUrl, err := url.Parse("https://opendatahub.com")
+	if err != nil {
+		return err
+	}
+	contactEmail, err := mail.ParseAddress("info@opendatahub.com")
+	if err != nil {
+		return err
+	}
+	// Feed info
+	info := gtfs.FeedInfo{
+		Publisher_name: "Open Data Hub",
+		Publisher_url:  publisherUrl,
+		Lang:           "en", // consider "mul" if we have translations
+		Contact_email:  contactEmail,
+	}
+	c.feed.FeedInfos = append(c.feed.FeedInfos, &info)
+	return nil
+}
+
+func createOutputPath(output string) error {
+	if strings.HasSuffix(strings.ToLower(output), ".zip") {
+		if _, err := os.OpenFile("gtfs.zip", os.O_RDONLY|os.O_CREATE, 0666); err != nil {
+			return fmt.Errorf("failed to create output file: %w", err)
+		}
+	} else {
+		if err := os.MkdirAll(output, 0755); err != nil {
+			return fmt.Errorf("failed to create output directory: %w", err)
+		}
+	}
 	return nil
 }
 
@@ -131,8 +173,8 @@ func (c *SSIMToGTFSConverter) processFlight(flight ssim.Flight, airlineCode stri
 	arrStop := c.getOrCreateStop(flight.Leg.ArrivalStation)
 
 	// Create or get route
-	routeID := fmt.Sprintf("%s%s", flight.Leg.AirlineDesignator, flight.Leg.FlightNumber)
-	route := c.getOrCreateRoute(routeID, flight.Leg.AirlineDesignator)
+	routeID := fmt.Sprintf("%s%s", airlineCode, flight.Leg.FlightNumber)
+	route := c.getOrCreateRoute(routeID, airlineCode)
 
 	// Create service (calendar)
 	serviceID := c.createService(flight)
@@ -149,7 +191,7 @@ func (c *SSIMToGTFSConverter) processFlight(flight ssim.Flight, airlineCode stri
 	}
 
 	// Create trip
-	tripID := fmt.Sprintf("%s_%s_%s", routeID, flight.Leg.PeriodStart, flight.Leg.LegSequence)
+	tripID := fmt.Sprintf("%s_%s_%s", routeID, flight.Leg.PeriodStart, flight.Leg.LegSequenceNumber)
 	trip := &gtfs.Trip{
 		Id:         tripID,
 		Route:      route,
@@ -167,6 +209,7 @@ func (c *SSIMToGTFSConverter) processFlight(flight ssim.Flight, airlineCode stri
 	depStopTime.SetPickup_type(0)
 	depStopTime.SetDrop_off_type(1)
 	depStopTime.SetTimepoint(true)
+	depStopTime.SetHeadsign(new(string))
 
 	trip.StopTimes = append(trip.StopTimes, depStopTime)
 
@@ -178,6 +221,7 @@ func (c *SSIMToGTFSConverter) processFlight(flight ssim.Flight, airlineCode stri
 	arrStopTime.SetPickup_type(1)
 	arrStopTime.SetDrop_off_type(0)
 	arrStopTime.SetTimepoint(true)
+	arrStopTime.SetHeadsign(new(string))
 
 	trip.StopTimes = append(trip.StopTimes, arrStopTime)
 
