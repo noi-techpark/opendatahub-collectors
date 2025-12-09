@@ -17,7 +17,7 @@ func Test_readStations(t *testing.T) {
 		"001bc506701005c2",
 		"C-S1",
 		"area viale Druso",
-		11.33998888888889,
+		11.33998889,
 		46.494825,
 		"Piazza Adriano 1",
 		"Bolzano - Bozen",

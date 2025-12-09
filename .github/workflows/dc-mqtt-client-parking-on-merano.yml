@@ -47,6 +47,7 @@ jobs:
           yq -i '.image.pullPolicy="IfNotPresent"' ${{ env.VALUES_YAML }}
           yq -i '.envSecret.MQTT_USER="${{ secrets.MQTT_PARKING_ONSTREET_MERANO_USER }}"' ${{ env.VALUES_YAML}}
           yq -i '.envSecret.MQTT_PASS="${{ secrets.MQTT_PARKING_ONSTREET_MERANO_PASSWORD }}"' ${{ env.VALUES_YAML}}
+          yq -i '.envSecret.MQTT_CLIENTID="NOI-TECHPARK-TEST"' ${{ env.VALUES_YAML}}
 
       - name: Deploy on cluster  
         uses: noi-techpark/github-actions/helm-deploy@v2
@@ -80,6 +81,7 @@ jobs:
           yq -i '.image.pullPolicy="IfNotPresent"' ${{ env.VALUES_YAML }}
           yq -i '.envSecret.MQTT_USER="${{ secrets.MQTT_PARKING_ONSTREET_MERANO_USER }}"' ${{ env.VALUES_YAML}}
           yq -i '.envSecret.MQTT_PASS="${{ secrets.MQTT_PARKING_ONSTREET_MERANO_PASSWORD }}"' ${{ env.VALUES_YAML}}
+          yq -i '.envSecret.MQTT_CLIENTID="NOI-TECHPARK"' ${{ env.VALUES_YAML}}
 
       - name: Deploy on cluster  
         uses: noi-techpark/github-actions/helm-deploy@v2
