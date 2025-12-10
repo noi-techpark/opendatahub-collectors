@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0"?>
 
 <!--
 SPDX-FileCopyrightText: 2025 NOI Techpark <digital@noi.bz.it>
@@ -7,57 +7,90 @@ SPDX-License-Identifier: CC0-1.0
 -->
 
 <methodResponse>
-    <params>
-        <param>
+  <params>
+    <param>
+      <value>
+        <struct>
+          <member>
+            <name>Nome</name>
             <value>
-                <array>
-                    <data>
-                        <value>P05 - Laurin</value>
-                        <value>
-                            <int>0</int>
-                        </value>
-                        <value>
-                            <int>1747242053</int>
-                        </value>
-                        <value>
-                            <int>0</int>
-                        </value>
-                        <value>
-                            <int>0</int>
-                        </value>
-                        <value>
-                            <int>90</int>
-                        </value>
-                        <value>
-                            <int>1747733400</int>
-                        </value>
-                        <value>
-                            <int>1</int>
-                        </value>
-                        <value>
-                            <int>1747733400</int>
-                        </value>
-                        <value>
-                            <int>1</int>
-                        </value>
-                        <value>
-                            <int>1540364444</int>
-                        </value>
-                        <value>
-                            <int>0</int>
-                        </value>
-                        <value>
-                            <int>0</int>
-                        </value>
-                        <value>
-                            <int>0</int>
-                        </value>
-                        <value>
-                            <int>1540364444</int>
-                        </value>
-                    </data>
-                </array>
+              <string>P5 - Laurin</string>
             </value>
-        </param>
-    </params>
+          </member>
+          <member>
+            <name>Stato</name>
+            <value>
+              <i4>1</i4>
+            </value>
+          </member>
+          <member>
+            <name>StatoTs</name>
+            <value>
+              <i4>1762770880</i4>
+            </value>
+          </member>
+          <member>
+            <name>Modalita</name>
+            <value>
+              <i4>0</i4>
+            </value>
+          </member>
+          <member>
+            <name>ModalitaTs</name>
+            <value>
+              <i4>1762770880</i4>
+            </value>
+          </member>
+          <member>
+            <name>PostiLiberi</name>
+            <value>
+              <i4>54</i4>
+            </value>
+          </member>
+          <member>
+            <name>PostiLiberiTs</name>
+            <value>
+              <i4>1765362840</i4>
+            </value>
+          </member>
+          <member>
+            <name>StatoComunicazione</name>
+            <value>
+              <boolean>0</boolean>
+            </value>
+          </member>
+          <member>
+            <name>StatoComunicazioneTs</name>
+            <value>
+              <i4>1762770880</i4>
+            </value>
+          </member>
+          <member>
+            <name>AllarmePostiTotali</name>
+            <value>
+              <boolean>0</boolean>
+            </value>
+          </member>
+          <member>
+            <name>AllarmeInattivita</name>
+            <value>
+              <boolean>0</boolean>
+            </value>
+          </member>
+          <member>
+            <name>AllarmePostiOccupati</name>
+            <value>
+              <boolean>0</boolean>
+            </value>
+          </member>
+          <member>
+            <name>AllarmeTs</name>
+            <value>
+              <i4>0</i4>
+            </value>
+          </member>
+        </struct>
+      </value>
+    </param>
+  </params>
 </methodResponse>

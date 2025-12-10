@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0"?>
 
 <!--
 SPDX-FileCopyrightText: 2025 NOI Techpark <digital@noi.bz.it>
@@ -7,38 +7,44 @@ SPDX-License-Identifier: CC0-1.0
 -->
 
 <methodResponse>
-    <params>
-        <param>
+  <params>
+    <param>
+      <value>
+        <array>
+          <data>
             <value>
-                <array>
-                    <data>
-                        <value>
-                            <int>103</int>
-                        </value>
-                        <value>
-                            <int>104</int>
-                        </value>
-                        <value>
-                            <int>105</int>
-                        </value>
-                        <value>
-                            <int>106</int>
-                        </value>
-                        <value>
-                            <int>107</int>
-                        </value>
-                        <value>
-                            <int>108</int>
-                        </value>
-                        <value>
-                            <int>115</int>
-                        </value>
-                        <value>
-                            <int>116</int>
-                        </value>
-                    </data>
-                </array>
+              <i4>103</i4>
             </value>
-        </param>
-    </params>
+            <value>
+              <i4>104</i4>
+            </value>
+            <value>
+              <i4>105</i4>
+            </value>
+            <value>
+              <i4>106</i4>
+            </value>
+            <value>
+              <i4>107</i4>
+            </value>
+            <value>
+              <i4>108</i4>
+            </value>
+            <value>
+              <i4>112</i4>
+            </value>
+            <value>
+              <i4>113</i4>
+            </value>
+            <value>
+              <i4>115</i4>
+            </value>
+            <value>
+              <i4>116</i4>
+            </value>
+          </data>
+        </array>
+      </value>
+    </param>
+  </params>
 </methodResponse>
