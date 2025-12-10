@@ -31,8 +31,8 @@ const METHOD_OCCUPANCY = "pGuide.getPostiLiberiParcheggioExt"
 
 type rawRec struct {
 	Id   int
-	Meta any
-	Data any
+	Meta *xmlrpc.XmlRpcValue
+	Data *xmlrpc.XmlRpcValue
 }
 
 func main() {

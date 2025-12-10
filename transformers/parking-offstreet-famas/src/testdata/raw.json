@@ -1,0 +1,894 @@
+{
+    "provider": "parking-offstreet-famas/bolzano",
+    "timestamp": "2025-12-10T13:45:54.661732714Z",
+    "rawdata": [
+        {
+            "Id": 103,
+            "Meta": {
+                "Array": {
+                    "Data": [
+                        {
+                            "I4": 103
+                        },
+                        {
+                            "String": "P3 - Piazza Walther"
+                        },
+                        {
+                            "I4": 403
+                        }
+                    ]
+                }
+            },
+            "Data": {
+                "Struct": {
+                    "Members": [
+                        {
+                            "Name": "Nome",
+                            "Value": {
+                                "String": "P3 - Piazza Walther"
+                            }
+                        },
+                        {
+                            "Name": "Stato",
+                            "Value": {
+                                "I4": 1
+                            }
+                        },
+                        {
+                            "Name": "StatoTs",
+                            "Value": {
+                                "I4": 1762782346
+                            }
+                        },
+                        {
+                            "Name": "Modalita",
+                            "Value": {
+                                "I4": 0
+                            }
+                        },
+                        {
+                            "Name": "ModalitaTs",
+                            "Value": {
+                                "I4": 1762782346
+                            }
+                        },
+                        {
+                            "Name": "PostiLiberi",
+                            "Value": {
+                                "I4": 105
+                            }
+                        },
+                        {
+                            "Name": "PostiLiberiTs",
+                            "Value": {
+                                "I4": 1765374300
+                            }
+                        },
+                        {
+                            "Name": "StatoComunicazione",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "StatoComunicazioneTs",
+                            "Value": {
+                                "I4": 1762782346
+                            }
+                        },
+                        {
+                            "Name": "AllarmePostiTotali",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "AllarmeInattivita",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "AllarmePostiOccupati",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "AllarmeTs",
+                            "Value": {
+                                "I4": 0
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "Id": 104,
+            "Meta": {
+                "Array": {
+                    "Data": [
+                        {
+                            "I4": 104
+                        },
+                        {
+                            "String": "P4 - Luna via Molini"
+                        },
+                        {
+                            "I4": 150
+                        }
+                    ]
+                }
+            },
+            "Data": {
+                "Struct": {
+                    "Members": [
+                        {
+                            "Name": "Nome",
+                            "Value": {
+                                "String": "P4 - Luna via Molini"
+                            }
+                        },
+                        {
+                            "Name": "Stato",
+                            "Value": {
+                                "I4": 1
+                            }
+                        },
+                        {
+                            "Name": "StatoTs",
+                            "Value": {
+                                "I4": 1762782346
+                            }
+                        },
+                        {
+                            "Name": "Modalita",
+                            "Value": {
+                                "I4": 0
+                            }
+                        },
+                        {
+                            "Name": "ModalitaTs",
+                            "Value": {
+                                "I4": 1762782346
+                            }
+                        },
+                        {
+                            "Name": "PostiLiberi",
+                            "Value": {
+                                "I4": 47
+                            }
+                        },
+                        {
+                            "Name": "PostiLiberiTs",
+                            "Value": {
+                                "I4": 1765374300
+                            }
+                        },
+                        {
+                            "Name": "StatoComunicazione",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "StatoComunicazioneTs",
+                            "Value": {
+                                "I4": 1762782346
+                            }
+                        },
+                        {
+                            "Name": "AllarmePostiTotali",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "AllarmeInattivita",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "AllarmePostiOccupati",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "AllarmeTs",
+                            "Value": {
+                                "I4": 0
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "Id": 105,
+            "Meta": {
+                "Array": {
+                    "Data": [
+                        {
+                            "I4": 105
+                        },
+                        {
+                            "String": "P5 - Laurin"
+                        },
+                        {
+                            "I4": 90
+                        }
+                    ]
+                }
+            },
+            "Data": {
+                "Struct": {
+                    "Members": [
+                        {
+                            "Name": "Nome",
+                            "Value": {
+                                "String": "P5 - Laurin"
+                            }
+                        },
+                        {
+                            "Name": "Stato",
+                            "Value": {
+                                "I4": 1
+                            }
+                        },
+                        {
+                            "Name": "StatoTs",
+                            "Value": {
+                                "I4": 1762782347
+                            }
+                        },
+                        {
+                            "Name": "Modalita",
+                            "Value": {
+                                "I4": 0
+                            }
+                        },
+                        {
+                            "Name": "ModalitaTs",
+                            "Value": {
+                                "I4": 1762782347
+                            }
+                        },
+                        {
+                            "Name": "PostiLiberi",
+                            "Value": {
+                                "I4": 49
+                            }
+                        },
+                        {
+                            "Name": "PostiLiberiTs",
+                            "Value": {
+                                "I4": 1765374300
+                            }
+                        },
+                        {
+                            "Name": "StatoComunicazione",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "StatoComunicazioneTs",
+                            "Value": {
+                                "I4": 1762782347
+                            }
+                        },
+                        {
+                            "Name": "AllarmePostiTotali",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "AllarmeInattivita",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "AllarmePostiOccupati",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "AllarmeTs",
+                            "Value": {
+                                "I4": 0
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "Id": 106,
+            "Meta": {
+                "Array": {
+                    "Data": [
+                        {
+                            "I4": 106
+                        },
+                        {
+                            "String": "P6 - Lauben Parking"
+                        },
+                        {
+                            "I4": 459
+                        }
+                    ]
+                }
+            },
+            "Data": {
+                "Struct": {
+                    "Members": [
+                        {
+                            "Name": "Nome",
+                            "Value": {
+                                "String": "P6 - Lauben Parking"
+                            }
+                        },
+                        {
+                            "Name": "Stato",
+                            "Value": {
+                                "I4": 1
+                            }
+                        },
+                        {
+                            "Name": "StatoTs",
+                            "Value": {
+                                "I4": 1762782347
+                            }
+                        },
+                        {
+                            "Name": "Modalita",
+                            "Value": {
+                                "I4": 0
+                            }
+                        },
+                        {
+                            "Name": "ModalitaTs",
+                            "Value": {
+                                "I4": 1762782347
+                            }
+                        },
+                        {
+                            "Name": "PostiLiberi",
+                            "Value": {
+                                "I4": 37
+                            }
+                        },
+                        {
+                            "Name": "PostiLiberiTs",
+                            "Value": {
+                                "I4": 1765374300
+                            }
+                        },
+                        {
+                            "Name": "StatoComunicazione",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "StatoComunicazioneTs",
+                            "Value": {
+                                "I4": 1762782347
+                            }
+                        },
+                        {
+                            "Name": "AllarmePostiTotali",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "AllarmeInattivita",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "AllarmePostiOccupati",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "AllarmeTs",
+                            "Value": {
+                                "I4": 0
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "Id": 107,
+            "Meta": {
+                "Array": {
+                    "Data": [
+                        {
+                            "I4": 107
+                        },
+                        {
+                            "String": "P7 - Mareccio"
+                        },
+                        {
+                            "I4": 145
+                        }
+                    ]
+                }
+            },
+            "Data": {
+                "Struct": {
+                    "Members": [
+                        {
+                            "Name": "faultCode",
+                            "Value": {
+                                "I4": 2
+                            }
+                        },
+                        {
+                            "Name": "faultString",
+                            "Value": {
+                                "String": "Errore durante il recupero dei posti liberi del parcheggio"
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "Id": 108,
+            "Meta": {
+                "Array": {
+                    "Data": [
+                        {
+                            "I4": 108
+                        },
+                        {
+                            "String": "P8 - BZ Centro"
+                        },
+                        {
+                            "I4": 1055
+                        }
+                    ]
+                }
+            },
+            "Data": {
+                "Struct": {
+                    "Members": [
+                        {
+                            "Name": "Nome",
+                            "Value": {
+                                "String": "P8 - BZ Centro"
+                            }
+                        },
+                        {
+                            "Name": "Stato",
+                            "Value": {
+                                "I4": 1
+                            }
+                        },
+                        {
+                            "Name": "StatoTs",
+                            "Value": {
+                                "I4": 1762782349
+                            }
+                        },
+                        {
+                            "Name": "Modalita",
+                            "Value": {
+                                "I4": 0
+                            }
+                        },
+                        {
+                            "Name": "ModalitaTs",
+                            "Value": {
+                                "I4": 1762782349
+                            }
+                        },
+                        {
+                            "Name": "PostiLiberi",
+                            "Value": {
+                                "I4": 353
+                            }
+                        },
+                        {
+                            "Name": "PostiLiberiTs",
+                            "Value": {
+                                "I4": 1765374300
+                            }
+                        },
+                        {
+                            "Name": "StatoComunicazione",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "StatoComunicazioneTs",
+                            "Value": {
+                                "I4": 1762782349
+                            }
+                        },
+                        {
+                            "Name": "AllarmePostiTotali",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "AllarmeInattivita",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "AllarmePostiOccupati",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "AllarmeTs",
+                            "Value": {
+                                "I4": 0
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "Id": 112,
+            "Meta": {
+                "Array": {
+                    "Data": [
+                        {
+                            "I4": 112
+                        },
+                        {
+                            "String": "P12 - Piazza Tribunale"
+                        },
+                        {
+                            "I4": 174
+                        }
+                    ]
+                }
+            },
+            "Data": {
+                "Struct": {
+                    "Members": [
+                        {
+                            "Name": "Nome",
+                            "Value": {
+                                "String": "P12 - Piazza Tribunale"
+                            }
+                        },
+                        {
+                            "Name": "Stato",
+                            "Value": {
+                                "I4": 1
+                            }
+                        },
+                        {
+                            "Name": "StatoTs",
+                            "Value": {
+                                "I4": 1762782350
+                            }
+                        },
+                        {
+                            "Name": "Modalita",
+                            "Value": {
+                                "I4": 0
+                            }
+                        },
+                        {
+                            "Name": "ModalitaTs",
+                            "Value": {
+                                "I4": 1762782350
+                            }
+                        },
+                        {
+                            "Name": "PostiLiberi",
+                            "Value": {
+                                "I4": 77
+                            }
+                        },
+                        {
+                            "Name": "PostiLiberiTs",
+                            "Value": {
+                                "I4": 1765374300
+                            }
+                        },
+                        {
+                            "Name": "StatoComunicazione",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "StatoComunicazioneTs",
+                            "Value": {
+                                "I4": 1762782350
+                            }
+                        },
+                        {
+                            "Name": "AllarmePostiTotali",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "AllarmeInattivita",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "AllarmePostiOccupati",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "AllarmeTs",
+                            "Value": {
+                                "I4": 0
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "Id": 113,
+            "Meta": {
+                "Array": {
+                    "Data": [
+                        {
+                            "I4": 113
+                        },
+                        {
+                            "String": "P13 - Direzional 2"
+                        },
+                        {
+                            "I4": 114
+                        }
+                    ]
+                }
+            },
+            "Data": {
+                "Struct": {
+                    "Members": [
+                        {
+                            "Name": "Nome",
+                            "Value": {
+                                "String": "P13 - Direzional 2"
+                            }
+                        },
+                        {
+                            "Name": "Stato",
+                            "Value": {
+                                "I4": 1
+                            }
+                        },
+                        {
+                            "Name": "StatoTs",
+                            "Value": {
+                                "I4": 1762782351
+                            }
+                        },
+                        {
+                            "Name": "Modalita",
+                            "Value": {
+                                "I4": 0
+                            }
+                        },
+                        {
+                            "Name": "ModalitaTs",
+                            "Value": {
+                                "I4": 1762782351
+                            }
+                        },
+                        {
+                            "Name": "PostiLiberi",
+                            "Value": {
+                                "I4": -1
+                            }
+                        },
+                        {
+                            "Name": "PostiLiberiTs",
+                            "Value": {
+                                "I4": 1765374300
+                            }
+                        },
+                        {
+                            "Name": "StatoComunicazione",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "StatoComunicazioneTs",
+                            "Value": {
+                                "I4": 1762782351
+                            }
+                        },
+                        {
+                            "Name": "AllarmePostiTotali",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "AllarmeInattivita",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "AllarmePostiOccupati",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "AllarmeTs",
+                            "Value": {
+                                "I4": 0
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "Id": 115,
+            "Meta": {
+                "Array": {
+                    "Data": [
+                        {
+                            "I4": 115
+                        },
+                        {
+                            "String": "P15 - Palasport"
+                        },
+                        {
+                            "I4": 425
+                        }
+                    ]
+                }
+            },
+            "Data": {
+                "Struct": {
+                    "Members": [
+                        {
+                            "Name": "Nome",
+                            "Value": {
+                                "String": "P15 - Palasport"
+                            }
+                        },
+                        {
+                            "Name": "Stato",
+                            "Value": {
+                                "I4": 1
+                            }
+                        },
+                        {
+                            "Name": "StatoTs",
+                            "Value": {
+                                "I4": 1762782353
+                            }
+                        },
+                        {
+                            "Name": "Modalita",
+                            "Value": {
+                                "I4": 0
+                            }
+                        },
+                        {
+                            "Name": "ModalitaTs",
+                            "Value": {
+                                "I4": 1762782353
+                            }
+                        },
+                        {
+                            "Name": "PostiLiberi",
+                            "Value": {
+                                "I4": 205
+                            }
+                        },
+                        {
+                            "Name": "PostiLiberiTs",
+                            "Value": {
+                                "I4": 1765374300
+                            }
+                        },
+                        {
+                            "Name": "StatoComunicazione",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "StatoComunicazioneTs",
+                            "Value": {
+                                "I4": 1762782353
+                            }
+                        },
+                        {
+                            "Name": "AllarmePostiTotali",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "AllarmeInattivita",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "AllarmePostiOccupati",
+                            "Value": {
+                                "Boolean": 0
+                            }
+                        },
+                        {
+                            "Name": "AllarmeTs",
+                            "Value": {
+                                "I4": 0
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "Id": 116,
+            "Meta": {
+                "Array": {
+                    "Data": [
+                        {
+                            "I4": 116
+                        },
+                        {
+                            "String": "P16 - Fiera"
+                        },
+                        {
+                            "I4": 770
+                        }
+                    ]
+                }
+            },
+            "Data": {
+                "Struct": {
+                    "Members": [
+                        {
+                            "Name": "faultCode",
+                            "Value": {
+                                "I4": 2
+                            }
+                        },
+                        {
+                            "Name": "faultString",
+                            "Value": {
+                                "String": "Errore durante il recupero dei posti liberi del parcheggio"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
