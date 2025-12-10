@@ -144,7 +144,7 @@ func (v XmlRpcValue) GetInt() *int {
 
 // strings can be raw or within a value tag
 func (v XmlRpcValue) GetString() *string {
-	if v.StringRaw != nil {
+	if v.String != nil {
 		return v.String
 	}
 	return v.StringRaw
