@@ -94,6 +94,12 @@ func main() {
 			stations = append(stations, s)
 
 			state := members2Map(raw.Data.Struct.Members)
+
+			if _, found := state["faultCode"]; found {
+				slog.Warn("Skipping station because it has errors in raw data", "scode", sCode, "faultCode", *state["faultCode"].I4, "faultString", *state["faultString"].String)
+				continue
+			}
+
 			if *state["StatoComunicazione"].Boolean != 1 &&
 				*state["AllarmePostiTotali"].Boolean != 1 &&
 				*state["AllarmeInattivita"].Boolean != 1 &&
