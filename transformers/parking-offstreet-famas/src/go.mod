@@ -1,6 +1,6 @@
 module opendatahub.com/tr-parking-offstreet-famas
 
-go 1.25.4
+go 1.24.4
 
 require (
 	github.com/noi-techpark/go-bdp-client v1.4.5
