@@ -68,28 +68,56 @@ func main() {
 
 	b.SyncDataTypes([]bdplib.DataType{occupiedDatatype})
 
+	stationMeta, err := LoadMeta("stations.csv")
+	ms.FailOnError(context.Background(), err, "failed loading metadata")
+
 	listener := tr.NewTr[RawRecs](context.Background(), env.Env)
-	err := listener.Start(context.Background(), func(ctx context.Context, r *rdb.Raw[RawRecs]) error {
+	err = listener.Start(context.Background(), func(ctx context.Context, r *rdb.Raw[RawRecs]) error {
 
 		stations := []bdplib.Station{}
 		recs := b.CreateDataMap()
 		for _, raw := range r.Rawdata {
-
 			sCode := strconv.Itoa(raw.Id)
+
+			meta, metaFound := stationMeta[sCode]
+			if !metaFound {
+				// Only consider what's in the CSV.
+				// Also needed because we want to ignore stations that FAMAS got from the open data hub and thus would be duplicates
+				continue
+			}
+
+			sName := meta.Name
+			if sName == "" {
+				sName = *raw.Meta.Array.Data[1].String
+			}
+
 			s := bdplib.CreateStation(
 				sCode,
-				*raw.Meta.Array.Data[1].String,
+				sName,
 				STATIONTYPE,
-				0.0, //lat
-				0.0, // lon
+				meta.Latitude,
+				meta.Longitude,
 				env.BDP_ORIGIN,
 			)
 
 			capacity := *raw.Meta.Array.Data[2].I4
 
 			s.MetaData = map[string]any{
-				"capacity":     capacity,
-				"municipality": "Bolzano - Bozen",
+				"capacity":      capacity,
+				"municipality":  "Bolzano - Bozen",
+				"name_de":       meta.NameDe,
+				"name_en":       meta.NameEn,
+				"name_it":       meta.NameIt,
+				"standard_name": meta.StandardName,
+				"netex_parking": map[string]any{
+					"type":              meta.NetexType,
+					"layout":            meta.NetexLayout,
+					"charging":          meta.NetexCharging,
+					"reservation":       meta.NetexReservation,
+					"surveillance":      meta.NetexSurveillance,
+					"vehicletypes":      meta.NetexVehicletypes,
+					"hazard_prohibited": meta.NetexHazardProhibited,
+				},
 			}
 			stations = append(stations, s)
 
