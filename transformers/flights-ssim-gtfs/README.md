@@ -15,12 +15,13 @@ https://github.com/planarnetwork/ssim2gtfs/
 https://pkg.go.dev/github.com/echa/code/iata
 https://usermanual.wiki/Pdf/242320788SSIMManualMarch2011.1329255234.pdf
 
-## Validate GTFS:
-```
-docker run --rm -v .:/work ghcr.io/mobilitydata/gtfs-validator:latest -i /work/gtfs.zip -o /work/validator_output
-```
-
 ## Run converter:
 ``` cd ssim2gtfs
-go run ./... --input testdata/sample.ssim --output gtfs.zip --agency SkyAlps --url 'https://skyalps.com' --timezone 'Europe/Rome'
+go run ./... --input testdata/sample.ssim --output gtfs.zip --agency SkyAlps --url 'https://skyalps.com' --timezone 'URC'
+```
+
+## Validate GTFS:
+```
+# first run converter as documented above
+docker run --rm -v .:/work ghcr.io/mobilitydata/gtfs-validator:latest -i /work/gtfs.zip -o /work/validator_output
 ```

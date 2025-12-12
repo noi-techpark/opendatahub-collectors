@@ -253,7 +253,7 @@ func (c *SSIMToGTFSConverter) processFlight(flight ssim.Flight, airlineCode stri
 		Id: tripID,
 		Points: gtfs.ShapePoints{
 			gtfs.ShapePoint{Lat: depStop.Lat, Lon: depStop.Lon, Sequence: 0, Dist_traveled: 0},
-			gtfs.ShapePoint{Lat: arrStop.Lat, Lon: arrStop.Lon, Sequence: 0, Dist_traveled: float32(distance)},
+			gtfs.ShapePoint{Lat: arrStop.Lat, Lon: arrStop.Lon, Sequence: 1, Dist_traveled: float32(distance)},
 		},
 	}
 	trip.Shape = &shape
@@ -278,7 +278,7 @@ func (c *SSIMToGTFSConverter) getOrCreateStop(iataCode string) *gtfs.Stop {
 		Name:          airport.Name,
 		Lat:           float32(airport.LatitudeDeg),
 		Lon:           float32(airport.LongitudeDeg),
-		Location_type: 1,
+		Location_type: 0,
 		Timezone:      emptyTz,
 		Url:           url,
 	}
