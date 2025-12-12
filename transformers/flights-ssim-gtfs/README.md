@@ -19,3 +19,8 @@ https://usermanual.wiki/Pdf/242320788SSIMManualMarch2011.1329255234.pdf
 ```
 docker run --rm -v .:/work ghcr.io/mobilitydata/gtfs-validator:latest -i /work/gtfs.zip -o /work/validator_output
 ```
+
+## Run converter:
+``` cd ssim2gtfs
+go run ./... --input testdata/sample.ssim --output gtfs.zip --agency SkyAlps --url 'https://skyalps.com' --timezone 'Europe/Rome'
+```

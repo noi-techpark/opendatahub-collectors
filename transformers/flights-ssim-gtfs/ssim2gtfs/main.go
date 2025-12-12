@@ -11,13 +11,13 @@ import (
 	"net/mail"
 	"net/url"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 
 	"github.com/patrickbr/gtfsparser"
 	"github.com/patrickbr/gtfsparser/gtfs"
 	"github.com/patrickbr/gtfswriter"
+	"github.com/umahmood/haversine"
 	"opendatahub.com/ssim2gtfs/ssim"
 )
 
@@ -63,6 +63,7 @@ type SSIMToGTFSConverter struct {
 	agencyTimezone string
 	writer         *gtfswriter.Writer
 	feed           *gtfsparser.Feed
+	airports       map[string]Airport
 }
 
 func NewSSIMToGTFSConverter(agencyName, agencyURL, timezone string) *SSIMToGTFSConverter {
@@ -80,6 +81,12 @@ func (c *SSIMToGTFSConverter) Convert(ssimData *ssim.SSIM, output string) error 
 
 	c.writer = &gtfswriter.Writer{}
 	c.feed = gtfsparser.NewFeed()
+
+	airports, err := loadAirports("airports.csv")
+	if err != nil {
+		return err
+	}
+	c.airports = airports
 
 	// Create agency
 	agencyName := c.agencyName
@@ -101,7 +108,7 @@ func (c *SSIMToGTFSConverter) Convert(ssimData *ssim.SSIM, output string) error 
 		return err
 	}
 	agency := &gtfs.Agency{
-		Id:       agencyName, // TODO: handle multiple
+		Id:       agencyName,
 		Name:     agencyName,
 		Url:      url,
 		Timezone: tz,
@@ -180,12 +187,21 @@ func (c *SSIMToGTFSConverter) processFlight(flight ssim.Flight, airlineCode stri
 	serviceID := c.createService(flight)
 
 	// Parse times
-	depTime, err := parseSSIMTime(flight.Leg.PassengerSTD)
+	agencyTz, err := time.LoadLocation(c.agencyTimezone)
+	if err != nil {
+		return fmt.Errorf("invalid timezone %s: %w", c.agencyTimezone, err)
+	}
+	// The timezone thing is a bit iffy because GTFS only has a single timezone per agency (or for each stop, but we don't have those)
+	// Since the agency timezone can be e.g. Europe/Rome it automatically applies daylight savings, but the ssim times are all in UTC + offset.
+	// To estimate the actual date of the flight, we take the start date of the schedule.
+	// But if the schedule includes a daylight savings switchover, we're probably giving out wrong times
+	// This can be avoided by using something fixed like UTC or CET as agency timezone.
+	depTime, err := ssimTime2Local(flight.Leg.PeriodStart+flight.Leg.PassengerSTD+flight.Leg.DepartureUTCOffset, agencyTz)
 	if err != nil {
 		return fmt.Errorf("invalid departure time: %w", err)
 	}
 
-	arrTime, err := parseSSIMTime(flight.Leg.PassengerSTA)
+	arrTime, err := ssimTime2Local(flight.Leg.PeriodStart+flight.Leg.PassengerSTA+flight.Leg.ArrivalUTCOffset, agencyTz)
 	if err != nil {
 		return fmt.Errorf("invalid arrival time: %w", err)
 	}
@@ -199,6 +215,12 @@ func (c *SSIMToGTFSConverter) processFlight(flight ssim.Flight, airlineCode stri
 		Headsign:   &flight.Leg.ArrivalStation,
 		Short_name: &flight.Leg.FlightNumber,
 	}
+
+	// calculate distance between departure and arrival airport
+	_, distance := haversine.Distance(
+		haversine.Coord{Lat: float64(depStop.Lat), Lon: float64(depStop.Lon)},
+		haversine.Coord{Lat: float64(arrStop.Lat), Lon: float64(arrStop.Lon)},
+	)
 
 	// Create stop times
 	depStopTime := gtfs.StopTime{}
@@ -222,25 +244,43 @@ func (c *SSIMToGTFSConverter) processFlight(flight ssim.Flight, airlineCode stri
 	arrStopTime.SetDrop_off_type(0)
 	arrStopTime.SetTimepoint(true)
 	arrStopTime.SetHeadsign(new(string))
+	arrStopTime.SetShape_dist_traveled(float32(distance))
 
 	trip.StopTimes = append(trip.StopTimes, arrStopTime)
+
+	// create shape for trip
+	shape := gtfs.Shape{
+		Id: tripID,
+		Points: gtfs.ShapePoints{
+			gtfs.ShapePoint{Lat: depStop.Lat, Lon: depStop.Lon, Sequence: 0, Dist_traveled: 0},
+			gtfs.ShapePoint{Lat: arrStop.Lat, Lon: arrStop.Lon, Sequence: 0, Dist_traveled: float32(distance)},
+		},
+	}
+	trip.Shape = &shape
+	c.feed.Shapes[shape.Id] = &shape
 
 	c.feed.Trips[tripID] = trip
 
 	return nil
 }
 
-func (c *SSIMToGTFSConverter) getOrCreateStop(stationCode string) *gtfs.Stop {
-	if stop, exists := c.feed.Stops[stationCode]; exists {
+func (c *SSIMToGTFSConverter) getOrCreateStop(iataCode string) *gtfs.Stop {
+	if stop, exists := c.feed.Stops[iataCode]; exists {
 		return stop
 	}
+	airport := c.airports[iataCode]
+
+	emptyTz, _ := gtfs.NewTimezone("") // throws an error because invalid timezone, but that's fine
+	url, _ := url.Parse(airport.HomeLink)
 
 	stop := &gtfs.Stop{
-		Id:            stationCode,
-		Name:          stationCode + " Airport",
-		Lat:           0.0, // You would need to look up actual coordinates
-		Lon:           0.0,
-		Location_type: 0,
+		Id:            iataCode,
+		Name:          airport.Name,
+		Lat:           float32(airport.LatitudeDeg),
+		Lon:           float32(airport.LongitudeDeg),
+		Location_type: 1,
+		Timezone:      emptyTz,
+		Url:           url,
 	}
 	c.feed.Stops[stop.Id] = stop
 	return stop
@@ -257,8 +297,8 @@ func (c *SSIMToGTFSConverter) getOrCreateRoute(routeID, airlineCode string) *gtf
 		Short_name: routeID,
 		Long_name:  fmt.Sprintf("Flight %s", routeID),
 		Type:       1100, // Air service
-		Color:      "0178BC",
-		Text_color: "FFFFFF",
+		// Color:      "0178BC",
+		// Text_color: "FFFFFF",
 	}
 	c.feed.Routes[route.Id] = route
 	return route
@@ -312,25 +352,17 @@ func (c *SSIMToGTFSConverter) createService(flight ssim.Flight) string {
 	return serviceID
 }
 
-func parseSSIMTime(timeStr string) (gtfs.Time, error) {
-	timeStr = strings.TrimSpace(timeStr)
-	if len(timeStr) < 4 {
-		return gtfs.Time{}, fmt.Errorf("invalid time format: %s", timeStr)
-	}
-
-	hours, err := strconv.Atoi(timeStr[0:2])
+func ssimTime2Local(dateTimeStr string, localTz *time.Location) (gtfs.Time, error) {
+	t, err := time.Parse("02Jan061504-0700", dateTimeStr)
 	if err != nil {
 		return gtfs.Time{}, err
 	}
 
-	minutes, err := strconv.Atoi(timeStr[2:4])
-	if err != nil {
-		return gtfs.Time{}, err
-	}
-
+	converted := t.In(localTz)
+	fmt.Printf("converting date: %s, %s, %d, %d\n", dateTimeStr, t, converted.Hour(), converted.Minute())
 	return gtfs.Time{
-		Hour:   int8(hours),
-		Minute: int8(minutes),
+		Hour:   int8(converted.Hour()),
+		Minute: int8(converted.Minute()),
 		Second: 0,
 	}, nil
 }
