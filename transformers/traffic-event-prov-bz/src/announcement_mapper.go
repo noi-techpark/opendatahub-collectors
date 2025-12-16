@@ -291,13 +291,13 @@ func MapTrafficEventToAnnouncement(tags Tags, raw dto.TrafficEvent, id string) (
 	announcement.HasLanguage = []string{"it", "de"}
 
 	// AdditionalProperties
-	announcement.AdditionalProperties.RoadIncidentProperties = odhContentModel.RoadIncidentProperties{
-		RoadsInvolved: []odhContentModel.RoadInvolved{
-			{
-				Code: StringPtr(raw.MessageStreetNr),
-			},
-		},
-	}
+	// announcement.AdditionalProperties.RoadIncidentProperties = odhContentModel.RoadIncidentProperties{
+	// 	RoadsInvolved: []odhContentModel.RoadInvolved{
+	// 		{
+	// 			Code: StringPtr(raw.MessageStreetNr),
+	// 		},
+	// 	},
+	// }
 
 	return announcement, nil
 }

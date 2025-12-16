@@ -74,9 +74,9 @@ type Generic struct {
 	} `json:"Mapping"`
 
 	// need to make typing explicit because map[string]any is not properly hashed
-	AdditionalProperties struct {
-		RoadIncidentProperties RoadIncidentProperties `json:"RoadIncidentProperties"`
-	} `json:"AdditionalProperties,omitempty"`
+	// AdditionalProperties struct {
+	// 	RoadIncidentProperties RoadIncidentProperties `json:"RoadIncidentProperties"`
+	// } `json:"AdditionalProperties,omitempty"`
 
 	Source *string            `json:"Source,omitempty" hash:"ignore"`
 	TagIds []string           `json:"TagIds,omitempty" hash:"set"`
@@ -93,25 +93,25 @@ type Announcement struct {
 	RelatedContent []*RelatedContent         `json:"RelatedContent,omitempty" hash:"set"`
 }
 
-// RoadIncidentProperties corresponds to the main JSON object.
-type RoadIncidentProperties struct {
-	// Note the struct tags are now PascalCase to match the C# properties
-	RoadsInvolved        []RoadInvolved `json:"RoadsInvolved" hash:"set"`
-	ExpectedDelayMinutes *int           `json:"ExpectedDelayMinutes"`
-	ExpectedDelayString  *string        `json:"ExpectedDelayString"`
-}
+// // RoadIncidentProperties corresponds to the main JSON object.
+// type RoadIncidentProperties struct {
+// 	// Note the struct tags are now PascalCase to match the C# properties
+// 	RoadsInvolved        []RoadInvolved `json:"RoadsInvolved" hash:"set"`
+// 	ExpectedDelayMinutes *int           `json:"ExpectedDelayMinutes"`
+// 	ExpectedDelayString  *string        `json:"ExpectedDelayString"`
+// }
 
-// RoadInvolved represents an item in the 'RoadsInvolved' array.
-type RoadInvolved struct {
-	Name  *string    `json:"Name"`
-	Code  *string    `json:"Code"`
-	Lanes []LaneInfo `json:"Lanes"`
-}
+// // RoadInvolved represents an item in the 'RoadsInvolved' array.
+// type RoadInvolved struct {
+// 	Name  *string    `json:"Name"`
+// 	Code  *string    `json:"Code"`
+// 	Lanes []LaneInfo `json:"Lanes"`
+// }
 
-// LaneInfo represents an item in the 'Lanes' array.
-type LaneInfo struct {
-	// Lane is a pointer for optionality (like C#'s int?)
-	Lane      *int              `json:"Lane"`
-	LaneName  map[string]string `json:"LaneName"`
-	Direction *string           `json:"Direction"`
-}
+// // LaneInfo represents an item in the 'Lanes' array.
+// type LaneInfo struct {
+// 	// Lane is a pointer for optionality (like C#'s int?)
+// 	Lane      *int              `json:"Lane"`
+// 	LaneName  map[string]string `json:"LaneName"`
+// 	Direction *string           `json:"Direction"`
+// }
