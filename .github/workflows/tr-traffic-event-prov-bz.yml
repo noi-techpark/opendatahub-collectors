@@ -88,7 +88,7 @@ jobs:
     environment: prod
     env:
       PROJECT_NAME: tr-traffic-event-prov-bz
-      VALUES_YAML: infrastructure/helm/values.yaml
+      VALUES_YAML: infrastructure/helm/values.prod.yaml
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
