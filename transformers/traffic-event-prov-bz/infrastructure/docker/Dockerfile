@@ -2,18 +2,22 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-FROM golang:1.23-bookworm as base
+FROM golang:1.24-bookworm as base
 
 FROM base as build-env
 WORKDIR /app
 COPY src/. .
+COPY resources/. ./resources
 RUN go mod download
 RUN CGO_ENABLED=0 GOOS=linux go build -o main
 
 # BUILD published image
 FROM alpine:latest as build
+# needs timezones for quirky localtime timestamps in JSON
+RUN apk add --no-cache tzdata
 WORKDIR /app
 COPY --from=build-env /app/main .
+COPY --from=build-env /app/resources /resources
 ENTRYPOINT [ "./main"]
 
 # LOCAL DEVELOPMENT
@@ -25,4 +29,5 @@ CMD ["go", "run", "main.go"]
 FROM base as test
 WORKDIR /code
 COPY src/. .
-CMD ["go", "test", "."]
+COPY resources/. ./resources
+CMD ["go", "test", "./..."]

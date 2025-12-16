@@ -42,7 +42,7 @@ jobs:
         docker-password: ${{ secrets.GITHUB_TOKEN }}
           
   deploy-test:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev/tr-traffic-event-prov-bz'
     needs: 
       - build
     runs-on: ubuntu-24.04
@@ -50,7 +50,7 @@ jobs:
     environment: test
     env:
       PROJECT_NAME: tr-traffic-event-prov-bz
-      VALUES_YAML: infrastructure/helm/values.yaml
+      VALUES_YAML: infrastructure/helm/values.test.yaml
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -61,11 +61,11 @@ jobs:
           yq -i '
             .image.repository="${{ env.DOCKER_IMAGE }}" |
             .image.tag="${{ env.DOCKER_TAG }}" |
-            .image.pullPolicy="IfNotPresent" |
-
-            .env.BDP_PROVENANCE_NAME="${{ env.PROJECT_NAME }}" |
-            .env.BDP_PROVENANCE_VERSION="${{ github.sha}}"
+            .image.pullPolicy="IfNotPresent" 
           ' ${{ env.VALUES_YAML }}
+
+          yq -i '.envSecret.ODH_CORE_TOKEN_CLIENT_ID = "${{ secrets.CONTENT_TRAFFIC_EVENT_PROV_BZ_CLIENT_ID }}"' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.ODH_CORE_TOKEN_CLIENT_SECRET = "${{ secrets.CONTENT_TRAFFIC_EVENT_PROV_BZ_CLIENT_SECRET }}"' ${{ env.VALUES_YAML }}
 
       - name: Deploy on cluster  
         uses: noi-techpark/github-actions/helm-deploy@v2
@@ -79,40 +79,40 @@ jobs:
           aws-eks-cluster-name: aws-main-eu-01
           aws-region: eu-west-1
 
-  deploy-prod:
-    if: github.ref == 'refs/heads/prod'
-    needs: 
-      - build
-    runs-on: ubuntu-24.04
-    concurrency: tr-traffic-event-prov-bz-deploy-prod
-    environment: prod
-    env:
-      PROJECT_NAME: tr-traffic-event-prov-bz
-      VALUES_YAML: infrastructure/helm/values.yaml
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
+  # deploy-prod:
+  #   if: github.ref == 'refs/heads/prod'
+  #   needs: 
+  #     - build
+  #   runs-on: ubuntu-24.04
+  #   concurrency: tr-traffic-event-prov-bz-deploy-prod
+  #   environment: prod
+  #   env:
+  #     PROJECT_NAME: tr-traffic-event-prov-bz
+  #     VALUES_YAML: infrastructure/helm/values.yaml
+  #   steps:
+  #     - name: Checkout source code
+  #       uses: actions/checkout@v4
 
-      - name: Customize values.yaml
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: |
-          yq -i '
-            .image.repository="${{ env.DOCKER_IMAGE }}" |
-            .image.tag="${{ env.DOCKER_TAG }}" |
-            .image.pullPolicy="IfNotPresent" |
+  #     - name: Customize values.yaml
+  #       working-directory: ${{ env.WORKING_DIRECTORY }}
+  #       run: |
+  #         yq -i '
+  #           .image.repository="${{ env.DOCKER_IMAGE }}" |
+  #           .image.tag="${{ env.DOCKER_TAG }}" |
+  #           .image.pullPolicy="IfNotPresent" |
 
-            .env.BDP_PROVENANCE_NAME="${{ env.PROJECT_NAME }}" |
-            .env.BDP_PROVENANCE_VERSION="${{ github.sha}}" 
-          ' ${{ env.VALUES_YAML }}
+  #           .env.BDP_PROVENANCE_NAME="${{ env.PROJECT_NAME }}" |
+  #           .env.BDP_PROVENANCE_VERSION="${{ github.sha}}" 
+  #         ' ${{ env.VALUES_YAML }}
 
-      - name: Deploy on cluster  
-        uses: noi-techpark/github-actions/helm-deploy@v2
-        with:
-          k8s-name: ${{ env.PROJECT_NAME }}
-          k8s-namespace: collector
-          chart-path: helm/generic-collector
-          values-file: ${{ env.WORKING_DIRECTORY }}/${{ env.VALUES_YAML }}
-          aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
-          aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
-          aws-eks-cluster-name: aws-main-eu-01
-          aws-region: eu-west-1
+  #     - name: Deploy on cluster  
+  #       uses: noi-techpark/github-actions/helm-deploy@v2
+  #       with:
+  #         k8s-name: ${{ env.PROJECT_NAME }}
+  #         k8s-namespace: collector
+  #         chart-path: helm/generic-collector
+  #         values-file: ${{ env.WORKING_DIRECTORY }}/${{ env.VALUES_YAML }}
+  #         aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
+  #         aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
+  #         aws-eks-cluster-name: aws-main-eu-01
+  #         aws-region: eu-west-1

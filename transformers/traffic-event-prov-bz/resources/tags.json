@@ -1,0 +1,116 @@
+[
+  {
+    "id": "announcement:traffic-event",
+    "name-it": "Evento di Traffico",
+    "name-de": "Verkehrsereignis",
+    "name-en": "Traffic Event"
+  },
+  {
+    "id": "traffic-event:hindrance",
+    "name-it": "Intralcio Viabilità Generale",
+    "name-de": "Allgemeine Verkehrsbehinderung",
+    "name-en": "General Traffic Hindrance"
+  },
+  {
+    "id": "traffic-event:current",
+    "name-it": "Situazione Attuale",
+    "name-de": "Aktuelle Lage",
+    "name-en": "Current Situation"
+  },
+  {
+    "id": "traffic-event:special",
+    "name-it": "Evento Speciale",
+    "name-de": "Sonderveranstaltung",
+    "name-en": "Special Event"
+  },
+  {
+    "id": "traffic-event:mountain-pass",
+    "name-it": "Passo e Montagna",
+    "name-de": "Berg und Passstraße",
+    "name-en": "Mountain Pass"
+  },
+  {
+    "id": "traffic-event:speed-camera",
+    "name-it": "Controllo Radar",
+    "name-de": "Radarkontrolle",
+    "name-en": "Speed Camera"
+  },
+  {
+    "id": "traffic-event:closure",
+    "name-it": "Chiusura o Blocco",
+    "name-de": "Sperre und Schließung",
+    "name-en": "Closure or Blockage"
+  },
+  {
+    "id": "traffic-event:road-work",
+    "name-it": "Cantiere Stradale",
+    "name-de": "Baustelle",
+    "name-en": "Road Work"
+  },
+  {
+    "id": "traffic-event:caution",
+    "name-it": "Attenzione e Pericolo",
+    "name-de": "Vorsicht und Gefahr",
+    "name-en": "Caution and Hazard"
+  },
+  {
+    "id": "traffic-event:event",
+    "name-it": "Manifestazione o Raduno",
+    "name-de": "Veranstaltung",
+    "name-en": "Event or Gathering"
+  },
+  {
+    "id": "traffic-event:accident",
+    "name-it": "Incidente",
+    "name-de": "Unfall",
+    "name-en": "Accident"
+  },
+  {
+    "id": "traffic-event:congestion",
+    "name-it": "Congestione o Coda",
+    "name-de": "Stau und Kolonnenverkehr",
+    "name-en": "Congestion or Queue"
+  },
+  {
+    "id": "traffic-event:weather-related",
+    "name-it": "Condizioni Meteo Avverse",
+    "name-de": "Wetterbedingte Behinderung",
+    "name-en": "Adverse Weather Condition"
+  },
+  {
+    "id": "traffic-event:prohibition",
+    "name-it": "Divieto di Circolazione",
+    "name-de": "Fahrverbot",
+    "name-en": "Driving Prohibition"
+  },
+  {
+    "id": "traffic-event:restriction",
+    "name-it": "Restrizione Generale",
+    "name-de": "Allgemeine Beschränkung",
+    "name-en": "General Restriction"
+  },
+  {
+    "id": "traffic-event:road-condition",
+    "name-it": "Condizione Strade (Libere/Catene)",
+    "name-de": "Straßenzustand (Frei/Kettenpflicht)",
+    "name-en": "Road Condition (Clear/Chains Req)"
+  },
+  {
+    "id": "traffic-event:maintenance",
+    "name-it": "Pulizia e Manutenzione",
+    "name-de": "Reinigungsarbeiten und Wartung",
+    "name-en": "Cleanup and Maintenance"
+  },
+  {
+    "id": "traffic-event:animal-on-road",
+    "name-it": "Animali sulla Strada",
+    "name-de": "Tiere auf Fahrbahn",
+    "name-en": "Animal on Road"
+  },
+  {
+    "id": "traffic-event:public-transport",
+    "name-it": "Mezzi Pubblici/Sciopero",
+    "name-de": "Öffentlicher Verkehr/Streik",
+    "name-en": "Public Transport/Strike"
+  }
+]
