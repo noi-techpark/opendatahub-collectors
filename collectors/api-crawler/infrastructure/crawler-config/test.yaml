@@ -1,0 +1,31 @@
+rootContext: []
+stream: true
+
+steps:
+    - type: request
+      name: first-request
+      request:
+          url: https://dogapi.dog/api/v2/breeds
+          method: GET
+          pagination:
+              nextPageUrlSelector: body:.links.next
+              stopOn:
+                  - type: pageNum
+                    value: 3
+ 
+      resultTransformer: .data
+ 
+      steps:
+          - type: forEach
+            name: get details
+            path: .
+            as: dog
+ 
+            steps:
+                - type: request
+                  name: details-request
+                  request:
+                      url: https://dogapi.dog/api/v2/breeds/{{ .dog.id }}
+                      method: GET
+                  resultTransformer: .data
+                  mergeOn: .dogDetails = $res
