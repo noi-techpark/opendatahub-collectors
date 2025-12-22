@@ -2,14 +2,14 @@
 //
 // SPDX-License-Identifier: CC0-1.0
 
-package main_test
+package ssim2gtfs_test
 
 import (
 	"os"
 	"testing"
 
 	"gotest.tools/v3/assert"
-	main "opendatahub.com/ssim2gtfs"
+	"opendatahub.com/ssim2gtfs"
 	ssim "opendatahub.com/ssimparser"
 )
 
@@ -23,7 +23,7 @@ func TestSSIMToGTFSConverter_Convert(t *testing.T) {
 	assert.NilError(t, err)
 	assert.Assert(t, s != nil)
 
-	c := main.NewSSIMToGTFSConverter("Skyalps", "https://skyalps.com", "UTC")
+	c := ssim2gtfs.NewSSIMToGTFSConverter("Skyalps", "https://skyalps.com", "UTC")
 
 	gotErr := c.Convert(s, "gtfs.zip")
 	assert.NilError(t, gotErr)
