@@ -10,11 +10,11 @@ import (
 
 	"gotest.tools/v3/assert"
 	main "opendatahub.com/ssim2gtfs"
-	"opendatahub.com/ssim2gtfs/ssim"
+	ssim "opendatahub.com/ssimparser"
 )
 
 func TestSSIMToGTFSConverter_Convert(t *testing.T) {
-	f, err := os.Open("./testdata/sample.ssim")
+	f, err := os.Open("../testdata/sample.ssim")
 	assert.NilError(t, err)
 	defer f.Close()
 

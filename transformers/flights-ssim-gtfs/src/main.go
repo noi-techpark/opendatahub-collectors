@@ -22,13 +22,11 @@ var env struct {
 
 // Create your own datatype for unmarshalling the Raw Data
 type RawType struct {
-	Field string
+	File     []byte
+	Filename string
+	Dir      string
+	Mtime    string
 }
-
-const STATIONTYPE = "ExampleStation"
-const PERIOD = 600
-
-var datatype = bdplib.CreateDataType("temperature", "°C", "Current temperature", "instant")
 
 func main() {
 	ms.InitWithEnv(context.Background(), "", &env)
@@ -36,22 +34,9 @@ func main() {
 
 	defer tel.FlushOnPanic()
 
-	b := bdplib.FromEnv(env.BdpEnv)
-
-	b.SyncDataTypes([]bdplib.DataType{datatype})
-
 	listener := tr.NewTr[RawType](context.Background(), env.Env)
 	err := listener.Start(context.Background(), func(ctx context.Context, r *rdb.Raw[RawType]) error {
-		err := b.SyncStations(STATIONTYPE, []bdplib.Station{}, true, false)
-		if err != nil {
-			return err
-		}
-		recs := b.CreateDataMap()
-		recs.AddRecord("stationcode", datatype.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), -999, PERIOD))
-		err = b.PushData(STATIONTYPE, recs)
-		if err != nil {
-			return err
-		}
+
 		return nil
 	})
 

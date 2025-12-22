@@ -1,6 +1,6 @@
 module opendatahub.com/ssim2gtfs
 
-go 1.25.4
+go 1.25.5
 
 require (
 	github.com/umahmood/haversine v0.0.0-20151105152445-808ab04add26
@@ -16,4 +16,7 @@ require (
 require (
 	github.com/klauspost/compress v1.17.7 // indirect
 	github.com/valyala/fastjson v1.6.4 // indirect
+	opendatahub.com/ssimparser v0.0.0-00010101000000-000000000000
 )
+
+replace opendatahub.com/ssimparser => ../ssimparser

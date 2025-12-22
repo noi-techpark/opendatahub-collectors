@@ -5,11 +5,11 @@
 package ssim_test
 
 import (
+	ssim "com/opendatahub/ssimparser"
 	"os"
 	"testing"
 
 	"gotest.tools/v3/assert"
-	"opendatahub.com/ssim2gtfs/ssim"
 )
 
 func TestParser_Parse(t *testing.T) {

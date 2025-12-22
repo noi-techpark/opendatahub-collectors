@@ -18,7 +18,7 @@ import (
 	"github.com/patrickbr/gtfsparser/gtfs"
 	"github.com/patrickbr/gtfswriter"
 	"github.com/umahmood/haversine"
-	"opendatahub.com/ssim2gtfs/ssim"
+	ssim "opendatahub.com/ssimparser"
 )
 
 func main() {
@@ -63,7 +63,7 @@ type SSIMToGTFSConverter struct {
 	agencyTimezone string
 	writer         *gtfswriter.Writer
 	feed           *gtfsparser.Feed
-	airports       map[string]Airport
+	airports       map[string]airport
 }
 
 func NewSSIMToGTFSConverter(agencyName, agencyURL, timezone string) *SSIMToGTFSConverter {

@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-type Airport struct {
+type airport struct {
 	ID               int
 	Ident            string
 	Type             string
@@ -32,7 +32,7 @@ type Airport struct {
 	Keywords         string
 }
 
-func loadAirports(filename string) (map[string]Airport, error) {
+func loadAirports(filename string) (map[string]airport, error) {
 	file, err := os.Open(filename)
 	if err != nil {
 		return nil, err
@@ -45,7 +45,7 @@ func loadAirports(filename string) (map[string]Airport, error) {
 		return nil, err
 	}
 
-	result := make(map[string]Airport)
+	result := make(map[string]airport)
 	for _, record := range records[1:] {
 		if len(record) < 19 || record[13] == "" {
 			continue
@@ -56,7 +56,7 @@ func loadAirports(filename string) (map[string]Airport, error) {
 		lon, _ := strconv.ParseFloat(record[5], 64)
 		elev, _ := strconv.Atoi(record[6])
 
-		airport := Airport{
+		airport := airport{
 			ID:               id,
 			Ident:            record[1],
 			Type:             record[2],
