@@ -14,7 +14,7 @@ type Root struct {
 	SystemHours       []RentalHour         `json:"system_hours"`
 	SystemRegions     []SystemRegion       `json:"system_regions"`
 	Plans             []PricingPlan        `json:"plans"`
-	GeofencingZones   []GeofencingZone     `json:"geofencing_zones"`
+	GeofencingZones   GeofencingZone       `json:"geofencing_zones"`
 }
 
 // GBFS Provider information (from providers.json)
