@@ -24,4 +24,4 @@ CMD ["go", "run", "main.go"]
 # TESTS
 FROM base AS test
 WORKDIR /code
-CMD ["go", "test", "."]
+CMD find . -name go.mod -execdir go test ./... \;
