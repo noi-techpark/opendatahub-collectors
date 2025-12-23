@@ -7,6 +7,8 @@ FROM golang:1.25-bookworm AS base
 FROM base AS build-env
 WORKDIR /app
 COPY src/. .
+COPY ssimparser/. .
+COPY ssim2gtfs/. .
 RUN go mod download
 RUN CGO_ENABLED=0 GOOS=linux go build -o main
 
