@@ -65,6 +65,8 @@ func main() {
 
 	listener := tr.NewTr[RawType](context.Background(), env.Env)
 	err = listener.Start(context.Background(), func(ctx context.Context, r *rdb.Raw[RawType]) error {
+		slog.Info("Incoming SSIM file")
+
 		// parse ssim file
 		parser := ssim.NewParser()
 		ssimData, err := parser.Parse(bytes.NewReader(r.Rawdata.File))
@@ -85,19 +87,21 @@ func main() {
 			return err
 		}
 
-		// push to S3 bucket
 		data, err := os.ReadFile(gtfsFile.Name())
 		if err != nil {
 			return err
 		}
 
-		// Upload to S3
+		slog.Info("Conversion done. Pushing to S3")
+
 		_, err = s3Client.PutObject(ctx, &s3.PutObjectInput{
 			Bucket: aws.String(env.AWS_S3_BUCKET_NAME),
 			Key:    aws.String(env.AWS_S3_FILE_NAME),
 			Body:   bytes.NewReader(data),
 		})
 		ms.FailOnError(ctx, err, "cannot push to S3")
+
+		slog.Info("S3 push done")
 
 		return nil
 	})
