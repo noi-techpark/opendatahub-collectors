@@ -78,6 +78,10 @@ func main() {
 		recs := b.CreateDataMap()
 		for _, raw := range r.Rawdata {
 			sCode := strconv.Itoa(raw.Id)
+			if raw.Meta.Array == nil {
+				slog.Warn("Skipping station because of invalid metadata", "id", sCode, "raw.Meta", raw.Meta)
+				continue
+			}
 
 			meta, metaFound := stationMeta[sCode]
 			if !metaFound {
