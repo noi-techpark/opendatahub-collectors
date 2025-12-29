@@ -16,6 +16,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o main
 FROM alpine:latest AS build
 WORKDIR /app
 COPY --from=build-env /app/main .
+COPY ssim2gtfs/airports.csv .
 ENTRYPOINT [ "./main"]
 
 # LOCAL DEVELOPMENT
