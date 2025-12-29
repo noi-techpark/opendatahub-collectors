@@ -20,7 +20,7 @@ env:
   BDP_PROVENANCE_NAME: 
   BDP_ORIGIN: skyalps
 
-  AWS_REGION: eu-west-01
+  AWS_REGION: eu-west-1
   AWS_S3_FILE_NAME: ssim-gtfs.zip
   AWS_S3_BUCKET_NAME: flighdata-skyalps-gtfs-test
 
