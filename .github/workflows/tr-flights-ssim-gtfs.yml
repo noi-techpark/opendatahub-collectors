@@ -67,8 +67,8 @@ jobs:
             yq -i '.image.pullPolicy = "IfNotPresent"' ${{ env.VALUES_YAML }}      
             yq -i '.env.BDP_PROVENANCE_NAME="${{ env.PROJECT_NAME }}"' ${{ env.VALUES_YAML }}      
             yq -i '.env.BDP_PROVENANCE_VERSION="${{github.sha}}"' ${{ env.VALUES_YAML }}      
-            yq -i '.env.AWS_ACCESS_KEY_ID="${{ secrets.SKYALPS_GTFS_AWS_ACCESS_KEY_ID }}"' ${{ env.VALUES_YAML }}      
-            yq -i '.env.AWS_ACCESS_SECRET_KEY="${{ secrets.SKYALPS_GTFS_AWS_ACCESS_SECRET_KEY }}"' ${{ env.VALUES_YAML }}      
+            yq -i '.envSecret.AWS_ACCESS_KEY_ID="${{ secrets.SKYALPS_GTFS_AWS_ACCESS_KEY_ID }}"' ${{ env.VALUES_YAML }}      
+            yq -i '.envSecret.AWS_ACCESS_SECRET_KEY="${{ secrets.SKYALPS_GTFS_AWS_ACCESS_SECRET_KEY }}"' ${{ env.VALUES_YAML }}      
 
       - name: Deploy on cluster  
         uses: noi-techpark/github-actions/helm-deploy@v2
