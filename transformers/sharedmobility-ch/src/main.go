@@ -173,14 +173,23 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 		typeGroupedVirtual[sType] = append(typeGroupedVirtual[sType], s)
 	}
 	for sType, stations := range typeGroupedVirtual {
-		bdp.SyncStations(sType, stations, true, true)
+		if err := bdp.SyncStations(sType, stations, true, true); err != nil {
+			return err
+		}
+	}
+	if err := bdp.SyncStations(StationTypeStation, values(physicalStations), true, true); err != nil {
+		return err
+	}
+	if err := bdp.SyncStations(StationTypeVehicle, values(vehicleStations), true, true); err != nil {
+		return err
 	}
 
-	bdp.SyncStations(StationTypeStation, values(physicalStations), true, false)
-	bdp.SyncStations(StationTypeVehicle, values(vehicleStations), true, false)
-
-	bdp.PushData(StationTypeStation, physicalDataMap)
-	bdp.PushData(StationTypeVehicle, vehicleDataMap)
+	if err := bdp.PushData(StationTypeStation, physicalDataMap); err != nil {
+		return err
+	}
+	if err := bdp.PushData(StationTypeVehicle, vehicleDataMap); err != nil {
+		return err
+	}
 	// Virtual stations might not have periodic data besides metadata in sync,
 	// but we could push data if there were aggregated measurements.
 
@@ -203,14 +212,14 @@ func SyncDataTypes(bdp bdplib.Bdp) {
 		bdplib.CreateDataType(DataTypeIsRenting, "", "is the station renting", "Instantaneous"),
 		bdplib.CreateDataType(DataTypeIsReturning, "", "is the station returning", "Instantaneous"),
 	}
-	bdp.SyncDataTypes(stationDataTypes)
+	ms.FailOnError(context.Background(), bdp.SyncDataTypes(stationDataTypes), "failed syncing station datatypes")
 
 	vehicleDataTypes := []bdplib.DataType{
 		bdplib.CreateDataType(DataTypeAvailability, "", "is the vehicle available", "Instantaneous"),
 		bdplib.CreateDataType(DataTypeInMaintenance, "", "is the vehicle in maintenance", "Instantaneous"),
 		bdplib.CreateDataType("status-details", "", "detailed status and location", "Instantaneous"),
 	}
-	bdp.SyncDataTypes(vehicleDataTypes)
+	ms.FailOnError(context.Background(), bdp.SyncDataTypes(vehicleDataTypes), "failed syncing vehicle datatypes")
 }
 
 var env tr.Env
