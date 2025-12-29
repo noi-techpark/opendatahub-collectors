@@ -7,7 +7,7 @@ package main
 import (
 	"bytes"
 	"context"
-	"log"
+	"fmt"
 	"log/slog"
 	"os"
 
@@ -69,7 +69,7 @@ func main() {
 		parser := ssim.NewParser()
 		ssimData, err := parser.Parse(bytes.NewReader(r.Rawdata.File))
 		if err != nil {
-			log.Fatalf("Error parsing SSIM: %v", err)
+			return fmt.Errorf("cannot parse ssim: %w", err)
 		}
 
 		// we write to a tmep dir for conversion
