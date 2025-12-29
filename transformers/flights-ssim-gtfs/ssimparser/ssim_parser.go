@@ -183,14 +183,15 @@ func (p *Parser) Parse(reader io.Reader) (*SSIM, error) {
 			}
 		case "5":
 			ssim.Trailer = p.parseTrailer(line)
-		default:
-			return ssim, fmt.Errorf("Invalid record type %s.", recordType)
 		}
-
 	}
 
 	if err := scanner.Err(); err != nil {
 		return nil, fmt.Errorf("error reading file: %w", err)
+	}
+
+	if len(ssim.Carriers)+len(ssim.Flights) == 0 {
+		return ssim, fmt.Errorf("could not parse any flights or carriers from ssim file. Maybe invalid format or empty?")
 	}
 
 	return ssim, nil
