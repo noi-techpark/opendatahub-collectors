@@ -21,3 +21,7 @@ FROM base as dev
 WORKDIR /code
 CMD ["go", "run", "."]
 
+# TESTS
+FROM base AS test
+WORKDIR /code
+CMD ["go", "test", "."]

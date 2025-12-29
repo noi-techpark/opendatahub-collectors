@@ -19,10 +19,10 @@ env:
   MQ_KEY: multi-rest-poller.sharedmobility-ch
   MQ_CLIENT: tr-sharedmobility-ch
 
-  BDP_BASE_URL: https://bdp.opendatahub.com
+  BDP_BASE_URL: http://bdp-core.core.svc.cluster.local
   BDP_PROVENANCE_VERSION: 
   BDP_PROVENANCE_NAME: 
-  BDP_ORIGIN: sharedmobility.ch
+  BDP_ORIGIN: sharedmobility-ch
 
   RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
 
