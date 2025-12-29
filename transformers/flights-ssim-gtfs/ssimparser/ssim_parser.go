@@ -183,7 +183,10 @@ func (p *Parser) Parse(reader io.Reader) (*SSIM, error) {
 			}
 		case "5":
 			ssim.Trailer = p.parseTrailer(line)
+		default:
+			return ssim, fmt.Errorf("Invalid record type %s.", recordType)
 		}
+
 	}
 
 	if err := scanner.Err(); err != nil {
