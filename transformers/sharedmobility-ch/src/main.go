@@ -16,8 +16,8 @@ import (
 )
 
 const (
-	StationTypeStation = "Station"
-	StationTypeVehicle = "Vehicle"
+	StationTypeStation        = "Station"
+	StationTypeVehicle        = "Vehicle"
 	StationTypeGenericSharing = "SharingMobilityService"
 
 	DataTypeNumberAvailable = "number-available"
@@ -176,12 +176,12 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 		bdp.SyncStations(sType, stations, true, true)
 	}
 
-	bdp.SyncStations(StationTypeStation, values(physicalStations), true, true)
-	bdp.SyncStations(StationTypeVehicle, values(vehicleStations), true, true)
+	bdp.SyncStations(StationTypeStation, values(physicalStations), true, false)
+	bdp.SyncStations(StationTypeVehicle, values(vehicleStations), true, false)
 
 	bdp.PushData(StationTypeStation, physicalDataMap)
 	bdp.PushData(StationTypeVehicle, vehicleDataMap)
-	// Virtual stations might not have periodic data besides metadata in sync, 
+	// Virtual stations might not have periodic data besides metadata in sync,
 	// but we could push data if there were aggregated measurements.
 
 	return nil
@@ -230,4 +230,3 @@ func main() {
 
 	ms.FailOnError(context.Background(), err, "error while listening to queue")
 }
-
