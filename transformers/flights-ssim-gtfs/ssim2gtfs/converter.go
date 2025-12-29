@@ -322,7 +322,6 @@ func ssimTime2Local(dateTimeStr string, localTz *time.Location) (gtfs.Time, erro
 	}
 
 	converted := t.In(localTz)
-	fmt.Printf("converting date: %s, %s, %d, %d\n", dateTimeStr, t, converted.Hour(), converted.Minute())
 	return gtfs.Time{
 		Hour:   int8(converted.Hour()),
 		Minute: int8(converted.Minute()),
