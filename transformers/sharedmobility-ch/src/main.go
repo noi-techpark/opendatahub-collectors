@@ -18,6 +18,8 @@ import (
 )
 
 const (
+	StationTypeStation        = "Station"
+	StationTypeVehicle        = "Vehicle"
 	StationTypeGenericSharing = "SharingMobilityService"
 
 	DataTypeNumberAvailable = "number-available"
