@@ -1,0 +1,14 @@
+github.com/google/go-cmp v0.5.9 h1:O2Tfq5qg4qc4AmwVlvv0oLiVAGB7enBSJ2x2DqQFi38=
+github.com/google/go-cmp v0.5.9/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
+github.com/klauspost/compress v1.17.7 h1:ehO88t2UGzQK66LMdE8tibEd1ErmzZjNEqWkjLAKQQg=
+github.com/klauspost/compress v1.17.7/go.mod h1:Di0epgTjJY877eYKx5yC51cX2A2Vl2ibi7bDH9ttBbw=
+github.com/patrickbr/gtfsparser v0.0.0-20240911102057-fc74d7141f00 h1:o3DZLXaWH3CMjNmLFRNIKiMajDDyvGkgmNflE+Myozo=
+github.com/patrickbr/gtfsparser v0.0.0-20240911102057-fc74d7141f00/go.mod h1:L88c76QEIfk3Z5pr1S715jfv1EIEVZ7BvNiefxz4o3o=
+github.com/patrickbr/gtfswriter v0.0.0-20241126214321-b6c6255581e4 h1:eRhBo3W/evmQ+WUj6xKjo84CuKuWojzteIlvonjWpD4=
+github.com/patrickbr/gtfswriter v0.0.0-20241126214321-b6c6255581e4/go.mod h1:B5RQqAhVjVuyfmnugGWZAENLM0liyRWR0lbhkcXcZc8=
+github.com/umahmood/haversine v0.0.0-20151105152445-808ab04add26 h1:UFHFmFfixpmfRBcxuu+LA9l8MdURWVdVNUHxO5n1d2w=
+github.com/umahmood/haversine v0.0.0-20151105152445-808ab04add26/go.mod h1:IGhd0qMDsUa9acVjsbsT7bu3ktadtGOHI79+idTew/M=
+github.com/valyala/fastjson v1.6.4 h1:uAUNq9Z6ymTgGhcm0UynUAB6tlbakBrz6CQFax3BXVQ=
+github.com/valyala/fastjson v1.6.4/go.mod h1:CLCAqky6SMuOcxStkYQvblddUtoRxhYMGLrsQns1aXY=
+gotest.tools/v3 v3.5.2 h1:7koQfIKdy+I8UTetycgUqXWSDwpgv193Ka+qRsmBY8Q=
+gotest.tools/v3 v3.5.2/go.mod h1:LtdLGcnqToBH83WByAAi/wiwSFCArdFIUV/xxN4pcjA=

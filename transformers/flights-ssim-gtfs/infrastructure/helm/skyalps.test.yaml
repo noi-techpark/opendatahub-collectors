@@ -1,0 +1,52 @@
+# SPDX-FileCopyrightText: 2025 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-flights-ssim-gtfs
+  pullPolicy: IfNotPresent
+  tag: latest
+
+env:
+  # ODH Core Writer Connection
+  LOG_LEVEL: "INFO"
+  MQ_QUEUE: sftp-server.skyalps
+  MQ_EXCHANGE: routed
+  MQ_KEY: sftp-server.skyalps
+  MQ_CLIENT: tr-flights-ssim-gtfs
+
+  BDP_BASE_URL: http://bdp-core.core.svc.cluster.local
+  BDP_PROVENANCE_VERSION: 
+  BDP_PROVENANCE_NAME: 
+  BDP_ORIGIN: skyalps
+
+  AWS_REGION: eu-west-1
+  AWS_S3_FILE_NAME: ssim-gtfs.zip
+  AWS_S3_BUCKET_NAME: flighdata-skyalps-gtfs-test
+
+  AGENCY_NAME: Skyalps
+  AGENCY_URL: https://www.skyalps.com
+  AGENCY_TZ: UTC
+
+  RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
+
+  SERVICE_NAME: tr-flights-ssim-gtfs
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+envSecret:
+  AWS_ACCESS_KEY_ID:
+  AWS_ACCESS_SECRET_KEY:
+
+envSecretRef:
+  - name: MQ_URI 
+    secret: rabbitmq-svcbind
+    key: uri
+  - name: BDP_TOKEN_URL
+    secret: oauth-collector
+    key: tokenUri
+  - name: BDP_CLIENT_ID
+    secret: oauth-collector
+    key: clientId
+  - name: BDP_CLIENT_SECRET
+    secret: oauth-collector
+    key: clientSecret
