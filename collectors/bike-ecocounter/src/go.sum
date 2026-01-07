@@ -104,6 +104,8 @@ github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 h1:C3w9PqII01/Oq
 github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
 github.com/noi-techpark/go-silky v1.0.2 h1:Wq2mNmACZ/syHLVqL39QNaJUzC3ua7D5PmA2AHn4y+Q=
 github.com/noi-techpark/go-silky v1.0.2/go.mod h1:9Db7CUcIkrcG0ucFezlbpIVyy82k42SSng3zk6y+HEc=
+github.com/noi-techpark/go-silky v1.0.3 h1:NePUod37gjEBYC1/tyiH4hhHi0GIwRhexmEqvLAByeU=
+github.com/noi-techpark/go-silky v1.0.3/go.mod h1:9Db7CUcIkrcG0ucFezlbpIVyy82k42SSng3zk6y+HEc=
 github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.3 h1:7RQ9CTRLoM4EGUcFq5ddEucAclwzLOU3WjVdVVPyGng=
 github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.3/go.mod h1:nrdL8vMSFYWzkhxCiB1mD0lD3OcnXl9K4FYzFx0M0VY=
 github.com/noi-techpark/opendatahub-go-sdk/qmill v1.0.2 h1:hVz4DnPEP7mZL5+ti1lXioanLySUQrCW3D6K0EcfKg0=

@@ -98,7 +98,8 @@ func main() {
 			}(crawlCtx)
 		}
 
-		now := time.Now()
+		// go 1 minute ahead to include this minute
+		now := time.Now().Add(1 * time.Minute)
 		startTimeVal := now.Add(-(time.Duration(env.PERIOD_MINUTES) * time.Minute))
 		err = craw.Run(crawlCtx, map[string]any{
 			"startDate": startTimeVal.Format("2006-01-02"),
