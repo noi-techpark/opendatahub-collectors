@@ -1,0 +1,40 @@
+# SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-bike-ecocounter
+  pullPolicy: IfNotPresent
+  tag: latest
+
+env:
+  # ODH Core Writer Connection
+  LOG_LEVEL: "INFO"
+  MQ_QUEUE: ecocounter.bike-counter
+  MQ_EXCHANGE: routed
+  MQ_KEY: ecocounter.bike-counter
+  MQ_CLIENT: tr-bike-ecocounter
+
+  BDP_BASE_URL: http://bdp-core.core.svc.cluster.local
+  BDP_PROVENANCE_VERSION:
+  BDP_PROVENANCE_NAME:
+  BDP_ORIGIN: "Ecocounter"
+
+  RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
+
+  SERVICE_NAME: tr-bike-ecocounter
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
+  - name: ODH_TOKEN_URL
+    secret: oauth-collector
+    key: tokenUri
+  - name: ODH_CLIENT_ID
+    secret: oauth-collector
+    key: clientId
+  - name: ODH_CLIENT_SECRET
+    secret: oauth-collector
+    key: clientSecret
