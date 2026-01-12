@@ -104,15 +104,11 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[[]Ecocounte
 
 	// Sync stations
 	err := bdp.SyncStations(StationType, stations, true, false)
-	if err != nil {
-		return fmt.Errorf("failed to sync stations: %w", err)
-	}
+	ms.FailOnError(ctx, err, "failed to sync stations")
 
 	// Push measurement data
 	err = bdp.PushData(StationType, dataMap)
-	if err != nil {
-		return fmt.Errorf("failed to push data: %w", err)
-	}
+	ms.FailOnError(ctx, err, "failed to push data")
 
 	log.Info("Ecocounter data transformation completed successfully")
 	return nil

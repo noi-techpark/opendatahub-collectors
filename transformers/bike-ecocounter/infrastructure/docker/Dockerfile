@@ -24,4 +24,4 @@ CMD ["go", "run", "."]
 # TESTS
 FROM base AS test
 WORKDIR /code
-CMD ["go", "test", "."]
+CMD ["go", "test", "./..."]
