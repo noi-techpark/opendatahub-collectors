@@ -160,11 +160,8 @@ func createMetadata(site EcocounterSite, direction string) map[string]interface{
 	metadata := make(map[string]interface{})
 
 	metadata["siteId"] = site.ID
-	metadata["description"] = site.Description
 	metadata["directional"] = site.Directional
 	metadata["granularity"] = site.Granularity
-	metadata["firstData"] = site.FirstData
-	metadata["lastData"] = site.LastData
 	metadata["hasTimestampedData"] = site.HasTimestampedData
 	metadata["hasWeather"] = site.HasWeather
 	metadata["travelModes"] = site.TravelModes
