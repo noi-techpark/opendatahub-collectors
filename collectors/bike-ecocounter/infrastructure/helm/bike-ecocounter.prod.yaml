@@ -11,7 +11,7 @@ env:
   CRON: "0 0 8 * * *"
   CONFIG_PATH: "/config/config.yaml"
   # 3 days
-  PERIOD_MINUTES: 259200
+  PERIOD_SECONDS: 259200
 
   SERVICE_NAME: dc-bike-ecocounter
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317

@@ -27,7 +27,7 @@ var env struct {
 	dc.Env
 	CRON           string
 	CONFIG_PATH    string
-	PERIOD_MINUTES int32
+	PERIOD_SECONDS int32
 }
 
 func main() {
@@ -100,7 +100,7 @@ func main() {
 
 		// go 1 minute ahead to include this minute
 		now := time.Now().Add(1 * time.Minute)
-		startTimeVal := now.Add(-(time.Duration(env.PERIOD_MINUTES) * time.Minute))
+		startTimeVal := now.Add(-(time.Duration(env.PERIOD_SECONDS) * time.Second))
 		err = craw.Run(crawlCtx, map[string]any{
 			"startDate": startTimeVal.Format("2006-01-02"),
 			"startTime": startTimeVal.Format("15:04"),
