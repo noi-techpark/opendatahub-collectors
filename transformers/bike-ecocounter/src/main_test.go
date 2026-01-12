@@ -56,10 +56,10 @@ func TestMapTravelModeToDataType(t *testing.T) {
 }
 
 func TestParseGranularityToSeconds(t *testing.T) {
-	require.Equal(t, 3600, parseGranularityToSeconds("PT1H"))
-	require.Equal(t, 900, parseGranularityToSeconds("PT15M"))
-	require.Equal(t, 1800, parseGranularityToSeconds("PT30M"))
-	require.Equal(t, 5400, parseGranularityToSeconds("PT1H30M"))
-	require.Equal(t, 60, parseGranularityToSeconds("PT1M"))
-	require.Equal(t, 3600, parseGranularityToSeconds("invalid")) // defaults to 1 hour
+	require.Equal(t, uint64(3600), parseGranularityToSeconds("PT1H"))
+	require.Equal(t, uint64(900), parseGranularityToSeconds("PT15M"))
+	require.Equal(t, uint64(1800), parseGranularityToSeconds("PT30M"))
+	require.Equal(t, uint64(5400), parseGranularityToSeconds("PT1H30M"))
+	require.Equal(t, uint64(60), parseGranularityToSeconds("PT1M"))
+	require.Equal(t, uint64(3600), parseGranularityToSeconds("invalid")) // defaults to 1 hour
 }
