@@ -56,7 +56,7 @@ jobs:
         docker-password: ${{ secrets.GITHUB_TOKEN }}
           
   deploy-test:
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feat/bike-ecocounter'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feat/bike-ecounter'
     needs: 
       - build
     runs-on: ubuntu-24.04
