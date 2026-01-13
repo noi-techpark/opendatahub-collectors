@@ -125,6 +125,11 @@ func main() {
 			}
 			stations = append(stations, s)
 
+			if raw.Data.Struct == nil {
+				slog.Warn("Skipping station because it has no record data or wrong format", "scode", sCode, "data", raw.Data)
+				continue
+			}
+
 			state := members2Map(raw.Data.Struct.Members)
 
 			if _, found := state["faultCode"]; found {
