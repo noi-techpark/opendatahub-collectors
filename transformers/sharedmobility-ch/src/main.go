@@ -6,6 +6,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"strings"
 
@@ -33,6 +34,14 @@ const (
 func TransformWithBdp(bdp bdplib.Bdp) tr.Handler[Root] {
 	return func(ctx context.Context, payload *rdb.Raw[Root]) error {
 		return Transform(ctx, bdp, payload)
+	}
+}
+
+func bool2Int(b bool) int {
+	if b {
+		return 1
+	} else {
+		return 0
 	}
 }
 
@@ -112,7 +121,7 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 			}
 		}
 
-		bdpStation := bdplib.CreateStation(regionID, region.Name, stationType, lat, lon, bdp.GetOrigin())
+		bdpStation := bdplib.CreateStation(fmt.Sprintf("%s:re:%s", bdp.GetOrigin(), regionID), region.Name, stationType, lat, lon, bdp.GetOrigin())
 		bdpStation.MetaData = make(map[string]any)
 		// Per spec Table 2: providers, system_pricing_plans, geofencing_zones, system_hours → METADATA
 		// Note: Spec mentions filtering by provider_id, but without provider_id in SystemRegion,
@@ -155,7 +164,7 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 					}
 				}
 			}
-			
+
 			if parentType, ok := virtualStationTypes[regionID]; ok {
 				stationType = GetStationTypeForPhysicalStation(parentType)
 			} else {
@@ -176,19 +185,19 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 			physicalDataMapsByType[stationType] = &dataMap
 		}
 
-		bdpStation := bdplib.CreateStation(s.StationID, s.Name, stationType, s.Lat, s.Lon, bdp.GetOrigin())
+		bdpStation := bdplib.CreateStation(fmt.Sprintf("%s:st:%s", bdp.GetOrigin(), s.StationID), s.Name, stationType, s.Lat, s.Lon, bdp.GetOrigin())
 		if s.RegionID != "" {
-			bdpStation.ParentStation = s.RegionID
+			bdpStation.ParentStation = virtualStations[s.RegionID].Id
 		}
 		physicalStationsByType[stationType][s.StationID] = bdpStation
 
 		// Real-time measurements
 		if status, ok := stationStatusMap[s.StationID]; ok {
-			physicalDataMapsByType[stationType].AddRecord(s.StationID, DataTypeNumberAvailable, bdplib.CreateRecord(ts, status.NumBikesAvailable, Period))
-			physicalDataMapsByType[stationType].AddRecord(s.StationID, DataTypeDocksAvailable, bdplib.CreateRecord(ts, status.NumDocksAvailable, Period))
-			physicalDataMapsByType[stationType].AddRecord(s.StationID, DataTypeIsInstalled, bdplib.CreateRecord(ts, status.IsInstalled, Period))
-			physicalDataMapsByType[stationType].AddRecord(s.StationID, DataTypeIsRenting, bdplib.CreateRecord(ts, status.IsRenting, Period))
-			physicalDataMapsByType[stationType].AddRecord(s.StationID, DataTypeIsReturning, bdplib.CreateRecord(ts, status.IsReturning, Period))
+			physicalDataMapsByType[stationType].AddRecord(bdpStation.Id, DataTypeNumberAvailable, bdplib.CreateRecord(ts, status.NumBikesAvailable, Period))
+			physicalDataMapsByType[stationType].AddRecord(bdpStation.Id, DataTypeDocksAvailable, bdplib.CreateRecord(ts, status.NumDocksAvailable, Period))
+			physicalDataMapsByType[stationType].AddRecord(bdpStation.Id, DataTypeIsInstalled, bdplib.CreateRecord(ts, bool2Int(status.IsInstalled), Period))
+			physicalDataMapsByType[stationType].AddRecord(bdpStation.Id, DataTypeIsRenting, bdplib.CreateRecord(ts, bool2Int(status.IsRenting), Period))
+			physicalDataMapsByType[stationType].AddRecord(bdpStation.Id, DataTypeIsReturning, bdplib.CreateRecord(ts, bool2Int(status.IsReturning), Period))
 		}
 	}
 
@@ -210,7 +219,7 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 		}
 
 		// Pointprojection empty, location in measurementJSON (per spec line 141)
-		bdpStation := bdplib.CreateStation(v.BikeID, v.BikeID, vehicleStationType, 0, 0, bdp.GetOrigin())
+		bdpStation := bdplib.CreateStation(fmt.Sprintf("%s:vh:%s", bdp.GetOrigin(), v.BikeID), v.BikeID, vehicleStationType, 0, 0, bdp.GetOrigin())
 		// Vehicles don't have parent stations per specification
 		vehicleStationsByType[vehicleStationType][v.BikeID] = bdpStation
 
@@ -224,13 +233,13 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 		}
 
 		// Real-time measurements (per spec lines 153-154)
-		availability := !v.IsReserved && !v.IsDisabled
-		inMaintenance := v.IsDisabled
+		availability := bool2Int(!v.IsReserved && !v.IsDisabled)
+		inMaintenance := bool2Int(v.IsDisabled)
 
-		vehicleDataMapsByType[vehicleStationType].AddRecord(v.BikeID, DataTypeAvailability, bdplib.CreateRecord(ts, availability, Period))
-		vehicleDataMapsByType[vehicleStationType].AddRecord(v.BikeID, DataTypeInMaintenance, bdplib.CreateRecord(ts, inMaintenance, Period))
+		vehicleDataMapsByType[vehicleStationType].AddRecord(bdpStation.Id, DataTypeAvailability, bdplib.CreateRecord(ts, availability, Period))
+		vehicleDataMapsByType[vehicleStationType].AddRecord(bdpStation.Id, DataTypeInMaintenance, bdplib.CreateRecord(ts, inMaintenance, Period))
 		// Store location in measurementJSON via status-details data type
-		vehicleDataMapsByType[vehicleStationType].AddRecord(v.BikeID, "status-details", bdplib.CreateRecord(ts, measurementJSON, Period))
+		vehicleDataMapsByType[vehicleStationType].AddRecord(bdpStation.Id, "status-details", bdplib.CreateRecord(ts, measurementJSON, Period))
 	}
 
 	// 6. Sync and Push
@@ -243,32 +252,42 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 	}
 	for sType, stations := range typeGroupedVirtual {
 		slog.Info("Syncing virtual stations", "type", sType, "count", len(stations))
-		bdp.SyncStations(sType, stations, true, true)
+		if err := bdp.SyncStations(sType, stations, true, true); err != nil {
+			return err
+		}
 	}
 
 	// Sync physical stations grouped by type
 	for stationType, stations := range physicalStationsByType {
 		slog.Info("Syncing physical stations", "type", stationType, "count", len(stations))
-		bdp.SyncStations(stationType, values(stations), true, true)
+		if err := bdp.SyncStations(stationType, values(stations), true, true); err != nil {
+			return err
+		}
 	}
 
 	// Sync vehicles grouped by type
 	for vehicleType, vehicles := range vehicleStationsByType {
 		slog.Info("Syncing vehicles", "type", vehicleType, "count", len(vehicles))
-		bdp.SyncStations(vehicleType, values(vehicles), true, true)
+		if err := bdp.SyncStations(vehicleType, values(vehicles), true, true); err != nil {
+			return err
+		}
 	}
 
 	// Push data for physical stations grouped by type
 	for stationType, dataMap := range physicalDataMapsByType {
-		bdp.PushData(stationType, *dataMap)
+		if err := bdp.PushData(stationType, *dataMap); err != nil {
+			return err
+		}
 	}
 
 	// Push data for vehicles grouped by type
 	for vehicleType, dataMap := range vehicleDataMapsByType {
-		bdp.PushData(vehicleType, *dataMap)
+		if err := bdp.PushData(vehicleType, *dataMap); err != nil {
+			return err
+		}
 	}
 
-	// Virtual stations might not have periodic data besides metadata in sync, 
+	// Virtual stations might not have periodic data besides metadata in sync,
 	// but we could push data if there were aggregated measurements.
 
 	return nil
@@ -282,7 +301,7 @@ func values[M ~map[K]V, K comparable, V any](m M) []V {
 	return r
 }
 
-func SyncDataTypes(bdp bdplib.Bdp) {
+func SyncDataTypes(bdp bdplib.Bdp) error {
 	// Station data types (same for all sharing mobility station types)
 	stationDataTypes := []bdplib.DataType{
 		bdplib.CreateDataType(DataTypeNumberAvailable, "", "number of available vehicles", "Instantaneous"),
@@ -291,17 +310,22 @@ func SyncDataTypes(bdp bdplib.Bdp) {
 		bdplib.CreateDataType(DataTypeIsRenting, "", "is the station renting", "Instantaneous"),
 		bdplib.CreateDataType(DataTypeIsReturning, "", "is the station returning", "Instantaneous"),
 	}
-	
+
 	// Vehicle data types (same for all sharing mobility vehicle types)
 	vehicleDataTypes := []bdplib.DataType{
 		bdplib.CreateDataType(DataTypeAvailability, "", "is the vehicle available", "Instantaneous"),
 		bdplib.CreateDataType(DataTypeInMaintenance, "", "is the vehicle in maintenance", "Instantaneous"),
 		bdplib.CreateDataType("status-details", "", "detailed status and location", "Instantaneous"),
 	}
-	
+
 	// Sync data types (they will be associated with the appropriate station types when used)
-	bdp.SyncDataTypes(stationDataTypes)
-	bdp.SyncDataTypes(vehicleDataTypes)
+	if err := bdp.SyncDataTypes(stationDataTypes); err != nil {
+		return err
+	}
+	if err := bdp.SyncDataTypes(vehicleDataTypes); err != nil {
+		return err
+	}
+	return nil
 }
 
 var env tr.Env
@@ -314,11 +338,10 @@ func main() {
 
 	b := bdplib.FromEnv()
 
-	SyncDataTypes(b)
+	ms.FailOnError(context.Background(), SyncDataTypes(b), "failed syncing data types")
 
 	listener := tr.NewTr[Root](context.Background(), env)
 	err := listener.Start(context.Background(), TransformWithBdp(b))
 
 	ms.FailOnError(context.Background(), err, "error while listening to queue")
 }
-
