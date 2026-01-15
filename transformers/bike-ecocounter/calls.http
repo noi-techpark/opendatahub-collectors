@@ -1,0 +1,22 @@
+<!--
+SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
+@host=https://api.eco-counter.com/api/v2
+
+### Pull sites
+GET {{host}}/sites?include=counters
+X-API-KEY: {{ $dotenv BEARER }}
+
+### history
+@site=100025000
+@start=2026-01-08
+@end=2026-01-08
+@startTime=06:00
+@endTime=06:15
+# @travelmode=bike,pedestrian,horse,scooter,car,minibus,bus
+@travelmode=
+GET {{host}}/history/traffic/raw?siteId={{site}}&startDate={{start}}&endDate={{end}}&startTime={{startTime}}&endTime={{endTime}}&gapFilling=true&validatedDataOnly=false&rawDataOnly=false
+X-API-KEY: {{ $dotenv BEARER }}

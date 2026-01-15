@@ -1,0 +1,26 @@
+rootContext: []
+headers:
+  X-API-KEY: ""
+
+steps:
+  - type: request
+    name: "Fetch sites"
+    request:
+      url: https://api.eco-counter.com/api/v2/sites?include=counters
+      method: GET
+    resultTransformer: .
+    
+    steps:
+      - type: forEach
+        path: .
+        as: site
+        parallelism:
+          maxConcurrency: 10
+        steps: 
+          - type: request
+            name: "Get Counters"
+            request:
+              url: https://api.eco-counter.com/api/v2/history/traffic/raw?siteId={{.site.id}}&startDate={{.startDate}}&endDate={{.endDate}}&startTime={{.startTime}}&endTime={{.endTime}}&gapFilling=true
+              method: GET
+            mergeOn: .measurements = $res
+  
