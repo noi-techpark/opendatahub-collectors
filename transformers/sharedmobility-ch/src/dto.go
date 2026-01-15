@@ -112,3 +112,85 @@ func (p Provider) GetStationType() string {
 	}
 }
 
+// GetStationTypeForPhysicalStation converts a service type to a physical station type
+// e.g., "BikeSharingService" -> "BikeSharingStation"
+func GetStationTypeForPhysicalStation(serviceType string) string {
+	switch serviceType {
+	case "ScooterSharingService":
+		return "ScooterSharingStation"
+	case "BikeSharingService":
+		return "BikeSharingStation"
+	case "CarSharingService":
+		return "CarSharingStation"
+	default:
+		return "SharingMobilityStation"
+	}
+}
+
+// GetStationTypeForVehicle converts a service type to a vehicle station type
+// e.g., "BikeSharingService" -> "BikeSharingVehicle"
+func GetStationTypeForVehicle(serviceType string) string {
+	switch serviceType {
+	case "ScooterSharingService":
+		return "ScooterSharingVehicle"
+	case "BikeSharingService":
+		return "BikeSharingVehicle"
+	case "CarSharingService":
+		return "CarSharingVehicle"
+	default:
+		return "SharingMobilityVehicle"
+	}
+}
+
+// GetVehicleTypeFromVehicleTypeID attempts to determine vehicle type from vehicle_type_id
+// by looking it up in providers. Returns the most common vehicle type if not found.
+func (r Root) GetVehicleTypeFromVehicleTypeID(vehicleTypeID string, providersMap map[string]Provider) string {
+	if vehicleTypeID == "" {
+		// If vehicle_type_id is empty, return the most common provider type
+		return r.getMostCommonProviderType()
+	}
+	
+	// First, try to find a provider that matches this vehicle_type_id
+	// Note: vehicle_type_id might reference a provider_id or be a separate identifier
+	// This is a best-effort mapping - if vehicle_type_id matches provider_id, use that provider's type
+	if provider, ok := providersMap[vehicleTypeID]; ok {
+		return provider.GetStationType()
+	}
+	
+	// If no direct match, check if any provider has a matching vehicle type
+	// This is a fallback - ideally vehicle_type_id should map to providers
+	for _, provider := range r.Providers {
+		if provider.ProviderID == vehicleTypeID {
+			return provider.GetStationType()
+		}
+	}
+	
+	// Default fallback: return the most common provider type
+	return r.getMostCommonProviderType()
+}
+
+// getMostCommonProviderType returns the most common vehicle type among providers
+func (r Root) getMostCommonProviderType() string {
+	if len(r.Providers) == 0 {
+		return "SharingMobilityService"
+	}
+	
+	typeCount := make(map[string]int)
+	for _, provider := range r.Providers {
+		stationType := provider.GetStationType()
+		typeCount[stationType]++
+	}
+	
+	// Find the most common type
+	maxCount := 0
+	mostCommonType := "SharingMobilityService"
+	for stationType, count := range typeCount {
+		if count > maxCount {
+			maxCount = count
+			mostCommonType = stationType
+		}
+	}
+	
+	return mostCommonType
+}
+

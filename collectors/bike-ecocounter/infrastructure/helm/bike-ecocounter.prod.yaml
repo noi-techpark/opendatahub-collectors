@@ -1,0 +1,26 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/dc-bike-ecocounter
+  pullPolicy: IfNotPresent
+  tag: "0.2.0" # Set this when upgrading chart with --set-value
+
+env:
+  LOG_LEVEL: "INFO"
+  MQ_CLIENT: dc-bike-ecocounter
+  PROVIDER: ecocounter/bike-counter
+
+  CRON: "0 0 8 * * *"
+  CONFIG_PATH: "/config/config.yaml"
+  # 3 days
+  PERIOD_SECONDS: 259200
+
+  SERVICE_NAME: dc-bike-ecocounter
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
+
+configMap:
+  mountPath: "/config/"
+  files: {}
