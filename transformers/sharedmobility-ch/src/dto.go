@@ -121,7 +121,7 @@ func GetStationTypeForPhysicalStation(serviceType string) string {
 	case "BikeSharingService":
 		return "BikesharingStation"
 	case "CarSharingService":
-		return "CarSharingStation"
+		return "CarsharingStation"
 	default:
 		return "SharingMobilityStation"
 	}
@@ -134,9 +134,9 @@ func GetStationTypeForVehicle(serviceType string) string {
 	case "ScooterSharingService":
 		return "ScooterSharingVehicle"
 	case "BikeSharingService":
-		return "BikeSharingVehicle"
+		return "Bicycle"
 	case "CarSharingService":
-		return "CarSharingVehicle"
+		return "CarsharingCar"
 	default:
 		return "SharingMobilityVehicle"
 	}
