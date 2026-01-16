@@ -142,10 +142,14 @@ func main() {
 				*state["AllarmeInattivita"].Boolean != 1 &&
 				*state["AllarmePostiOccupati"].Boolean != 1 {
 
-				occupied := capacity - *state["PostiLiberi"].I4
-				timestamp := *state["PostiLiberiTs"].I4 * 1000
+				free := *state["PostiLiberi"].I4
+				// Sometimes we get -1 out of the blue. Probably and API error, just ignore
+				if free >= 0 {
+					occupied := min(max(capacity-free, 0), capacity) // clamp between 0 and capacity
+					timestamp := *state["PostiLiberiTs"].I4 * 1000
 
-				recs.AddRecord(sCode, occupiedDatatype.Name, bdplib.CreateRecord(int64(timestamp), occupied, PERIOD))
+					recs.AddRecord(sCode, occupiedDatatype.Name, bdplib.CreateRecord(int64(timestamp), occupied, PERIOD))
+				}
 			}
 		}
 
