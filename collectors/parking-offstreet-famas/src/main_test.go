@@ -38,22 +38,22 @@ func Test_Unmarshal(t *testing.T) {
 	// test input obtained by using calls.http
 
 	res := unmarshal(t, "./testdata/listresponse.xml")
-	assert.Equal(t, *res.Param.Array.Data[0].Int, 103)
-	assert.Equal(t, *res.Param.Array.Data[1].Int, 104)
-	assert.Equal(t, len(res.Param.Array.Data), 8)
+	assert.Equal(t, *res.Param.Array.Data[0].GetInt(), 103)
+	assert.Equal(t, *res.Param.Array.Data[1].GetInt(), 104)
+	assert.Equal(t, len(res.Param.Array.Data), 10)
 
 	res = unmarshal(t, "./testdata/metaresponse.xml")
-	assert.Equal(t, *res.Param.Array.Data[0].Int, 105)
-	assert.Equal(t, *res.Param.Array.Data[1].StringRaw, "P05 - Laurin")
-	assert.Equal(t, *res.Param.Array.Data[2].Int, 90)
+	assert.Equal(t, *res.Param.Array.Data[0].GetInt(), 105)
+	assert.Equal(t, *res.Param.Array.Data[1].GetString(), "P5 - Laurin")
+	assert.Equal(t, *res.Param.Array.Data[2].GetInt(), 90)
 
 	res = unmarshal(t, "./testdata/occupancyresponse.xml")
-	assert.Equal(t, *res.Param.Array.Data[0].StringRaw, "P05 - Laurin")
-	assert.Equal(t, *res.Param.Array.Data[1].Int, 0)
-	assert.Equal(t, len(res.Param.Array.Data), 15)
+	assert.Equal(t, *res.Param.Struct.Members[0].Value.GetString(), "P5 - Laurin")
+	assert.Equal(t, *res.Param.Struct.Members[1].Value.GetInt(), 1)
+	assert.Equal(t, len(res.Param.Struct.Members), 13)
 
 	res = unmarshal(t, "./testdata/faultresponse.xml")
-	assert.Equal(t, *res.Fault.Struct.Members[0].Value.I4, 0)
+	assert.Equal(t, *res.Fault.Struct.Members[0].Value.GetInt(), 0)
 }
 
 func unmarshal(t *testing.T, input string) (res xmlrpc.XmlRpcResponse) {

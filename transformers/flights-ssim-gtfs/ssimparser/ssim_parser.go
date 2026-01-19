@@ -239,7 +239,7 @@ func (p *Parser) parseFlightLeg(line string) FlightLegRecord {
 		ServiceType:                            p.extractField(line, 13, 14),
 		PeriodStart:                            p.extractField(line, 14, 21),
 		PeriodEnd:                              p.extractField(line, 21, 28),
-		DaysOfOperation:                        p.extractField(line, 28, 35),
+		DaysOfOperation:                        p.extractFieldNoTrim(line, 28, 35),
 		FrequencyRate:                          p.extractField(line, 35, 36),
 		DepartureStation:                       p.extractField(line, 36, 39),
 		PassengerSTD:                           p.extractField(line, 39, 43),
@@ -315,6 +315,16 @@ func (p *Parser) extractField(line string, start, end int) string {
 		return ""
 	}
 	return strings.TrimSpace(line[start:end])
+}
+
+func (p *Parser) extractFieldNoTrim(line string, start, end int) string {
+	if end > len(line) {
+		end = len(line)
+	}
+	if start >= len(line) {
+		return ""
+	}
+	return line[start:end]
 }
 
 // Helper methods for Flight

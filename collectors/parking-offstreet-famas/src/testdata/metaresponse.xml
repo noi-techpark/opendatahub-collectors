@@ -1,11 +1,10 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0"?>
 
 <!--
 SPDX-FileCopyrightText: 2025 NOI Techpark <digital@noi.bz.it>
 
 SPDX-License-Identifier: CC0-1.0
 -->
-
 <methodResponse>
   <params>
     <param>
@@ -13,11 +12,13 @@ SPDX-License-Identifier: CC0-1.0
         <array>
           <data>
             <value>
-              <int>105</int>
+              <i4>105</i4>
             </value>
-            <value>P05 - Laurin</value>
             <value>
-              <int>90</int>
+              <string>P5 - Laurin</string>
+            </value>
+            <value>
+              <i4>90</i4>
             </value>
           </data>
         </array>

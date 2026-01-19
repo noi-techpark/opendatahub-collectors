@@ -6,25 +6,25 @@ package main
 
 // Root holds the top-level fields as mapped by the multi-rest-poller.
 type Root struct {
-	Providers         []Provider           `json:"providers"`
-	SystemInformation SystemInformation    `json:"system_information"`
+	Providers          []Provider           `json:"providers"`
+	SystemInformation  SystemInformation    `json:"system_information"`
 	StationInformation []StationInformation `json:"station_information"`
-	FreeBikeStatus    []FreeBikeStatus     `json:"free_bike_status"`
-	StationStatus     []StationStatus      `json:"station_status"`
-	SystemHours       []RentalHour         `json:"system_hours"`
-	SystemRegions     []SystemRegion       `json:"system_regions"`
-	Plans             []PricingPlan        `json:"plans"`
-	GeofencingZones   GeofencingZone       `json:"geofencing_zones"`
+	FreeBikeStatus     []FreeBikeStatus     `json:"free_bike_status"`
+	StationStatus      []StationStatus      `json:"station_status"`
+	SystemHours        []RentalHour         `json:"system_hours"`
+	SystemRegions      []SystemRegion       `json:"system_regions"`
+	Plans              []PricingPlan        `json:"plans"`
+	GeofencingZones    GeofencingZone       `json:"geofencing_zones"`
 }
 
 // GBFS Provider information (from providers.json)
 type Provider struct {
-	ProviderID  string   `json:"provider_id"`
-	Name        string   `json:"name"`
-	URL         string   `json:"url"`
-	VehicleType string   `json:"vehicle_type"`
-	AppStore    string   `json:"app_store"`
-	PlayStore   string   `json:"play_store"`
+	ProviderID  string `json:"provider_id"`
+	Name        string `json:"name"`
+	URL         string `json:"url"`
+	VehicleType string `json:"vehicle_type"`
+	AppStore    string `json:"app_store"`
+	PlayStore   string `json:"play_store"`
 }
 
 // GBFS System Information (from system_information.json)
@@ -85,18 +85,18 @@ type SystemRegion struct {
 
 // GBFS Pricing Plan (from system_pricing_plans.json)
 type PricingPlan struct {
-	PlanID      string `json:"plan_id"`
-	Name        string `json:"name"`
-	Currency    string `json:"currency"`
+	PlanID      string  `json:"plan_id"`
+	Name        string  `json:"name"`
+	Currency    string  `json:"currency"`
 	Price       float64 `json:"price"`
-	IsTaxable   bool   `json:"is_taxable"`
-	Description string `json:"description"`
+	IsTaxable   bool    `json:"is_taxable"`
+	Description string  `json:"description"`
 }
 
 // GBFS Geofencing Zone (from external URL)
 type GeofencingZone struct {
-	Type     string                 `json:"type"`
-	Features []interface{}          `json:"features"` // GeoJSON features
+	Type     string        `json:"type"`
+	Features []interface{} `json:"features"` // GeoJSON features
 }
 
 func (p Provider) GetStationType() string {
@@ -119,9 +119,9 @@ func GetStationTypeForPhysicalStation(serviceType string) string {
 	case "ScooterSharingService":
 		return "ScooterSharingStation"
 	case "BikeSharingService":
-		return "BikeSharingStation"
+		return "BikesharingStation"
 	case "CarSharingService":
-		return "CarSharingStation"
+		return "CarsharingStation"
 	default:
 		return "SharingMobilityStation"
 	}
@@ -134,9 +134,9 @@ func GetStationTypeForVehicle(serviceType string) string {
 	case "ScooterSharingService":
 		return "ScooterSharingVehicle"
 	case "BikeSharingService":
-		return "BikeSharingVehicle"
+		return "Bicycle"
 	case "CarSharingService":
-		return "CarSharingVehicle"
+		return "CarsharingCar"
 	default:
 		return "SharingMobilityVehicle"
 	}
@@ -149,14 +149,14 @@ func (r Root) GetVehicleTypeFromVehicleTypeID(vehicleTypeID string, providersMap
 		// If vehicle_type_id is empty, return the most common provider type
 		return r.getMostCommonProviderType()
 	}
-	
+
 	// First, try to find a provider that matches this vehicle_type_id
 	// Note: vehicle_type_id might reference a provider_id or be a separate identifier
 	// This is a best-effort mapping - if vehicle_type_id matches provider_id, use that provider's type
 	if provider, ok := providersMap[vehicleTypeID]; ok {
 		return provider.GetStationType()
 	}
-	
+
 	// If no direct match, check if any provider has a matching vehicle type
 	// This is a fallback - ideally vehicle_type_id should map to providers
 	for _, provider := range r.Providers {
@@ -164,7 +164,7 @@ func (r Root) GetVehicleTypeFromVehicleTypeID(vehicleTypeID string, providersMap
 			return provider.GetStationType()
 		}
 	}
-	
+
 	// Default fallback: return the most common provider type
 	return r.getMostCommonProviderType()
 }
@@ -174,13 +174,13 @@ func (r Root) getMostCommonProviderType() string {
 	if len(r.Providers) == 0 {
 		return "SharingMobilityService"
 	}
-	
+
 	typeCount := make(map[string]int)
 	for _, provider := range r.Providers {
 		stationType := provider.GetStationType()
 		typeCount[stationType]++
 	}
-	
+
 	// Find the most common type
 	maxCount := 0
 	mostCommonType := "SharingMobilityService"
@@ -190,7 +190,6 @@ func (r Root) getMostCommonProviderType() string {
 			mostCommonType = stationType
 		}
 	}
-	
+
 	return mostCommonType
 }
-

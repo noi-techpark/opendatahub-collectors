@@ -31,8 +31,8 @@ const METHOD_OCCUPANCY = "pGuide.getPostiLiberiParcheggioExt"
 
 type rawRec struct {
 	Id   int
-	Meta []any
-	Data []any
+	Meta *xmlrpc.XmlRpcValue
+	Data *xmlrpc.XmlRpcValue
 }
 
 func main() {
@@ -58,23 +58,31 @@ func main() {
 		ms.FailOnError(ctx, err, "cannot get list of stations. aborting")
 
 		for _, id := range res.Param.Array.Data {
-			rec := rawRec{Id: *id.Int}
+			rec := rawRec{Id: *id.GetInt()}
 
 			req := xmlrpc.XmlRpcRequest{MethodName: METHOD_STATION_METADATA}
-			req.Params.Values = append(req.Params.Values, xmlrpc.XmlRpcValue{Int: id.Int})
+			req.Params.Values = append(req.Params.Values, xmlrpc.XmlRpcValue{Int: id.GetInt()})
 			res, err = rpc(req)
 			if err != nil {
-				slog.Error("error getting station metadata", "err", err, "id", id.Int)
+				slog.Error("error getting station metadata", "err", err, "id", id.GetInt())
 			}
-			rec.Meta = ar2list(*res.Param.Array)
+			if res.Fault != nil {
+				rec.Meta = res.Fault
+			} else {
+				rec.Meta = res.Param
+			}
 
 			req = xmlrpc.XmlRpcRequest{MethodName: METHOD_OCCUPANCY}
-			req.Params.Values = append(req.Params.Values, xmlrpc.XmlRpcValue{Int: id.Int})
+			req.Params.Values = append(req.Params.Values, xmlrpc.XmlRpcValue{Int: id.GetInt()})
 			res, err = rpc(req)
 			if err != nil {
-				slog.Error("error getting station occupancy", "err", err, "id", id.Int)
+				slog.Error("error getting station occupancy", "err", err, "id", id.GetInt())
 			}
-			rec.Data = ar2list(*res.Param.Array)
+			if res.Fault != nil {
+				rec.Data = res.Fault
+			} else {
+				rec.Data = res.Param
+			}
 
 			rawRecs = append(rawRecs, rec)
 		}
@@ -89,47 +97,6 @@ func main() {
 		slog.Info("Job complete", "records_pushed", len(rawRecs))
 	})
 	c.Run()
-}
-
-func anyVal(v xmlrpc.XmlRpcValue) any {
-	if v.Int != nil {
-		return *v.Int
-	}
-	if v.I4 != nil {
-		return *v.I4
-	}
-	if v.Double != nil {
-		return *v.Double
-	}
-	if v.Boolean != nil {
-		return *v.Boolean
-	}
-	if v.String != nil {
-		return *v.String
-	}
-	if v.DateTime != nil {
-		return *v.DateTime
-	}
-	if v.Base64 != nil {
-		return *v.Base64
-	}
-	if v.Array != nil {
-		return *v.Array
-	}
-	if v.Struct != nil {
-		return *v.Struct
-	}
-	if v.StringRaw != nil {
-		return *v.StringRaw
-	}
-	return nil
-}
-
-func ar2list(ar xmlrpc.XmlRpcArray) (ret []any) {
-	for _, e := range ar.Data {
-		ret = append(ret, anyVal(e))
-	}
-	return ret
 }
 
 func rpc(req xmlrpc.XmlRpcRequest) (res xmlrpc.XmlRpcResponse, err error) {

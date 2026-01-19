@@ -11,6 +11,7 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"strings"
 
 	"golang.org/x/net/html/charset"
 )
@@ -53,16 +54,38 @@ func (r XmlRpcRequest) MarshalXML(e *xml.Encoder, start xml.StartElement) error 
 }
 
 type XmlRpcValue struct {
-	Int       *int          `xml:"int,omitempty"`
-	I4        *int          `xml:"i4,omitempty"`
-	Double    *float64      `xml:"double,omitempty"`
-	Boolean   *uint8        `xml:"boolean,omitempty"`
-	String    *string       `xml:"string,omitempty"`
-	DateTime  *string       `xml:"dateTime.iso8601,omitempty"`
-	Base64    *[]byte       `xml:"base64,omitempty"`
-	Struct    *XmlRpcStruct `xml:"struct,omitempty"`
-	Array     *XmlRpcArray  `xml:"array,omitempty"`
-	StringRaw *string       `xml:",chardata"`
+	Int       *int          `xml:"int,omitempty" json:",omitempty"`
+	I4        *int          `xml:"i4,omitempty" json:",omitempty"`
+	Double    *float64      `xml:"double,omitempty" json:",omitempty"`
+	Boolean   *uint8        `xml:"boolean,omitempty" json:",omitempty"`
+	String    *string       `xml:"string,omitempty" json:",omitempty"`
+	DateTime  *string       `xml:"dateTime.iso8601,omitempty" json:",omitempty"`
+	Base64    *[]byte       `xml:"base64,omitempty" json:",omitempty"`
+	Struct    *XmlRpcStruct `xml:"struct,omitempty" json:",omitempty"`
+	Array     *XmlRpcArray  `xml:"array,omitempty" json:",omitempty"`
+	StringRaw *string       `xml:",chardata" json:",omitempty"`
+}
+
+func (v *XmlRpcValue) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	type Alias XmlRpcValue
+	aux := (*Alias)(v)
+
+	if err := d.DecodeElement(aux, &start); err != nil {
+		return err
+	}
+
+	// Only set StringRaw if no other field was populated
+	if v.Int == nil && v.I4 == nil && v.Double == nil &&
+		v.Boolean == nil && v.String == nil && v.DateTime == nil &&
+		v.Base64 == nil && v.Struct == nil && v.Array == nil &&
+		*v.StringRaw != "" {
+		raw := strings.TrimSpace(*v.StringRaw)
+		v.StringRaw = &raw
+	} else {
+		v.StringRaw = nil
+	}
+
+	return nil
 }
 
 type XmlRpcStruct struct {
@@ -109,4 +132,20 @@ func XmlRpc(url string, req XmlRpcRequest) (ret XmlRpcResponse, err error) {
 
 func Pt[T any](t T) *T {
 	return &t
+}
+
+// ints can either be called Int or I4
+func (v XmlRpcValue) GetInt() *int {
+	if v.Int != nil {
+		return v.Int
+	}
+	return v.I4
+}
+
+// strings can be raw or within a value tag
+func (v XmlRpcValue) GetString() *string {
+	if v.String != nil {
+		return v.String
+	}
+	return v.StringRaw
 }
