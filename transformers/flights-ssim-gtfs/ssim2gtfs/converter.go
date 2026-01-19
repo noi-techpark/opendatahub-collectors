@@ -294,19 +294,22 @@ func (c *SSIMToGTFSConverter) createService(flight ssim.Flight) string {
 	// Parse days of operation (1234567 where 1=Monday, 7=Sunday)
 	daysStr := flight.Leg.DaysOfOperation
 	daysOfWeek := [7]bool{}
-	for i := 0; i < 7 && i < len(daysStr); i++ {
+	for i := 0; i < 7; i++ {
 		daysOfWeek[i] = daysStr[i] != ' ' && daysStr[i] != '0'
+		// log.Printf("day %s %d %s to bool %v", daysStr, i, string(daysStr[i]), daysOfWeek[i])
 	}
 
 	service := gtfs.EmptyService()
 	service.SetId(serviceID)
-	service.SetDaymap(0, daysOfWeek[0]) //monday
-	service.SetDaymap(1, daysOfWeek[1])
-	service.SetDaymap(2, daysOfWeek[2])
-	service.SetDaymap(3, daysOfWeek[3])
-	service.SetDaymap(4, daysOfWeek[4])
-	service.SetDaymap(5, daysOfWeek[5])
-	service.SetDaymap(6, daysOfWeek[6])
+	service.SetDaymap(1, daysOfWeek[0]) //monday
+	service.SetDaymap(2, daysOfWeek[1])
+	service.SetDaymap(3, daysOfWeek[2])
+	service.SetDaymap(4, daysOfWeek[3])
+	service.SetDaymap(5, daysOfWeek[4])
+	service.SetDaymap(6, daysOfWeek[5])
+	service.SetDaymap(0, daysOfWeek[6]) //sunday
+
+	// log.Printf("daymap in:%v, map:%v,  out:%#b", flight.Leg.DaysOfOperation, daysOfWeek, service.RawDaymap())
 
 	service.SetStart_date(gtfs.NewDate(uint8(startDate.Day()), uint8(startDate.Month()), uint16(startDate.Year())))
 	service.SetEnd_date(gtfs.NewDate(uint8(endDate.Day()), uint8(endDate.Month()), uint16(endDate.Year())))
