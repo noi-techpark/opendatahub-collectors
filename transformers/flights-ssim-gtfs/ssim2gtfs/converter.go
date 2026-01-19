@@ -272,7 +272,7 @@ func (c *SSIMToGTFSConverter) createService(flight ssim.Flight) string {
 		flight.Leg.AirlineDesignator,
 		flight.Leg.FlightNumber,
 		flight.Leg.PeriodStart,
-		flight.Leg.DaysOfOperation)
+		strings.ReplaceAll(flight.Leg.DaysOfOperation, " ", ""))
 
 	if _, exists := c.feed.Services[serviceID]; exists {
 		return serviceID
