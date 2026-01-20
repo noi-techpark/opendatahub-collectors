@@ -33,6 +33,7 @@ require (
 	github.com/patrickbr/gtfswriter v0.0.0-20241126214321-b6c6255581e4 // indirect
 	github.com/umahmood/haversine v0.0.0-20151105152445-808ab04add26 // indirect
 	github.com/valyala/fastjson v1.6.4 // indirect
+	github.com/zsefvlol/timezonemapper v1.0.0 // indirect
 )
 
 replace opendatahub.com/ssimparser => ../ssimparser
