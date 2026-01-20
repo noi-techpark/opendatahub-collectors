@@ -143,8 +143,8 @@ func (c *SSIMToGTFSConverter) processFlight(flight ssim.Flight, airlineCode stri
 	arrStop := c.getOrCreateStop(flight.Leg.ArrivalStation)
 
 	// Create or get route
-	routeID := fmt.Sprintf("%s%s", airlineCode, flight.Leg.FlightNumber)
-	route := c.getOrCreateRoute(routeID, airlineCode)
+	routeID := fmt.Sprintf("%s%s", flight.Leg.AirlineDesignator, flight.Leg.FlightNumber)
+	route := c.getOrCreateRoute(routeID, airlineCode, flight.Leg.DepartureStation, flight.Leg.ArrivalStation)
 
 	// Create service (calendar)
 	serviceID := c.createService(flight)
@@ -171,7 +171,7 @@ func (c *SSIMToGTFSConverter) processFlight(flight ssim.Flight, airlineCode stri
 
 	// Create trip
 	tripID := fmt.Sprintf("%s_%s_%s", routeID, flight.Leg.PeriodStart, flight.Leg.LegSequenceNumber)
-	headsign := fmt.Sprintf("%s -> %s", flight.Leg.DepartureStation, flight.Leg.ArrivalStation)
+	headsign := fmt.Sprintf("%s - %s", flight.Leg.DepartureStation, flight.Leg.ArrivalStation)
 	trip := &gtfs.Trip{
 		Id:         tripID,
 		Route:      route,
@@ -255,7 +255,7 @@ func (c *SSIMToGTFSConverter) getOrCreateStop(iataCode string) *gtfs.Stop {
 	return stop
 }
 
-func (c *SSIMToGTFSConverter) getOrCreateRoute(routeID, airlineCode string) *gtfs.Route {
+func (c *SSIMToGTFSConverter) getOrCreateRoute(routeID, airlineCode string, departure string, arrival string) *gtfs.Route {
 	if route, exists := c.feed.Routes[routeID]; exists {
 		return route
 	}
@@ -264,7 +264,7 @@ func (c *SSIMToGTFSConverter) getOrCreateRoute(routeID, airlineCode string) *gtf
 		Id:         routeID,
 		Agency:     c.feed.Agencies[airlineCode],
 		Short_name: routeID,
-		Long_name:  fmt.Sprintf("Flight %s", routeID),
+		Long_name:  fmt.Sprintf("%s %s - %s", routeID, departure, arrival),
 		Type:       1100, // Air service
 		// Color:      "0178BC",
 		// Text_color: "FFFFFF",
