@@ -89,11 +89,10 @@ func (c *SSIMToGTFSConverter) Convert(ssimData *ssim.SSIM, output string) error 
 	// Process flights
 	for _, flight := range ssimData.Flights {
 		if err := c.processFlight(flight, c.agencyName); err != nil {
-			log.Printf("Warning: error processing flight %s%s: %v",
+			return fmt.Errorf("Warning: error processing flight %s%s: %w",
 				flight.Leg.AirlineDesignator,
 				flight.Leg.FlightNumber,
 				err)
-			continue
 		}
 	}
 
