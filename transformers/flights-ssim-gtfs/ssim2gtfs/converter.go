@@ -171,11 +171,12 @@ func (c *SSIMToGTFSConverter) processFlight(flight ssim.Flight, airlineCode stri
 
 	// Create trip
 	tripID := fmt.Sprintf("%s_%s_%s", routeID, flight.Leg.PeriodStart, flight.Leg.LegSequenceNumber)
+	headsign := fmt.Sprintf("%s -> %s", flight.Leg.DepartureStation, flight.Leg.ArrivalStation)
 	trip := &gtfs.Trip{
 		Id:         tripID,
 		Route:      route,
 		Service:    c.feed.Services[serviceID],
-		Headsign:   &flight.Leg.ArrivalStation,
+		Headsign:   &headsign,
 		Short_name: &flight.Leg.FlightNumber,
 	}
 
