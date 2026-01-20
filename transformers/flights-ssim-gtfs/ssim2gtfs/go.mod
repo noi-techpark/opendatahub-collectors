@@ -7,6 +7,8 @@ require (
 	gotest.tools/v3 v3.5.2
 )
 
+require github.com/zsefvlol/timezonemapper v1.0.0
+
 require (
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/patrickbr/gtfsparser v0.0.0-20240911102057-fc74d7141f00

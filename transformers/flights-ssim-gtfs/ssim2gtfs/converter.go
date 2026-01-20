@@ -17,6 +17,7 @@ import (
 	"github.com/patrickbr/gtfsparser/gtfs"
 	"github.com/patrickbr/gtfswriter"
 	"github.com/umahmood/haversine"
+	"github.com/zsefvlol/timezonemapper"
 	ssim "opendatahub.com/ssimparser"
 )
 
@@ -233,7 +234,12 @@ func (c *SSIMToGTFSConverter) getOrCreateStop(iataCode string) *gtfs.Stop {
 	}
 	airport := c.airports[iataCode]
 
-	emptyTz, _ := gtfs.NewTimezone("") // throws an error because invalid timezone, but that's fine
+	// map gps point to timezone
+	tzString := timezonemapper.LatLngToTimezoneString(airport.LatitudeDeg, airport.LongitudeDeg)
+	tz, err := gtfs.NewTimezone(tzString)
+	if err != nil {
+		tz, _ = gtfs.NewTimezone("") // empty timezone, defaults to agency
+	}
 	url, _ := url.Parse(airport.HomeLink)
 
 	stop := &gtfs.Stop{
@@ -242,7 +248,7 @@ func (c *SSIMToGTFSConverter) getOrCreateStop(iataCode string) *gtfs.Stop {
 		Lat:           float32(airport.LatitudeDeg),
 		Lon:           float32(airport.LongitudeDeg),
 		Location_type: 0,
-		Timezone:      emptyTz,
+		Timezone:      tz,
 		Url:           url,
 	}
 	c.feed.Stops[stop.Id] = stop
