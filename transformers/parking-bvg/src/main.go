@@ -160,6 +160,8 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CountingAre
 			if facilityName == "" {
 				facilityName = parsed.Standort
 			}
+			// inject ParentStationCode since we need to link eac area to the facility
+			area.ParentStationCode = parsed.Standort
 
 			capacity := parsed.AnzahlGesamtparkplaetze
 
@@ -322,7 +324,7 @@ func createParkingStation(bdp bdplib.Bdp, area CountingArea, parsed AreaNameComp
 	)
 
 	// Set Parent Station ID to the site_id (ParkingFacility)
-	station.ParentStation = area.SiteID
+	station.ParentStation = area.ParentStationCode
 
 	metadata := proto.ToMetadata()
 

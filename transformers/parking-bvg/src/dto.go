@@ -11,20 +11,21 @@ type CountingAreaList []CountingArea
 
 // CountingArea represents a single element in the top-level array
 type CountingArea struct {
-	AppearanceParams AppearanceParams `json:"appearance_params"`
-	Counts           Counts           `json:"counts"`
-	Created          time.Time        `json:"created"`
-	ID               string           `json:"id"`
-	LastResetTime    *time.Time       `json:"last_reset_time"` // Use *time.Time for null or date string
-	MultiSg          bool             `json:"multi_sg"`
-	Name             string           `json:"name"`
-	ResetDayOfWeek   *string          `json:"reset_day_of_week"` // Use *string for null or string
-	ResetMode        string           `json:"reset_mode"`
-	ResetTimeOfDay   *string          `json:"reset_time_of_day"` // Use *string for null or string
-	ResetTimezone    *string          `json:"reset_timezone"`    // Use *string for null or string
-	SiteID           string           `json:"site_id"`
-	Type             string           `json:"type"`
-	Where            Where            `json:"where"`
+	AppearanceParams  AppearanceParams `json:"appearance_params"`
+	Counts            Counts           `json:"counts"`
+	Created           time.Time        `json:"created"`
+	ID                string           `json:"id"`
+	LastResetTime     *time.Time       `json:"last_reset_time"` // Use *time.Time for null or date string
+	MultiSg           bool             `json:"multi_sg"`
+	Name              string           `json:"name"`
+	ResetDayOfWeek    *string          `json:"reset_day_of_week"` // Use *string for null or string
+	ResetMode         string           `json:"reset_mode"`
+	ResetTimeOfDay    *string          `json:"reset_time_of_day"` // Use *string for null or string
+	ResetTimezone     *string          `json:"reset_timezone"`    // Use *string for null or string
+	SiteID            string           `json:"site_id"`
+	Type              string           `json:"type"`
+	Where             Where            `json:"where"`
+	ParentStationCode string
 }
 
 // AppearanceParams contains parameters for object appearance
