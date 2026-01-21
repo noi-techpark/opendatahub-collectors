@@ -15,6 +15,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o main
 # BUILD published image
 FROM alpine:latest AS build
 WORKDIR /app
+RUN apk add --no-cache tzdata
 COPY --from=build-env /app/main .
 COPY ssim2gtfs/airports.csv .
 ENTRYPOINT [ "./main"]

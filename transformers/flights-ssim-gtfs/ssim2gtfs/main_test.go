@@ -23,7 +23,7 @@ func TestSSIMToGTFSConverter_Convert(t *testing.T) {
 	assert.NilError(t, err)
 	assert.Assert(t, s != nil)
 
-	c := ssim2gtfs.NewSSIMToGTFSConverter("Skyalps", "https://skyalps.com", "UTC")
+	c := ssim2gtfs.NewSSIMToGTFSConverter("Skyalps", "https://skyalps.com", "Europe/Rome")
 
 	gotErr := c.Convert(s, "gtfs.zip")
 	assert.NilError(t, gotErr)
