@@ -23,18 +23,21 @@ import (
 const period = 60
 const stationtype = "EnvironmentStation"
 
-var env tr.Env
+var env struct {
+	tr.Env
+	bdplib.BdpEnv
+}
 
 func main() {
 	ctx := context.Background()
 	ms.InitWithEnv(ctx, "", &env)
 
-	b := bdplib.FromEnv()
+	b := bdplib.FromEnv(env.BdpEnv)
 
 	defer tel.FlushOnPanic()
 
 	dtmap := readDataTypes("datatypes.csv")
-	ms.FailOnError(ctx, b.SyncDataTypes("", maps.Values(dtmap)), "error pushing datatypes")
+	ms.FailOnError(ctx, b.SyncDataTypes(maps.Values(dtmap)), "error pushing datatypes")
 
 	stations, err := readStationCSV("stations.csv")
 	ms.FailOnError(ctx, err, "error loading station csv")
