@@ -27,12 +27,12 @@ envSecretRef:
   - name: MQ_URI 
     secret: rabbitmq-svcbind
     key: uri
-  - name: ODH_TOKEN_URL
+  - name: BDP_TOKEN_URL
     secret: oauth-collector
     key: tokenUri
-  - name: ODH_CLIENT_ID
+  - name: BDP_CLIENT_ID
     secret: oauth-collector
     key: clientId
-  - name: ODH_CLIENT_SECRET
+  - name: BDP_CLIENT_SECRET
     secret: oauth-collector
     key: clientSecret
