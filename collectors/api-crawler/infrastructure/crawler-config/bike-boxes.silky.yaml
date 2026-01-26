@@ -11,20 +11,18 @@ headers:
     Content-Type: application/json
 
 steps:
-    - type: forEach
+    - type: forValues
       name: "Fetch translations for all locations"
       values: ["en", "de", "lld"]
-      path: .translations
       as: language
       steps:
         - type: request
           name: "Get locations in language"
-          as: locations
           request:
-              url: "https://sta.api.weelo.it/resources/locations?languageID={{ .language.value }}"
+              url: "https://sta.api.weelo.it/resources/locations?languageID={{ .language }}"
               method: GET
 
-          mergeWithParentOn: .[$ctx.language.value] = $res
+          mergeOn: .[$ctx.language] = $res
 
           steps:
             - type: forEach
@@ -35,7 +33,7 @@ steps:
                 - type: request
                   name: "Get Stations"
                   request:
-                      url: "https://sta.api.weelo.it/resources/stations?languageID={{ .language.value }}&locationId={{ .location.locationID }}"
+                      url: "https://sta.api.weelo.it/resources/stations?languageID={{ .language }}&locationId={{ .location.locationID }}"
                       method: GET
                   
                   mergeOn: .stations = $res

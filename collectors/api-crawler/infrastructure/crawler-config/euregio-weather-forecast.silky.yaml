@@ -1,8 +1,7 @@
 rootContext: []
 stream: true
 steps:
-  - type: forEach
-    path: "."
+  - type: forValues
     values: 
       - 000d29ea-0af4-45bd-8bf0-2f487784589d
       - 00140f3e-551b-4162-9a61-fa5b72f9698e
@@ -611,12 +610,12 @@ steps:
       - type: request
         name: Get Forecasts
         request:
-          url: https://meteo.report/var/data/forecasts/{{ .id.value }}.json
+          url: https://meteo.report/var/data/forecasts/{{ .id }}.json
           method: GET
           headers:
             Accept: application/json
         mergeOn: |
-          . = {
-            id: .value,
+          . += [{
+            id: $ctx.id,
             forecasts: $res
-          }
+          }]

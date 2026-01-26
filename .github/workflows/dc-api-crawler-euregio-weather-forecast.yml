@@ -11,7 +11,7 @@ on:
 
 env:
   WORKING_DIRECTORY: collectors/api-crawler
-  HTTP_CONFIG_PATH: infrastructure/crawler-config/euregio-weather-forecast.yaml
+  HTTP_CONFIG_PATH: infrastructure/crawler-config/euregio-weather-forecast.silky.yaml
   DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/dc-api-crawler
   DOCKER_TAG: ${{ github.sha }}
   KUBERNETES_NAMESPACE: collector
@@ -33,7 +33,7 @@ jobs:
         docker-password: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-euregio-weather-forecast-test:
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev/euregio-weather-forecast'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev/crawlerv1'
     needs: build
     runs-on: ubuntu-24.04
     concurrency: dc-api-crawler-euregio-weather-forecast-test

@@ -9,10 +9,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
+	"net/http"
 	"time"
 
 	"github.com/hashicorp/go-retryablehttp"
-	"github.com/noi-techpark/go-apigorowler"
+	"github.com/noi-techpark/go-silky"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/dc"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
@@ -39,9 +40,24 @@ func main() {
 
 	slog.Info("Setup complete. Starting cron scheduler")
 
-	craw, errors, err := apigorowler.NewApiCrawler(env.CONFIG_PATH)
+	craw, errors, err := silky.NewApiCrawler(env.CONFIG_PATH)
 	ms.FailOnError(context.Background(), err, "failed to load call config", "validation", errors)
 	client := retryablehttp.NewClient()
+	client.CheckRetry = func(ctx context.Context, resp *http.Response, err error) (bool, error) {
+		// Handle network/internal errors using the built-in policy
+		// Note the name change to DefaultRetryPolicy
+		shouldRetry, checkErr := retryablehttp.DefaultRetryPolicy(ctx, resp, err)
+
+		// If it's an unrecoverable 4xx code, kill the retry loop and return error
+		if resp != nil && (resp.StatusCode >= 400 && resp.StatusCode < 500) {
+			// Allow 429 (Too Many Requests) to still retry
+			if resp.StatusCode != 429 {
+				return false, fmt.Errorf("unrecoverable client error: %d", resp.StatusCode)
+			}
+		}
+
+		return shouldRetry, checkErr
+	}
 	craw.SetClient(client.StandardClient())
 
 	c := cron.New(cron.WithSeconds())
@@ -97,7 +113,7 @@ func main() {
 			}(crawlCtx)
 		}
 
-		err = craw.Run(crawlCtx)
+		err = craw.Run(crawlCtx, map[string]any{})
 		ms.FailOnError(ctx, err, "failed to crawl", "err", err)
 
 		// only publish if something returned
