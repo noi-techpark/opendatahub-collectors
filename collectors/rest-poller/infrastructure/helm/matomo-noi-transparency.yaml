@@ -8,6 +8,9 @@ env:
   PROVIDER: matomo/noi-transparency
 
   CRON: "0 0 0 * * *"
+
+  SERVICE_NAME: dc-rest-poller-matomo-noi-transparency
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
   
 envSecret:
   HTTP_URL: "<URL SET BY CICD>"

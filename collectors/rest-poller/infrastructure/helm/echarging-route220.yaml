@@ -11,6 +11,9 @@ env:
   HTTP_URL: https://platform.evway.net/api/idm/getAllRoute220Stations
   HTTP_HEADER_CALLER: "X-Caller-ID: NOI-Techpark"
 
+  SERVICE_NAME: dc-rest-poller-echarging-route220
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
 envSecretRef:
   - name: MQ_URI
     secret: rabbitmq-svcbind

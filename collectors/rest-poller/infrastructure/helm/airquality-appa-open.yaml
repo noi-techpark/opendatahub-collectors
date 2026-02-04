@@ -10,6 +10,9 @@ env:
   CRON: "0 0 * * * *"
   HTTP_URL: "https://dati.retecivica.bz.it/services/airquality/timeseries?station_code=ML5&meas_code=NO2"
 
+  SERVICE_NAME: dc-rest-poller-airquality-appa-open
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
 envSecretRef:
   - name: MQ_URI
     secret: rabbitmq-svcbind

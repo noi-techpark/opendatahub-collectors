@@ -10,6 +10,9 @@ env:
   CRON: "0 */10 * * * *"
   HTTP_URL: "https://www.provinz.bz.it/vmz/traffic.json"
 
+  SERVICE_NAME: dc-rest-poller-traffic-event-prov-bz
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
 envSecretRef:
   - name: MQ_URI
     secret: rabbitmq-svcbind
