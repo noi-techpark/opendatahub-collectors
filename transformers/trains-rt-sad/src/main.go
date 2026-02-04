@@ -28,31 +28,19 @@ type RawType struct {
 const STATIONTYPE = "ExampleStation"
 const PERIOD = 600
 
-var datatype = bdplib.CreateDataType("temperature", "°C", "Current temperature", "instant")
-
 func main() {
 	ms.InitWithEnv(context.Background(), "", &env)
 	slog.Info("Starting data transformer...")
 
 	defer tel.FlushOnPanic()
 
-	b := bdplib.FromEnv(env.BdpEnv)
-
-	b.SyncDataTypes([]bdplib.DataType{datatype})
-
 	listener := tr.NewTr[RawType](context.Background(), env.Env)
 	err := listener.Start(context.Background(), func(ctx context.Context, r *rdb.Raw[RawType]) error {
-		err := b.SyncStations(STATIONTYPE, []bdplib.Station{}, true, false)
-		if err != nil {
-			return err
-		}
-		recs := b.CreateDataMap()
-		recs.AddRecord("stationcode", datatype.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), -999, PERIOD))
-		err = b.PushData(STATIONTYPE, recs)
-		if err != nil {
-			return err
-		}
 		return nil
+		// unmarshal the thing
+		// get relevant netex
+		// compose siri-vm
+		// upload
 	})
 
 	ms.FailOnError(context.Background(), err, "error while listening to queue")
