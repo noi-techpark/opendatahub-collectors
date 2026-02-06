@@ -108,6 +108,19 @@ func GetStationTypeForVehicle(serviceType string) string {
 	}
 }
 
+// Helper to simulate the fix logic in tests
+func deduceProviderTypeFromStationID(stationID string, providersMap map[string]Provider) string {
+	stationIDLower := strings.ToLower(stationID)
+	for _, p := range providersMap {
+		pID := strings.ToLower(p.ProviderID)
+		if len(pID) < 3 { continue }
+		if strings.Contains(stationIDLower, pID) {
+			return MapVehicleType(p.VehicleType)
+		}
+	}
+	return ""
+}
+
 // GetStationTypeForPhysicalStation maps service type to station type
 func GetStationTypeForPhysicalStation(serviceType string) string {
 	switch serviceType {

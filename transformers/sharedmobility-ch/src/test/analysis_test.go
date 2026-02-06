@@ -27,19 +27,52 @@ func TestFullAnalysis(t *testing.T) {
 	stNoParent := 0
 	
 	if data := fetchAnalysis("https://sharedmobility.ch/station_information.json", t); data != nil {
+		fmt.Printf("Totale Stazioni: %d\n", len(data.Data.Stations))
+		
+		stationCounts := make(map[string]int)
+		// Removed redefined stNoParent
+		
 		for _, s := range data.Data.Stations {
 			if s.RegionID == "" {
-				stNoParent++
+				stNoParent++ // Uses the outer scope variable defined at line 27
 			}
+			
+			// Reimplements the logic from main.go to show the user what will happen
+			var stationType string
+			
+			// 1. Initial guess based on most common (simplified simulation)
+			// In main.go we use complex logic with virtual parents, here we simplify for the report
+			// If we want to be accurate to the fix, we should apply the deduction logic on orphans
+			
+			if s.RegionID != "" {
+				// Assume correct mapping for regional stations (mostly bikes)
+				stationType = "BikesharingStation" // Simplified assumption for report
+			} else {
+				// Orphan: likely Generic or Bike default
+				stationType = "SharingMobilityStation" 
+				
+				// APPLY THE FIX LOGIC: Deduce from ID
+				deduced := deduceProviderTypeFromStationID(s.StationID, providersMap)
+				if deduced != "" {
+					stationType = GetStationTypeForPhysicalStation(deduced)
+				}
+			}
+			stationCounts[stationType]++
 		}
-		fmt.Printf("Totale Stazioni: %d\n", len(data.Data.Stations))
+		
 		fmt.Printf(" -> Di cui Orfane (RegionID vuoto): %d\n", stNoParent)
+		
+		fmt.Println("\nDETTAGLIO STAZIONI (Stimato con logica Fix):")
+		for t, c := range stationCounts {
+			fmt.Printf(" -> %-25s: %d\n", t, c)
+		}
 	}
 
 	// 3. Analisi Veicoli
 	fmt.Println("\n--- 3. ANALISI VEICOLI ---")
 	vhCounts := make(map[string]int)
-	unknownSample := []string{}
+	// Map to track distinct vehicle_type_ids and their counts
+	vehicleTypeIDCounts := make(map[string]int)
 	
 	if data := fetchAnalysis("https://sharedmobility.ch/free_bike_status.json", t); data != nil {
 		for _, b := range data.Data.Bikes {
@@ -47,28 +80,14 @@ func TestFullAnalysis(t *testing.T) {
 			vehicleType := GetStationTypeForVehicle(serviceType)
 			
 			vhCounts[vehicleType]++
-			
-			if serviceType == "SharingMobilityService" {
-				if len(unknownSample) < 5 {
-					unknownSample = append(unknownSample, b.VehicleTypeID)
-				}
-			}
+			vehicleTypeIDCounts[b.VehicleTypeID]++
 		}
 		fmt.Printf("Totale Veicoli: %d\n", len(data.Data.Bikes))
 	}
 
-	fmt.Println("\nDETTAGLIO TIPI:")
+	fmt.Println("\nDETTAGLIO TIPI (Conteggio Finale):")
 	for tipo, count := range vhCounts {
-		fmt.Printf(" -> %-15s: %d\n", tipo, count)
-	}
-
-	if len(unknownSample) > 0 {
-		fmt.Println("\n!!! ALLARME: Veicoli con tipo generico !!!")
-		fmt.Println("Ecco 5 esempi di 'vehicle_type_id' che non corrispondono a provider conosciuti:")
-		for _, id := range unknownSample {
-			fmt.Printf(" - '%s'\n", id)
-		}
-		fmt.Println("Questi veicoli sono stati categorizzati come 'SharingMobilityService' generico.")
+		fmt.Printf(" -> %-25s: %d\n", tipo, count)
 	}
 }
 
