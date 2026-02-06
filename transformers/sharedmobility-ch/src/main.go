@@ -168,9 +168,20 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 				stationType = GetStationTypeForPhysicalStation(mostCommonType)
 			}
 		} else {
-			// No region_id or malformed, use most common provider type
+			// No region_id or malformed, use most common provider type initially
 			mostCommonType := payload.Rawdata.getMostCommonProviderType()
 			stationType = GetStationTypeForPhysicalStation(mostCommonType)
+		}
+
+		// Fallback/Correction: If the determined type is Generic or Bike (default), 
+		// try to deduce a more specific provider from the StationID itself.
+		// This fixes "Orphan" stations (no region) that actually belong to CarProviders (e.g. "mobility:123")
+		if stationType == GetStationTypeForPhysicalStation(StationTypeGenericSharing) || 
+		   stationType == GetStationTypeForPhysicalStation("BikeSharingService") {
+			
+			if deducedProviderType := payload.Rawdata.deduceProviderTypeFromStationID(s.StationID, providersMap); deducedProviderType != "" {
+				stationType = GetStationTypeForPhysicalStation(deducedProviderType)
+			}
 		}
 
 		// Initialize maps for this station type if needed
