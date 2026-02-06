@@ -10,6 +10,9 @@ env:
   CRON: "0 */5 * * * *"
   HTTP_HEADER_CALLER: "X-Caller-ID: NOI-Techpark"
 
+  SERVICE_NAME: dc-rest-poller-echarging-driwe
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
 envSecret:
   HTTP_URL: https://www.driwe.club/api/stations/metadata?auth-token=******
 

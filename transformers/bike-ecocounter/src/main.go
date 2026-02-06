@@ -88,11 +88,11 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[[]Ecocounte
 				stations = append(stations, station)
 
 				// Add measurements for this direction
-				addMeasurements(log, dataMap, station.Id, site, direction)
+				addMeasurements(log, dataMap, station.Id, site, direction.direction)
 			}
 		} else {
 			// Create a single station for non-directional sites
-			station := createStation(bdp, site, "")
+			station := createStation(bdp, site, direction{})
 			stations = append(stations, station)
 
 			// Add all measurements
@@ -114,28 +114,33 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[[]Ecocounte
 	return nil
 }
 
-func getUniqueDirections(measurements []Measurement) []string {
-	directionMap := make(map[string]bool)
+type direction struct {
+	direction string
+	flowName  string
+}
+
+func getUniqueDirections(measurements []Measurement) []direction {
+	directionMap := make(map[string]string)
 	for _, m := range measurements {
 		if m.Direction != "" {
-			directionMap[m.Direction] = true
+			directionMap[m.Direction] = m.FlowName
 		}
 	}
 
-	directions := make([]string, 0, len(directionMap))
-	for dir := range directionMap {
-		directions = append(directions, dir)
+	directions := make([]direction, 0, len(directionMap))
+	for dir, flowname := range directionMap {
+		directions = append(directions, direction{direction: dir, flowName: flowname})
 	}
 	return directions
 }
 
-func createStation(bdp bdplib.Bdp, site EcocounterSite, direction string) bdplib.Station {
+func createStation(bdp bdplib.Bdp, site EcocounterSite, direction direction) bdplib.Station {
 	var stationID string
 	var stationName string
 
-	if direction != "" && direction != "undefined" {
-		stationID = fmt.Sprintf("%s:%d:%s", StationCodePrefix, site.ID, strings.ToUpper(direction))
-		stationName = fmt.Sprintf("%s (%s)", site.Name, direction)
+	if direction.direction != "" && direction.direction != "undefined" {
+		stationID = fmt.Sprintf("%s:%d:%s", StationCodePrefix, site.ID, strings.ToUpper(direction.direction))
+		stationName = fmt.Sprintf("%s (%s) - %s", site.Name, direction.direction, direction.flowName)
 	} else {
 		stationID = fmt.Sprintf("%s:%d", StationCodePrefix, site.ID)
 		stationName = site.Name
@@ -156,7 +161,7 @@ func createStation(bdp bdplib.Bdp, site EcocounterSite, direction string) bdplib
 	return station
 }
 
-func createMetadata(site EcocounterSite, direction string) map[string]interface{} {
+func createMetadata(site EcocounterSite, direction direction) map[string]interface{} {
 	metadata := make(map[string]interface{})
 
 	metadata["siteId"] = site.ID
@@ -166,8 +171,9 @@ func createMetadata(site EcocounterSite, direction string) map[string]interface{
 	metadata["hasWeather"] = site.HasWeather
 	metadata["travelModes"] = site.TravelModes
 
-	if direction != "" {
-		metadata["direction"] = direction
+	if direction.direction != "" {
+		metadata["direction"] = direction.direction
+		metadata["flowName"] = direction.flowName
 	}
 
 	// Store counter information

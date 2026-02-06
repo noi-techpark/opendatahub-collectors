@@ -11,6 +11,9 @@ env:
   HTTP_URL: "https://parking.valgardena.it/get_station_metadata"
   HTTP_HEADER_ACCEPT: "Accept: application/json"
 
+  SERVICE_NAME: dc-rest-poller-parking-valgardena-metadata
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
 envSecret:
   HTTP_HEADER_AUTHORIZATION: ""
 

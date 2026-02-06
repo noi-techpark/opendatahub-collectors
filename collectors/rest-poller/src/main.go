@@ -5,6 +5,7 @@
 package main
 
 import (
+	"context"
 	"io"
 	"log/slog"
 	"net/http"
@@ -13,10 +14,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kelseyhightower/envconfig"
-	"github.com/noi-techpark/go-opendatahub-ingest/dc"
-	"github.com/noi-techpark/go-opendatahub-ingest/dto"
-	"github.com/noi-techpark/go-opendatahub-ingest/ms"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/dc"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
+	"github.com/noi-techpark/opendatahub-go-sdk/tel"
 	"github.com/robfig/cron/v3"
 )
 
@@ -38,24 +39,33 @@ var env struct {
 const ENV_HEADER_PREFIX = "HTTP_HEADER_"
 
 func main() {
+	ms.InitWithEnv(context.Background(), "", &env)
 	slog.Info("Starting data collector...")
-	envconfig.MustProcess("", &env)
-	ms.InitLog(env.LOG_LEVEL)
 
-	headers := customHeaders()
-	u, err := url.Parse(env.HTTP_URL)
-	ms.FailOnError(err, "failed parsing poll URL")
+	defer tel.FlushOnPanic()
 
-	mq, err := dc.PubFromEnv(env.Env)
-	ms.FailOnError(err, "failed creating mq publisher")
+	collector := dc.NewDc[dc.EmptyData](context.Background(), env.Env)
 
 	c := cron.New(cron.WithSeconds())
 	c.AddFunc(env.CRON, func() {
+		collector.GetInputChannel() <- dc.NewInput[dc.EmptyData](context.Background(), nil)
+	})
+
+	slog.Info("Setup complete. Starting cron scheduler")
+	go func() {
+		c.Run()
+	}()
+
+	headers := customHeaders()
+	u, err := url.Parse(env.HTTP_URL)
+	ms.FailOnError(context.Background(), err, "failed parsing poll URL")
+
+	err = collector.Start(context.Background(), func(ctx context.Context, a dc.EmptyData) (*rdb.RawAny, error) {
 		slog.Info("Starting poll job")
 		jobstart := time.Now()
 
 		req, err := http.NewRequest(env.HTTP_METHOD, u.String(), http.NoBody)
-		ms.FailOnError(err, "could not create http request")
+		ms.FailOnError(context.Background(), err, "could not create http request")
 
 		req.Header = headers
 
@@ -63,17 +73,17 @@ func main() {
 		resp, err := client.Do(req)
 		if err != nil {
 			slog.Error("error during http request:", "err", err)
-			return
+			return nil, err
 		}
 		if resp.StatusCode != http.StatusOK {
 			slog.Error("http request returned non-OK status", "statusCode", resp.StatusCode)
-			return
+			return nil, err
 		}
 		defer resp.Body.Close()
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			slog.Error("error reading response body:", "err", err)
-			return
+			return nil, err
 		}
 
 		var raw any
@@ -83,15 +93,15 @@ func main() {
 			raw = string(body)
 		}
 
-		mq <- dto.RawAny{
+		ret := rdb.RawAny{
 			Provider:  env.PROVIDER,
 			Timestamp: time.Now(),
 			Rawdata:   raw,
 		}
 		slog.Info("Polling job completed", "runtime_ms", time.Since(jobstart).Milliseconds())
+		return &ret, nil
 	})
-	slog.Info("Setup complete. Starting cron scheduler")
-	c.Run()
+	ms.FailOnError(context.Background(), err, err.Error())
 }
 
 func customHeaders() http.Header {

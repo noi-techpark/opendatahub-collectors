@@ -38,10 +38,10 @@ func TestTransform(t *testing.T) {
 
 func TestGetUniqueDirections(t *testing.T) {
 	measurements := []Measurement{
-		{Direction: "in", TravelMode: "bike"},
-		{Direction: "out", TravelMode: "bike"},
-		{Direction: "in", TravelMode: "pedestrian"},
-		{Direction: "out", TravelMode: "pedestrian"},
+		{Direction: "in", TravelMode: "bike", FlowName: "test"},
+		{Direction: "out", TravelMode: "bike", FlowName: "test"},
+		{Direction: "in", TravelMode: "pedestrian", FlowName: "test"},
+		{Direction: "out", TravelMode: "pedestrian", FlowName: "test"},
 	}
 
 	directions := getUniqueDirections(measurements)

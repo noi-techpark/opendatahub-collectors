@@ -11,6 +11,9 @@ env:
   HTTP_URL: "http://84.18.132.129/trafficstudiorestwebservice/getParkingAreasSituation"
   HTTP_HEADERS_ACCEPT: "Accept: application/json"
 
+  SERVICE_NAME: dc-rest-poller-parking-offstreet-merano
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
 envSecretRef:
   - name: MQ_URI
     secret: rabbitmq-svcbind

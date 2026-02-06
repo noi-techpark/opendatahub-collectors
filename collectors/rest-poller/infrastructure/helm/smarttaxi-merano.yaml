@@ -10,6 +10,9 @@ env:
   CRON: "0 */1 * * * *"
   HTTP_URL: https://appclient.smarttaxi.it/terzeparti/elencotassisti/ThrPartMrn2024/91/
 
+  SERVICE_NAME: dc-rest-poller-smarttaxi-merano
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
 envSecretRef:
   - name: MQ_URI
     secret: rabbitmq-svcbind
