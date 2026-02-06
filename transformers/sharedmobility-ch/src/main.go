@@ -98,13 +98,8 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 		if len(payload.Rawdata.Providers) > 0 {
 			firstType := payload.Rawdata.Providers[0].GetStationType()
 			allSameType := true
-			for _, p := range payload.Rawdata.Providers {
-				providerType := p.GetStationType()
-				typeCount[providerType]++
-				if providerType != firstType {
-					allSameType = false
-				}
-			}
+
+
 			if allSameType {
 				stationType = firstType
 			} else {
