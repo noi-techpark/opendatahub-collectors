@@ -25927,64 +25927,6 @@
             {
                 "Stations": [
                     {
-                        "id": "urn:bikecounter:ecocounter:100024999:IN",
-                        "name": "Sterzing / Vipiteno (in)",
-                        "stationType": "BikeCounter",
-                        "latitude": 46.90778,
-                        "longitude": 11.43281,
-                        "origin": "",
-                        "metaData": {
-                            "counters": [
-                                {
-                                    "id": 10570,
-                                    "installationDate": "2015-08-17T00:00:00+02:00",
-                                    "serial": "X2H15078056"
-                                }
-                            ],
-                            "direction": "in",
-                            "directional": true,
-                            "flowName": "Sterzing Radweg Richtung Brixen",
-                            "granularity": "PT1H",
-                            "hasTimestampedData": false,
-                            "hasWeather": false,
-                            "siteId": 100024999,
-                            "travelModes": [
-                                "pedestrian",
-                                "bike",
-                                "car"
-                            ]
-                        }
-                    },
-                    {
-                        "id": "urn:bikecounter:ecocounter:100024999:OUT",
-                        "name": "Sterzing / Vipiteno (out)",
-                        "stationType": "BikeCounter",
-                        "latitude": 46.90778,
-                        "longitude": 11.43281,
-                        "origin": "",
-                        "metaData": {
-                            "counters": [
-                                {
-                                    "id": 10570,
-                                    "installationDate": "2015-08-17T00:00:00+02:00",
-                                    "serial": "X2H15078056"
-                                }
-                            ],
-                            "direction": "out",
-                            "directional": true,
-                            "flowName": "Sterzing Radweg Richtung Brenner",
-                            "granularity": "PT1H",
-                            "hasTimestampedData": false,
-                            "hasWeather": false,
-                            "siteId": 100024999,
-                            "travelModes": [
-                                "pedestrian",
-                                "bike",
-                                "car"
-                            ]
-                        }
-                    },
-                    {
                         "id": "urn:bikecounter:ecocounter:100024999",
                         "name": "Sterzing / Vipiteno",
                         "stationType": "BikeCounter",
@@ -26014,8 +25956,66 @@
                         }
                     },
                     {
+                        "id": "urn:bikecounter:ecocounter:100024999:IN",
+                        "name": "Sterzing / Vipiteno (in) - Sterzing Radweg Richtung Brixen",
+                        "stationType": "BikeCounter",
+                        "latitude": 46.90778,
+                        "longitude": 11.43281,
+                        "origin": "",
+                        "metaData": {
+                            "counters": [
+                                {
+                                    "id": 10570,
+                                    "installationDate": "2015-08-17T00:00:00+02:00",
+                                    "serial": "X2H15078056"
+                                }
+                            ],
+                            "direction": "in",
+                            "directional": true,
+                            "flowName": "Sterzing Radweg Richtung Brixen",
+                            "granularity": "PT1H",
+                            "hasTimestampedData": false,
+                            "hasWeather": false,
+                            "siteId": 100024999,
+                            "travelModes": [
+                                "pedestrian",
+                                "bike",
+                                "car"
+                            ]
+                        }
+                    },
+                    {
+                        "id": "urn:bikecounter:ecocounter:100024999:OUT",
+                        "name": "Sterzing / Vipiteno (out) - Sterzing Radweg Richtung Brenner",
+                        "stationType": "BikeCounter",
+                        "latitude": 46.90778,
+                        "longitude": 11.43281,
+                        "origin": "",
+                        "metaData": {
+                            "counters": [
+                                {
+                                    "id": 10570,
+                                    "installationDate": "2015-08-17T00:00:00+02:00",
+                                    "serial": "X2H15078056"
+                                }
+                            ],
+                            "direction": "out",
+                            "directional": true,
+                            "flowName": "Sterzing Radweg Richtung Brenner",
+                            "granularity": "PT1H",
+                            "hasTimestampedData": false,
+                            "hasWeather": false,
+                            "siteId": 100024999,
+                            "travelModes": [
+                                "pedestrian",
+                                "bike",
+                                "car"
+                            ]
+                        }
+                    },
+                    {
                         "id": "urn:bikecounter:ecocounter:100025000:IN",
-                        "name": "Brixen / Bressanone (in)",
+                        "name": "Brixen / Bressanone (in) - Brixen Radfahrer Richtung Brixen",
                         "stationType": "BikeCounter",
                         "latitude": 46.73462,
                         "longitude": 11.65104,
@@ -26044,7 +26044,7 @@
                     },
                     {
                         "id": "urn:bikecounter:ecocounter:100025000:OUT",
-                        "name": "Brixen / Bressanone (out)",
+                        "name": "Brixen / Bressanone (out) - Brixen Radfahrer Richtung Stering Bruneck",
                         "stationType": "BikeCounter",
                         "latitude": 46.73462,
                         "longitude": 11.65104,
@@ -26101,6 +26101,64 @@
                         }
                     },
                     {
+                        "id": "urn:bikecounter:ecocounter:100025001:IN",
+                        "name": "Mühlbach / Rio di Pusteria (in) - Mühlbach Radweg Richtung Brixen",
+                        "stationType": "BikeCounter",
+                        "latitude": 46.8125,
+                        "longitude": 11.68623,
+                        "origin": "",
+                        "metaData": {
+                            "counters": [
+                                {
+                                    "id": 10572,
+                                    "installationDate": "2015-08-17T00:00:00+02:00",
+                                    "serial": "X2H15078058"
+                                }
+                            ],
+                            "direction": "in",
+                            "directional": true,
+                            "flowName": "Mühlbach Radweg Richtung Brixen",
+                            "granularity": "PT1H",
+                            "hasTimestampedData": false,
+                            "hasWeather": false,
+                            "siteId": 100025001,
+                            "travelModes": [
+                                "pedestrian",
+                                "bike",
+                                "car"
+                            ]
+                        }
+                    },
+                    {
+                        "id": "urn:bikecounter:ecocounter:100025001:OUT",
+                        "name": "Mühlbach / Rio di Pusteria (out) - Mühlbach Radweg Richtung Bruneck",
+                        "stationType": "BikeCounter",
+                        "latitude": 46.8125,
+                        "longitude": 11.68623,
+                        "origin": "",
+                        "metaData": {
+                            "counters": [
+                                {
+                                    "id": 10572,
+                                    "installationDate": "2015-08-17T00:00:00+02:00",
+                                    "serial": "X2H15078058"
+                                }
+                            ],
+                            "direction": "out",
+                            "directional": true,
+                            "flowName": "Mühlbach Radweg Richtung Bruneck",
+                            "granularity": "PT1H",
+                            "hasTimestampedData": false,
+                            "hasWeather": false,
+                            "siteId": 100025001,
+                            "travelModes": [
+                                "pedestrian",
+                                "bike",
+                                "car"
+                            ]
+                        }
+                    },
+                    {
                         "id": "urn:bikecounter:ecocounter:100025001",
                         "name": "Mühlbach / Rio di Pusteria",
                         "stationType": "BikeCounter",
@@ -26130,66 +26188,8 @@
                         }
                     },
                     {
-                        "id": "urn:bikecounter:ecocounter:100025001:IN",
-                        "name": "Mühlbach / Rio di Pusteria (in)",
-                        "stationType": "BikeCounter",
-                        "latitude": 46.8125,
-                        "longitude": 11.68623,
-                        "origin": "",
-                        "metaData": {
-                            "counters": [
-                                {
-                                    "id": 10572,
-                                    "installationDate": "2015-08-17T00:00:00+02:00",
-                                    "serial": "X2H15078058"
-                                }
-                            ],
-                            "direction": "in",
-                            "directional": true,
-                            "flowName": "Mühlbach Radweg Richtung Brixen",
-                            "granularity": "PT1H",
-                            "hasTimestampedData": false,
-                            "hasWeather": false,
-                            "siteId": 100025001,
-                            "travelModes": [
-                                "pedestrian",
-                                "bike",
-                                "car"
-                            ]
-                        }
-                    },
-                    {
-                        "id": "urn:bikecounter:ecocounter:100025001:OUT",
-                        "name": "Mühlbach / Rio di Pusteria (out)",
-                        "stationType": "BikeCounter",
-                        "latitude": 46.8125,
-                        "longitude": 11.68623,
-                        "origin": "",
-                        "metaData": {
-                            "counters": [
-                                {
-                                    "id": 10572,
-                                    "installationDate": "2015-08-17T00:00:00+02:00",
-                                    "serial": "X2H15078058"
-                                }
-                            ],
-                            "direction": "out",
-                            "directional": true,
-                            "flowName": "Mühlbach Radweg Richtung Bruneck",
-                            "granularity": "PT1H",
-                            "hasTimestampedData": false,
-                            "hasWeather": false,
-                            "siteId": 100025001,
-                            "travelModes": [
-                                "pedestrian",
-                                "bike",
-                                "car"
-                            ]
-                        }
-                    },
-                    {
                         "id": "urn:bikecounter:ecocounter:100025002:IN",
-                        "name": "Ehrenburg (in)",
+                        "name": "Ehrenburg (in) - Ehrenburg Radweg Richtung Bruneck",
                         "stationType": "BikeCounter",
                         "latitude": 46.79703347485021,
                         "longitude": 11.84454381465912,
@@ -26218,7 +26218,7 @@
                     },
                     {
                         "id": "urn:bikecounter:ecocounter:100025002:OUT",
-                        "name": "Ehrenburg (out)",
+                        "name": "Ehrenburg (out) - Ehrenburg Radweg Richtung Brixen",
                         "stationType": "BikeCounter",
                         "latitude": 46.79703347485021,
                         "longitude": 11.84454381465912,
@@ -26275,8 +26275,37 @@
                         }
                     },
                     {
+                        "id": "urn:bikecounter:ecocounter:100025003:OUT",
+                        "name": "Bruneck / Brunico (out) - Bruneck Radweg Richtung Toblach",
+                        "stationType": "BikeCounter",
+                        "latitude": 46.791,
+                        "longitude": 11.95029,
+                        "origin": "",
+                        "metaData": {
+                            "counters": [
+                                {
+                                    "id": 10574,
+                                    "installationDate": "2015-08-17T00:00:00+02:00",
+                                    "serial": "X2H15078060"
+                                }
+                            ],
+                            "direction": "out",
+                            "directional": true,
+                            "flowName": "Bruneck Radweg Richtung Toblach",
+                            "granularity": "PT1H",
+                            "hasTimestampedData": false,
+                            "hasWeather": false,
+                            "siteId": 100025003,
+                            "travelModes": [
+                                "pedestrian",
+                                "bike",
+                                "car"
+                            ]
+                        }
+                    },
+                    {
                         "id": "urn:bikecounter:ecocounter:100025003:IN",
-                        "name": "Bruneck / Brunico (in)",
+                        "name": "Bruneck / Brunico (in) - Bruneck Radweg Richtung Brixen",
                         "stationType": "BikeCounter",
                         "latitude": 46.791,
                         "longitude": 11.95029,
@@ -26333,37 +26362,8 @@
                         }
                     },
                     {
-                        "id": "urn:bikecounter:ecocounter:100025003:OUT",
-                        "name": "Bruneck / Brunico (out)",
-                        "stationType": "BikeCounter",
-                        "latitude": 46.791,
-                        "longitude": 11.95029,
-                        "origin": "",
-                        "metaData": {
-                            "counters": [
-                                {
-                                    "id": 10574,
-                                    "installationDate": "2015-08-17T00:00:00+02:00",
-                                    "serial": "X2H15078060"
-                                }
-                            ],
-                            "direction": "out",
-                            "directional": true,
-                            "flowName": "Bruneck Radweg Richtung Toblach",
-                            "granularity": "PT1H",
-                            "hasTimestampedData": false,
-                            "hasWeather": false,
-                            "siteId": 100025003,
-                            "travelModes": [
-                                "pedestrian",
-                                "bike",
-                                "car"
-                            ]
-                        }
-                    },
-                    {
                         "id": "urn:bikecounter:ecocounter:100025005:IN",
-                        "name": "Toblach / Dobbiaco (in)",
+                        "name": "Toblach / Dobbiaco (in) - Toblach Radweg Richtung Toblach",
                         "stationType": "BikeCounter",
                         "latitude": 46.704983302915856,
                         "longitude": 12.21984386444092,
@@ -26392,7 +26392,7 @@
                     },
                     {
                         "id": "urn:bikecounter:ecocounter:100025005:OUT",
-                        "name": "Toblach / Dobbiaco (out)",
+                        "name": "Toblach / Dobbiaco (out) - Toblach Radweg Richtung Cortina",
                         "stationType": "BikeCounter",
                         "latitude": 46.704983302915856,
                         "longitude": 12.21984386444092,
@@ -26449,35 +26449,8 @@
                         }
                     },
                     {
-                        "id": "urn:bikecounter:ecocounter:100039975:IN",
-                        "name": "Laas / Lasa - C-2/1-02 (in)",
-                        "stationType": "BikeCounter",
-                        "latitude": 46.61753,
-                        "longitude": 10.69034,
-                        "origin": "",
-                        "metaData": {
-                            "counters": [
-                                {
-                                    "id": 16289,
-                                    "installationDate": "2012-06-04T00:00:00+02:00",
-                                    "serial": "Y2H17082948"
-                                }
-                            ],
-                            "direction": "in",
-                            "directional": true,
-                            "flowName": "Laas / Lasa - C-2/1-02 Fahrräder Meran - Merano",
-                            "granularity": "PT15M",
-                            "hasTimestampedData": false,
-                            "hasWeather": true,
-                            "siteId": 100039975,
-                            "travelModes": [
-                                "bike"
-                            ]
-                        }
-                    },
-                    {
                         "id": "urn:bikecounter:ecocounter:100039975:OUT",
-                        "name": "Laas / Lasa - C-2/1-02 (out)",
+                        "name": "Laas / Lasa - C-2/1-02 (out) - Laas / Lasa - C-2/1-02 Fahrräder Reschen - Resia",
                         "stationType": "BikeCounter",
                         "latitude": 46.61753,
                         "longitude": 10.69034,
@@ -26503,8 +26476,35 @@
                         }
                     },
                     {
+                        "id": "urn:bikecounter:ecocounter:100039975:IN",
+                        "name": "Laas / Lasa - C-2/1-02 (in) - Laas / Lasa - C-2/1-02 Fahrräder Meran - Merano",
+                        "stationType": "BikeCounter",
+                        "latitude": 46.61753,
+                        "longitude": 10.69034,
+                        "origin": "",
+                        "metaData": {
+                            "counters": [
+                                {
+                                    "id": 16289,
+                                    "installationDate": "2012-06-04T00:00:00+02:00",
+                                    "serial": "Y2H17082948"
+                                }
+                            ],
+                            "direction": "in",
+                            "directional": true,
+                            "flowName": "Laas / Lasa - C-2/1-02 Fahrräder Meran - Merano",
+                            "granularity": "PT15M",
+                            "hasTimestampedData": false,
+                            "hasWeather": true,
+                            "siteId": 100039975,
+                            "travelModes": [
+                                "bike"
+                            ]
+                        }
+                    },
+                    {
                         "id": "urn:bikecounter:ecocounter:100040720:IN",
-                        "name": "Mals / Malles - C-14/1-01 (in)",
+                        "name": "Mals / Malles - C-14/1-01 (in) - Mals / Malles - C-14/1-01 [Bike IN]",
                         "stationType": "BikeCounter",
                         "latitude": 46.68297,
                         "longitude": 10.54657,
@@ -26536,7 +26536,7 @@
                     },
                     {
                         "id": "urn:bikecounter:ecocounter:100040720:OUT",
-                        "name": "Mals / Malles - C-14/1-01 (out)",
+                        "name": "Mals / Malles - C-14/1-01 (out) - Mals / Malles - C-14/1-01 [Bike OUT]",
                         "stationType": "BikeCounter",
                         "latitude": 46.68297,
                         "longitude": 10.54657,
@@ -26568,7 +26568,7 @@
                     },
                     {
                         "id": "urn:bikecounter:ecocounter:100040730:IN",
-                        "name": "Calvenwald- C-9/1-01 (in)",
+                        "name": "Calvenwald- C-9/1-01 (in) - Calvenwald- C-9/1-01 Fahrräder Laatsch - Laudes",
                         "stationType": "BikeCounter",
                         "latitude": 46.66658,
                         "longitude": 10.50761,
@@ -26600,7 +26600,7 @@
                     },
                     {
                         "id": "urn:bikecounter:ecocounter:100040730:OUT",
-                        "name": "Calvenwald- C-9/1-01 (out)",
+                        "name": "Calvenwald- C-9/1-01 (out) - Calvenwald- C-9/1-01 Fahrräder Schweiz - Svizzera",
                         "stationType": "BikeCounter",
                         "latitude": 46.66658,
                         "longitude": 10.50761,
@@ -26632,7 +26632,7 @@
                     },
                     {
                         "id": "urn:bikecounter:ecocounter:100040731:IN",
-                        "name": "Reschenpass / Passo Resia - C-2/1-01 (in)",
+                        "name": "Reschenpass / Passo Resia - C-2/1-01 (in) - Reschenpass / Passo Resia - C-2/1-01 Fahrräder Meran - Merano",
                         "stationType": "BikeCounter",
                         "latitude": 46.84449,
                         "longitude": 10.50729,
@@ -26664,7 +26664,7 @@
                     },
                     {
                         "id": "urn:bikecounter:ecocounter:100040731:OUT",
-                        "name": "Reschenpass / Passo Resia - C-2/1-01 (out)",
+                        "name": "Reschenpass / Passo Resia - C-2/1-01 (out) - Reschenpass / Passo Resia - C-2/1-01 Fahrräder Reschenpass - Passo Resia",
                         "stationType": "BikeCounter",
                         "latitude": 46.84449,
                         "longitude": 10.50729,
@@ -26695,41 +26695,8 @@
                         }
                     },
                     {
-                        "id": "urn:bikecounter:ecocounter:100041704:OUT",
-                        "name": "Gargazon / Gargazzone (out)",
-                        "stationType": "BikeCounter",
-                        "latitude": 46.57465,
-                        "longitude": 11.19889,
-                        "origin": "",
-                        "metaData": {
-                            "counters": [
-                                {
-                                    "id": 34354,
-                                    "installationDate": "2022-02-08T13:00:00+01:00",
-                                    "serial": "X2H22022155"
-                                },
-                                {
-                                    "id": 18141,
-                                    "installationDate": "2017-12-01T00:00:00+01:00",
-                                    "serial": "X2H17103273"
-                                }
-                            ],
-                            "direction": "out",
-                            "directional": true,
-                            "flowName": "Gargazon Fahrräder Richtung Meran",
-                            "granularity": "PT1H",
-                            "hasTimestampedData": false,
-                            "hasWeather": false,
-                            "siteId": 100041704,
-                            "travelModes": [
-                                "pedestrian",
-                                "bike"
-                            ]
-                        }
-                    },
-                    {
                         "id": "urn:bikecounter:ecocounter:100041704:IN",
-                        "name": "Gargazon / Gargazzone (in)",
+                        "name": "Gargazon / Gargazzone (in) - Gargazon Fahrräder Richtung Bozen",
                         "stationType": "BikeCounter",
                         "latitude": 46.57465,
                         "longitude": 11.19889,
@@ -26761,8 +26728,41 @@
                         }
                     },
                     {
+                        "id": "urn:bikecounter:ecocounter:100041704:OUT",
+                        "name": "Gargazon / Gargazzone (out) - Gargazon Fahrräder Richtung Meran",
+                        "stationType": "BikeCounter",
+                        "latitude": 46.57465,
+                        "longitude": 11.19889,
+                        "origin": "",
+                        "metaData": {
+                            "counters": [
+                                {
+                                    "id": 34354,
+                                    "installationDate": "2022-02-08T13:00:00+01:00",
+                                    "serial": "X2H22022155"
+                                },
+                                {
+                                    "id": 18141,
+                                    "installationDate": "2017-12-01T00:00:00+01:00",
+                                    "serial": "X2H17103273"
+                                }
+                            ],
+                            "direction": "out",
+                            "directional": true,
+                            "flowName": "Gargazon Fahrräder Richtung Meran",
+                            "granularity": "PT1H",
+                            "hasTimestampedData": false,
+                            "hasWeather": false,
+                            "siteId": 100041704,
+                            "travelModes": [
+                                "pedestrian",
+                                "bike"
+                            ]
+                        }
+                    },
+                    {
                         "id": "urn:bikecounter:ecocounter:100042159:IN",
-                        "name": "Kardaun / Cardano (in)",
+                        "name": "Kardaun / Cardano (in) - Kardaun / Cardano Fahrräder IN",
                         "stationType": "BikeCounter",
                         "latitude": 46.49472,
                         "longitude": 11.3901,
@@ -26790,7 +26790,7 @@
                     },
                     {
                         "id": "urn:bikecounter:ecocounter:100042159:OUT",
-                        "name": "Kardaun / Cardano (out)",
+                        "name": "Kardaun / Cardano (out) - Kardaun / Cardano Fahrräder OUT",
                         "stationType": "BikeCounter",
                         "latitude": 46.49472,
                         "longitude": 11.3901,
@@ -26818,7 +26818,7 @@
                     },
                     {
                         "id": "urn:bikecounter:ecocounter:100045984:IN",
-                        "name": "Riffian / Rifiano (in)",
+                        "name": "Riffian / Rifiano (in) - Riffian Fahrräder Richtung Meran",
                         "stationType": "BikeCounter",
                         "latitude": 46.716384694151266,
                         "longitude": 11.193153753087568,
@@ -26852,7 +26852,7 @@
                     },
                     {
                         "id": "urn:bikecounter:ecocounter:100045984:OUT",
-                        "name": "Riffian / Rifiano (out)",
+                        "name": "Riffian / Rifiano (out) - Riffian Fahhräder Richtung St. Leonhard",
                         "stationType": "BikeCounter",
                         "latitude": 46.716384694151266,
                         "longitude": 11.193153753087568,
@@ -26920,7 +26920,7 @@
                     },
                     {
                         "id": "urn:bikecounter:ecocounter:100045985:IN",
-                        "name": "Marling / Marlengo (in)",
+                        "name": "Marling / Marlengo (in) - Marling Fahrräder Richtung Lana",
                         "stationType": "BikeCounter",
                         "latitude": 46.6565332553701,
                         "longitude": 11.145520183739475,
@@ -26949,7 +26949,7 @@
                     },
                     {
                         "id": "urn:bikecounter:ecocounter:100045985:OUT",
-                        "name": "Marling / Marlengo (out)",
+                        "name": "Marling / Marlengo (out) - Marling Fahrräder Richtung Meran/Merano",
                         "stationType": "BikeCounter",
                         "latitude": 46.6565332553701,
                         "longitude": 11.145520183739475,
@@ -27007,7 +27007,7 @@
                     },
                     {
                         "id": "urn:bikecounter:ecocounter:100045986:IN",
-                        "name": "Rabland / Rablà (in)",
+                        "name": "Rabland / Rablà (in) - Rabland Fahrräder Richtung Meran",
                         "stationType": "BikeCounter",
                         "latitude": 46.66616339037015,
                         "longitude": 11.068175028314128,
@@ -27041,7 +27041,7 @@
                     },
                     {
                         "id": "urn:bikecounter:ecocounter:100045986:OUT",
-                        "name": "Rabland / Rablà (out)",
+                        "name": "Rabland / Rablà (out) - Rabland Fahrräder Richtung Reschen",
                         "stationType": "BikeCounter",
                         "latitude": 46.66616339037015,
                         "longitude": 11.068175028314128,
@@ -27109,7 +27109,7 @@
                     },
                     {
                         "id": "urn:bikecounter:ecocounter:100049921:IN",
-                        "name": "Tschars / Ciardes - C-2/1-03 (in)",
+                        "name": "Tschars / Ciardes - C-2/1-03 (in) - Tschars Fahrräder IN Radfahrer Meran - Merano",
                         "stationType": "BikeCounter",
                         "latitude": 46.64198,
                         "longitude": 10.95525,
@@ -27141,7 +27141,7 @@
                     },
                     {
                         "id": "urn:bikecounter:ecocounter:100049921:OUT",
-                        "name": "Tschars / Ciardes - C-2/1-03 (out)",
+                        "name": "Tschars / Ciardes - C-2/1-03 (out) - Tschars Fahrräder OUT Radfahrer Reschen - Resia",
                         "stationType": "BikeCounter",
                         "latitude": 46.64198,
                         "longitude": 10.95525,
@@ -27173,7 +27173,7 @@
                     },
                     {
                         "id": "urn:bikecounter:ecocounter:300017586:IN",
-                        "name": "Staben / Stava (in)",
+                        "name": "Staben / Stava (in) - Staben Fahrräder Meran",
                         "stationType": "BikeCounter",
                         "latitude": 46.64561924242298,
                         "longitude": 10.965895711732397,
@@ -27202,7 +27202,7 @@
                     },
                     {
                         "id": "urn:bikecounter:ecocounter:300017586:OUT",
-                        "name": "Staben / Stava (out)",
+                        "name": "Staben / Stava (out) - Staben Fahrräder Reschen",
                         "stationType": "BikeCounter",
                         "latitude": 46.64561924242298,
                         "longitude": 10.965895711732397,
@@ -27259,74 +27259,6 @@
                         }
                     },
                     {
-                        "id": "urn:bikecounter:ecocounter:300023228:IN",
-                        "name": "St. Leonhard / San Leonardo (in)",
-                        "stationType": "BikeCounter",
-                        "latitude": 46.80776,
-                        "longitude": 11.24101,
-                        "origin": "",
-                        "metaData": {
-                            "counters": [
-                                {
-                                    "id": 34774,
-                                    "installationDate": "2022-03-28T00:00:00+02:00",
-                                    "serial": "X2H22032484"
-                                },
-                                {
-                                    "id": 34186,
-                                    "installationDate": "2023-07-18T12:00:00+02:00",
-                                    "serial": "X2H22012003"
-                                }
-                            ],
-                            "direction": "in",
-                            "directional": true,
-                            "flowName": "St. Leonhard / San Leonardo Fahrräder St. Martin/ San Martino",
-                            "granularity": "PT15M",
-                            "hasTimestampedData": false,
-                            "hasWeather": false,
-                            "siteId": 300023228,
-                            "travelModes": [
-                                "pedestrian",
-                                "bike",
-                                "car"
-                            ]
-                        }
-                    },
-                    {
-                        "id": "urn:bikecounter:ecocounter:300023228:OUT",
-                        "name": "St. Leonhard / San Leonardo (out)",
-                        "stationType": "BikeCounter",
-                        "latitude": 46.80776,
-                        "longitude": 11.24101,
-                        "origin": "",
-                        "metaData": {
-                            "counters": [
-                                {
-                                    "id": 34774,
-                                    "installationDate": "2022-03-28T00:00:00+02:00",
-                                    "serial": "X2H22032484"
-                                },
-                                {
-                                    "id": 34186,
-                                    "installationDate": "2023-07-18T12:00:00+02:00",
-                                    "serial": "X2H22012003"
-                                }
-                            ],
-                            "direction": "out",
-                            "directional": true,
-                            "flowName": "St. Leonhard / San Leonardo Fahrräder Moos/Moso",
-                            "granularity": "PT15M",
-                            "hasTimestampedData": false,
-                            "hasWeather": false,
-                            "siteId": 300023228,
-                            "travelModes": [
-                                "pedestrian",
-                                "bike",
-                                "car"
-                            ]
-                        }
-                    },
-                    {
                         "id": "urn:bikecounter:ecocounter:300023228",
                         "name": "St. Leonhard / San Leonardo",
                         "stationType": "BikeCounter",
@@ -27361,8 +27293,76 @@
                         }
                     },
                     {
+                        "id": "urn:bikecounter:ecocounter:300023228:IN",
+                        "name": "St. Leonhard / San Leonardo (in) - St. Leonhard / San Leonardo Fahrräder St. Martin/ San Martino",
+                        "stationType": "BikeCounter",
+                        "latitude": 46.80776,
+                        "longitude": 11.24101,
+                        "origin": "",
+                        "metaData": {
+                            "counters": [
+                                {
+                                    "id": 34774,
+                                    "installationDate": "2022-03-28T00:00:00+02:00",
+                                    "serial": "X2H22032484"
+                                },
+                                {
+                                    "id": 34186,
+                                    "installationDate": "2023-07-18T12:00:00+02:00",
+                                    "serial": "X2H22012003"
+                                }
+                            ],
+                            "direction": "in",
+                            "directional": true,
+                            "flowName": "St. Leonhard / San Leonardo Fahrräder St. Martin/ San Martino",
+                            "granularity": "PT15M",
+                            "hasTimestampedData": false,
+                            "hasWeather": false,
+                            "siteId": 300023228,
+                            "travelModes": [
+                                "pedestrian",
+                                "bike",
+                                "car"
+                            ]
+                        }
+                    },
+                    {
+                        "id": "urn:bikecounter:ecocounter:300023228:OUT",
+                        "name": "St. Leonhard / San Leonardo (out) - St. Leonhard / San Leonardo Fahrräder Moos/Moso",
+                        "stationType": "BikeCounter",
+                        "latitude": 46.80776,
+                        "longitude": 11.24101,
+                        "origin": "",
+                        "metaData": {
+                            "counters": [
+                                {
+                                    "id": 34774,
+                                    "installationDate": "2022-03-28T00:00:00+02:00",
+                                    "serial": "X2H22032484"
+                                },
+                                {
+                                    "id": 34186,
+                                    "installationDate": "2023-07-18T12:00:00+02:00",
+                                    "serial": "X2H22012003"
+                                }
+                            ],
+                            "direction": "out",
+                            "directional": true,
+                            "flowName": "St. Leonhard / San Leonardo Fahrräder Moos/Moso",
+                            "granularity": "PT15M",
+                            "hasTimestampedData": false,
+                            "hasWeather": false,
+                            "siteId": 300023228,
+                            "travelModes": [
+                                "pedestrian",
+                                "bike",
+                                "car"
+                            ]
+                        }
+                    },
+                    {
                         "id": "urn:bikecounter:ecocounter:300032584:IN",
-                        "name": "Prad / Prato (in)",
+                        "name": "Prad / Prato (in) - Prad / Prato Fahrräder IN",
                         "stationType": "BikeCounter",
                         "latitude": 46.60969,
                         "longitude": 10.57305,
@@ -27389,7 +27389,7 @@
                     },
                     {
                         "id": "urn:bikecounter:ecocounter:300032584:OUT",
-                        "name": "Prad / Prato (out)",
+                        "name": "Prad / Prato (out) - Stilfs / Stelvio Fahrräder OUT",
                         "stationType": "BikeCounter",
                         "latitude": 46.60969,
                         "longitude": 10.57305,
