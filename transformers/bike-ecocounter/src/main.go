@@ -140,7 +140,7 @@ func createStation(bdp bdplib.Bdp, site EcocounterSite, direction direction) bdp
 
 	if direction.direction != "" && direction.direction != "undefined" {
 		stationID = fmt.Sprintf("%s:%d:%s", StationCodePrefix, site.ID, strings.ToUpper(direction.direction))
-		stationName = fmt.Sprintf("%s (%s)", site.Name, direction.direction)
+		stationName = fmt.Sprintf("%s (%s) - %s", site.Name, direction.direction, direction.flowName)
 	} else {
 		stationID = fmt.Sprintf("%s:%d", StationCodePrefix, site.ID)
 		stationName = site.Name
