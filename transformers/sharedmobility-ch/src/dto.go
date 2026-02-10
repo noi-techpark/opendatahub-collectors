@@ -200,12 +200,13 @@ func (r Root) getMostCommonProviderType() string {
 	return mostCommonType
 }
 
-// deduceProviderTypeFromStationID tries to find a provider based on ID prefix/suffix in the station ID
-func (r Root) deduceProviderTypeFromStationID(stationID string, providersMap map[string]Provider) string {
+// deduceProviderFromStationID tries to find a provider based on ID prefix/suffix in the station ID
+func (r Root) deduceProviderFromStationID(stationID string, providersMap map[string]Provider) *Provider {
 	stationIDLower := strings.ToLower(stationID)
 	
 	// Check against all known providers
-	for _, p := range r.Providers {
+	for i := range r.Providers {
+		p := &r.Providers[i]
 		// Clean up provider ID key (e.g. "mobility" from "mobility")
 		// Often keys are like "mobility", "2em", "edrive". 
 		// Checks if stationID contains the provider ID (case insensitive)
@@ -218,9 +219,9 @@ func (r Root) deduceProviderTypeFromStationID(stationID string, providersMap map
 		}
 
 		if strings.Contains(stationIDLower, pID) {
-			return p.GetStationType()
+			return p
 		}
 	}
 	
-	return ""
+	return nil
 }

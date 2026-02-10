@@ -98,8 +98,13 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 		if len(payload.Rawdata.Providers) > 0 {
 			firstType := payload.Rawdata.Providers[0].GetStationType()
 			allSameType := true
-
-
+			for _, p := range payload.Rawdata.Providers {
+				providerType := p.GetStationType()
+				typeCount[providerType]++
+				if providerType != firstType {
+					allSameType = false
+				}
+			}
 			if allSameType {
 				stationType = firstType
 			} else {
@@ -176,11 +181,30 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 		// Fallback/Correction: If the determined type is Generic or Bike (default), 
 		// try to deduce a more specific provider from the StationID itself.
 		// This fixes "Orphan" stations (no region) that actually belong to CarProviders (e.g. "mobility:123")
-		if stationType == GetStationTypeForPhysicalStation(StationTypeGenericSharing) || 
-		   stationType == GetStationTypeForPhysicalStation("BikeSharingService") {
+		if (stationType == GetStationTypeForPhysicalStation(StationTypeGenericSharing) || 
+		stationType == GetStationTypeForPhysicalStation("BikeSharingService")) && s.RegionID == "" {
 			
-			if deducedProviderType := payload.Rawdata.deduceProviderTypeFromStationID(s.StationID, providersMap); deducedProviderType != "" {
-				stationType = GetStationTypeForPhysicalStation(deducedProviderType)
+			if deducedProvider := payload.Rawdata.deduceProviderFromStationID(s.StationID, providersMap); deducedProvider != nil {
+				stationType = GetStationTypeForPhysicalStation(deducedProvider.GetStationType())
+
+				// Create a virtual region for this provider if it doesn't exist
+				// Use the provider ID as the region key
+				targetRegionID := deducedProvider.ProviderID
+				
+				// Deduplicate: Check if we already created a virtual station for this provider/region
+				if _, exists := virtualStations[targetRegionID]; !exists {
+					// Create new virtual station (Region)
+					// ID format: <origin>:re:<provider_id>
+					regionStationID := fmt.Sprintf("%s:re:%s", bdp.GetOrigin(), targetRegionID)
+					bdpRegionStation := bdplib.CreateStation(regionStationID, deducedProvider.Name, deducedProvider.GetStationType(), 0, 0, bdp.GetOrigin())
+					
+					// Add minimal metadata
+					bdpRegionStation.MetaData = make(map[string]any)
+					// We could add the provider info here if needed
+					
+					virtualStations[targetRegionID] = bdpRegionStation
+					virtualStationTypes[targetRegionID] = deducedProvider.GetStationType()
+				}
 			}
 		}
 
@@ -192,14 +216,29 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 		}
 
 		bdpStation := bdplib.CreateStation(fmt.Sprintf("%s:st:%s", bdp.GetOrigin(), s.StationID), s.Name, stationType, s.Lat, s.Lon, bdp.GetOrigin())
-		if s.RegionID != "" {
-			bdpStation.ParentStation = virtualStations[s.RegionID].Id
+		
+		parentRegionID := s.RegionID
+
+		if parentRegionID == "" {
+			if deducedProvider := payload.Rawdata.deduceProviderFromStationID(s.StationID, providersMap); deducedProvider != nil {
+				parentRegionID = deducedProvider.ProviderID
+			}
+		}
+
+		if parentRegionID != "" {
+			if startWithColon := strings.HasSuffix(parentRegionID, ":"); startWithColon {
+			}
+			
+			if vs, ok := virtualStations[parentRegionID]; ok {
+				bdpStation.ParentStation = vs.Id
+			}
 		}
 		physicalStationsByType[stationType][s.StationID] = bdpStation
 
 		// Real-time measurements
 		if status, ok := stationStatusMap[s.StationID]; ok {
-			physicalDataMapsByType[stationType].AddRecord(bdpStation.Id, DataTypeNumberAvailable, bdplib.CreateRecord(ts, status.NumBikesAvailable, Period))
+			metricName := mapStationTypeToMetric(stationType)
+			physicalDataMapsByType[stationType].AddRecord(bdpStation.Id, metricName, bdplib.CreateRecord(ts, status.NumBikesAvailable, Period))
 			physicalDataMapsByType[stationType].AddRecord(bdpStation.Id, DataTypeDocksAvailable, bdplib.CreateRecord(ts, status.NumDocksAvailable, Period))
 			physicalDataMapsByType[stationType].AddRecord(bdpStation.Id, DataTypeIsInstalled, bdplib.CreateRecord(ts, bool2Int(status.IsInstalled), Period))
 			physicalDataMapsByType[stationType].AddRecord(bdpStation.Id, DataTypeIsRenting, bdplib.CreateRecord(ts, bool2Int(status.IsRenting), Period))
@@ -315,6 +354,9 @@ func SyncDataTypes(bdp bdplib.Bdp) error {
 		bdplib.CreateDataType(DataTypeIsInstalled, "", "is the station installed", "Instantaneous"),
 		bdplib.CreateDataType(DataTypeIsRenting, "", "is the station renting", "Instantaneous"),
 		bdplib.CreateDataType(DataTypeIsReturning, "", "is the station returning", "Instantaneous"),
+		bdplib.CreateDataType("CarsharingCar", "", "number of available cars", "Instantaneous"),
+		bdplib.CreateDataType("Bicycle", "", "number of available bicycles", "Instantaneous"),
+		bdplib.CreateDataType("ScooterSharingVehicle", "", "number of available scooters", "Instantaneous"),
 	}
 
 	// Vehicle data types (same for all sharing mobility vehicle types)
@@ -350,4 +392,17 @@ func main() {
 	err := listener.Start(context.Background(), TransformWithBdp(b))
 
 	ms.FailOnError(context.Background(), err, "error while listening to queue")
+}
+
+func mapStationTypeToMetric(stationType string) string {
+	switch stationType {
+	case GetStationTypeForPhysicalStation("CarSharingService"):
+		return "CarsharingCar"
+	case GetStationTypeForPhysicalStation("BikeSharingService"):
+		return "Bicycle"
+	case GetStationTypeForPhysicalStation("ScooterSharingService"):
+		return "ScooterSharingVehicle"
+	default:
+		return DataTypeNumberAvailable
+	}
 }

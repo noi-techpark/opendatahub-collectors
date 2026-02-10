@@ -52,9 +52,9 @@ func TestFullAnalysis(t *testing.T) {
 				stationType = "SharingMobilityStation" 
 				
 				// APPLY THE FIX LOGIC: Deduce from ID
-				deduced := deduceProviderTypeFromStationID(s.StationID, providersMap)
-				if deduced != "" {
-					stationType = GetStationTypeForPhysicalStation(deduced)
+				deduced := deduceProviderFromStationID(s.StationID, providersMap)
+				if deduced != nil {
+					stationType = GetStationTypeForPhysicalStation(deduced.GetStationType())
 				}
 			}
 			stationCounts[stationType]++

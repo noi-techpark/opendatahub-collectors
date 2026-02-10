@@ -17,6 +17,10 @@ type Provider struct {
 	VehicleType string `json:"vehicle_type"`
 }
 
+func (p Provider) GetStationType() string {
+	return MapVehicleType(p.VehicleType)
+}
+
 type StationInformation struct {
 	StationID string  `json:"station_id"`
 	Name      string  `json:"name"`
@@ -109,16 +113,23 @@ func GetStationTypeForVehicle(serviceType string) string {
 }
 
 // Helper to simulate the fix logic in tests
-func deduceProviderTypeFromStationID(stationID string, providersMap map[string]Provider) string {
+func deduceProviderFromStationID(stationID string, providersMap map[string]Provider) *Provider {
 	stationIDLower := strings.ToLower(stationID)
 	for _, p := range providersMap {
 		pID := strings.ToLower(p.ProviderID)
 		if len(pID) < 3 { continue }
 		if strings.Contains(stationIDLower, pID) {
-			return MapVehicleType(p.VehicleType)
+			// Need to return a pointer, but p is a copy in range over map value?
+			// Range over map value gives a copy.
+			// We can return a pointer to a new copy or valid object.
+			// Since this is just a test helper, returning &p where p is the range var is unsafe in older Go versions (loop var reuse),
+			// but safe in Go 1.22+. Given we don't know the version, let's be safe.
+			// Actually providersMap values are `Provider` structs.
+			found := p
+			return &found
 		}
 	}
-	return ""
+	return nil
 }
 
 // GetStationTypeForPhysicalStation maps service type to station type
