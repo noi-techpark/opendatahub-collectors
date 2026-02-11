@@ -111,8 +111,9 @@ func raw2Siri(c *Cache, refTime time.Time, r Dto, n netex.PublicationDelivery) (
 	}
 
 	parseTs := func(ts string) time.Time {
-		tm, err := time.ParseInLocation(time.RFC3339, ts, locItaly)
+		tm, err := time.ParseInLocation("2006-01-02 15:04:05", ts, locItaly)
 		if err != nil {
+			fmt.Println(err)
 			return time.Time{}
 		}
 		return tm
@@ -121,8 +122,9 @@ func raw2Siri(c *Cache, refTime time.Time, r Dto, n netex.PublicationDelivery) (
 	for _, upd := range r.Data {
 		// filter out trains which have state different from 3 and state = 3 but with “old” timestamps
 		statusTime := parseTs(upd.Status.Time)
+		train := upd.Trip.Train
 		// TODO: define exactly what old timestamp means
-		if upd.Status.Code != 3 || refTime.Sub(statusTime).Hours() > 4 {
+		if upd.Status.Code != 3 || refTime.Sub(statusTime).Hours() > 24 || train == "" {
 			continue
 		}
 
@@ -131,8 +133,6 @@ func raw2Siri(c *Cache, refTime time.Time, r Dto, n netex.PublicationDelivery) (
 		va.RecordedAtTime = posTime.Format(time.RFC3339)
 		va.ValidUntilTime = posTime.Add(time.Hour * 24).Format(time.RFC3339)
 		vj := &va.MonitoredVehicleJourney
-
-		train := upd.Trip.Train
 
 		nJourney := findJourney(n, c, train)
 		if nJourney == nil {
@@ -150,11 +150,16 @@ func raw2Siri(c *Cache, refTime time.Time, r Dto, n netex.PublicationDelivery) (
 		vj.FramedVehicleJourneyRef.DatedVehicleJourneyRef = "TBD"
 
 		nLine := findLine(n, c, nJourney.LineRef.Ref)
+		if nLine == nil {
+			return s, fmt.Errorf("could not find Line %s in static data", nJourney.LineRef.Ref)
+		}
 		vj.PublishedLineName = nLine.Name
 
 		lastStop := (*nJourneyPattern.PointsInSequence)[len((*nJourneyPattern.PointsInSequence))-1]
 		nDestDis := findDestinationDisplay(n, c, lastStop.DestinationDisplayRef.Ref)
-		vj.DirectionName = nDestDis.Name
+		if nDestDis != nil {
+			vj.DirectionName = nDestDis.Name
+		}
 
 		vj.OperatorRef = nJourney.OperatorRef.Ref
 

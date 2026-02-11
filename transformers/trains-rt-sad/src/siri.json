@@ -1,0 +1,288 @@
+{
+  "Version": "2.1",
+  "ServiceDelivery": {
+    "ResponseTimestamp": "2026-02-11T16:28:44+01:00",
+    "ProducerRef": "TBD",
+    "VehicleMonitoringDelivery": {
+      "ResponseTimestamp": "2026-02-11T16:28:44+01:00",
+      "ProducerRef": "TBD",
+      "VehicleActivity": [
+        {
+          "RecordedAtTime": "2026-02-06T08:50:14+01:00",
+          "ValidUntilTime": "2026-02-07T08:50:14+01:00",
+          "VehicleMonitoringRef": "",
+          "MonitoredVehicleJourney": {
+            "LineRef": "it:apb:Line:02400B.26a",
+            "DirectionRef": "inbound",
+            "FramedVehicleJourneyRef": {
+              "DataFrameRef": "2026-02-03T19:45:00+01:00",
+              "DatedVehicleJourneyRef": "TBD"
+            },
+            "PublishedLineName": "B400",
+            "DirectionName": "",
+            "OperatorRef": "it:apb:Operator:019",
+            "ProductCategoryRef": "unknown",
+            "Monitored": true,
+            "InCongestion": false,
+            "VehicleLocation": {
+              "Longitude": 12.4344845,
+              "Latitude": 46.74704
+            },
+            "Delay": "PT0S",
+            "VehicleRef": "1839"
+          }
+        },
+        {
+          "RecordedAtTime": "2026-02-06T08:47:57+01:00",
+          "ValidUntilTime": "2026-02-07T08:47:57+01:00",
+          "VehicleMonitoringRef": "",
+          "MonitoredVehicleJourney": {
+            "LineRef": "it:apb:Line:02400B.26a",
+            "DirectionRef": "inbound",
+            "FramedVehicleJourneyRef": {
+              "DataFrameRef": "2026-02-03T19:45:00+01:00",
+              "DatedVehicleJourneyRef": "TBD"
+            },
+            "PublishedLineName": "B400",
+            "DirectionName": "",
+            "OperatorRef": "it:apb:Operator:019",
+            "ProductCategoryRef": "unknown",
+            "Monitored": true,
+            "InCongestion": false,
+            "VehicleLocation": {
+              "Longitude": 11.610531,
+              "Latitude": 46.788143
+            },
+            "Delay": "PT-780S",
+            "VehicleRef": "1847"
+          }
+        },
+        {
+          "RecordedAtTime": "2026-02-06T03:08:56+01:00",
+          "ValidUntilTime": "2026-02-07T03:08:56+01:00",
+          "VehicleMonitoringRef": "",
+          "MonitoredVehicleJourney": {
+            "LineRef": "it:apb:Line:02400B.26a",
+            "DirectionRef": "outbound",
+            "FramedVehicleJourneyRef": {
+              "DataFrameRef": "2026-02-03T19:45:00+01:00",
+              "DatedVehicleJourneyRef": "TBD"
+            },
+            "PublishedLineName": "B400",
+            "DirectionName": "",
+            "OperatorRef": "it:apb:Operator:019",
+            "ProductCategoryRef": "unknown",
+            "Monitored": true,
+            "InCongestion": false,
+            "VehicleLocation": {
+              "Longitude": 11.928964,
+              "Latitude": 46.79414
+            },
+            "Delay": "PT-20280S",
+            "VehicleRef": "1842"
+          }
+        },
+        {
+          "RecordedAtTime": "2026-02-06T08:50:15+01:00",
+          "ValidUntilTime": "2026-02-07T08:50:15+01:00",
+          "VehicleMonitoringRef": "",
+          "MonitoredVehicleJourney": {
+            "LineRef": "it:apb:Line:02400B.26a",
+            "DirectionRef": "inbound",
+            "FramedVehicleJourneyRef": {
+              "DataFrameRef": "2026-02-03T19:45:00+01:00",
+              "DatedVehicleJourneyRef": "TBD"
+            },
+            "PublishedLineName": "B400",
+            "DirectionName": "",
+            "OperatorRef": "it:apb:Operator:019",
+            "ProductCategoryRef": "unknown",
+            "Monitored": true,
+            "InCongestion": false,
+            "VehicleLocation": {
+              "Longitude": 12.226004,
+              "Latitude": 46.724915
+            },
+            "Delay": "PT0S",
+            "VehicleRef": "1841"
+          }
+        },
+        {
+          "RecordedAtTime": "2026-02-06T08:50:14+01:00",
+          "ValidUntilTime": "2026-02-07T08:50:14+01:00",
+          "VehicleMonitoringRef": "",
+          "MonitoredVehicleJourney": {
+            "LineRef": "it:apb:Line:02400B.26a",
+            "DirectionRef": "inbound",
+            "FramedVehicleJourneyRef": {
+              "DataFrameRef": "2026-02-03T19:45:00+01:00",
+              "DatedVehicleJourneyRef": "TBD"
+            },
+            "PublishedLineName": "B400",
+            "DirectionName": "",
+            "OperatorRef": "it:apb:Operator:019",
+            "ProductCategoryRef": "unknown",
+            "Monitored": true,
+            "InCongestion": false,
+            "VehicleLocation": {
+              "Longitude": 11.949902,
+              "Latitude": 46.7972
+            },
+            "Delay": "PT60S",
+            "VehicleRef": "1843"
+          }
+        },
+        {
+          "RecordedAtTime": "2026-02-06T08:50:14+01:00",
+          "ValidUntilTime": "2026-02-07T08:50:14+01:00",
+          "VehicleMonitoringRef": "",
+          "MonitoredVehicleJourney": {
+            "LineRef": "it:apb:Line:03102T.26a",
+            "DirectionRef": "inbound",
+            "FramedVehicleJourneyRef": {
+              "DataFrameRef": "2026-02-03T19:45:00+01:00",
+              "DatedVehicleJourneyRef": "TBD"
+            },
+            "PublishedLineName": "REG",
+            "DirectionName": "",
+            "OperatorRef": "it:apb:Operator:099",
+            "ProductCategoryRef": "unknown",
+            "Monitored": true,
+            "InCongestion": false,
+            "VehicleLocation": {
+              "Longitude": 11.541569,
+              "Latitude": 46.813663
+            },
+            "Delay": "PT0S",
+            "VehicleRef": "17104"
+          }
+        },
+        {
+          "RecordedAtTime": "2026-02-06T08:49:24+01:00",
+          "ValidUntilTime": "2026-02-07T08:49:24+01:00",
+          "VehicleMonitoringRef": "",
+          "MonitoredVehicleJourney": {
+            "LineRef": "it:apb:Line:03100T.26a",
+            "DirectionRef": "outbound",
+            "FramedVehicleJourneyRef": {
+              "DataFrameRef": "2026-02-03T19:45:00+01:00",
+              "DatedVehicleJourneyRef": "TBD"
+            },
+            "PublishedLineName": "REG",
+            "DirectionName": "",
+            "OperatorRef": "it:apb:Operator:099",
+            "ProductCategoryRef": "unknown",
+            "Monitored": true,
+            "InCongestion": false,
+            "VehicleLocation": {
+              "Longitude": 11.28109,
+              "Latitude": 46.352173
+            },
+            "Delay": "PT0S",
+            "VehicleRef": "16033"
+          }
+        },
+        {
+          "RecordedAtTime": "2026-02-06T08:50:15+01:00",
+          "ValidUntilTime": "2026-02-07T08:50:15+01:00",
+          "VehicleMonitoringRef": "",
+          "MonitoredVehicleJourney": {
+            "LineRef": "it:apb:Line:02400B.26a",
+            "DirectionRef": "outbound",
+            "FramedVehicleJourneyRef": {
+              "DataFrameRef": "2026-02-03T19:45:00+01:00",
+              "DatedVehicleJourneyRef": "TBD"
+            },
+            "PublishedLineName": "B400",
+            "DirectionName": "",
+            "OperatorRef": "it:apb:Operator:019",
+            "ProductCategoryRef": "unknown",
+            "Monitored": true,
+            "InCongestion": false,
+            "VehicleLocation": {
+              "Longitude": 12.585064,
+              "Latitude": 46.768833
+            },
+            "Delay": "PT0S",
+            "VehicleRef": "1848"
+          }
+        },
+        {
+          "RecordedAtTime": "2026-02-06T08:50:15+01:00",
+          "ValidUntilTime": "2026-02-07T08:50:15+01:00",
+          "VehicleMonitoringRef": "",
+          "MonitoredVehicleJourney": {
+            "LineRef": "it:apb:Line:03200T.26a",
+            "DirectionRef": "outbound",
+            "FramedVehicleJourneyRef": {
+              "DataFrameRef": "2026-02-03T19:45:00+01:00",
+              "DatedVehicleJourneyRef": "TBD"
+            },
+            "PublishedLineName": "REG",
+            "DirectionName": "",
+            "OperatorRef": "it:apb:Operator:099",
+            "ProductCategoryRef": "unknown",
+            "Monitored": true,
+            "InCongestion": false,
+            "VehicleLocation": {
+              "Longitude": 11.295693,
+              "Latitude": 46.486214
+            },
+            "Delay": "PT120S",
+            "VehicleRef": "16287"
+          }
+        },
+        {
+          "RecordedAtTime": "2026-02-06T08:49:56+01:00",
+          "ValidUntilTime": "2026-02-07T08:49:56+01:00",
+          "VehicleMonitoringRef": "",
+          "MonitoredVehicleJourney": {
+            "LineRef": "it:apb:Line:03102T.26a",
+            "DirectionRef": "inbound",
+            "FramedVehicleJourneyRef": {
+              "DataFrameRef": "2026-02-03T19:45:00+01:00",
+              "DatedVehicleJourneyRef": "TBD"
+            },
+            "PublishedLineName": "REG",
+            "DirectionName": "",
+            "OperatorRef": "it:apb:Operator:099",
+            "ProductCategoryRef": "unknown",
+            "Monitored": true,
+            "InCongestion": false,
+            "VehicleLocation": {
+              "Longitude": 11.296939,
+              "Latitude": 46.485794
+            },
+            "Delay": "PT240S",
+            "VehicleRef": "17128"
+          }
+        },
+        {
+          "RecordedAtTime": "2026-02-06T08:50:12+01:00",
+          "ValidUntilTime": "2026-02-07T08:50:12+01:00",
+          "VehicleMonitoringRef": "",
+          "MonitoredVehicleJourney": {
+            "LineRef": "it:apb:Line:03200T.26a",
+            "DirectionRef": "inbound",
+            "FramedVehicleJourneyRef": {
+              "DataFrameRef": "2026-02-03T19:45:00+01:00",
+              "DatedVehicleJourneyRef": "TBD"
+            },
+            "PublishedLineName": "REG",
+            "DirectionName": "",
+            "OperatorRef": "it:apb:Operator:099",
+            "ProductCategoryRef": "unknown",
+            "Monitored": true,
+            "InCongestion": false,
+            "VehicleLocation": {
+              "Longitude": 11.149062,
+              "Latitude": 46.6554
+            },
+            "Delay": "PT0S",
+            "VehicleRef": "17116"
+          }
+        }
+      ]
+    }
+  }
+}

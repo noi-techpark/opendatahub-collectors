@@ -65,4 +65,7 @@ func Test_map(t *testing.T) {
 	s, err := raw2Siri(c, refTime, dto, n)
 	assert.NilError(t, err)
 	fmt.Println(s)
+	xmlBytes, err := json.MarshalIndent(s, "", "  ")
+	assert.NilError(t, err)
+	os.WriteFile("siri.json", xmlBytes, 0644)
 }
