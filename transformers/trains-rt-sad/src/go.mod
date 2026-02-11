@@ -4,13 +4,11 @@ go 1.25.6
 
 require (
 	github.com/noi-techpark/go-bdp-client v1.4.6
-	github.com/noi-techpark/go-netex v1.4.0
+	github.com/noi-techpark/go-netex v0.6.1
 	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.7
 	github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0
 	gotest.tools/v3 v3.5.2
 )
-
-replace github.com/noi-techpark/go-netex => /home/cz/odh/go-netex
 
 require (
 	github.com/ThreeDotsLabs/watermill v1.4.6 // indirect
@@ -55,7 +53,6 @@ require (
 	github.com/prometheus/common v0.62.0 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
 	github.com/rabbitmq/amqp091-go v1.10.0 // indirect
-	github.com/relvacode/iso8601 v1.7.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
 	go.opentelemetry.io/auto/sdk v1.1.0 // indirect

@@ -4,15 +4,18 @@
 package main
 
 import (
+	"encoding/json"
 	"encoding/xml"
+	"fmt"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/noi-techpark/go-netex"
 	"gotest.tools/v3/assert"
 )
 
-func Test_main(t *testing.T) {
+func Test_find(t *testing.T) {
 	data, err := os.ReadFile("netex.xml")
 	assert.NilError(t, err)
 	var delivery netex.PublicationDelivery
@@ -40,4 +43,26 @@ func Test_main(t *testing.T) {
 	display := findDestinationDisplay(delivery, c, "it:apb:DestinationDisplay:137")
 	assert.Assert(t, display != nil)
 	assert.Assert(t, display.Name == "Caldaro")
+}
+
+func Test_map(t *testing.T) {
+	nb, err := os.ReadFile("netex.xml")
+	assert.NilError(t, err)
+	var n netex.PublicationDelivery
+	err = xml.Unmarshal(nb, &n)
+	assert.NilError(t, err)
+
+	c := NewCache()
+
+	ex, err := os.ReadFile("testdata/example.json")
+	assert.NilError(t, err)
+	var dto Dto
+	json.Unmarshal(ex, &dto)
+	assert.NilError(t, err)
+
+	refTime, _ := time.Parse(time.RFC3339, "2026-02-03T19:45:00.000+01:00")
+
+	s, err := raw2Siri(c, refTime, dto, n)
+	assert.NilError(t, err)
+	fmt.Println(s)
 }

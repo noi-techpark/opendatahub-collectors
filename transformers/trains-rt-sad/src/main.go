@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 NOI Techpark <digital@noi.bz.it>
+// SPDX-FileCopyrightText: 2026 NOI Techpark <digital@noi.bz.it>
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -8,9 +8,11 @@ import (
 	"context"
 	"encoding/json"
 	"encoding/xml"
+	"fmt"
 	"log/slog"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"github.com/noi-techpark/go-netex"
@@ -25,9 +27,6 @@ var env struct {
 	bdplib.BdpEnv
 	NETEX_PATH string `default:"netex.xml"`
 }
-
-const STATIONTYPE = "ExampleStation"
-const PERIOD = 600
 
 type Dto struct {
 	Status string `json:"status"`
@@ -48,7 +47,7 @@ type Dto struct {
 		Trip struct {
 			Line  string `json:"line"`
 			Trip  string `json:"trip"`
-			Train any    `json:"train"`
+			Train string `json:"train"`
 			Delay int    `json:"delay"`
 			Time  string `json:"time"`
 		} `json:"trip"`
@@ -80,23 +79,101 @@ func main() {
 
 	listener := tr.NewTr[string](ctx, env.Env)
 	err = listener.Start(ctx, func(ctx context.Context, r *rdb.Raw[string]) error {
-		raw := Dto{}
-		if err := json.Unmarshal([]byte(r.Rawdata), &raw); err != nil {
+		dto := Dto{}
+		if err := json.Unmarshal([]byte(r.Rawdata), &dto); err != nil {
 			return err
 		}
 
-		// lineRef = TimeTableFrame/VehicleJourneys[trainNumbers/TrainNumberRef like TrainNumber:(json.train)].LineRef
-		// directionRef = ServiceFrame/journeyPatterns[id = ServiceJourney.ServiceJourneyPatternRef]/DirectionType
-		// publishedLineName = ServiceFrame/Line[id = ServiceJourney.LineRef]/Name
-		// DirectionName = ServiceFrame/destinationDisplay[id = journeyPattern/pointsinSequence[-1].DestinationDisplayRef]
-		// OperatorRef = vehicleJourney.OperatorRef
-
+		_, err := raw2Siri(cache, r.Timestamp, dto, n)
+		if err != nil {
+			return err
+		}
 		// compose siri-vm
 		// upload
 		return nil
 	})
 
 	ms.FailOnError(ctx, err, "error while listening to queue")
+}
+
+func raw2Siri(c *Cache, refTime time.Time, r Dto, n netex.PublicationDelivery) (Siri, error) {
+	producer := "TBD"
+	respTs := time.Now().Format(time.RFC3339)
+	s := NewSiri()
+	s.ServiceDelivery.ProducerRef = producer
+	s.ServiceDelivery.ResponseTimestamp = respTs
+	s.ServiceDelivery.VehicleMonitoringDelivery.ProducerRef = producer
+	s.ServiceDelivery.VehicleMonitoringDelivery.ResponseTimestamp = respTs
+
+	locItaly, err := time.LoadLocation("Europe/Rome")
+	if err != nil {
+		return s, fmt.Errorf("cannot find Europe/Rome tz data: %w", err)
+	}
+
+	parseTs := func(ts string) time.Time {
+		tm, err := time.ParseInLocation(time.RFC3339, ts, locItaly)
+		if err != nil {
+			return time.Time{}
+		}
+		return tm
+	}
+
+	for _, upd := range r.Data {
+		// filter out trains which have state different from 3 and state = 3 but with “old” timestamps
+		statusTime := parseTs(upd.Status.Time)
+		// TODO: define exactly what old timestamp means
+		if upd.Status.Code != 3 || refTime.Sub(statusTime).Hours() > 4 {
+			continue
+		}
+
+		va := VehicleActivity{}
+		posTime := parseTs(upd.Position.Time)
+		va.RecordedAtTime = posTime.Format(time.RFC3339)
+		va.ValidUntilTime = posTime.Add(time.Hour * 24).Format(time.RFC3339)
+		vj := &va.MonitoredVehicleJourney
+
+		train := upd.Trip.Train
+
+		nJourney := findJourney(n, c, train)
+		if nJourney == nil {
+			return s, fmt.Errorf("could not find journey for train %s in static data", train)
+		}
+		vj.LineRef = nJourney.LineRef.Ref
+
+		nJourneyPattern := findJourneyPattern(n, c, nJourney.ServiceJourneyPatternRef.Ref)
+		if nJourneyPattern == nil {
+			return s, fmt.Errorf("could not find journey pattern for train %s in static data", train)
+		}
+		vj.DirectionRef = nJourneyPattern.DirectionType
+
+		vj.FramedVehicleJourneyRef.DataFrameRef = refTime.Format(time.RFC3339)
+		vj.FramedVehicleJourneyRef.DatedVehicleJourneyRef = "TBD"
+
+		nLine := findLine(n, c, nJourney.LineRef.Ref)
+		vj.PublishedLineName = nLine.Name
+
+		lastStop := (*nJourneyPattern.PointsInSequence)[len((*nJourneyPattern.PointsInSequence))-1]
+		nDestDis := findDestinationDisplay(n, c, lastStop.DestinationDisplayRef.Ref)
+		vj.DirectionName = nDestDis.Name
+
+		vj.OperatorRef = nJourney.OperatorRef.Ref
+
+		vj.ProductCategoryRef = "unknown"
+		vj.Monitored = true
+		vj.InCongestion = false
+		vj.VehicleLocation.Latitude = float32(upd.Position.Latitude)
+		vj.VehicleLocation.Longitude = float32(upd.Position.Longitude)
+		vj.Delay = mapDelay(upd.Trip.Delay)
+		vj.VehicleRef = train //TODO: this is not correct, should be a valid ID, but there are no vehicles defined in the reference Netex. Sta does it like this on their other SIRI-VM though
+
+		s.ServiceDelivery.VehicleMonitoringDelivery.VehicleActivity = append(s.ServiceDelivery.VehicleMonitoringDelivery.VehicleActivity, va)
+	}
+	return s, nil
+}
+
+func mapDelay(d int) string {
+	// delay for Siri is in seconds. we assume our source is in minutes
+	return fmt.Sprintf("PT%dS", d*60)
 }
 
 type Cache struct {

@@ -7,6 +7,7 @@ FROM golang:1.24-bookworm AS base
 FROM base AS build-env
 WORKDIR /app
 COPY src/. .
+RUN apt-get install -y --no-install-recommends tzdata
 RUN go mod download
 RUN CGO_ENABLED=0 GOOS=linux go build -o main
 
@@ -14,6 +15,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o main
 FROM alpine:latest AS build
 WORKDIR /app
 COPY --from=build-env /app/main .
+RUN apk add --no-cache tzdata
 ENTRYPOINT [ "./main"]
 
 # LOCAL DEVELOPMENT
