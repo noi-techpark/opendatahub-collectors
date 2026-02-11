@@ -4,6 +4,8 @@
 
 package main
 
+import "strings"
+
 // Root holds the top-level fields as mapped by the multi-rest-poller.
 type Root struct {
 	Providers          []Provider           `json:"providers"`
@@ -146,26 +148,30 @@ func GetStationTypeForVehicle(serviceType string) string {
 // by looking it up in providers. Returns the most common vehicle type if not found.
 func (r Root) GetVehicleTypeFromVehicleTypeID(vehicleTypeID string, providersMap map[string]Provider) string {
 	if vehicleTypeID == "" {
-		// If vehicle_type_id is empty, return the most common provider type
 		return r.getMostCommonProviderType()
 	}
 
-	// First, try to find a provider that matches this vehicle_type_id
-	// Note: vehicle_type_id might reference a provider_id or be a separate identifier
-	// This is a best-effort mapping - if vehicle_type_id matches provider_id, use that provider's type
+	// 1. Try exact match
 	if provider, ok := providersMap[vehicleTypeID]; ok {
 		return provider.GetStationType()
 	}
 
-	// If no direct match, check if any provider has a matching vehicle type
-	// This is a fallback - ideally vehicle_type_id should map to providers
+	// 2. Try splitting composite IDs (e.g. "provider:1" -> "provider")
+	parts := strings.Split(vehicleTypeID, ":")
+	if len(parts) > 1 {
+		providerID := parts[0]
+		if provider, ok := providersMap[providerID]; ok {
+			return provider.GetStationType()
+		}
+	}
+
+	// 3. Fallback: check if any provider ID matches the vehicleTypeID directly (legacy check)
 	for _, provider := range r.Providers {
 		if provider.ProviderID == vehicleTypeID {
 			return provider.GetStationType()
 		}
 	}
 
-	// Default fallback: return the most common provider type
 	return r.getMostCommonProviderType()
 }
 
@@ -192,4 +198,30 @@ func (r Root) getMostCommonProviderType() string {
 	}
 
 	return mostCommonType
+}
+
+// deduceProviderFromStationID tries to find a provider based on ID prefix/suffix in the station ID
+func (r Root) deduceProviderFromStationID(stationID string, providersMap map[string]Provider) *Provider {
+	stationIDLower := strings.ToLower(stationID)
+	
+	// Check against all known providers
+	for i := range r.Providers {
+		p := &r.Providers[i]
+		// Clean up provider ID key (e.g. "mobility" from "mobility")
+		// Often keys are like "mobility", "2em", "edrive". 
+		// Checks if stationID contains the provider ID (case insensitive)
+		// e.g. stationID "mobility:123" contains providerID "mobility"
+		pID := strings.ToLower(p.ProviderID)
+		
+		// Skip very short keys to avoid false positives if any exist (though unlikely in this dataset)
+		if len(pID) < 3 {
+			continue 
+		}
+
+		if strings.Contains(stationIDLower, pID) {
+			return p
+		}
+	}
+	
+	return nil
 }

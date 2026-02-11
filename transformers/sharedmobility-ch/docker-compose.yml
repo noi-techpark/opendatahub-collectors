@@ -11,6 +11,7 @@ services:
       - .env
     volumes:
       - ./src:/code
+      - ../utils:/utils
       - pkg:/go/pkg/mod
     working_dir: /code
     network_mode: host 
