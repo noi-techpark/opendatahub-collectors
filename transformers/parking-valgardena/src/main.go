@@ -24,7 +24,7 @@ const Station = "ParkingStation"
 const Period = 120
 const Origin = "GARDENA"
 const DataType = "free"
-const Municipality = "gardena"
+const Municipality = "valgardena"
 
 var env struct {
 	tr.Env
