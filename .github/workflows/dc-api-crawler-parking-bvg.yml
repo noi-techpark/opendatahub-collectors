@@ -6,12 +6,12 @@ on:
       - "collectors/api-crawler/**"
       - "!collectors/api-crawler/infrastructure/helm/*"
       - "collectors/api-crawler/infrastructure/helm/parking-bvg.*.yaml"
-      - "collectors/api-crawler/infrastructure/crawler-config/parking-bvg.yaml"
+      - "collectors/api-crawler/infrastructure/crawler-config/parking-bvg.silky.yaml"
       - ".github/workflows/dc-api-crawler-parking-bvg.yml"
 
 env:
   WORKING_DIRECTORY: collectors/api-crawler
-  HTTP_CONFIG_PATH: infrastructure/crawler-config/parking-bvg.yaml
+  HTTP_CONFIG_PATH: infrastructure/crawler-config/parking-bvg.silky.yaml
   DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/dc-api-crawler
   DOCKER_TAG: ${{ github.sha }}
   KUBERNETES_NAMESPACE: collector

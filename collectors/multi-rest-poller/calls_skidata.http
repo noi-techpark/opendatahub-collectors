@@ -1,0 +1,33 @@
+# SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+###
+@token={{$dotenv API_TOKEN}}
+@clientId={{$dotenv OAUTH_CLIENT_ID}}
+@clientSecret={{$dotenv OAUTH_CLIENT_SECRET}}
+@clientUsername={{$dotenv OAUTH_USERNAME}}
+@clientPassword={{$dotenv OAUTH_PASSWORD}}
+
+
+# @name mybestparking
+POST https://www.mybestinparking.it/oauth/token
+Content-type: application/x-www-form-urlencoded
+
+grant_type=password&username={{clientUsername}}&password={{clientPassword}}&client_id={{clientId}}&client_secret={{clientSecret}}
+
+
+###
+
+@token = {{mybestparking.response.body.access_token}}
+
+###
+GET https://www.mybestinparking.it/api/Facility/GetFacilities
+Accept: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# @name second_call
+GET https://www.mybestinparking.it/api/Facility/GetFreePlaces?FacilityID=609883
+Authorization: Bearer {{token}}

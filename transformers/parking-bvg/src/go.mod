@@ -9,7 +9,6 @@ require (
 	github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0
 	github.com/noi-techpark/opendatahub-go-sdk/testsuite v1.1.1
 	github.com/stretchr/testify v1.11.1
-	gotest.tools v2.2.0+incompatible
 )
 
 require (

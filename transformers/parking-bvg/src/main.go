@@ -111,37 +111,32 @@ func TransformWithBdp(bdp bdplib.Bdp) tr.Handler[CountingAreaList] {
 func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CountingAreaList]) error {
 	slog.Info("Processing parking counting area data transformation", "timestamp", payload.Timestamp)
 
-	// Group stations by their site_id to later create ParkingFacilities
-	stationsByFacility := make(map[string][]bdplib.Station)
 	stationDataMap := bdp.CreateDataMap()
 	facilityDataMap := bdp.CreateDataMap() // Data map for Facility measurements
 
 	ts := payload.Timestamp.UnixMilli()
 
-	// Grouping all data by SiteID
-	areasBySite := make(map[string][]CountingArea)
-	// Iterate over the pointer to the slice of areas
+	// Group areas by the Standort prefix parsed from the area name
+	areasByStandort := make(map[string][]CountingArea)
 	for _, area := range payload.Rawdata {
-		// Important: Filter out "line_crossing" areas as per requirements
 		if area.Type == "line_crossing" {
 			slog.Debug("Skipping line_crossing area", "id", area.ID, "name", area.Name)
 			continue
 		}
 
-		// Get the latest measurement (assuming 'totals' only has one or the last is the latest)
 		if len(area.Counts.Totals) == 0 {
 			slog.Warn("Skipping area with no count data", "id", area.ID, "name", area.Name)
 			continue
 		}
 
-		areasBySite[area.SiteID] = append(areasBySite[area.SiteID], area)
+		parsed := parseAreaName(area.Name)
+		areasByStandort[parsed.Standort] = append(areasByStandort[parsed.Standort], area)
 	}
 
 	var allParkingStations []*bdplib.Station
 	var allParkingFacilities []*bdplib.Station
 
-	for siteID, areas := range areasBySite {
-		facilityName := ""
+	for standort, areas := range areasByStandort {
 		totalCapacity := 0
 
 		// Maps to hold capacity sums for ParkingFacility metadata
@@ -156,12 +151,8 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CountingAre
 			// 1. Parse name and capacity from the area name
 			parsed := parseAreaName(area.Name)
 
-			// Set facility name from the first part of the area name
-			if facilityName == "" {
-				facilityName = parsed.Standort
-			}
-			// inject ParentStationCode since we need to link eac area to the facility
-			area.ParentStationCode = parsed.Standort
+			// inject ParentStationCode since we need to link each area to the facility
+			area.ParentStationCode = standort
 
 			capacity := parsed.AnzahlGesamtparkplaetze
 
@@ -173,7 +164,6 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CountingAre
 			}
 
 			allParkingStations = append(allParkingStations, station)
-			stationsByFacility[siteID] = append(stationsByFacility[siteID], *station)
 
 			// 3. Calculate and Add Measurements for the ParkingStation
 			occupancy := area.Counts.Totals[len(area.Counts.Totals)-1].CountVehicle
@@ -204,7 +194,7 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CountingAre
 		}
 
 		// --- 1. Create Parking Facility (Site) ---
-		facility := createParkingFacility(bdp, siteID, facilityName, totalCapacity, facilityCapacityByType)
+		facility := createParkingFacility(bdp, standort, standort, totalCapacity, facilityCapacityByType)
 		if nil == facility {
 			continue
 		}
@@ -366,7 +356,8 @@ func createParkingFacility(bdp bdplib.Bdp, siteID, facilityName string, totalCap
 
 	// Required capacity fields: capacity is total
 	metadata["capacity"] = totalCapacity
-	metadata["provider_id"] = siteID
+	// siteID is not reliable as parent id
+	// metadata["provider_id"] = siteID
 
 	// Map of capacity by type for the metadata
 	for typ, cap := range capacityByType {
