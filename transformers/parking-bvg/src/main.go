@@ -137,11 +137,6 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CountingAre
 	var allParkingFacilities []*bdplib.Station
 
 	for standort, areas := range areasByStandort {
-		if StationProto.GetStationByID(standort) == nil {
-			slog.Warn("Skipping standort: facility not found in stations.csv, child stations will not be processed", "standort", standort)
-			continue
-		}
-
 		totalCapacity := 0
 
 		// Maps to hold capacity sums for ParkingFacility metadata
@@ -164,10 +159,6 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CountingAre
 			// 2. Create the ParkingStation (Camera)
 			singleTypeCapacityMap := map[string]int{parsed.Typ: capacity}
 			station := createParkingStation(bdp, area, parsed, capacity, singleTypeCapacityMap)
-			if nil == station {
-				continue
-			}
-
 			allParkingStations = append(allParkingStations, station)
 
 			// 3. Calculate and Add Measurements for the ParkingStation
@@ -200,9 +191,6 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CountingAre
 
 		// --- 1. Create Parking Facility (Site) ---
 		facility := createParkingFacility(bdp, standort, standort, totalCapacity, facilityCapacityByType)
-		if nil == facility {
-			continue
-		}
 		allParkingFacilities = append(allParkingFacilities, facility)
 
 		// --- 4. Push Facility Measurements ---
@@ -305,23 +293,29 @@ func parseAreaName(name string) AreaNameComponents {
 // createParkingStation now accepts a map for capacityByType
 func createParkingStation(bdp bdplib.Bdp, area CountingArea, parsed AreaNameComponents, capacity int, capacityByType map[string]int) *bdplib.Station {
 	proto := StationProto.GetStationByID(area.ID)
-	if nil == proto {
-		slog.Warn("area not found in station.csv configuration", "id", area.ID)
-		return nil
+
+	standardName := area.Name
+	var lat, lon float64
+	metadata := make(map[string]any)
+
+	if proto != nil {
+		standardName = proto.StandardName
+		lat = proto.Lat
+		lon = proto.Lon
+		metadata = proto.ToMetadata()
+	} else {
+		slog.Warn("area not found in stations.csv, creating station without enrichment", "id", area.ID)
 	}
 
 	station := bdplib.CreateStation(
 		area.Name,
-		proto.StandardName,
+		standardName,
 		StationTypeParkingStation,
-		proto.Lat, proto.Lon,
+		lat, lon,
 		bdp.GetOrigin(),
 	)
 
-	// Set Parent Station ID to the site_id (ParkingFacility)
 	station.ParentStation = area.ParentStationCode
-
-	metadata := proto.ToMetadata()
 
 	// METADATA fields
 	metadata["class_categories"] = area.AppearanceParams.ClassCategories
@@ -344,20 +338,27 @@ func createParkingStation(bdp bdplib.Bdp, area CountingArea, parsed AreaNameComp
 
 func createParkingFacility(bdp bdplib.Bdp, siteID, facilityName string, totalCapacity int, capacityByType map[string]int) *bdplib.Station {
 	proto := StationProto.GetStationByID(siteID)
-	if nil == proto {
-		slog.Warn("site not found in station.csv configuration", "id", siteID)
-		return nil
+
+	standardName := facilityName
+	var lat, lon float64
+	metadata := make(map[string]any)
+
+	if proto != nil {
+		standardName = proto.StandardName
+		lat = proto.Lat
+		lon = proto.Lon
+		metadata = proto.ToMetadata()
+	} else {
+		slog.Warn("facility not found in stations.csv, creating station without enrichment", "id", siteID)
 	}
 
 	station := bdplib.CreateStation(
 		facilityName,
-		proto.StandardName,
+		standardName,
 		StationTypeParkingFacility,
-		proto.Lat, proto.Lon,
+		lat, lon,
 		bdp.GetOrigin(),
 	)
-
-	metadata := proto.ToMetadata()
 
 	// Required capacity fields: capacity is total
 	metadata["capacity"] = totalCapacity
