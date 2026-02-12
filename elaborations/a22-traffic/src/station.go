@@ -154,7 +154,13 @@ func (m measurementMap) startFrom(s Station) time.Time {
 		// min timestamp every time
 		isCamera := IsCamera(s)
 		if !isCamera && (dt == DataTypeEuroPct ||
-			dt == DataTypeNationalityCount) {
+			dt == DataTypeEuroPctLight ||
+			dt == DataTypeEuroPctHeavy ||
+			dt == DataTypeEuroPctBuses ||
+			dt == DataTypeNationalityCount ||
+			dt == DataTypeNationalityCountLight ||
+			dt == DataTypeNationalityCountHeavy ||
+			dt == DataTypeNationalityCountBuses) {
 			continue
 		}
 		if _, ok := m.LastByDataTypes[dt]; !ok {
