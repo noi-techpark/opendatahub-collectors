@@ -31,6 +31,31 @@ func elaborate(ctx context.Context, dataMap *bdplib.DataMap, existingMeasurement
 		dataMap.AddRecord(station.Id, DataTypeNationalityCount, bdplib.CreateRecord(timestamp, natCounts, period))
 	}
 
+	// Per-class Nationality and EURO distributions (camera-only)
+	if IsCamera(station) {
+		light, heavy, buses := filterVehiclesByClass(vehicles)
+
+		if existingMeasurements.shouldElaborate(DataTypeNationalityCountLight, t) {
+			dataMap.AddRecord(station.Id, DataTypeNationalityCountLight, bdplib.CreateRecord(timestamp, createVehicleNationality(light), period))
+		}
+		if existingMeasurements.shouldElaborate(DataTypeNationalityCountHeavy, t) {
+			dataMap.AddRecord(station.Id, DataTypeNationalityCountHeavy, bdplib.CreateRecord(timestamp, createVehicleNationality(heavy), period))
+		}
+		if existingMeasurements.shouldElaborate(DataTypeNationalityCountBuses, t) {
+			dataMap.AddRecord(station.Id, DataTypeNationalityCountBuses, bdplib.CreateRecord(timestamp, createVehicleNationality(buses), period))
+		}
+
+		if existingMeasurements.shouldElaborate(DataTypeEuroPctLight, t) {
+			dataMap.AddRecord(station.Id, DataTypeEuroPctLight, bdplib.CreateRecord(timestamp, createVehicleEuro(light, t), period))
+		}
+		if existingMeasurements.shouldElaborate(DataTypeEuroPctHeavy, t) {
+			dataMap.AddRecord(station.Id, DataTypeEuroPctHeavy, bdplib.CreateRecord(timestamp, createVehicleEuro(heavy, t), period))
+		}
+		if existingMeasurements.shouldElaborate(DataTypeEuroPctBuses, t) {
+			dataMap.AddRecord(station.Id, DataTypeEuroPctBuses, bdplib.CreateRecord(timestamp, createVehicleEuro(buses, t), period))
+		}
+	}
+
 	// Vehicle counts
 	classCounts := createVehicleCounts(vehicles)
 
@@ -107,6 +132,19 @@ func elaborate(ctx context.Context, dataMap *bdplib.DataMap, existingMeasurement
 	}
 
 	return nil
+}
+
+func filterVehiclesByClass(vehicles []Vehicle) (light, heavy, buses []Vehicle) {
+	for _, v := range vehicles {
+		if v.IsLight() {
+			light = append(light, v)
+		} else if v.IsHeavy() {
+			heavy = append(heavy, v)
+		} else if v.IsBus() {
+			buses = append(buses, v)
+		}
+	}
+	return
 }
 
 func createVehicleCounts(vehicles []Vehicle) map[string]int {
