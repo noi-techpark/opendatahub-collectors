@@ -137,6 +137,11 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CountingAre
 	var allParkingFacilities []*bdplib.Station
 
 	for standort, areas := range areasByStandort {
+		if StationProto.GetStationByID(standort) == nil {
+			slog.Warn("Skipping standort: facility not found in stations.csv, child stations will not be processed", "standort", standort)
+			continue
+		}
+
 		totalCapacity := 0
 
 		// Maps to hold capacity sums for ParkingFacility metadata
