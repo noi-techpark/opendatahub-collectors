@@ -1,0 +1,23 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/rest-poller
+  pullPolicy: IfNotPresent
+  tag: "0.2.0" # Set this when upgrading chart with --set-value
+
+env:
+  MQ_CLIENT: dc-trains-rt-sad
+  PROVIDER: rest-poller/trains-rt-sad
+
+  CRON: "0/20 * * * * *"
+  HTTP_URL: "https://www.sad.it/treni/api/position.php"
+  HTTP_HEADER_REFERER: "Referer: Open Data Hub"
+
+  SERVICE_NAME: dc-rest-poller-trains-rt-sad
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+  
+envSecret:
+  HTTP_HEADER_AUTHORIZATION: "Authorization: Basic ****"
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
