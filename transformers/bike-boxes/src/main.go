@@ -274,6 +274,7 @@ func createBayStation(bdp bdplib.Bdp, place BikePlace, station, locationStation 
 	)
 
 	bay.ParentStation = station.Id
+	bay.ParentStationType = StationTypeStation
 
 	metadata := make(map[string]interface{})
 	metadata["position"] = place.Position
