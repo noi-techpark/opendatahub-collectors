@@ -10883,6 +10883,7 @@
                         "longitude": 11.6504571344273,
                         "origin": "",
                         "parentStation": "307",
+                        "parentStationType": "BikeParkingLocation",
                         "metaData": {
                             "addresses": {
                                 "de": "Bahnhofstraße, Brixen (Fahrrad-Tiefgarage)",
@@ -11801,6 +11802,7 @@
                         "longitude": 11.6502689265017,
                         "origin": "",
                         "parentStation": "307",
+                        "parentStationType": "BikeParkingLocation",
                         "metaData": {
                             "addresses": {
                                 "de": "Bahnhofplatz 3, Brixen",
@@ -11929,6 +11931,7 @@
                         "longitude": 11.929789674862956,
                         "origin": "",
                         "parentStation": "308",
+                        "parentStationType": "BikeParkingLocation",
                         "metaData": {
                             "addresses": {
                                 "de": "neben Busbahnhof am Bahnhof Bruneck",
@@ -12107,6 +12110,7 @@
                         "longitude": 11.929652575375327,
                         "origin": "",
                         "parentStation": "308",
+                        "parentStationType": "BikeParkingLocation",
                         "metaData": {
                             "addresses": {
                                 "de": "neben Busbahnhof am Bahnhof Bruneck",
@@ -12245,6 +12249,7 @@
                         "longitude": 11.92972700554647,
                         "origin": "",
                         "parentStation": "308",
+                        "parentStationType": "BikeParkingLocation",
                         "metaData": {
                             "addresses": {
                                 "de": "neben Busbahnhof am Bahnhof Bruneck",
@@ -12383,6 +12388,7 @@
                         "longitude": 11.251385185868289,
                         "origin": "",
                         "parentStation": "350",
+                        "parentStationType": "BikeParkingLocation",
                         "metaData": {
                             "addresses": {
                                 "de": "Bahnhofstraße 16, Kaltern\r\n",
@@ -12456,6 +12462,7 @@
                         "longitude": 11.1991866173291,
                         "origin": "",
                         "parentStation": "311",
+                        "parentStationType": "BikeParkingLocation",
                         "metaData": {
                             "addresses": {
                                 "de": "neben dem Gleis, Bahnhof Gargazon",
@@ -12774,6 +12781,7 @@
                         "longitude": 11.323994687055583,
                         "origin": "",
                         "parentStation": "324",
+                        "parentStationType": "BikeParkingLocation",
                         "metaData": {
                             "addresses": {
                                 "de": "Bahnhofsparkplatz",
@@ -12882,6 +12890,7 @@
                         "longitude": 11.14210865155619,
                         "origin": "",
                         "parentStation": "351",
+                        "parentStationType": "BikeParkingLocation",
                         "metaData": {
                             "addresses": {
                                 "de": "Meranerstraße 4, Lana\r\n",
@@ -12940,6 +12949,7 @@
                         "longitude": 11.232262509126265,
                         "origin": "",
                         "parentStation": "354",
+                        "parentStationType": "BikeParkingLocation",
                         "metaData": {
                             "addresses": {
                                 "de": "Bahnhofstraße 95, Margreid an der Weinstraße\r\n",
@@ -13048,6 +13058,7 @@
                         "longitude": 11.0035328243605,
                         "origin": "",
                         "parentStation": "310",
+                        "parentStationType": "BikeParkingLocation",
                         "metaData": {
                             "addresses": {
                                 "de": "direkt am Gleis, Bahnhof Naturns",
@@ -13366,6 +13377,7 @@
                         "longitude": 11.1825204668821,
                         "origin": "",
                         "parentStation": "309",
+                        "parentStationType": "BikeParkingLocation",
                         "metaData": {
                             "addresses": {
                                 "de": "Eingang Pkw-Parkplatz, Bahnhof Lana – Burgstall",
@@ -13684,6 +13696,7 @@
                         "longitude": 11.20344483044252,
                         "origin": "",
                         "parentStation": "355",
+                        "parentStationType": "BikeParkingLocation",
                         "metaData": {
                             "addresses": {
                                 "de": "Bahnhofstraße, Salurn",
