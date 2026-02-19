@@ -1,0 +1,39 @@
+# SPDX-FileCopyrightText: 2025 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-parking-switzerland
+  pullPolicy: IfNotPresent
+  tag: latest
+
+env:
+  LOG_LEVEL: "INFO"
+  MQ_QUEUE: parking-switzerland
+  MQ_EXCHANGE: routed
+  MQ_KEY: parking-switzerland
+  MQ_CLIENT: tr-parking-switzerland
+
+  BDP_BASE_URL: http://bdp-core.core.svc.cluster.local
+  BDP_PROVENANCE_VERSION:
+  BDP_PROVENANCE_NAME:
+  BDP_ORIGIN: SBB
+
+  RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
+
+  SERVICE_NAME: tr-parking-switzerland
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
+  - name: ODH_TOKEN_URL
+    secret: oauth-collector
+    key: tokenUri
+  - name: ODH_CLIENT_ID
+    secret: oauth-collector
+    key: clientId
+  - name: ODH_CLIENT_SECRET
+    secret: oauth-collector
+    key: clientSecret
