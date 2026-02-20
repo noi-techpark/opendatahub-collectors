@@ -1,12 +1,11 @@
-module opendatahub.com/dc-emobility-switzerland
+module opendatahub.com/tr-emobility-ch
 
-go 1.24.1
+go 1.25.0
 
 require (
-	github.com/hashicorp/go-retryablehttp v0.7.7
+	github.com/noi-techpark/go-bdp-client v1.5.1
 	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.7
 	github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0
-	github.com/robfig/cron/v3 v3.0.1
 )
 
 require (
@@ -32,7 +31,6 @@ require (
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.1 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
-	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0 // indirect
