@@ -1,0 +1,17 @@
+# SPDX-FileCopyrightText: 2025 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+http_calls:
+  data_selector_type: json
+  nested_calls:
+    - url: https://data.geo.admin.ch/ch.bfe.ladestellen-elektromobilitaet/data/oicp/ch.bfe.ladestellen-elektromobilitaet.json
+      method: GET
+      data_selector_type: json
+      data_selector: $.EVSEData
+      data_destination_field: evse_data
+    - url: https://data.geo.admin.ch/ch.bfe.ladestellen-elektromobilitaet/status/oicp/ch.bfe.ladestellen-elektromobilitaet.json
+      method: GET
+      data_selector_type: json
+      data_selector: $.EVSEStatuses
+      data_destination_field: evse_statuses
