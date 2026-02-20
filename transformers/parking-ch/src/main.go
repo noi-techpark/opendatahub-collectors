@@ -8,21 +8,20 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"os"
 
 	"github.com/noi-techpark/go-bdp-client/bdplib"
-	ms "github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
-	tr "github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
-	tel "github.com/noi-techpark/opendatahub-go-sdk/tel"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
+	"github.com/noi-techpark/opendatahub-go-sdk/tel"
 )
 
 const (
-	StationTypeBikeParking = "BikeParking"
+	StationTypeBikeParking  = "BikeParking"
 	StationTypeParkingStation = "ParkingStation"
 
 	Origin = "SBB"
-	MeasurementPeriod = 1800 // 30 minutes in seconds
+	Period = 1800 // 30 minutes in seconds
 )
 
 const (
@@ -44,15 +43,7 @@ func main() {
 	ms.InitWithEnv(context.Background(), "", &env)
 	slog.Info("Starting Swiss parking data transformer...")
 
-	b := bdplib.FromEnv(bdplib.BdpEnv{
-		BDP_BASE_URL:           os.Getenv("BDP_BASE_URL"),
-		BDP_PROVENANCE_VERSION: os.Getenv("BDP_PROVENANCE_VERSION"),
-		BDP_PROVENANCE_NAME:    os.Getenv("BDP_PROVENANCE_NAME"),
-		BDP_ORIGIN:             os.Getenv("BDP_ORIGIN"),
-		BDP_TOKEN_URL:          os.Getenv("ODH_TOKEN_URL"),
-		BDP_CLIENT_ID:          os.Getenv("ODH_CLIENT_ID"),
-		BDP_CLIENT_SECRET:      os.Getenv("ODH_CLIENT_SECRET"),
-	})
+	b := bdplib.FromEnv()
 	defer tel.FlushOnPanic()
 
 	slog.Info("Syncing data types on startup")
@@ -61,21 +52,20 @@ func main() {
 
 	slog.Info("Starting transformer listener...")
 
-	listener := tr.NewTr[string](context.Background(), env)
+	listener := tr.NewTr[Root](context.Background(), env)
 
-	err = listener.Start(context.Background(),
-		tr.RawString2JsonMiddleware[CombinedParkingData](TransformWithBdp(b)))
+	err = listener.Start(context.Background(), TransformWithBdp(b))
 
 	ms.FailOnError(context.Background(), err, "error while listening to queue")
 }
 
-func TransformWithBdp(bdp bdplib.Bdp) tr.Handler[CombinedParkingData] {
-	return func(ctx context.Context, payload *rdb.Raw[CombinedParkingData]) error {
+func TransformWithBdp(bdp bdplib.Bdp) tr.Handler[Root] {
+	return func(ctx context.Context, payload *rdb.Raw[Root]) error {
 		return Transform(ctx, bdp, payload)
 	}
 }
 
-func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CombinedParkingData]) error {
+func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) error {
 	slog.Info("Processing Swiss parking data",
 		"timestamp", payload.Timestamp,
 		"bikeFeatures", len(payload.Rawdata.BikeParking.Features),
@@ -83,7 +73,7 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CombinedPar
 
 	ts := payload.Timestamp.UnixMilli()
 
-	// Process bike parking stations (stations + metadata only, no measurements)
+	// Process bike parking stations
 	bikeStations, err := processBikeParking(bdp, payload.Rawdata.BikeParking)
 	if err != nil {
 		return fmt.Errorf("processing bike parking: %w", err)
@@ -141,7 +131,7 @@ func processBikeParking(bdp bdplib.Bdp, fc GeoJSONFeatureCollection) ([]bdplib.S
 			continue
 		}
 
-		station := bdplib.CreateStation(stationCode, name, StationTypeBikeParking, lat, lon, Origin)
+		station := bdplib.CreateStation(fmt.Sprintf("%s:%s", Origin, stationCode), name, StationTypeBikeParking, lat, lon, Origin)
 
 		// Store all properties as metadata
 		metadata := make(map[string]interface{})
@@ -172,7 +162,7 @@ func processCarParking(bdp bdplib.Bdp, fc GeoJSONFeatureCollection, ts int64) ([
 			continue
 		}
 
-		station := bdplib.CreateStation(stationCode, name, StationTypeParkingStation, lat, lon, Origin)
+		station := bdplib.CreateStation(fmt.Sprintf("%s:%s", Origin, stationCode), name, StationTypeParkingStation, lat, lon, Origin)
 
 		// Store all properties as metadata, except measurement fields
 		metadata := make(map[string]interface{})
@@ -187,19 +177,18 @@ func processCarParking(bdp bdplib.Bdp, fc GeoJSONFeatureCollection, ts int64) ([
 
 		// Add measurements (only if values are non-nil)
 		if v, ok := props[DataTypePredictedForecastedOccupancy]; ok && v != nil {
-			dataMap.AddRecord(stationCode, DataTypePredictedForecastedOccupancy,
-				bdplib.CreateRecord(ts, v, MeasurementPeriod))
+			dataMap.AddRecord(station.Id, DataTypePredictedForecastedOccupancy,
+				bdplib.CreateRecord(ts, v, Period))
 		}
 
 		if v, ok := props[DataTypeCurrentEstimatedOccupancy]; ok && v != nil {
-			// JSON unmarshals numbers as float64
-			dataMap.AddRecord(stationCode, DataTypeCurrentEstimatedOccupancy,
-				bdplib.CreateRecord(ts, v, MeasurementPeriod))
+			dataMap.AddRecord(station.Id, DataTypeCurrentEstimatedOccupancy,
+				bdplib.CreateRecord(ts, v, Period))
 		}
 
 		if v, ok := props[DataTypeCurrentEstimatedOccupancyLevel]; ok && v != nil {
-			dataMap.AddRecord(stationCode, DataTypeCurrentEstimatedOccupancyLevel,
-				bdplib.CreateRecord(ts, v, MeasurementPeriod))
+			dataMap.AddRecord(station.Id, DataTypeCurrentEstimatedOccupancyLevel,
+				bdplib.CreateRecord(ts, v, Period))
 		}
 	}
 
