@@ -54,7 +54,7 @@ jobs:
     concurrency: tr-parking-ch-deploy-test
     environment: test
     env:
-      VALUES_YAML: infrastructure/helm/values.yaml
+      VALUES_YAML: infrastructure/helm/parking-ch.yaml
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
