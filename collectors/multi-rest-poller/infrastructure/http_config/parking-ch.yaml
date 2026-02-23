@@ -1,0 +1,15 @@
+# SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+http_calls:
+  data_selector_type: json
+  nested_calls:
+    - url: https://data.opentransportdata.swiss/dataset/bike-parking/resource_permalink/bike_parking.json
+      method: GET
+      data_selector_type: json
+      data_destination_field: bike_parking
+    - url: https://data.opentransportdata.swiss/dataset/parking-facilities/resource_permalink/parking-facilities.json
+      method: GET
+      data_selector_type: json
+      data_destination_field: car_parking
