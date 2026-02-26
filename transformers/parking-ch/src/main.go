@@ -115,15 +115,21 @@ func processBikeParking(bdp bdplib.Bdp, fc GeoJSONFeatureCollection) ([]bdplib.S
 	for _, feature := range fc.Features {
 		props := feature.Properties
 
-		// Extract station code from properties.source.id
-		sourceMap, ok := props["source"].(map[string]interface{})
-		if !ok {
-			slog.Warn("Bike parking feature missing source map", "featureID", feature.ID)
+		// Extract station code from properties.stopPlaceUic
+		stopPlaceUic, ok := props["stopPlaceUic"]
+		if !ok || stopPlaceUic == nil {
+			slog.Warn("Bike parking feature missing stopPlaceUic", "featureID", feature.ID)
 			continue
 		}
 
-		stationCode := fmt.Sprintf("%v", sourceMap["id"])
-		name := fmt.Sprintf("%v", sourceMap["name"])
+		stationCode := fmt.Sprintf("%v", stopPlaceUic)
+
+		nameVal, ok := props["name"]
+		if !ok || nameVal == nil {
+			slog.Warn("Bike parking feature missing name", "featureID", feature.ID)
+			continue
+		}
+		name := fmt.Sprintf("%v", nameVal)
 
 		lat, lon, err := extractCoordinates(feature.Geometry)
 		if err != nil {

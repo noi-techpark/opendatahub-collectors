@@ -39,10 +39,14 @@ type TestMetrics struct {
 func (p ParkingData) GetMetrics() TestMetrics {
 	measurements := 0
 	for _, feature := range p.CarParking.Features {
-		if props := feature.Properties; props != nil {
-			if _, ok := props["currentEstimatedOccupancy"]; ok {
-				measurements++
-			}
+		props := feature.Properties
+		if props == nil {
+			continue
+		}
+		if props["currentEstimatedOccupancy"] != nil ||
+			props["currentEstimatedOccupancyLevel"] != nil ||
+			props["predictedForecastedOccupancy"] != nil {
+			measurements++
 		}
 	}
 	return TestMetrics{
