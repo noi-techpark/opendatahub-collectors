@@ -13,7 +13,7 @@ env:
   BDP_PROVENANCE_VERSION: 
   BDP_ORIGIN: DRIWE-OCPI
   
-  NINJA_URL: https://mobility.api.opendatahub.testingmachine.eu
+  NINJA_URL: http://ninja-api.core.svc.cluster.local
   
   LOG_LEVEL: INFO
 

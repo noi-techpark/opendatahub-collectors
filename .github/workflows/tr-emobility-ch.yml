@@ -1,26 +1,27 @@
+
 # SPDX-FileCopyrightText: 2026 NOI Techpark <digital@noi.bz.it>
 #
 # SPDX-License-Identifier: CC0-1.0
 
-name: CI/CD tr-parking-ch
+name: CI/CD tr-emobility-ch
 
 on: 
   push:
     paths:
-      - "transformers/parking-ch/**"
-      - ".github/workflows/tr-parking-ch.yml"     
+      - "transformers/emobility-ch/**"
+      - ".github/workflows/tr-emobility-ch.yml"     
 
 env:
-  PROJECT_NAME: tr-parking-ch
-  WORKING_DIRECTORY: transformers/parking-ch
-  DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/tr-parking-ch
+  PROJECT_NAME: tr-emobility-ch
+  WORKING_DIRECTORY: transformers/emobility-ch
+  DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/tr-emobility-ch
   DOCKER_TAG: ${{ github.sha }}
   KUBERNETES_NAMESPACE: collector
 
 jobs:
   tests:
     runs-on: ubuntu-24.04
-    concurrency: tr-parking-ch-tests
+    concurrency: tr-emobility-ch-tests
     
     steps:
       - name: Checkout source code
@@ -32,7 +33,7 @@ jobs:
 
   build:
     runs-on: ubuntu-24.04
-    concurrency: tr-parking-ch-build
+    concurrency: tr-emobility-ch-build
     needs: 
       - tests
     steps:
@@ -51,10 +52,10 @@ jobs:
     needs: 
       - build
     runs-on: ubuntu-24.04
-    concurrency: tr-parking-ch-deploy-test
+    concurrency: tr-emobility-ch-deploy-test
     environment: test
     env:
-      VALUES_YAML: infrastructure/helm/parking-ch.yaml
+      VALUES_YAML: infrastructure/helm/emobility-ch.yaml
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
