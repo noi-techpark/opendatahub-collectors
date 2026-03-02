@@ -1,5 +1,5 @@
 image:
-  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-traffic-event-prov-bz
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-urban-green-r3gis
   pullPolicy: IfNotPresent
 
 env:  
@@ -9,14 +9,14 @@ env:
   ODH_CORE_URL: https://api.tourism.testingmachine.eu/v1
   ODH_CORE_TOKEN_URL: https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token
 
-  MQ_QUEUE: traffic-event.prov-bz
+  MQ_QUEUE: r3gis.urbangreen
   MQ_EXCHANGE: routed
-  MQ_KEY: traffic-event.prov-bz
-  MQ_CLIENT: tr-traffic-event-prov-bz
+  MQ_KEY: r3gis.urbangreen
+  MQ_CLIENT: tr-urban-green-r3gis
 
   RAW_DATA_BRIDGE_ENDPOINT: "http://raw-data-bridge.core.svc.cluster.local:2000"
 
-  SERVICE_NAME: tr-traffic-event-prov-bz
+  SERVICE_NAME: tr-urban-green-r3gis
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 
 envSecret:
