@@ -46,15 +46,11 @@ func TestTransformerIntegration(t *testing.T) {
 
 			// Check required properties
 			props := feature.Properties
-			if sourceMap, ok := props["source"].(map[string]interface{}); !ok {
-				t.Errorf("Feature %d: Missing source property", i)
-			} else {
-				if _, ok := sourceMap["id"]; !ok {
-					t.Errorf("Feature %d: Missing source.id", i)
-				}
-				if _, ok := sourceMap["name"]; !ok {
-					t.Errorf("Feature %d: Missing source.name", i)
-				}
+			if _, ok := props["stopPlaceUic"]; !ok {
+				t.Errorf("Feature %d: Missing stopPlaceUic", i)
+			}
+			if _, ok := props["name"]; !ok {
+				t.Errorf("Feature %d: Missing name", i)
 			}
 		}
 		t.Log("✓ Bike parking structure validation passed")
@@ -77,25 +73,20 @@ func TestTransformerIntegration(t *testing.T) {
 				t.Errorf("Feature %d: Missing displayName", i)
 			}
 
-			// Check measurement fields
-			hasPredicted := false
-			hasOccupancy := false
-			hasLevel := false
-
-			if _, ok := props["predictedForecastedOccupancy"]; ok {
-				hasPredicted = true
+			// Per-feature log only; not all stations emit real-time data
+			hasPredicted := props["predictedForecastedOccupancy"] != nil
+			hasOccupancy := props["currentEstimatedOccupancy"] != nil
+			hasLevel := props["currentEstimatedOccupancyLevel"] != nil
+			if !hasPredicted && !hasOccupancy && !hasLevel {
+				t.Logf("Feature %d: No prediction/occupancy fields present (expected for static-only stations)", i)
 			}
-			if _, ok := props["currentEstimatedOccupancy"]; ok {
-				hasOccupancy = true
-			}
-			if _, ok := props["currentEstimatedOccupancyLevel"]; ok {
-				hasLevel = true
-			}
-
-			if !hasPredicted || !hasOccupancy || !hasLevel {
-				t.Logf("Feature %d: Missing measurement fields (Predicted:%v, Occupancy:%v, Level:%v)",
-					i, hasPredicted, hasOccupancy, hasLevel)
-			}
+		}
+		// Use pre-computed metrics (single source of truth via GetMetrics) to assert
+		// at least one station has prediction data in any healthy data feed
+		if metrics.Measurements == 0 {
+			t.Errorf("Expected at least one car parking feature with prediction/occupancy fields, got none")
+		} else {
+			t.Logf("%d/%d car features have prediction/occupancy data", metrics.Measurements, len(parkingData.CarParking.Features))
 		}
 		t.Log("✓ Car parking structure validation passed")
 	})
@@ -240,10 +231,8 @@ func getFallbackTestData() *ParkingData {
 						Coordinates: []float64{11.3521, 46.4983},
 					},
 					Properties: map[string]interface{}{
-						"source": map[string]interface{}{
-							"id":   "bp-merano-01",
-							"name": "Merano Central Station Bike Parking",
-						},
+						"stopPlaceUic":      "8503010",
+						"name":              "Merano Central Station Bike Parking",
 						"capacity":          float64(50),
 						"weather_protected": true,
 					},
