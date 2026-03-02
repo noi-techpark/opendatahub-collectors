@@ -48,12 +48,12 @@ func elaborate(ctx context.Context, dataMap *bdplib.DataMap, existingMeasurement
 		if existingMeasurements.shouldElaborate(DataTypeEuroPctLight, t) {
 			dataMap.AddRecord(station.Id, DataTypeEuroPctLight, bdplib.CreateRecord(timestamp, createVehicleEuro(light, t), period))
 		}
-		if existingMeasurements.shouldElaborate(DataTypeEuroPctHeavy, t) {
-			dataMap.AddRecord(station.Id, DataTypeEuroPctHeavy, bdplib.CreateRecord(timestamp, createVehicleEuro(heavy, t), period))
-		}
-		if existingMeasurements.shouldElaborate(DataTypeEuroPctBuses, t) {
-			dataMap.AddRecord(station.Id, DataTypeEuroPctBuses, bdplib.CreateRecord(timestamp, createVehicleEuro(buses, t), period))
-		}
+		// if existingMeasurements.shouldElaborate(DataTypeEuroPctHeavy, t) {
+		// 	dataMap.AddRecord(station.Id, DataTypeEuroPctHeavy, bdplib.CreateRecord(timestamp, createVehicleEuro(heavy, t), period))
+		// }
+		// if existingMeasurements.shouldElaborate(DataTypeEuroPctBuses, t) {
+		// 	dataMap.AddRecord(station.Id, DataTypeEuroPctBuses, bdplib.CreateRecord(timestamp, createVehicleEuro(buses, t), period))
+		// }
 	}
 
 	// Vehicle counts
@@ -275,14 +275,15 @@ func createVehicleNationality(vehicles []Vehicle) map[string]int {
 
 func createVehicleEuro(vehicles []Vehicle, t time.Time) map[string]float64 {
 	euroProb := map[string]float64{
-		EURO0: 0.0,
-		EURO1: 0.0,
-		EURO2: 0.0,
-		EURO3: 0.0,
-		EURO4: 0.0,
-		EURO5: 0.0,
-		EURO6: 0.0,
-		EUROE: 0.0,
+		EURO0:  0.0,
+		EURO1:  0.0,
+		EURO2:  0.0,
+		EURO3:  0.0,
+		EURO4:  0.0,
+		EURO5:  0.0,
+		EURO6:  0.0,
+		EUROE:  0.0,
+		NVALID: 0.0,
 	}
 	validVehicleCount := 0
 
@@ -309,6 +310,7 @@ func createVehicleEuro(vehicles []Vehicle, t time.Time) map[string]float64 {
 		for euroClass := range euroProb {
 			euroProb[euroClass] /= float64(validVehicleCount)
 		}
+		euroProb[NVALID] = float64(validVehicleCount)
 	}
 
 	return euroProb

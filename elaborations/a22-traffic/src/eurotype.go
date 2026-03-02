@@ -16,14 +16,15 @@ import (
 )
 
 const (
-	EURO0 = "EURO0"
-	EURO1 = "EURO1"
-	EURO2 = "EURO2"
-	EURO3 = "EURO3"
-	EURO4 = "EURO4"
-	EURO5 = "EURO5"
-	EURO6 = "EURO6"
-	EUROE = "ELECTRIC"
+	EURO0  = "EURO0"
+	EURO1  = "EURO1"
+	EURO2  = "EURO2"
+	EURO3  = "EURO3"
+	EURO4  = "EURO4"
+	EURO5  = "EURO5"
+	EURO6  = "EURO6"
+	EUROE  = "ELECTRIC"
+	NVALID = "NVALID"
 )
 
 type EUROType struct {
