@@ -1,0 +1,6 @@
+.env
+/target
+.vscode
+__debug
+tmp/
+src/analysis

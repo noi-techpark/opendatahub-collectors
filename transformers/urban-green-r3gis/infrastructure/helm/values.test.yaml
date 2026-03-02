@@ -1,0 +1,29 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-traffic-event-prov-bz
+  pullPolicy: IfNotPresent
+
+env:  
+  LOG_LEVEL: INFO
+
+  # content writer
+  ODH_CORE_URL: https://api.tourism.testingmachine.eu/v1
+  ODH_CORE_TOKEN_URL: https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token
+
+  MQ_QUEUE: traffic-event.prov-bz
+  MQ_EXCHANGE: routed
+  MQ_KEY: traffic-event.prov-bz
+  MQ_CLIENT: tr-traffic-event-prov-bz
+
+  RAW_DATA_BRIDGE_ENDPOINT: "http://raw-data-bridge.core.svc.cluster.local:2000"
+
+  SERVICE_NAME: tr-traffic-event-prov-bz
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+envSecret:
+  ODH_CORE_TOKEN_CLIENT_ID: ""
+  ODH_CORE_TOKEN_CLIENT_SECRET: ""
+
+envSecretRef:
+  - name: MQ_URI 
+    secret: rabbitmq-svcbind
+    key: uri
