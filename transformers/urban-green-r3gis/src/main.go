@@ -79,7 +79,7 @@ func main() {
 	} else {
 		listener := tr.NewTr[string](context.Background(), env.Env)
 
-		err = listener.Start(context.Background(), tr.RawString2JsonMiddleware(Transform))
+		err = listener.Start(context.Background(), tr.RawBase64JsonMiddleware(Transform))
 		ms.FailOnError(context.Background(), err, "error while listening to queue")
 	}
 }

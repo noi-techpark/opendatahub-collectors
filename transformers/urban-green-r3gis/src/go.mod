@@ -7,7 +7,7 @@ toolchain go1.24.4
 require (
 	github.com/google/uuid v1.6.0
 	github.com/noi-techpark/opendatahub-go-sdk/clib v0.0.1
-	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.8
+	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.9
 	github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0
 	github.com/noi-techpark/opendatahub-go-sdk/testsuite v1.1.1
 	golang.org/x/text v0.24.0
