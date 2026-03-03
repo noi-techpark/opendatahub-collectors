@@ -23,12 +23,6 @@ envSecretRef:
   - name: MQ_URI
     secret: rabbitmq-svcbind
     key: uri
-  - name: A22_USERNAME
-    secret: a22-credentials
-    key: username
-  - name: A22_PASSWORD
-    secret: a22-credentials
-    key: password
 
 configMap:
   mountPath: "/config/"

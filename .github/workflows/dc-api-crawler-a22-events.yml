@@ -52,8 +52,8 @@ jobs:
           yq -i '.image.repository="${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML}}
           yq -i '.image.tag="${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
           yq -i '.image.pullPolicy="IfNotPresent"' ${{ env.VALUES_YAML }}
-          yq -i '.env.A22_USERNAME="${{secrets.A22_EVENT_USERNAME_TEST}}"' ${{ env.VALUES_YAML }}
-          yq -i '.env.A22_PASSWORD="${{secrets.A22_EVENT_PASSWORD_TEST}}"' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.A22_USERNAME="${{secrets.A22_EVENT_USERNAME_TEST}}"' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.A22_PASSWORD="${{secrets.A22_EVENT_PASSWORD_TEST}}"' ${{ env.VALUES_YAML }}
           yq -i '.configMap.files["config.yaml"] = load_str("${{ env.HTTP_CONFIG_PATH }}")' ${{ env.VALUES_YAML }}
 
       - name: Deploy on cluster  
