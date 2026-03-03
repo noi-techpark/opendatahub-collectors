@@ -4,18 +4,27 @@ go 1.24.4
 
 require (
 	github.com/hashicorp/go-retryablehttp v0.7.8
-	github.com/noi-techpark/go-silky v1.0.7
+	github.com/noi-techpark/go-silky v1.0.9
 	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.3
 	github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0
 	github.com/robfig/cron/v3 v3.0.1
 )
 
 require (
-	github.com/expr-lang/expr v1.17.7 // indirect
+	dario.cat/mergo v1.0.2 // indirect
+	github.com/Masterminds/goutils v1.1.1 // indirect
+	github.com/Masterminds/semver/v3 v3.4.0 // indirect
+	github.com/Masterminds/sprig/v3 v3.3.0 // indirect
+	github.com/expr-lang/expr v1.17.8 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
+	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/itchyny/gojq v0.12.18 // indirect
 	github.com/itchyny/timefmt-go v0.1.7 // indirect
+	github.com/mitchellh/copystructure v1.2.0 // indirect
+	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/rabbitmq/amqp091-go v1.10.0 // indirect
+	github.com/shopspring/decimal v1.4.0 // indirect
+	github.com/spf13/cast v1.10.0 // indirect
 	golang.org/x/oauth2 v0.35.0 // indirect
 	golang.org/x/time v0.14.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
@@ -78,10 +87,10 @@ require (
 	go.opentelemetry.io/otel/trace v1.35.0
 	go.opentelemetry.io/proto/otlp v1.5.0 // indirect
 	golang.org/x/arch v0.16.0 // indirect
-	golang.org/x/crypto v0.37.0 // indirect
-	golang.org/x/net v0.39.0 // indirect
-	golang.org/x/sys v0.38.0 // indirect
-	golang.org/x/text v0.24.0 // indirect
+	golang.org/x/crypto v0.48.0 // indirect
+	golang.org/x/net v0.49.0 // indirect
+	golang.org/x/sys v0.41.0 // indirect
+	golang.org/x/text v0.34.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250414145226-207652e42e2e // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250414145226-207652e42e2e // indirect
 	google.golang.org/grpc v1.71.1 // indirect
