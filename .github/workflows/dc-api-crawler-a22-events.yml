@@ -39,7 +39,7 @@ jobs:
     concurrency: dc-api-crawler-a22-events-test
     environment: test
     env:
-      VALUES_YAML: infrastructure/helm/a22-events.test.yaml
+      VALUES_YAML: infrastructure/helm/a22-events.yaml
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
