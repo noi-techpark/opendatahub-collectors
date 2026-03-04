@@ -27,7 +27,7 @@ CMD ["go", "run", "main.go"]
 
 # TESTS
 FROM base as test
-WORKDIR /code
+WORKDIR /code/src
 COPY src/. .
-COPY resources/. ./resources
+COPY resources/. ../resources
 CMD ["go", "test", "./..."]
