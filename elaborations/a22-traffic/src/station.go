@@ -155,8 +155,8 @@ func (m measurementMap) startFrom(s Station) time.Time {
 		isCamera := IsCamera(s)
 		if !isCamera && (dt == DataTypeEuroPct ||
 			dt == DataTypeEuroPctLight ||
-			dt == DataTypeEuroPctHeavy ||
-			dt == DataTypeEuroPctBuses ||
+			// dt == DataTypeEuroPctHeavy ||
+			// dt == DataTypeEuroPctBuses ||
 			dt == DataTypeNationalityCount ||
 			dt == DataTypeNationalityCountLight ||
 			dt == DataTypeNationalityCountHeavy ||

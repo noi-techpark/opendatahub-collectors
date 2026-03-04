@@ -48,14 +48,14 @@ const (
 	DataTypeAvgFlow            = "Average Flow"
 	DataTypeEuroPct            = "EURO Category Pct"
 	DataTypeEuroPctLight       = "EURO Category Pct Light Vehicles"
-	DataTypeEuroPctHeavy       = "EURO Category Pct Heavy Vehicles"
-	DataTypeEuroPctBuses       = "EURO Category Pct Buses"
-	DataTypeNationalityCount   = "Plate Nationality Count"
+	// DataTypeEuroPctHeavy       = "EURO Category Pct Heavy Vehicles"
+	// DataTypeEuroPctBuses       = "EURO Category Pct Buses"
+	DataTypeNationalityCount      = "Plate Nationality Count"
 	DataTypeNationalityCountLight = "Plate Nationality Count Light Vehicles"
 	DataTypeNationalityCountHeavy = "Plate Nationality Count Heavy Vehicles"
 	DataTypeNationalityCountBuses = "Plate Nationality Count Buses"
-	DataTypeDirection          = "Traffic Normal Direction"
-	DataTypeDirectionScore     = "Traffic Direction Score"
+	DataTypeDirection             = "Traffic Normal Direction"
+	DataTypeDirectionScore        = "Traffic Direction Score"
 
 	MeasurementPeriod uint64 = 600
 )
@@ -87,8 +87,8 @@ var allDataTypes = []string{
 	DataTypeAvgFlow,
 	DataTypeEuroPct,
 	DataTypeEuroPctLight,
-	DataTypeEuroPctHeavy,
-	DataTypeEuroPctBuses,
+	// DataTypeEuroPctHeavy,
+	// DataTypeEuroPctBuses,
 	DataTypeNationalityCount,
 	DataTypeNationalityCountLight,
 	DataTypeNationalityCountHeavy,
@@ -399,8 +399,8 @@ func SyncDataTypes(bdp bdplib.Bdp) {
 	// Euro emission category
 	dataTypes = append(dataTypes, bdplib.CreateDataType(DataTypeEuroPct, "%", "Euro emission standards distribution", "Mean"))
 	dataTypes = append(dataTypes, bdplib.CreateDataType(DataTypeEuroPctLight, "%", "Euro emission standards distribution for light vehicles", "Mean"))
-	dataTypes = append(dataTypes, bdplib.CreateDataType(DataTypeEuroPctHeavy, "%", "Euro emission standards distribution for heavy vehicles", "Mean"))
-	dataTypes = append(dataTypes, bdplib.CreateDataType(DataTypeEuroPctBuses, "%", "Euro emission standards distribution for buses", "Mean"))
+	// dataTypes = append(dataTypes, bdplib.CreateDataType(DataTypeEuroPctHeavy, "%", "Euro emission standards distribution for heavy vehicles", "Mean"))
+	// dataTypes = append(dataTypes, bdplib.CreateDataType(DataTypeEuroPctBuses, "%", "Euro emission standards distribution for buses", "Mean"))
 
 	// Plate nationality
 	dataTypes = append(dataTypes, bdplib.CreateDataType(DataTypeNationalityCount, "", "Vehicle Count by License Plate Nationality", "Count"))
