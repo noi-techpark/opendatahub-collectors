@@ -52,9 +52,9 @@ func main() {
 
 	slog.Info("Starting transformer listener...")
 
-	listener := tr.NewTr[Root](context.Background(), env)
+	listener := tr.NewTr[string](context.Background(), env)
 
-	err = listener.Start(context.Background(), TransformWithBdp(b))
+	err = listener.Start(context.Background(), MultiFormatMiddleware[Root](TransformWithBdp(b)))
 
 	ms.FailOnError(context.Background(), err, "error while listening to queue")
 }
