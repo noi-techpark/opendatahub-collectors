@@ -183,7 +183,7 @@ func raw2Siri(c *Cache, refTime time.Time, r Dto, n netex.PublicationDelivery) (
 		vj.DirectionRef = nJourneyPattern.DirectionType
 
 		vj.FramedVehicleJourneyRef.DataFrameRef = refTime.Format(time.RFC3339)
-		vj.FramedVehicleJourneyRef.DatedVehicleJourneyRef = "TBD"
+		vj.FramedVehicleJourneyRef.DatedVehicleJourneyRef = nJourney.Id
 
 		nLine := findLine(n, c, nJourney.LineRef.Ref)
 		if nLine == nil {
