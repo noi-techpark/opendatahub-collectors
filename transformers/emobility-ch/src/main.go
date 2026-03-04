@@ -43,9 +43,9 @@ func main() {
 	ms.FailOnError(context.Background(), err, "failed to sync data types")
 
 	slog.Info("Starting transformer listener...")
-	listener := tr.NewTr[Root](context.Background(), env.Env)
+	listener := tr.NewTr[string](context.Background(), env.Env)
 
-	err = listener.Start(context.Background(), TransformWithBdp(b))
+	err = listener.Start(context.Background(), MultiFormatMiddleware[Root](TransformWithBdp(b)))
 	ms.FailOnError(context.Background(), err, "error while listening to queue")
 }
 
