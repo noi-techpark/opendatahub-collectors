@@ -1,0 +1,72 @@
+[
+  {
+    "id": "announcement:traffic-event",
+    "name-it": "Evento di Traffico",
+    "name-de": "Verkehrsereignis",
+    "name-en": "Traffic Event",
+    "types": ["announcement"]
+  },
+  {
+    "id": "traffic-event:accident",
+    "name-it": "Incidente",
+    "name-de": "Unfall",
+    "name-en": "Accident",
+    "types": ["announcement", "traffic-event"]
+  },
+  {
+    "id": "traffic-event:congestion",
+    "name-it": "Congestione o Coda",
+    "name-de": "Stau und Kolonnenverkehr",
+    "name-en": "Congestion or Queue",
+    "types": ["announcement", "traffic-event"]
+  },
+  {
+    "id": "traffic-event:weather-related",
+    "name-it": "Condizioni Meteo Avverse",
+    "name-de": "Wetterbedingte Behinderung",
+    "name-en": "Adverse Weather Condition",
+    "types": ["announcement", "traffic-event"]
+  },
+  {
+    "id": "traffic-event:road-work",
+    "name-it": "Cantiere Stradale",
+    "name-de": "Baustelle",
+    "name-en": "Road Work",
+    "types": ["announcement", "traffic-event"]
+  },
+  {
+    "id": "traffic-event:hindrance",
+    "name-it": "Intralcio Viabilità Generale",
+    "name-de": "Allgemeine Verkehrsbehinderung",
+    "name-en": "General Traffic Hindrance",
+    "types": ["announcement", "traffic-event"]
+  },
+  {
+    "id": "traffic-event:prohibition",
+    "name-it": "Divieto di Circolazione",
+    "name-de": "Fahrverbot",
+    "name-en": "Driving Prohibition",
+    "types": ["announcement", "traffic-event"]
+  },
+  {
+    "id": "traffic-event:caution",
+    "name-it": "Attenzione e Pericolo",
+    "name-de": "Vorsicht und Gefahr",
+    "name-en": "Caution and Hazard",
+    "types": ["announcement", "traffic-event"]
+  },
+  {
+    "id": "traffic-event:current",
+    "name-it": "Situazione Attuale",
+    "name-de": "Aktuelle Lage",
+    "name-en": "Current Situation",
+    "types": ["announcement", "traffic-event"]
+  },
+  {
+    "id": "traffic-event:closure",
+    "name-it": "Chiusura o Blocco",
+    "name-de": "Sperre und Schließung",
+    "name-en": "Closure or Blockage",
+    "types": ["announcement", "traffic-event"]
+  }
+]
