@@ -21,7 +21,7 @@ import (
 )
 
 const (
-	SOURCE      = "A22"
+	SOURCE      = "a22"
 	ID_TEMPLATE = "urn:announcements:a22"
 )
 
