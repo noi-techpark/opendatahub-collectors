@@ -196,8 +196,8 @@ func raw2Siri(c *Cache, refTime time.Time, r Dto, n netex.PublicationDelivery) (
 		// we iterate backwards through the stops and take the first one that has it set
 		pis := *nJourneyPattern.PointsInSequence
 		ddRef := ""
-		for i := range pis {
-			dd := pis[len(pis)-i].DestinationDisplayRef.Ref
+		for i := len(pis) - 1; i >= 0; i-- {
+			dd := pis[i].DestinationDisplayRef.Ref
 			if dd != "" {
 				ddRef = dd
 				break

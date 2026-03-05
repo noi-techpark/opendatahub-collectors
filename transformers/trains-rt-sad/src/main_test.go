@@ -74,5 +74,4 @@ func Test_download(t *testing.T) {
 	if err := downloadLatestNetex(); err != nil {
 		t.Fatal("could not download latest netex", err)
 	}
-
 }
