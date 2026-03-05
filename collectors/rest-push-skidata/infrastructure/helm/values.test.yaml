@@ -1,0 +1,46 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/dc-rest-push-skidata
+  pullPolicy: IfNotPresent
+  tag: ""
+
+imagePullSecrets:
+  - name: container-registry-r
+
+service:
+  enabled: true
+  type: ClusterIP
+  port: 8080
+  health:
+    delay: 20
+    path: /health
+
+ingress:
+  enabled: true
+
+  annotations:
+    cert-manager.io/issuer: "letsencrypt-prod"
+
+  className: nginx
+  tls:
+    - hosts:
+        - push.api.dev.testingmachine.eu
+      secretName: tls-rest-push-skidata
+  hosts:
+    - host: push.api.dev.testingmachine.eu
+      paths:
+        - path: "/skidata/parking-stations"
+          pathType: Prefix
+
+env:
+  LOGLEVEL: "INFO"
+  PROVIDER: "skidata/parking-stations"
+  MQ_CLIENT: "dc-rest-push-skidata"
+  MQ_EXCHANGE: "ingress"
+  SERVICE_NAME: "dc-rest-push-skidata"
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
