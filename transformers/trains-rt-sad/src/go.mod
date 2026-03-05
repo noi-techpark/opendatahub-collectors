@@ -5,7 +5,7 @@ go 1.25.6
 require (
 	github.com/jlaffaye/ftp v0.2.0
 	github.com/noi-techpark/go-bdp-client v1.4.6
-	github.com/noi-techpark/go-netex v0.6.1
+	github.com/noi-techpark/go-netex v0.6.2
 	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.7
 	github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0
 	gotest.tools/v3 v3.5.2

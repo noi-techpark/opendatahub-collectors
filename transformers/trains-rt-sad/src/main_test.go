@@ -25,7 +25,7 @@ func Test_find(t *testing.T) {
 	c := NewCache()
 
 	// Test findJourney
-	journey := findJourney(delivery, c, "1853")
+	journey := findJourney(delivery, c, "1853", "2025-12-14")
 	assert.Assert(t, journey != nil)
 	assert.Assert(t, journey.Id == "it:apb:ServiceJourney:024002B-Pizzin-100-1-36540:38")
 

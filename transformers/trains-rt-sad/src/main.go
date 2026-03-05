@@ -169,7 +169,8 @@ func raw2Siri(c *Cache, refTime time.Time, r Dto, n netex.PublicationDelivery) (
 		va.ValidUntilTime = posTime.Add(time.Hour * 24).Format(time.RFC3339)
 		vj := &va.MonitoredVehicleJourney
 
-		nJourney := findJourney(n, c, train)
+		tripTime := parseTs(upd.Trip.Time)
+		nJourney := findJourney(n, c, train, tripTime.Format("2006-01-02"))
 		if nJourney == nil {
 			slog.Warn("could not find journey for train in static data. Ignoring record", "train", train)
 			continue
@@ -191,10 +192,22 @@ func raw2Siri(c *Cache, refTime time.Time, r Dto, n netex.PublicationDelivery) (
 		}
 		vj.PublishedLineName = nLine.Name
 
-		lastStop := (*nJourneyPattern.PointsInSequence)[len((*nJourneyPattern.PointsInSequence))-1]
-		nDestDis := findDestinationDisplay(n, c, lastStop.DestinationDisplayRef.Ref)
-		if nDestDis != nil {
-			vj.DirectionName = nDestDis.Name
+		// original spec was to take the description of the last stop, but at time of writing, only the first stop has a destinationDisplay.
+		// we iterate backwards through the stops and take the first one that has it set
+		pis := *nJourneyPattern.PointsInSequence
+		ddRef := ""
+		for i := range pis {
+			dd := pis[len(pis)-i].DestinationDisplayRef.Ref
+			if dd != "" {
+				ddRef = dd
+				break
+			}
+		}
+		if ddRef != "" {
+			nDestDis := findDestinationDisplay(n, c, ddRef)
+			if nDestDis != nil {
+				vj.DirectionName = nDestDis.Name
+			}
 		}
 
 		vj.OperatorRef = nJourney.OperatorRef.Ref
@@ -222,6 +235,7 @@ type Cache struct {
 	journeyPatterns     map[string]*netex.ServiceJourneyPattern
 	lines               map[string]*netex.Line
 	destinationDisplays map[string]*netex.DestinationDisplay
+	dayTypes            map[string]any
 }
 
 func NewCache() *Cache {
@@ -230,27 +244,63 @@ func NewCache() *Cache {
 		journeyPatterns:     make(map[string]*netex.ServiceJourneyPattern),
 		lines:               make(map[string]*netex.Line),
 		destinationDisplays: make(map[string]*netex.DestinationDisplay),
+		dayTypes:            make(map[string]any),
 	}
 }
 
+func buildDates(n netex.PublicationDelivery) map[string]any {
+	ret := map[string]any{}
+	for _, cf := range n.DataObjects {
+		for _, scf := range cf.Frames.ServiceCalendarFrame {
+			for _, sc := range scf.ServiceCalendar {
+				for _, dta := range *sc.DayTypeAssignments {
+					ret[dta.DayTypeRef.Ref+"|"+dta.Date] = struct{}{}
+				}
+			}
+		}
+	}
+	return ret
+}
+
+func journeyMatchesTrain(j netex.ServiceJourney, train string) bool {
+	suffix := "TrainNumber:" + train
+	if j.TrainNumbers != nil {
+		for _, ref := range *j.TrainNumbers {
+			if strings.HasSuffix(ref.Ref, suffix) {
+				return true
+			}
+		}
+	}
+	return false
+}
+func journeyMatchesDay(j netex.ServiceJourney, c map[string]any, day string) bool {
+	if j.DayTypes != nil {
+		for _, dt := range *j.DayTypes {
+			if _, found := c[dt.Ref+"|"+day]; found {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 // TODO: all these do not handle versioning, we just find the first one that's matching and hope for the best
-func findJourney(n netex.PublicationDelivery, cache *Cache, train string) *netex.ServiceJourney {
+func findJourney(n netex.PublicationDelivery, cache *Cache, train string, day string) *netex.ServiceJourney {
 	if journey, ok := cache.journeys[train]; ok {
 		return journey
 	}
 
-	suffix := "TrainNumber:" + train
+	if len(cache.dayTypes) == 0 {
+		cache.dayTypes = buildDates(n)
+	}
+
 	for _, cf := range n.DataObjects {
 		for _, tf := range cf.Frames.TimetableFrame {
 			if tf.VehicleJourneys != nil {
 				for _, journey := range *tf.VehicleJourneys {
-					if journey.TrainNumbers != nil {
-						for _, ref := range *journey.TrainNumbers {
-							if strings.HasSuffix(ref.Ref, suffix) {
-								cache.journeys[train] = &journey
-								return &journey
-							}
-						}
+					if journeyMatchesTrain(journey, train) && journeyMatchesDay(journey, cache.dayTypes, day) {
+						cache.journeys[train] = &journey
+						return &journey
 					}
 				}
 			}
