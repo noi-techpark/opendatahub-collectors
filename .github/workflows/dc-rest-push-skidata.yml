@@ -33,7 +33,7 @@ jobs:
           docker-password: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-test:
-    if: github.ref == 'refs/heads/main' || github.ref == 'dev/skidata'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev/skidata'
     needs: build
     runs-on: ubuntu-24.04
     concurrency: dc-rest-push-skidata-test
