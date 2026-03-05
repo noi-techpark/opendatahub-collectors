@@ -46,6 +46,8 @@ jobs:
 
       - name: Customize values.yaml
         working-directory: ${{ env.WORKING_DIRECTORY }}
+        env:
+          SKIDATA_CREDENTIALS: ${{ secrets.SKIDATA_PUSH_CREDENTIALS_JSON }}
         run: |
           yq -i '.image.repository="${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML }}
           yq -i '.image.tag="${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
@@ -53,7 +55,7 @@ jobs:
           yq -i '.env.SKIDATA_BASE_URL = "https://sweb.skidata.com"' ${{ env.VALUES_YAML }}
           yq -i '.envSecret.INBOUND_AUTH_USER = "${{ secrets.SKIDATA_PUSH_INBOUND_USER }}"' ${{ env.VALUES_YAML }}
           yq -i '.envSecret.INBOUND_AUTH_PASS = "${{ secrets.SKIDATA_PUSH_INBOUND_PASS }}"' ${{ env.VALUES_YAML }}
-          yq -i '.envSecret.SKIDATA_CREDENTIALS_JSON = ${{ secrets.SKIDATA_PUSH_CREDENTIALS_JSON }}' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.SKIDATA_CREDENTIALS_JSON = strenv(SKIDATA_CREDENTIALS)' ${{ env.VALUES_YAML }}
 
       - name: Deploy on cluster
         uses: noi-techpark/github-actions/helm-deploy@v2
@@ -81,6 +83,8 @@ jobs:
 
   #     - name: Customize values.yaml
   #       working-directory: ${{ env.WORKING_DIRECTORY }}
+  #       env:
+  #         SKIDATA_CREDENTIALS: ${{ secrets.SKIDATA_PUSH_CREDENTIALS_JSON }}
   #       run: |
   #         yq -i '.image.repository="${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML }}
   #         yq -i '.image.tag="${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
@@ -89,7 +93,7 @@ jobs:
   #         yq -i '.env.SKIDATA_BASE_URL = "https://car.webhost.skidata.com"' ${{ env.VALUES_YAML }}
   #         yq -i '.envSecret.INBOUND_AUTH_USER = "${{ secrets.SKIDATA_PUSH_INBOUND_USER }}"' ${{ env.VALUES_YAML }}
   #         yq -i '.envSecret.INBOUND_AUTH_PASS = "${{ secrets.SKIDATA_PUSH_INBOUND_PASS }}"' ${{ env.VALUES_YAML }}
-  #         yq -i '.envSecret.SKIDATA_CREDENTIALS_JSON = ${{ secrets.SKIDATA_PUSH_CREDENTIALS_JSON }}' ${{ env.VALUES_YAML }}
+  #         yq -i '.envSecret.SKIDATA_CREDENTIALS_JSON = strenv(SKIDATA_CREDENTIALS)' ${{ env.VALUES_YAML }}
 
   #     - name: Deploy on cluster
   #       uses: noi-techpark/github-actions/helm-deploy@v2
