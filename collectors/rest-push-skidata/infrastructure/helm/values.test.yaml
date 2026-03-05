@@ -30,7 +30,7 @@ ingress:
   hosts:
     - host: push.api.dev.testingmachine.eu
       paths:
-        - path: "/skidata/parking-stations"
+        - path: "/push/skidata/parking-stations"
           pathType: Prefix
 
 env:

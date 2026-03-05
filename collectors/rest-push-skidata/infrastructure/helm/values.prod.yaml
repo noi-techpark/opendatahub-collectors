@@ -30,7 +30,7 @@ ingress:
   hosts:
     - host: push.api.opendatahub.com
       paths:
-        - path: "/skidata/parking-stations"
+        - path: "/push/skidata/parking-stations"
           pathType: Prefix
 
 env:

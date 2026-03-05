@@ -25,7 +25,7 @@ func serve(inputCh chan<- dc.Input[PushPayload]) {
 		return c.NoContent(http.StatusOK)
 	})
 
-	skidata := e.Group("/skidata/parking-stations",
+	skidata := e.Group("/push/skidata/parking-stations",
 		middleware.BasicAuth(validateInbound))
 
 	skidata.POST("/:facilityId", func(c echo.Context) error {
