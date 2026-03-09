@@ -28,6 +28,8 @@ env:
   AGENCY_URL: https://www.skyalps.com
   AGENCY_TZ: Europe/Rome
 
+  GTF_API_URL: https://gtfs.api.opendatahub.com/v1/dataset/skyalps-flight-data/raw
+
   RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
 
   SERVICE_NAME: tr-flights-ssim-gtfs

@@ -7,10 +7,12 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"log/slog"
 	"os"
 
+	"github.com/ThreeDotsLabs/watermill"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
@@ -19,6 +21,7 @@ import (
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
+	"github.com/noi-techpark/opendatahub-go-sdk/qmill"
 	"github.com/noi-techpark/opendatahub-go-sdk/tel"
 	"opendatahub.com/ssim2gtfs"
 	ssim "opendatahub.com/ssimparser"
@@ -36,6 +39,7 @@ var env struct {
 	AWS_S3_BUCKET_NAME    string
 	AWS_ACCESS_KEY_ID     string
 	AWS_ACCESS_SECRET_KEY string
+	GTF_API_URL           string
 }
 
 // Create your own datatype for unmarshalling the Raw Data
@@ -44,6 +48,15 @@ type RawType struct {
 	Filename string
 	Dir      string
 	Mtime    string
+}
+
+const (
+	TRANSFORMED_EXCHANGE = "transformed"
+	ROUTING_KEY          = "gtfs-api.skyalps.put"
+)
+
+type transformedMessage struct {
+	Url string `json:"url"`
 }
 
 func main() {
@@ -62,6 +75,20 @@ func main() {
 	ms.FailOnError(context.Background(), err, "failed to create AWS config")
 	// Create an S3 client
 	s3Client := s3.NewFromConfig(awsConfig)
+
+	// Create transformed exchange publisher
+	transEx, err := qmill.NewPublisherQmill(context.Background(), env.MQ_URI, env.MQ_CLIENT,
+		qmill.WithExchange("transformed", "topic", true),
+		qmill.WithNoRequeueOnNack(true),
+		qmill.WithLogger(watermill.NewSlogLogger(slog.Default())),
+	)
+	ms.FailOnError(context.Background(), err, "failed to declare transformed exchange")
+
+	// since this transformer only handle skyalps without versioning
+	// we can statically marshal the transformed message on startup
+	// Create and emit transformed message
+	transExPayload, err := json.Marshal(&transformedMessage{Url: env.GTF_API_URL})
+	ms.FailOnError(context.Background(), err, "failed to create transformed ex payload")
 
 	listener := tr.NewTr[RawType](context.Background(), env.Env)
 	err = listener.Start(context.Background(), func(ctx context.Context, r *rdb.Raw[RawType]) error {
@@ -100,9 +127,12 @@ func main() {
 			Body:   bytes.NewReader(data),
 		})
 		ms.FailOnError(ctx, err, "cannot push to S3")
-
 		slog.Info("S3 push done")
 
+		// Create and emit transformed message
+		err = transEx.Publish(ctx, transExPayload, ROUTING_KEY)
+		ms.FailOnError(ctx, err, "cannot publish to transformed exchange")
+		slog.Info("Transformed publish done")
 		return nil
 	})
 
