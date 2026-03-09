@@ -102,8 +102,8 @@ jobs:
             .image.pullPolicy="IfNotPresent"
           ' ${{ env.VALUES_YAML }}
 
-          yq -i '.envSecret.ODH_CORE_TOKEN_CLIENT_ID = "${{ secrets.CONTENT_GTFS_TO_TRIP_CLIENT_ID_PROD }}"' ${{ env.VALUES_YAML }}
-          yq -i '.envSecret.ODH_CORE_TOKEN_CLIENT_SECRET = "${{ secrets.CONTENT_GTFS_TO_TRIP_CLIENT_SECRET_PROD }}"' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.ODH_CORE_TOKEN_CLIENT_ID = "${{ secrets.CONTENT_GTFS_TO_TRIP_CLIENT_ID }}"' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.ODH_CORE_TOKEN_CLIENT_SECRET = "${{ secrets.CONTENT_GTFS_TO_TRIP_CLIENT_SECRET }}"' ${{ env.VALUES_YAML }}
 
       - name: Deploy on cluster
         uses: noi-techpark/github-actions/helm-deploy@v2
