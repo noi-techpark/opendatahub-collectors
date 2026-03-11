@@ -31,6 +31,9 @@ func serve(inputCh chan<- dc.Input[PushPayload]) {
 	e.HEAD("/push/skidata/parking-stations", func(c echo.Context) error {
 		return c.NoContent(http.StatusOK)
 	})
+	e.GET("/push/skidata/parking-stations/health", func(c echo.Context) error {
+		return c.NoContent(http.StatusOK)
+	})
 	e.HEAD("/push/skidata/parking-stations/health", func(c echo.Context) error {
 		return c.NoContent(http.StatusOK)
 	})
