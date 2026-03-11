@@ -31,6 +31,9 @@ func serve(inputCh chan<- dc.Input[PushPayload]) {
 	e.HEAD("/push/skidata/parking-stations", func(c echo.Context) error {
 		return c.NoContent(http.StatusOK)
 	})
+	e.HEAD("/push/skidata/parking-stations/health", func(c echo.Context) error {
+		return c.NoContent(http.StatusOK)
+	})
 
 	skidata := e.Group("/push/skidata/parking-stations",
 		middleware.BasicAuth(validateInbound))
