@@ -6,8 +6,8 @@ package main
 import (
 	"encoding/json"
 	"encoding/xml"
-	"fmt"
 	"os"
+	"os/exec"
 	"testing"
 	"time"
 
@@ -16,7 +16,7 @@ import (
 )
 
 func Test_find(t *testing.T) {
-	data, err := os.ReadFile("netex.xml")
+	data, err := os.ReadFile("testdata/netex.xml")
 	assert.NilError(t, err)
 	var delivery netex.PublicationDelivery
 	err = xml.Unmarshal(data, &delivery)
@@ -45,8 +45,9 @@ func Test_find(t *testing.T) {
 	assert.Assert(t, display.Name == "Caldaro")
 }
 
-func Test_map(t *testing.T) {
-	nb, err := os.ReadFile("netex.xml")
+func Test_validate(t *testing.T) {
+	t.Log("reading netex")
+	nb, err := os.ReadFile("testdata/netex.xml")
 	assert.NilError(t, err)
 	var n netex.PublicationDelivery
 	err = xml.Unmarshal(nb, &n)
@@ -54,6 +55,7 @@ func Test_map(t *testing.T) {
 
 	c := NewCache()
 
+	t.Log("reading example.json")
 	ex, err := os.ReadFile("testdata/example.json")
 	assert.NilError(t, err)
 	var dto Dto
@@ -62,12 +64,24 @@ func Test_map(t *testing.T) {
 
 	refTime, _ := time.Parse(time.RFC3339, "2026-02-03T19:45:00.000+01:00")
 
+	t.Log("converting to SIRI")
 	s, err := raw2Siri(c, refTime, dto, n)
 	assert.NilError(t, err)
-	fmt.Println(s)
-	xmlBytes, err := json.MarshalIndent(s, "", "  ")
+
+	t.Log("writing SIRI json")
+	jsonBytes, err := json.MarshalIndent(s, "", "  ")
 	assert.NilError(t, err)
-	os.WriteFile("siri.json", xmlBytes, 0644)
+	os.WriteFile("siri.json", jsonBytes, 0644)
+
+	t.Log("writing SIRI xml")
+	xmlBytes, err := xml.MarshalIndent(s, "", "  ")
+	assert.NilError(t, err)
+	os.WriteFile("siri.xml", xmlBytes, 0644)
+
+	t.Log("validating xml")
+	if out, err := exec.Command("xmllint", "--noout", "--schema", "testdata/SIRI/xsd/siri.xsd", "siri.xml").CombinedOutput(); err != nil {
+		t.Fatalf("xml validation failed:\n %s", out)
+	}
 }
 
 func Test_download(t *testing.T) {

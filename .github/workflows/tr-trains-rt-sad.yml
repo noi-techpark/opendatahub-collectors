@@ -25,6 +25,9 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
+        # SIRI repo is needed as submodule
+        with:
+          submodules: true
 
       - name: Run tests
         run: docker run --rm --volume ./src:/code $(docker build -q . -f infrastructure/docker/Dockerfile --target test)

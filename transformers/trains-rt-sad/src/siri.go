@@ -27,25 +27,21 @@ func NewSiri() Siri {
 	return siri
 }
 
-type DeliveryThingy struct {
-	ResponseTimestamp string
-	ProducerRef       string
-}
-
 type ServiceDelivery struct {
-	DeliveryThingy
+	ResponseTimestamp         string
+	ProducerRef               string
 	VehicleMonitoringDelivery VehicleMonitoringDelivery
 }
 
 type VehicleMonitoringDelivery struct {
-	DeliveryThingy
-	VehicleActivity []VehicleActivity
+	ResponseTimestamp string
+	VehicleActivity   []VehicleActivity
 }
 
 type VehicleActivity struct {
-	RecordedAtTime          string
-	ValidUntilTime          string
-	VehicleMonitoringRef    string
+	RecordedAtTime string
+	ValidUntilTime string
+	// VehicleMonitoringRef    string
 	MonitoredVehicleJourney struct {
 		LineRef                 string
 		DirectionRef            string

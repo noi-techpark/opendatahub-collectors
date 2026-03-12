@@ -84,7 +84,6 @@ func main() {
 
 	listener := tr.NewTr[string](ctx, env.Env)
 	err := listener.Start(ctx, func(ctx context.Context, r *rdb.Raw[string]) error {
-
 		// Every 24 hours there is a new Netex file. Make sure we're somewhat up to date
 		mu.Lock()
 		defer mu.Unlock()
@@ -137,7 +136,6 @@ func raw2Siri(c *Cache, refTime time.Time, r Dto, n netex.PublicationDelivery) (
 	s := NewSiri()
 	s.ServiceDelivery.ProducerRef = producer
 	s.ServiceDelivery.ResponseTimestamp = respTs
-	s.ServiceDelivery.VehicleMonitoringDelivery.ProducerRef = producer
 	s.ServiceDelivery.VehicleMonitoringDelivery.ResponseTimestamp = respTs
 
 	locItaly, err := time.LoadLocation("Europe/Rome")
@@ -183,7 +181,7 @@ func raw2Siri(c *Cache, refTime time.Time, r Dto, n netex.PublicationDelivery) (
 		}
 		vj.DirectionRef = nJourneyPattern.DirectionType
 
-		vj.FramedVehicleJourneyRef.DataFrameRef = refTime.Format(time.RFC3339)
+		vj.FramedVehicleJourneyRef.DataFrameRef = refTime.Format("2006-01-02")
 		vj.FramedVehicleJourneyRef.DatedVehicleJourneyRef = nJourney.Id
 
 		nLine := findLine(n, c, nJourney.LineRef.Ref)
@@ -226,8 +224,14 @@ func raw2Siri(c *Cache, refTime time.Time, r Dto, n netex.PublicationDelivery) (
 }
 
 func mapDelay(d int) string {
-	// delay for Siri is in seconds. we assume our source is in minutes
-	return fmt.Sprintf("PT%dS", d*60)
+	// delay for Siri is in seconds, source is in minutes
+	delay := d * 60
+
+	if delay < 0 {
+		// xml time period format requiest the minus sign to be in front if negative
+		return fmt.Sprintf("-PT%dS", -delay)
+	}
+	return fmt.Sprintf("PT%dS", delay)
 }
 
 type Cache struct {

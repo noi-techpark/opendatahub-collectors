@@ -11,6 +11,7 @@ SPDX-PackageDownloadLocation = "https://github.com/noi-techpark/opendatahub-coll
 path = [
     ".github/**",
     "**/.gitignore",
+    "**/.gitmodules",
     ".pre-commit-config.yaml",
     "**/*.json",
     "**/*.pdf",
