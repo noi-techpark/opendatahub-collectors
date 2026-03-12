@@ -164,7 +164,7 @@ func raw2Siri(c *Cache, refTime time.Time, r Dto, n netex.PublicationDelivery) (
 		va := VehicleActivity{}
 		posTime := parseTs(upd.Position.Time)
 		if refTime.Before(posTime) {
-			slog.Warn("implausible posTime in the future", "posTime", posTime, "refTime", refTime, "train", train)
+			slog.Warn("implausible posTime in the future", "Position.Time", upd.Position.Time, "parsed", posTime, "refTime", refTime, "train", train)
 		}
 		va.RecordedAtTime = posTime.Format(time.RFC3339)
 		va.ValidUntilTime = posTime.Add(time.Hour * 24).Format(time.RFC3339)
