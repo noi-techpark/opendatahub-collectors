@@ -132,7 +132,7 @@ func main() {
 }
 
 func raw2Siri(c *Cache, refTime time.Time, r Dto, n netex.PublicationDelivery) (Siri, error) {
-	producer := "TBD"
+	producer := "SAD"
 	respTs := time.Now().Format(time.RFC3339)
 	s := NewSiri()
 	s.ServiceDelivery.ProducerRef = producer
