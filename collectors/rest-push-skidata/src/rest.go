@@ -47,7 +47,7 @@ func serve(inputCh chan<- dc.Input[PushPayload]) {
 	skidata := e.Group("/push/skidata/parking-stations",
 		middleware.BasicAuth(validateInbound))
 
-	skidata.POST("/:facilityId", func(c echo.Context) error {
+	skidata.POST("/:slug", func(c echo.Context) error {
 		return handlePush(c, inputCh)
 	})
 
@@ -63,18 +63,15 @@ func validateInbound(username, password string, c echo.Context) (bool, error) {
 }
 
 func handlePush(c echo.Context, inputCh chan<- dc.Input[PushPayload]) error {
-	facilityId := c.Param("facilityId")
-
 	body, err := io.ReadAll(c.Request().Body)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Unable to read request body").WithInternal(err)
 	}
 
-	slog.Debug("Incoming push", "facilityId", facilityId)
+	slog.Debug("Incoming push")
 
 	inputCh <- dc.NewInput(c.Request().Context(), PushPayload{
-		FacilityId: facilityId,
-		Body:       body,
+		Body: body,
 	})
 
 	return c.JSON(http.StatusOK, map[string]string{

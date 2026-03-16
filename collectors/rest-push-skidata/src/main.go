@@ -18,8 +18,7 @@ import (
 
 // PushPayload carries the raw JSON body together with the facilityId from the URL.
 type PushPayload struct {
-	FacilityId string
-	Body       json.RawMessage
+	Body json.RawMessage
 }
 
 var env struct {
