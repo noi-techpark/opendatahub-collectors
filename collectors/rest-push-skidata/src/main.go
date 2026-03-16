@@ -51,7 +51,7 @@ func main() {
 			return &rdb.RawAny{
 				Provider:  env.PROVIDER,
 				Timestamp: time.Now(),
-				Rawdata:   p,
+				Rawdata:   p.Body,
 			}, nil
 		})
 	}()
