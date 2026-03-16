@@ -17,13 +17,13 @@ import (
 	"github.com/noi-techpark/opendatahub-go-sdk/tel"
 )
 
-type CountingArea struct {
-	CarparkId      int    `json:"carparkId"`
-	CountingAreaId int    `json:"countingAreaId"`
-	Name           string `json:"name"`
-	Capacity       int    `json:"capacity"`
-	OccupancyLimit int    `json:"occupancyLimit"`
-	FreeLimit      int    `json:"freeLimit"`
+type CountingCategory struct {
+	CarparkId          int    `json:"carparkId"`
+	CountingCategoryId int    `json:"countingCategoryId"`
+	Name               string `json:"name"`
+	Capacity           int    `json:"capacity"`
+	OccupancyLimit     int    `json:"occupancyLimit"`
+	FreeLimit          int    `json:"freeLimit"`
 }
 
 var httpClient *http.Client
@@ -100,17 +100,21 @@ func healthCheck(cred FacilityCredential) error {
 }
 
 func subscribeFacility(cred FacilityCredential) error {
-	areas, err := getCountingAreas(cred)
+	categories, err := getCountingCategories(cred)
 	if err != nil {
-		return fmt.Errorf("failed to get counting areas: %w", err)
+		return fmt.Errorf("failed to get counting categories: %w", err)
 	}
 
-	carparkIds := make([]int, 0, len(areas))
-	for _, a := range areas {
-		carparkIds = append(carparkIds, a.CarparkId)
+	seen := make(map[int]bool)
+	carparkIds := make([]int, 0)
+	for _, c := range categories {
+		if !seen[c.CarparkId] {
+			seen[c.CarparkId] = true
+			carparkIds = append(carparkIds, c.CarparkId)
+		}
 	}
 
-	slog.Info("Fetched counting areas", "facility", cred.Facility, "carparkIds", carparkIds)
+	slog.Info("Fetched counting categories", "facility", cred.Facility, "carparkIds", carparkIds)
 
 	err = enableNotifications(cred, carparkIds)
 	if err != nil {
@@ -119,8 +123,8 @@ func subscribeFacility(cred FacilityCredential) error {
 	return nil
 }
 
-func getCountingAreas(cred FacilityCredential) ([]CountingArea, error) {
-	url := cred.ApiURL(fmt.Sprintf("countingareas/%s", cred.Facility))
+func getCountingCategories(cred FacilityCredential) ([]CountingCategory, error) {
+	url := cred.ApiURL(fmt.Sprintf("countingcategories/%s", cred.Facility))
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -137,15 +141,15 @@ func getCountingAreas(cred FacilityCredential) ([]CountingArea, error) {
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
-		return nil, fmt.Errorf("counting areas returned %d: %s", resp.StatusCode, string(body))
+		return nil, fmt.Errorf("counting categories returned %d: %s", resp.StatusCode, string(body))
 	}
 
-	var areas []CountingArea
-	err = json.NewDecoder(resp.Body).Decode(&areas)
+	var categories []CountingCategory
+	err = json.NewDecoder(resp.Body).Decode(&categories)
 	if err != nil {
-		return nil, fmt.Errorf("failed to decode counting areas: %w", err)
+		return nil, fmt.Errorf("failed to decode counting categories: %w", err)
 	}
-	return areas, nil
+	return categories, nil
 }
 
 func enableNotifications(cred FacilityCredential, carparkIds []int) error {
