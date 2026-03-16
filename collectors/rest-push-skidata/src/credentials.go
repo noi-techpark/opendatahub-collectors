@@ -4,18 +4,25 @@
 
 package main
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type FacilityCredential struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
+	Facility string `json:"facility"`
+	URL      string `json:"url"`
 }
 
-// CredentialsMap maps facilityId to its credentials.
-type CredentialsMap map[string]FacilityCredential
+// ApiURL returns the full URL for a Skidata Dynamic Data API call.
+func (c FacilityCredential) ApiURL(path string) string {
+	return fmt.Sprintf("%s/bei/advconn/dynamicdata/v1/%s", c.URL, path)
+}
 
-func ParseCredentials(jsonBlob string) (CredentialsMap, error) {
-	var creds CredentialsMap
+func ParseCredentials(jsonBlob string) ([]FacilityCredential, error) {
+	var creds []FacilityCredential
 	err := json.Unmarshal([]byte(jsonBlob), &creds)
 	return creds, err
 }

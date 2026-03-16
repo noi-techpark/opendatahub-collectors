@@ -11,8 +11,10 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"time"
 
 	"github.com/hashicorp/go-retryablehttp"
+	"github.com/noi-techpark/opendatahub-go-sdk/tel"
 )
 
 type CountingArea struct {
@@ -32,17 +34,75 @@ func init() {
 	httpClient = rc.StandardClient()
 }
 
-func SubscribeAll(creds CredentialsMap) {
-	for facilityId, cred := range creds {
-		go subscribeFacility(facilityId, cred)
+func SubscribeAll(creds []FacilityCredential) {
+	for _, cred := range creds {
+		go manageFacility(cred)
 	}
 }
 
-func subscribeFacility(facilityId string, cred FacilityCredential) {
-	areas, err := getCountingAreas(facilityId, cred)
+func manageFacility(cred FacilityCredential) {
+	defer tel.FlushOnPanic()
+
+	backoff := time.Second
+	for {
+		err := healthCheck(cred)
+		if err != nil {
+			slog.Error("Health check failed", "facility", cred.Facility, "err", err)
+			time.Sleep(backoff)
+			backoff = min(backoff*2, 30*time.Second)
+			continue
+		}
+
+		backoff = time.Second
+		err = subscribeFacility(cred)
+		if err != nil {
+			slog.Error("Subscription failed", "facility", cred.Facility, "err", err)
+			time.Sleep(backoff)
+			backoff = min(backoff*2, 30*time.Second)
+			continue
+		}
+
+		backoff = time.Second
+		slog.Info("Subscribed to push notifications", "facility", cred.Facility)
+
+		// monitoring loop
+		for {
+			time.Sleep(30 * time.Second)
+			err = healthCheck(cred)
+			if err != nil {
+				slog.Warn("Health check failed, re-subscribing", "facility", cred.Facility, "err", err)
+				break
+			}
+		}
+	}
+}
+
+func healthCheck(cred FacilityCredential) error {
+	url := cred.ApiURL("health")
+
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		slog.Error("Failed to get counting areas", "facilityId", facilityId, "err", err)
-		return
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+	req.SetBasicAuth(cred.Username, cred.Password)
+
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("request failed: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("health check returned %d: %s", resp.StatusCode, string(body))
+	}
+	return nil
+}
+
+func subscribeFacility(cred FacilityCredential) error {
+	areas, err := getCountingAreas(cred)
+	if err != nil {
+		return fmt.Errorf("failed to get counting areas: %w", err)
 	}
 
 	carparkIds := make([]int, 0, len(areas))
@@ -50,20 +110,17 @@ func subscribeFacility(facilityId string, cred FacilityCredential) {
 		carparkIds = append(carparkIds, a.CarparkId)
 	}
 
-	slog.Info("Fetched counting areas", "facilityId", facilityId, "carparkIds", carparkIds)
+	slog.Info("Fetched counting areas", "facility", cred.Facility, "carparkIds", carparkIds)
 
-	err = enableNotifications(facilityId, cred, carparkIds)
+	err = enableNotifications(cred, carparkIds)
 	if err != nil {
-		slog.Error("Failed to enable notifications", "facilityId", facilityId, "err", err)
-		return
+		return fmt.Errorf("failed to enable notifications: %w", err)
 	}
-
-	slog.Info("Subscribed to push notifications", "facilityId", facilityId)
+	return nil
 }
 
-func getCountingAreas(facilityId string, cred FacilityCredential) ([]CountingArea, error) {
-	url := fmt.Sprintf("%s/bei/advconn/dynamicdata/v1/countingareas/%s",
-		env.SKIDATA_BASE_URL, facilityId)
+func getCountingAreas(cred FacilityCredential) ([]CountingArea, error) {
+	url := cred.ApiURL(fmt.Sprintf("countingareas/%s", cred.Facility))
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -91,9 +148,8 @@ func getCountingAreas(facilityId string, cred FacilityCredential) ([]CountingAre
 	return areas, nil
 }
 
-func enableNotifications(facilityId string, cred FacilityCredential, carparkIds []int) error {
-	url := fmt.Sprintf("%s/bei/advconn/dynamicdata/v1/notifications/enable/%s",
-		env.SKIDATA_BASE_URL, facilityId)
+func enableNotifications(cred FacilityCredential, carparkIds []int) error {
+	url := cred.ApiURL(fmt.Sprintf("notifications/enable/%s", cred.Facility))
 
 	body, err := json.Marshal(carparkIds)
 	if err != nil {
