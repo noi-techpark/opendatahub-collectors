@@ -27,7 +27,7 @@ func MapBrennerLECEventToAnnouncement(tags clib.TagDefs, event dto.BrennerLECEve
 			Active: true,
 			Source: clib.StringPtr(SOURCE),
 			LicenseInfo: &clib.LicenseInfo{
-				ClosedData: true,
+				ClosedData: false,
 				License:    clib.StringPtr("CC0"),
 			},
 			Geo: map[string]clib.GpsInfo{},
