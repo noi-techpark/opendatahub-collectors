@@ -144,12 +144,15 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 		}
 
 		if len(payload.Rawdata.GeofencingZones.Features) > 0 {
+			sort.Slice(payload.Rawdata.GeofencingZones.Features, func(i, j int) bool {
+				return payload.Rawdata.GeofencingZones.Features[i].Properties.ProviderID < payload.Rawdata.GeofencingZones.Features[j].Properties.ProviderID
+			})
 			bdpStation.MetaData["geofencing_zones"] = payload.Rawdata.GeofencingZones
 		}
 
 		if len(payload.Rawdata.SystemHours) > 0 {
 			sort.Slice(payload.Rawdata.SystemHours, func(i, j int) bool {
-				return payload.Rawdata.SystemHours[i].StartTime < payload.Rawdata.SystemHours[j].StartTime
+				return payload.Rawdata.SystemHours[i].ProviderID < payload.Rawdata.SystemHours[j].ProviderID
 			})
 			bdpStation.MetaData["system_hours"] = payload.Rawdata.SystemHours
 		}
