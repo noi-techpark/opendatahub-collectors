@@ -5,6 +5,7 @@ on:
     paths:
       - "collectors/api-crawler/**"
       - "!collectors/api-crawler/infrastructure/helm/*"
+      - "!collectors/api-crawler/infrastructure/crawler-config/*"
       - "collectors/api-crawler/infrastructure/helm/bike-boxes.*.yaml"
       - "collectors/api-crawler/infrastructure/crawler-config/bike-boxes.yaml"
       - ".github/workflows/dc-api-crawler-bike-boxes.yml"

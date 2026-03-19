@@ -5,6 +5,7 @@ on:
     paths:
       - "collectors/api-crawler/**"
       - "!collectors/api-crawler/infrastructure/helm/*"
+      - "!collectors/api-crawler/infrastructure/crawler-config/*"
       - "collectors/api-crawler/infrastructure/helm/a22-events-opendata.yaml"
       - "collectors/api-crawler/infrastructure/crawler-config/a22-events-opendata.silky.yaml"
       - ".github/workflows/dc-api-crawler-a22-events-opendata.yml"
