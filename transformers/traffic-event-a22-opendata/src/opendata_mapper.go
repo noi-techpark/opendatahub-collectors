@@ -108,16 +108,14 @@ func mapOpendataBase(rd *roadData, event dto.A22OpendataEvent, tagID string) (od
 	tag := tags.FindById(tagID)
 	ann.Detail = map[string]*clib.DetailGeneric{
 		"it": {
-			Title:    clib.StringPtr(tag.NameIt),
-			BaseText: clib.StringPtr(buildOpendataLocationText(event, "it")),
+			Title:    clib.StringPtr(fmt.Sprintf("%s - %s", tag.NameIt, buildOpendataLocationText(event, "it"))),
+			BaseText: clib.StringPtr(event.Descrizione),
 		},
 		"de": {
-			Title:    clib.StringPtr(tag.NameDe),
-			BaseText: clib.StringPtr(buildOpendataLocationText(event, "de")),
+			Title: clib.StringPtr(fmt.Sprintf("%s - %s", tag.NameDe, buildOpendataLocationText(event, "de"))),
 		},
 		"en": {
-			Title:    clib.StringPtr(tag.NameEn),
-			BaseText: clib.StringPtr(buildOpendataLocationText(event, "en")),
+			Title: clib.StringPtr(fmt.Sprintf("%s - %s", tag.NameEn, buildOpendataLocationText(event, "en"))),
 		},
 	}
 
