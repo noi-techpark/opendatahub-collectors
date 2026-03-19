@@ -35,7 +35,7 @@ type Generic struct {
 
 	// need to make typing explicit because map[string]any is not properly hashed
 	Mapping struct {
-		ProviderA22 ProviderA22 `json:"ProviderA22"`
+		ProviderA22Open ProviderA22 `json:"ProviderA22Open"`
 	} `json:"Mapping"`
 
 	Source *string                 `json:"Source,omitempty" hash:"ignore"`
