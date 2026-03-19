@@ -93,7 +93,7 @@ func MapA22EventToAnnouncement(tags clib.TagDefs, event dto.A22Event, id string)
 			Active: true,
 			Source: clib.StringPtr(SOURCE),
 			LicenseInfo: &clib.LicenseInfo{
-				ClosedData: false,
+				ClosedData: true,
 				License:    clib.StringPtr("CC0"),
 			},
 			Geo: map[string]clib.GpsInfo{},
