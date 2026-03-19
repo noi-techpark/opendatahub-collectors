@@ -96,6 +96,7 @@ func main() {
 			ms.FailOnError(ctx, err, "could not unmarshal netex")
 			cache = NewCache()
 			nTime = time.Now()
+			slog.Info("Successfully downloaded new NeTEx")
 		}
 
 		dto := Dto{}
@@ -220,6 +221,10 @@ func raw2Siri(c *Cache, refTime time.Time, r Dto, n netex.PublicationDelivery) (
 		vj.VehicleLocation.Longitude = float32(upd.Position.Longitude)
 		vj.Delay = mapDelay(upd.Trip.Delay)
 		vj.VehicleRef = train //TODO: this is not correct, should be a valid ID, but there are no vehicles defined in the reference Netex. Sta does it like this on their other SIRI-VM though
+
+		if upd.Trip.Delay < -10 {
+			slog.Warn("Detected train with suspiciously large anticipation", "upd", upd)
+		}
 
 		s.ServiceDelivery.VehicleMonitoringDelivery.VehicleActivity = append(s.ServiceDelivery.VehicleMonitoringDelivery.VehicleActivity, va)
 	}
