@@ -76,6 +76,7 @@ func main() {
 		if craw.GetDataStream() != nil {
 			// handle streaming
 			go func(ctx context.Context) {
+				defer tel.FlushOnPanic()
 				for {
 					select {
 					case <-ctx.Done():
