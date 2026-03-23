@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2026 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/traffic-swiss
+  pullPolicy: IfNotPresent
+  tag: "0.1.0"
+
+env:
+  MQ_CLIENT: dc-traffic-swiss
+  PROVIDER: traffic-swiss/fedro
+  CRON: "20 * * * * *"
+  CRON_STATIC: "0 0 2 * * *"
+  STATIC_URL: https://data.opentransportdata.swiss/de/dataset/trafficcounters
+  REALTIME_URL: https://data.opentransportdata.swiss/de/dataset/trafficcountersrealtime
+  SERVICE_NAME: dc-traffic-swiss
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
+  - name: AUTH_BEARER_TOKEN
+    secret: traffic-swiss-api-key
+    key: token
