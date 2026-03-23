@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"sort"
 	"strings"
 
 	"github.com/noi-techpark/go-bdp-client/bdplib"
@@ -127,16 +128,32 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 		// Note: Spec mentions filtering by provider_id, but without provider_id in SystemRegion,
 		// we store all providers/plans/hours/zones for the region as metadata
 		// Only add non-empty metadata to avoid null pointer issues
+
 		if len(payload.Rawdata.Providers) > 0 {
+			sort.Slice(payload.Rawdata.Providers, func(i, j int) bool {
+				return payload.Rawdata.Providers[i].ProviderID < payload.Rawdata.Providers[j].ProviderID
+			})
 			bdpStation.MetaData["providers"] = payload.Rawdata.Providers
 		}
+
 		if len(payload.Rawdata.Plans) > 0 {
+			sort.Slice(payload.Rawdata.Plans, func(i, j int) bool {
+				return payload.Rawdata.Plans[i].PlanID < payload.Rawdata.Plans[j].PlanID
+			})
 			bdpStation.MetaData["system_pricing_plans"] = payload.Rawdata.Plans
 		}
-		if payload.Rawdata.GeofencingZones.Features != nil && len(payload.Rawdata.GeofencingZones.Features) > 0 {
+
+		if len(payload.Rawdata.GeofencingZones.Features) > 0 {
+			sort.Slice(payload.Rawdata.GeofencingZones.Features, func(i, j int) bool {
+				return payload.Rawdata.GeofencingZones.Features[i].Properties.ProviderID < payload.Rawdata.GeofencingZones.Features[j].Properties.ProviderID
+			})
 			bdpStation.MetaData["geofencing_zones"] = payload.Rawdata.GeofencingZones
 		}
+
 		if len(payload.Rawdata.SystemHours) > 0 {
+			sort.Slice(payload.Rawdata.SystemHours, func(i, j int) bool {
+				return payload.Rawdata.SystemHours[i].ProviderID < payload.Rawdata.SystemHours[j].ProviderID
+			})
 			bdpStation.MetaData["system_hours"] = payload.Rawdata.SystemHours
 		}
 
@@ -178,30 +195,30 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 			stationType = GetStationTypeForPhysicalStation(mostCommonType)
 		}
 
-		// Fallback/Correction: If the determined type is Generic or Bike (default), 
+		// Fallback/Correction: If the determined type is Generic or Bike (default),
 		// try to deduce a more specific provider from the StationID itself.
 		// This fixes "Orphan" stations (no region) that actually belong to CarProviders (e.g. "mobility:123")
-		if (stationType == GetStationTypeForPhysicalStation(StationTypeGenericSharing) || 
-		stationType == GetStationTypeForPhysicalStation("BikeSharingService")) && s.RegionID == "" {
-			
+		if (stationType == GetStationTypeForPhysicalStation(StationTypeGenericSharing) ||
+			stationType == GetStationTypeForPhysicalStation("BikeSharingService")) && s.RegionID == "" {
+
 			if deducedProvider := payload.Rawdata.deduceProviderFromStationID(s.StationID, providersMap); deducedProvider != nil {
 				stationType = GetStationTypeForPhysicalStation(deducedProvider.GetStationType())
 
 				// Create a virtual region for this provider if it doesn't exist
 				// Use the provider ID as the region key
 				targetRegionID := deducedProvider.ProviderID
-				
+
 				// Deduplicate: Check if we already created a virtual station for this provider/region
 				if _, exists := virtualStations[targetRegionID]; !exists {
 					// Create new virtual station (Region)
 					// ID format: <origin>:re:<provider_id>
 					regionStationID := fmt.Sprintf("%s:re:%s", bdp.GetOrigin(), targetRegionID)
 					bdpRegionStation := bdplib.CreateStation(regionStationID, deducedProvider.Name, deducedProvider.GetStationType(), 0, 0, bdp.GetOrigin())
-					
+
 					// Add minimal metadata
 					bdpRegionStation.MetaData = make(map[string]any)
 					// We could add the provider info here if needed
-					
+
 					virtualStations[targetRegionID] = bdpRegionStation
 					virtualStationTypes[targetRegionID] = deducedProvider.GetStationType()
 				}
@@ -216,7 +233,7 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 		}
 
 		bdpStation := bdplib.CreateStation(fmt.Sprintf("%s:st:%s", bdp.GetOrigin(), s.StationID), s.Name, stationType, s.Lat, s.Lon, bdp.GetOrigin())
-		
+
 		parentRegionID := s.RegionID
 
 		if parentRegionID == "" {
@@ -228,7 +245,7 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 		if parentRegionID != "" {
 			if startWithColon := strings.HasSuffix(parentRegionID, ":"); startWithColon {
 			}
-			
+
 			if vs, ok := virtualStations[parentRegionID]; ok {
 				bdpStation.ParentStation = vs.Id
 			}

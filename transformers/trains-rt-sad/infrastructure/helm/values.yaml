@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2025 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-trains-rt-sad
+  pullPolicy: IfNotPresent
+  tag: latest
+
+env:
+  # ODH Core Writer Connection
+  LOG_LEVEL: "INFO"
+  MQ_QUEUE: rest-poller.trains-rt-sad
+  MQ_EXCHANGE: routed
+  MQ_KEY: rest-poller.trains-rt-sad
+  MQ_CLIENT: tr-trains-rt-sad
+
+  RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
+
+  SERVICE_NAME: tr-trains-rt-sad
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+envSecretRef:
+  - name: MQ_URI 
+    secret: rabbitmq-svcbind
+    key: uri

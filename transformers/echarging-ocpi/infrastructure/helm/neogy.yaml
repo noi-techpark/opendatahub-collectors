@@ -15,7 +15,7 @@ env:
   
   LOG_LEVEL: INFO
 
-  NINJA_URL: https://mobility.api.opendatahub.testingmachine.eu
+  NINJA_URL: http://ninja-api.core.svc.cluster.local
 
   MQ_EXCHANGE: routed
   MQ_PUSH_QUEUE: echarging-ocpi.neogy-push-evse
