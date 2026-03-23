@@ -39,7 +39,7 @@ jobs:
     concurrency: dc-gtfs-rt-json-sta-trip-updates-test
     environment: test
     env:
-      VALUES_YAML: infrastructure/helm/sta-trip-updates.values.test.yaml
+      VALUES_YAML: infrastructure/helm/sta-trip-updates.test.yaml
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
