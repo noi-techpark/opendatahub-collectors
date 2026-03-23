@@ -1,0 +1,15 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/dc-gtfs-rt-json
+  pullPolicy: IfNotPresent
+  tag: ""
+
+env:
+  CRON: "0/20 * * * * *"
+  CONFIG_PATH: "/config/config.yaml"
+  CALLBACK_URL: "http://files-nginx-internal.core.svc.cluster.local/gtfs-rt-json/feeds/sta/trip-updates.json"
+  SERVICE_NAME: dc-gtfs-rt-json-sta
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+configMap:
+  mountPath: "/config/"
+  files: {}

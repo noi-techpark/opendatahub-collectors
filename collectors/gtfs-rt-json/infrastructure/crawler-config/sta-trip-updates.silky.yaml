@@ -1,0 +1,14 @@
+# Silky config for gtfs-rt-json
+# See https://github.com/noi-techpark/go-silky for documentation
+
+rootContext: {}
+stream: false
+
+steps:
+  - type: request
+    name: "Fetch GTFS-RT data"
+    request:
+      url: "https://efa.sta.bz.it/gtfs-r?FORMAT=json"
+      method: GET
+      headers:
+        Accept: application/json
