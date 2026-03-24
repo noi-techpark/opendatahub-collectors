@@ -5,6 +5,7 @@
 package main
 
 import (
+	"context"
 	"encoding/xml"
 	"fmt"
 	"io"
@@ -23,11 +24,13 @@ type Root struct {
 
 // StationDTO represents a traffic sensor station.
 type StationDTO struct {
-	ID        string         `json:"id"`
-	Lat       float64        `json:"lat"`
-	Lon       float64        `json:"lon"`
-	Metadata  map[string]any `json:"metadata"`
-	DataTypes []string       `json:"data_types"`
+	ID          string         `json:"id"`
+	Lat         float64        `json:"lat"`
+	Lon         float64        `json:"lon"`
+	StationType string         `json:"stationtype"`
+	Origin      string         `json:"origin"`
+	Metadata    map[string]any `json:"metadata"`
+	DataTypes   []string       `json:"data_types"`
 }
 
 // MeasurementDTO represents a single aggregated measurement.
@@ -100,10 +103,22 @@ type MeasurementSiteLocation struct {
 //         <measurementSiteReference id="CH:0002.01"/>
 //         <measurementTimeDefault>2024-09-20T10:00:00Z</measurementTimeDefault>
 //         <measuredValue index="11">
-//           <vehicleFlowRate>42.0</vehicleFlowRate>
+//           <measuredValue>
+//             <basicData xsi:type="dx223:TrafficFlow">
+//               <vehicleFlow>
+//                 <vehicleFlowRate>300</vehicleFlowRate>
+//               </vehicleFlow>
+//             </basicData>
+//           </measuredValue>
 //         </measuredValue>
 //         <measuredValue index="12">
-//           <speed>112.4</speed>
+//           <measuredValue>
+//             <basicData xsi:type="dx223:TrafficSpeed">
+//               <averageVehicleSpeed>
+//                 <speed>112.4</speed>
+//               </averageVehicleSpeed>
+//             </basicData>
+//           </measuredValue>
 //         </measuredValue>
 //       </siteMeasurements>
 //     </payloadPublication>
@@ -134,8 +149,8 @@ type SiteMeasurementReference struct {
 
 type MeasuredValue struct {
 	Index           string  `xml:"index,attr"`
-	VehicleFlowRate float64 `xml:"vehicleFlowRate"`
-	SpeedValue      float64 `xml:"speed"`
+	VehicleFlowRate float64 `xml:"measuredValue>basicData>vehicleFlow>vehicleFlowRate"`
+	SpeedValue      float64 `xml:"measuredValue>basicData>averageVehicleSpeed>speed"`
 }
 
 // ── SOAP request constants ────────────────────────────────────────────────────
@@ -143,9 +158,16 @@ type MeasuredValue struct {
 const realtimeSoapAction = "http://opentransportdata.swiss/TDP/Soap_Datex2/Pull/v1/pullMeasuredData"
 
 const realtimeSoapBody = `<?xml version="1.0" encoding="UTF-8"?>
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:dx223="http://datex2.eu/schema/2/2_0">
   <SOAP-ENV:Body>
-    <tdpplv1:pullMeasuredData xmlns:tdpplv1="http://datex2.eu/wsdl/TDP/Soap_Datex2/Pull/v1"/>
+    <dx223:d2LogicalModel modelBaseVersion="2">
+      <dx223:exchange>
+        <dx223:supplierIdentification>
+          <dx223:country>ch</dx223:country>
+          <dx223:nationalIdentifier>OTD</dx223:nationalIdentifier>
+        </dx223:supplierIdentification>
+      </dx223:exchange>
+    </dx223:d2LogicalModel>
   </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>`
 
@@ -178,9 +200,11 @@ func ParseStaticXML(data []byte) ([]StationDTO, map[string]map[string]string, er
 		}
 
 		dtos = append(dtos, StationDTO{
-			ID:  site.ID,
-			Lat: site.Location.Lat,
-			Lon: site.Location.Lon,
+			ID:          site.ID,
+			Lat:         site.Location.Lat,
+			Lon:         site.Location.Lon,
+			StationType: "TrafficSensor",
+			Origin:      "FEDRO",
 			Metadata: map[string]any{
 				"lane":        site.Location.Lane,
 				"carriageway": site.Location.Carriageway,
@@ -247,6 +271,12 @@ func FetchSOAP(endpoint, soapAction, body, bearerToken string) ([]byte, error) {
 	client := retryablehttp.NewClient()
 	client.RetryMax = 3
 	client.Logger = nil
+	client.CheckRetry = func(ctx context.Context, resp *http.Response, err error) (bool, error) {
+		if resp != nil && (resp.StatusCode == http.StatusTooManyRequests || resp.StatusCode == http.StatusForbidden) {
+			return false, nil
+		}
+		return retryablehttp.DefaultRetryPolicy(ctx, resp, err)
+	}
 
 	resp, err := client.Do(req)
 	if err != nil {

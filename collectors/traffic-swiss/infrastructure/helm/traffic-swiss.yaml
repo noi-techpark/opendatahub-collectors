@@ -12,8 +12,8 @@ env:
   PROVIDER: traffic-swiss/fedro
   CRON: "20 * * * * *"
   CRON_STATIC: "0 0 2 * * *"
-  STATIC_URL: https://data.opentransportdata.swiss/de/dataset/trafficcounters
-  REALTIME_URL: https://data.opentransportdata.swiss/de/dataset/trafficcountersrealtime
+  STATIC_URL: https://data.opentransportdata.swiss/dataset/9f2cd216-a6a0-47ca-b498-6893bd911f4b/resource/7529d2c0-47bd-4a1d-a85c-fa9a782c9d8b/download/measurementsitetable.current_2025-02-18_00-58-420100_v5.xml
+  REALTIME_URL: https://api.opentransportdata.swiss/TDP/Soap_Datex2/Pull
   SERVICE_NAME: dc-traffic-swiss
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 

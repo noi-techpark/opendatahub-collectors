@@ -103,12 +103,18 @@ func runRealtimeCollection(ctx context.Context, collector *dc.Dc[dc.EmptyData], 
 	}
 
 	stationsMu.RLock()
-	chars := charIndex
+	chars := make(map[string]map[string]string, len(charIndex))
+	for k, v := range charIndex {
+		chars[k] = v
+	}
 	stationsMu.RUnlock()
 
 	var measurements []MeasurementDTO
 	for _, sm := range siteMeasurements {
-		ts, err := time.Parse(time.RFC3339, sm.TimeDefault)
+		ts, err := time.Parse(time.RFC3339Nano, sm.TimeDefault)
+		if err != nil {
+			ts, err = time.Parse(time.RFC3339, sm.TimeDefault)
+		}
 		if err != nil {
 			slog.Warn("bad timestamp in realtime feed", "raw", sm.TimeDefault, "err", err)
 			ts = time.Now()

@@ -33,9 +33,16 @@ services:
       - dev
 
   rabbitmq:
-    extends:
-      file: ../lib/docker-compose/docker-compose.rabbitmq.yml
-      service: rabbitmq
+    image: rabbitmq:management-alpine
+    environment:
+      - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbitmq_management load_definitions "/etc/rabbitmq/definitions.json"
+    ports:
+      - 15673:15672
+    volumes:
+      - ../lib/docker-compose/rabbitmq-definitions.json:/etc/rabbitmq/definitions.json
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 2s
     attach: false
     profiles:
       - dev

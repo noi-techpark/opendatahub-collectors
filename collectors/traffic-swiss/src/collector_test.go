@@ -54,7 +54,8 @@ const minimalStaticXML = `<?xml version="1.0" encoding="UTF-8"?>
 </D2LogicalModel>`
 
 // minimalRealtimeXML mirrors the real SOAP response from the opentransportdata.swiss
-// SOAP endpoint. measuredValue elements have direct children vehicleFlowRate / speed.
+// SOAP endpoint. Each measuredValue element follows the DATEX II v2.3 nested structure:
+// outer measuredValue (with index attr) → inner measuredValue → basicData → vehicle data.
 const minimalRealtimeXML = `<?xml version="1.0" encoding="UTF-8"?>
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
   <SOAP-ENV:Body>
@@ -64,10 +65,22 @@ const minimalRealtimeXML = `<?xml version="1.0" encoding="UTF-8"?>
           <measurementSiteReference id="CH:0002.01"/>
           <measurementTimeDefault>2024-09-20T10:00:00Z</measurementTimeDefault>
           <measuredValue index="11">
-            <vehicleFlowRate>42.0</vehicleFlowRate>
+            <measuredValue>
+              <basicData>
+                <vehicleFlow>
+                  <vehicleFlowRate>42.0</vehicleFlowRate>
+                </vehicleFlow>
+              </basicData>
+            </measuredValue>
           </measuredValue>
           <measuredValue index="12">
-            <speed>112.4</speed>
+            <measuredValue>
+              <basicData>
+                <averageVehicleSpeed>
+                  <speed>112.4</speed>
+                </averageVehicleSpeed>
+              </basicData>
+            </measuredValue>
           </measuredValue>
         </siteMeasurements>
       </payloadPublication>
