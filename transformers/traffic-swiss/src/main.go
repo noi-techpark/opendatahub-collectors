@@ -47,20 +47,23 @@ func main() {
 	err := b.SyncDataTypes(trafficDataTypes)
 	ms.FailOnError(ctx, err, "failed to sync data types")
 
+	agg := NewAggregator()
+
 	listener := tr.NewTr[string](ctx, env.Env)
-	err = listener.Start(ctx, MultiFormatMiddleware[Root](TransformWithBdp(b)))
+	err = listener.Start(ctx, MultiFormatMiddleware[Root](TransformWithBdp(b, agg)))
 	ms.FailOnError(ctx, err, "error while listening to queue")
 }
 
-// TransformWithBdp returns a Handler that calls Transform with the given BDP client.
-func TransformWithBdp(bdp bdplib.Bdp) tr.Handler[Root] {
+// TransformWithBdp returns a Handler that calls Transform with the given BDP client and aggregator.
+func TransformWithBdp(bdp bdplib.Bdp, agg *Aggregator) tr.Handler[Root] {
 	return func(ctx context.Context, payload *rdb.Raw[Root]) error {
-		return Transform(ctx, bdp, payload)
+		return Transform(ctx, bdp, agg, payload)
 	}
 }
 
 // Transform maps the collector payload to ODH BDP API calls.
-func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) error {
+// Raw 1-minute measurements are aggregated over a 10-sample window before being pushed.
+func Transform(ctx context.Context, bdp bdplib.Bdp, agg *Aggregator, payload *rdb.Raw[Root]) error {
 	root := payload.Rawdata
 
 	// 1. Build stations
@@ -79,18 +82,25 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 		return err
 	}
 
-	// 3. Build and push measurements
+	// 3. Aggregate raw measurements and push completed windows
 	if len(root.Measurements) == 0 {
 		return nil
 	}
 
 	dataMap := bdp.CreateDataMap()
 	for _, m := range root.Measurements {
-		dataMap.AddRecord(
-			m.StationID,
-			m.DataType,
-			bdplib.CreateRecord(m.Timestamp.UnixMilli(), m.Value, Period),
-		)
+		aggVal, aggTs, done := agg.Add(m.StationID, m.DataType, m.Value, m.Timestamp)
+		if done {
+			dataMap.AddRecord(
+				m.StationID,
+				m.DataType,
+				bdplib.CreateRecord(aggTs.UnixMilli(), aggVal, Period),
+			)
+		}
+	}
+
+	if len(dataMap.Branch) == 0 {
+		return nil
 	}
 
 	return bdp.PushData(StationType, dataMap)

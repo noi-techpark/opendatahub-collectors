@@ -17,37 +17,53 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// runTransformWithEncoding decodes payload then calls Transform with a BdpMock.
-func runTransformWithEncoding(t *testing.T, payload string) *bdpmock.BdpMock {
+// runTransformOnce calls Transform once with a fresh aggregator.
+// Use for tests that only check station syncing (no measurements needed).
+func runTransformOnce(t *testing.T, payload string) *bdpmock.BdpMock {
 	t.Helper()
 	b := bdpmock.MockFromEnv(bdplib.BdpEnv{BDP_ORIGIN: Origin})
 	root, err := DecodePayload[Root](payload)
 	require.NoError(t, err)
 	raw := &rdb.Raw[Root]{Rawdata: *root, Timestamp: time.Now()}
-	require.NoError(t, Transform(context.Background(), b, raw))
+	require.NoError(t, Transform(context.Background(), b, NewAggregator(), raw))
+	return b.(*bdpmock.BdpMock)
+}
+
+// runTransformNTimes calls Transform n times with the same aggregator and BDP mock.
+// Use for tests that check measurements (requires windowSize calls to emit data).
+func runTransformNTimes(t *testing.T, payload string, n int) *bdpmock.BdpMock {
+	t.Helper()
+	b := bdpmock.MockFromEnv(bdplib.BdpEnv{BDP_ORIGIN: Origin})
+	agg := NewAggregator()
+	root, err := DecodePayload[Root](payload)
+	require.NoError(t, err)
+	raw := &rdb.Raw[Root]{Rawdata: *root, Timestamp: time.Now()}
+	for i := 0; i < n; i++ {
+		require.NoError(t, Transform(context.Background(), b, agg, raw))
+	}
 	return b.(*bdpmock.BdpMock)
 }
 
 func TestTransform_PlainJSON(t *testing.T) {
-	mock := runTransformWithEncoding(t, encodePlainJSON(t, sampleRoot()))
+	mock := runTransformOnce(t, encodePlainJSON(t, sampleRoot()))
 	assert.NotEmpty(t, mock.SyncedStations[StationType])
 }
 
 func TestTransform_Base64JSON(t *testing.T) {
-	mock := runTransformWithEncoding(t, encodeBase64JSON(t, sampleRoot()))
+	mock := runTransformOnce(t, encodeBase64JSON(t, sampleRoot()))
 	assert.NotEmpty(t, mock.SyncedStations[StationType])
 }
 
 func TestTransform_GzipBase64JSON(t *testing.T) {
-	mock := runTransformWithEncoding(t, encodeGzipBase64JSON(t, sampleRoot()))
+	mock := runTransformOnce(t, encodeGzipBase64JSON(t, sampleRoot()))
 	assert.NotEmpty(t, mock.SyncedStations[StationType])
 }
 
 func TestTransform_AllEncodingsProduceSameOutput(t *testing.T) {
 	root := sampleRoot()
-	m1 := runTransformWithEncoding(t, encodePlainJSON(t, root))
-	m2 := runTransformWithEncoding(t, encodeBase64JSON(t, root))
-	m3 := runTransformWithEncoding(t, encodeGzipBase64JSON(t, root))
+	m1 := runTransformNTimes(t, encodePlainJSON(t, root), windowSize)
+	m2 := runTransformNTimes(t, encodeBase64JSON(t, root), windowSize)
+	m3 := runTransformNTimes(t, encodeGzipBase64JSON(t, root), windowSize)
 
 	assert.Equal(t, len(m1.SyncedStations[StationType]), len(m2.SyncedStations[StationType]))
 	assert.Equal(t, len(m1.SyncedStations[StationType]), len(m3.SyncedStations[StationType]))
@@ -60,11 +76,10 @@ func TestTransform_AllEncodingsProduceSameOutput(t *testing.T) {
 }
 
 func TestTransform_StationFields(t *testing.T) {
-	mock := runTransformWithEncoding(t, encodePlainJSON(t, sampleRoot()))
+	mock := runTransformOnce(t, encodePlainJSON(t, sampleRoot()))
 
 	calls := mock.SyncedStations[StationType]
 	require.NotEmpty(t, calls)
-	// Find station CH:0002.01
 	var station *bdplib.Station
 	for _, s := range calls[0].Stations {
 		if s.Id == "CH:0002.01" {
@@ -84,7 +99,7 @@ func TestTransform_StationFields(t *testing.T) {
 }
 
 func TestTransform_Measurements(t *testing.T) {
-	mock := runTransformWithEncoding(t, encodePlainJSON(t, sampleRoot()))
+	mock := runTransformNTimes(t, encodePlainJSON(t, sampleRoot()), windowSize)
 
 	dmJSON, err := json.Marshal(mock.SyncedData[StationType])
 	require.NoError(t, err)
@@ -107,11 +122,9 @@ func TestTransform_EmptyMeasurements(t *testing.T) {
 	r, err := DecodePayload[Root](payload)
 	require.NoError(t, err)
 	raw := &rdb.Raw[Root]{Rawdata: *r, Timestamp: time.Now()}
-	require.NoError(t, Transform(context.Background(), b, raw))
+	require.NoError(t, Transform(context.Background(), b, NewAggregator(), raw))
 
 	mock := b.(*bdpmock.BdpMock)
-	// SyncStations should still be called
 	assert.NotEmpty(t, mock.SyncedStations[StationType])
-	// PushData should NOT be called (no measurements)
 	assert.Empty(t, mock.SyncedData[StationType])
 }

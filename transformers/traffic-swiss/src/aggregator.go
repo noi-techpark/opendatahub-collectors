@@ -17,24 +17,22 @@ type sample struct {
 	ts    time.Time
 }
 
-// Aggregator buffers 1-minute measurements per station/data-type and emits
+// Aggregator buffers 1-minute raw measurements per station/data-type and emits
 // aggregated results once a 10-sample window is complete.
-// Flow types (data type names containing "flow") are summed; speed types are averaged.
+// Flow types are summed; speed types are averaged.
 type Aggregator struct {
 	mu     sync.Mutex
-	buffer map[string]map[string][]sample // [stationID][odhDataType][]sample
+	buffer map[string]map[string][]sample // [stationID][dataType][]sample
 }
 
-// NewAggregator returns an initialised Aggregator.
 func NewAggregator() *Aggregator {
 	return &Aggregator{
 		buffer: make(map[string]map[string][]sample),
 	}
 }
 
-// Add appends a sample for the given station/data-type.
-// When the window of 10 samples is reached it returns (aggregatedValue, lastTimestamp, true)
-// and resets the bucket. Otherwise it returns (0, zero, false).
+// Add appends a raw sample. When 10 samples are accumulated it returns
+// (aggregatedValue, lastTimestamp, true) and resets the bucket.
 func (a *Aggregator) Add(stationID, dataType string, value float64, ts time.Time) (float64, time.Time, bool) {
 	a.mu.Lock()
 	defer a.mu.Unlock()
@@ -62,7 +60,6 @@ func (a *Aggregator) Add(stationID, dataType string, value float64, ts time.Time
 		result /= float64(len(bucket))
 	}
 
-	// Reset bucket
 	a.buffer[stationID][dataType] = nil
 	return result, lastTs, true
 }

@@ -21,7 +21,7 @@ type StationDTO struct {
 	DataTypes []string       `json:"data_types"`
 }
 
-// MeasurementDTO represents a single 10-minute aggregated measurement.
+// MeasurementDTO represents a single raw 1-minute measurement from the collector.
 type MeasurementDTO struct {
 	StationID string    `json:"station_id"`
 	DataType  string    `json:"data_type"`

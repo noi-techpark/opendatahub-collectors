@@ -24,13 +24,11 @@ type Root struct {
 
 // StationDTO represents a traffic sensor station.
 type StationDTO struct {
-	ID          string         `json:"id"`
-	Lat         float64        `json:"lat"`
-	Lon         float64        `json:"lon"`
-	StationType string         `json:"stationtype"`
-	Origin      string         `json:"origin"`
-	Metadata    map[string]any `json:"metadata"`
-	DataTypes   []string       `json:"data_types"`
+	ID        string         `json:"id"`
+	Lat       float64        `json:"lat"`
+	Lon       float64        `json:"lon"`
+	Metadata  map[string]any `json:"metadata"`
+	DataTypes []string       `json:"data_types"`
 }
 
 // MeasurementDTO represents a single aggregated measurement.
@@ -200,11 +198,9 @@ func ParseStaticXML(data []byte) ([]StationDTO, map[string]map[string]string, er
 		}
 
 		dtos = append(dtos, StationDTO{
-			ID:          site.ID,
-			Lat:         site.Location.Lat,
-			Lon:         site.Location.Lon,
-			StationType: "TrafficSensor",
-			Origin:      "FEDRO",
+			ID:  site.ID,
+			Lat: site.Location.Lat,
+			Lon: site.Location.Lon,
 			Metadata: map[string]any{
 				"lane":        site.Location.Lane,
 				"carriageway": site.Location.Carriageway,

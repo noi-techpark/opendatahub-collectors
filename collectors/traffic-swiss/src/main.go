@@ -41,7 +41,6 @@ func main() {
 	defer tel.FlushOnPanic()
 
 	collector := dc.NewDc[dc.EmptyData](context.Background(), env.Env)
-	aggregator := NewAggregator()
 
 	// Fetch static data once at startup so stations are available immediately.
 	runStaticCollection(context.Background(), collector)
@@ -51,7 +50,7 @@ func main() {
 		runStaticCollection(context.Background(), collector)
 	})
 	c.AddFunc(env.CRON, func() {
-		runRealtimeCollection(context.Background(), collector, aggregator)
+		runRealtimeCollection(context.Background(), collector)
 	})
 	c.Run()
 }
@@ -86,7 +85,7 @@ func runStaticCollection(ctx context.Context, collector *dc.Dc[dc.EmptyData]) {
 	slog.Info("static collection complete", "stations", len(parsed))
 }
 
-func runRealtimeCollection(ctx context.Context, collector *dc.Dc[dc.EmptyData], agg *Aggregator) {
+func runRealtimeCollection(ctx context.Context, collector *dc.Dc[dc.EmptyData]) {
 	ctx, col := collector.StartCollection(ctx)
 	defer col.End(ctx)
 
@@ -138,15 +137,12 @@ func runRealtimeCollection(ctx context.Context, collector *dc.Dc[dc.EmptyData], 
 				value = mv.SpeedValue
 			}
 
-			aggVal, aggTs, done := agg.Add(sm.SiteRef.ID, dt, value, ts)
-			if done {
-				measurements = append(measurements, MeasurementDTO{
-					StationID: sm.SiteRef.ID,
-					DataType:  dt,
-					Value:     aggVal,
-					Timestamp: aggTs,
-				})
-			}
+			measurements = append(measurements, MeasurementDTO{
+				StationID: sm.SiteRef.ID,
+				DataType:  dt,
+				Value:     value,
+				Timestamp: ts,
+			})
 		}
 	}
 
@@ -160,7 +156,7 @@ func runRealtimeCollection(ctx context.Context, collector *dc.Dc[dc.EmptyData], 
 
 	root := Root{Stations: allStations, Measurements: measurements}
 	publishRoot(ctx, col, root)
-	slog.Info("realtime collection: published aggregated measurements", "count", len(measurements))
+	slog.Info("realtime collection: published measurements", "count", len(measurements))
 }
 
 // snapshotStations returns a slice copy of all known stations.
