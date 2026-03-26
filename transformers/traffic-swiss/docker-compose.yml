@@ -1,0 +1,22 @@
+# SPDX-FileCopyrightText: 2026 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+name: tr-traffic-swiss
+
+services:
+  app:
+    build:
+      dockerfile: infrastructure/docker/Dockerfile
+      context: .
+      target: dev
+    env_file:
+      - .env
+    volumes:
+      - ./src:/code
+      - pkg:/go/pkg/mod
+    working_dir: /code
+    network_mode: host
+
+volumes:
+  pkg:
