@@ -43,32 +43,32 @@ func main() {
 	collector := dc.NewDc[dc.EmptyData](context.Background(), env.Env)
 
 	// Fetch static data once at startup so stations are available immediately.
-	runStaticCollection(context.Background(), collector)
+	ms.FailOnError(context.Background(), runStaticCollection(context.Background(), collector), "Failed initial static collection")
 
 	c := cron.New(cron.WithSeconds())
 	c.AddFunc(env.CRON_STATIC, func() {
-		runStaticCollection(context.Background(), collector)
+		ms.FailOnError(context.Background(), runStaticCollection(context.Background(), collector), "failed scheduled static collection")
 	})
 	c.AddFunc(env.CRON, func() {
-		runRealtimeCollection(context.Background(), collector)
+		ms.FailOnError(context.Background(), runRealtimeCollection(context.Background(), collector), "failed scheduled realtime collection")
 	})
 	c.Run()
 }
 
-func runStaticCollection(ctx context.Context, collector *dc.Dc[dc.EmptyData]) {
+func runStaticCollection(ctx context.Context, collector *dc.Dc[dc.EmptyData]) error {
 	ctx, col := collector.StartCollection(ctx)
 	defer col.End(ctx)
 
 	data, err := FetchURL(env.STATIC_URL, "")
 	if err != nil {
 		slog.Error("static fetch failed", "err", err)
-		return
+		return err
 	}
 
 	parsed, chars, err := ParseStaticXML(data)
 	if err != nil {
 		slog.Error("static XML parse failed", "err", err)
-		return
+		return err
 	}
 
 	stationsMu.Lock()
@@ -81,24 +81,27 @@ func runStaticCollection(ctx context.Context, collector *dc.Dc[dc.EmptyData]) {
 	stationsMu.Unlock()
 
 	root := Root{Stations: snapshotStations(), Measurements: nil}
-	publishRoot(ctx, col, root)
+	if err := publishRoot(ctx, col, root); err != nil {
+		return err
+	}
 	slog.Info("static collection complete", "stations", len(parsed))
+	return nil
 }
 
-func runRealtimeCollection(ctx context.Context, collector *dc.Dc[dc.EmptyData]) {
+func runRealtimeCollection(ctx context.Context, collector *dc.Dc[dc.EmptyData]) error {
 	ctx, col := collector.StartCollection(ctx)
 	defer col.End(ctx)
 
 	data, err := FetchSOAP(env.REALTIME_URL, realtimeSoapAction, realtimeSoapBody, env.AUTH_BEARER_TOKEN)
 	if err != nil {
 		slog.Error("realtime fetch failed", "err", err)
-		return
+		return err
 	}
 
 	siteMeasurements, err := ParseRealtimeXML(data)
 	if err != nil {
 		slog.Error("realtime XML parse failed", "err", err)
-		return
+		return err
 	}
 
 	stationsMu.RLock()
@@ -147,7 +150,7 @@ func runRealtimeCollection(ctx context.Context, collector *dc.Dc[dc.EmptyData]) 
 	}
 
 	if len(measurements) == 0 {
-		return
+		return nil
 	}
 
 	stationsMu.RLock()
@@ -155,8 +158,11 @@ func runRealtimeCollection(ctx context.Context, collector *dc.Dc[dc.EmptyData]) 
 	stationsMu.RUnlock()
 
 	root := Root{Stations: allStations, Measurements: measurements}
-	publishRoot(ctx, col, root)
+	if err := publishRoot(ctx, col, root); err != nil {
+		return err
+	}
 	slog.Info("realtime collection: published measurements", "count", len(measurements))
+	return nil
 }
 
 // snapshotStations returns a slice copy of all known stations.
@@ -169,11 +175,11 @@ func snapshotStations() []StationDTO {
 	return result
 }
 
-func publishRoot(ctx context.Context, col *dc.Collection, root Root) {
+func publishRoot(ctx context.Context, col *dc.Collection, root Root) error {
 	jsonBytes, err := json.Marshal(root)
 	if err != nil {
 		slog.Error("marshal root failed", "err", err)
-		return
+		return err
 	}
 	if err := col.Publish(ctx, &rdb.RawAny{
 		Provider:  env.PROVIDER,
@@ -181,5 +187,7 @@ func publishRoot(ctx context.Context, col *dc.Collection, root Root) {
 		Rawdata:   string(jsonBytes),
 	}); err != nil {
 		slog.Error("publish failed", "err", err)
+		return err
 	}
+	return nil
 }
