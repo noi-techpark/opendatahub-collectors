@@ -30,7 +30,7 @@ envSecretRef:
     key: uri
   - name: BDP_TOKEN_URL
     secret: oauth-collector
-    key: tokenUrl
+    key: tokenUri
   - name: BDP_CLIENT_ID
     secret: oauth-collector
     key: clientId
