@@ -16,11 +16,11 @@ env:
   REALTIME_URL: https://api.opentransportdata.swiss/TDP/Soap_Datex2/Pull
   SERVICE_NAME: dc-traffic-swiss
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+  
+envSecret:
+  AUTH_BEARER_TOKEN: "TBD"
 
 envSecretRef:
   - name: MQ_URI
     secret: rabbitmq-svcbind
     key: uri
-  - name: AUTH_BEARER_TOKEN
-    secret: traffic-swiss-api-key
-    key: token

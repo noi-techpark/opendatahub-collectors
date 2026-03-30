@@ -53,6 +53,7 @@ jobs:
           yq -i '.image.repository = "${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML }}
           yq -i '.image.tag = "${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
           yq -i '.image.pullPolicy = "IfNotPresent"' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.AUTH_BEARER_TOKEN = "${{ secrets.TRAFFIC_SWISS_API_TOKEN}}"' ${{ env.VALUES_YAML }}
 
       - name: Deploy on cluster
         uses: noi-techpark/github-actions/helm-deploy@v2
