@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/kelseyhightower/envconfig"
@@ -37,20 +36,23 @@ var env struct {
 }
 
 type payloadMetaData struct {
-	Uid      string `json:"id"`
-	NameDE   string `json:"name_DE"`
-	NameIT   string `json:"name_IT"`
-	Lat      string `json:"latitude"`
-	Long     string `json:"longitude"`
-	Capacity int    `json:"capacity"`
+	Uid      string  `json:"id"`
+	NameDE   string  `json:"name_DE"`
+	NameIT   string  `json:"name_IT"`
+	Lat      float64 `json:"latitude"`
+	Long     float64 `json:"longitude"`
+	Capacity int     `json:"capacity"`
+	Provider string  `json:"provider"`
 }
 
 type payloadMetaArray []payloadMetaData
 
 type payloadData struct {
-	Uid       string `json:"id"`
-	Time      string `json:"timestamp"`
-	Occupancy int    `json:"occupancy"`
+	Uid  string `json:"id"`
+	Time string `json:"timestamp"`
+	// Occupancy is deprecated as per email from 25.03.2026, replaced by free_slots which should do the same thing
+	Occupancy int `json:"occupancy"`
+	Free      int `json:"free_slots"`
 }
 
 func main() {
@@ -85,13 +87,13 @@ func main() {
 		parkingid := stationId(payload.Uid, Origin)
 
 		if !env.BATCH_MODE {
-			parkingData.AddRecord(parkingid, DataType, bdplib.CreateRecord(r.Timestamp.UnixMilli(), payload.Occupancy, Period))
+			parkingData.AddRecord(parkingid, DataType, bdplib.CreateRecord(r.Timestamp.UnixMilli(), payload.Free, Period))
 			if err := b.PushData(Station, parkingData); err != nil {
 				slog.Error("error pushing parking occupancy data:", "err", err)
 				return err
 			}
 		} else {
-			batchParkingData.AddRecord(parkingid, DataType, bdplib.CreateRecord(r.Timestamp.UnixMilli(), payload.Occupancy, Period))
+			batchParkingData.AddRecord(parkingid, DataType, bdplib.CreateRecord(r.Timestamp.UnixMilli(), payload.Free, Period))
 			if time.Since(lastBatchTime) >= batchSecond {
 				err := b.PushData(Station, batchParkingData)
 				ms.FailOnError(err, "error pushing batch parking occupancy data")
@@ -113,17 +115,7 @@ func main() {
 		var stations []bdplib.Station
 		for _, payload := range *payloadArray {
 			parkingid := stationId(payload.Uid, b.Origin)
-			lat, err := strconv.ParseFloat(payload.Lat, 64)
-			if err != nil {
-				slog.Error("cannot parse latitude", "err", err)
-				continue
-			}
-			lon, err := strconv.ParseFloat(payload.Long, 64)
-			if err != nil {
-				slog.Error("cannot parse longitude", "err", err)
-				continue
-			}
-			s := bdplib.CreateStation(parkingid, payload.NameIT, Station, lat, lon, Origin)
+			s := bdplib.CreateStation(parkingid, payload.NameIT, Station, payload.Lat, payload.Long, Origin)
 
 			MetaData := make(map[string]interface{})
 			MetaData["name_IT"] = payload.NameIT

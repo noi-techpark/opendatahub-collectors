@@ -35,18 +35,21 @@ var env struct {
 }
 
 type ParkingMetadata struct {
-	ID        string `json:"id"`
-	NameDE    string `json:"name_DE"`
-	NameIT    string `json:"name_IT"`
-	Latitude  string `json:"latitude"`
-	Longitude string `json:"longitude"`
-	Capacity  int    `json:"capacity"`
+	ID        string  `json:"id"`
+	NameDE    string  `json:"name_DE"`
+	NameIT    string  `json:"name_IT"`
+	Latitude  float64 `json:"latitude"`
+	Longitude float64 `json:"longitude"`
+	Capacity  int     `json:"capacity"`
+	Provider  string  `json:"provider"`
 }
 
 type ParkingData struct {
 	ID        string `json:"id"`
 	Timestamp string `json:"timestamp"`
-	Occupancy int    `json:"occupancy"`
+	// Occupancy is deprecated as per email from 25.03.2026, replaced by free_slots which should do the same thing
+	Occupancy int `json:"occupancy"`
+	Free      int `json:"free_slots"`
 }
 
 const ENV_HEADER_PREFIX = "HTTP_HEADER_"
