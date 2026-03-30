@@ -13,9 +13,14 @@ env:
   MQ_EXCHANGE: routed
   MQ_KEY: traffic-swiss.fedro
   MQ_CLIENT: tr-traffic-swiss
+
+  BDP_BASE_URL: http://bdp-core.core.svc.cluster.local
   BDP_ORIGIN: FEDRO
   BDP_PROVENANCE_NAME: tr-traffic-swiss
   BDP_PROVENANCE_VERSION: "0.1.0"
+
+  RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
+
   SERVICE_NAME: tr-traffic-swiss
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 
@@ -23,18 +28,12 @@ envSecretRef:
   - name: MQ_URI
     secret: rabbitmq-svcbind
     key: uri
-  - name: BDP_BASE_URL
-    secret: odh-writer
-    key: url
   - name: BDP_TOKEN_URL
-    secret: odh-writer
+    secret: oauth-collector
     key: tokenUrl
   - name: BDP_CLIENT_ID
-    secret: odh-writer
+    secret: oauth-collector
     key: clientId
   - name: BDP_CLIENT_SECRET
-    secret: odh-writer
+    secret: oauth-collector
     key: clientSecret
-  - name: RAW_DATA_BRIDGE_ENDPOINT
-    secret: raw-data-bridge
-    key: endpoint
