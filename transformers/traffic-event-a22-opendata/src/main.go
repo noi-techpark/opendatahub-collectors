@@ -146,7 +146,7 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.Root]) error {
 		}
 
 		ann := entry.Entity
-		if ann.EndTime != nil {
+		if ann.EndTime == nil {
 			ann.EndTime = &sourceTime
 		}
 		ann.Mapping.ProviderA22Open.SyncTime = sourceTime
