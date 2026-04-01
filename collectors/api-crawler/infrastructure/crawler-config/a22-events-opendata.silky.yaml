@@ -1,0 +1,32 @@
+# SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+rootContext: {}
+stream: false
+
+auth:
+  type: basic
+  username: ${A22_USERNAME}
+  password: ${A22_PASSWORD}
+
+steps:
+  - type: request
+    name: GetLavoriInCorso
+    request:
+      url: "https://www.autobrennero.it/webservice/WSOpenData.asmx/GetLavoriInCorso"
+      method: POST
+      headers:
+        Content-Type: application/json
+    resultTransformer: .d
+    mergeOn: .["RoadWorks"] = $res
+  
+  - type: request
+    name: GetTraffico
+    request:
+      url: "https://www.autobrennero.it/webservice/WSOpenData.asmx/GetTraffico"
+      method: POST
+      headers:
+        Content-Type: application/json
+    resultTransformer: .d
+    mergeOn: .["Traffic"] = $res

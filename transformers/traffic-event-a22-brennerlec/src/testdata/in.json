@@ -1,0 +1,77 @@
+[
+    {
+        "dataattuazione": "/Date(1672422111000+0100)/",
+        "idtratta": "T1Nord",
+        "limite": 130
+    },
+    {
+        "dataattuazione": "/Date(1672422111000+0100)/",
+        "idtratta": "T2Nord",
+        "limite": 130
+    },
+    {
+        "dataattuazione": "/Date(1758374956000+0200)/",
+        "idtratta": "AL_T1Sud",
+        "limite": 110
+    },
+    {
+        "dataattuazione": "/Date(1765215430000+0100)/",
+        "idtratta": "AL_T2Sud",
+        "limite": 110
+    },
+    {
+        "dataattuazione": "/Date(1766945076000+0100)/",
+        "idtratta": "AL_T3Sud",
+        "limite": 130
+    },
+    {
+        "dataattuazione": "/Date(1766945076000+0100)/",
+        "idtratta": "AL_T4Sud",
+        "limite": 130
+    },
+    {
+        "dataattuazione": "/Date(1766945013000+0100)/",
+        "idtratta": "AL_T5Sud",
+        "limite": 130
+    },
+    {
+        "dataattuazione": "/Date(1758461467000+0200)/",
+        "idtratta": "AL_T1Nord",
+        "limite": 110
+    },
+    {
+        "dataattuazione": "/Date(1758461467000+0200)/",
+        "idtratta": "AL_T2Nord",
+        "limite": 110
+    },
+    {
+        "dataattuazione": "/Date(1766856251000+0100)/",
+        "idtratta": "AL_T3Nord",
+        "limite": 130
+    },
+    {
+        "dataattuazione": "/Date(1766857917000+0100)/",
+        "idtratta": "AL_T4Nord",
+        "limite": 130
+    },
+    {
+        "dataattuazione": "/Date(1766857917000+0100)/",
+        "idtratta": "AL_T5Nord",
+        "limite": 130
+    },
+    {
+        "dataattuazione": "/Date(1672408848000+0100)/",
+        "idtratta": "T1",
+        "limite": 130
+    },
+    {
+        "dataattuazione": "/Date(1672408848000+0100)/",
+        "idtratta": "T2",
+        "limite": 130
+    },
+    {
+        "dataattuazione": "/Date(1672419531000+0100)/",
+        "idtratta": "T3",
+        "limite": 130
+    }
+]

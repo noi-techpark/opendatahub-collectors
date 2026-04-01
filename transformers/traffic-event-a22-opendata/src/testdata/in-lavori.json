@@ -1,0 +1,22 @@
+[
+    {
+        "IDNotizia": "1542687636638",
+        "Direzione": "Entrambe",
+        "Icona": "https://www.autobrennero.it/private_images/mappa/icone/notizie/21.png",
+        "Descrizione": "Dalle ore 17:33 del 21/11/2024 - colonnine SOS fuori servizio tra Brennero e Vipiteno in entrambe le carreggiate",
+        "KmInizio": 0,
+        "KmFine": 15.9,
+        "DataInizio": "21/11/2024 16:32:59",
+        "DataFine": "31/12/1969 23:59:59"
+    },
+    {
+        "IDNotizia": "1569314659785",
+        "Direzione": "Sud",
+        "Icona": "https://www.autobrennero.it/private_images/mappa/icone/notizie/54.png",
+        "Descrizione": "Dalle ore 06:00 del 12/06/2025 alle ore 20:00 del 20/10/2025 deviazione di carreggiata con 2 flussi di marcia  dal km 5.347 al km 10.208 tra Brennero Paese e Vipiteno carreggiata sud",
+        "KmInizio": 5.3,
+        "KmFine": 10.2,
+        "DataInizio": "12/06/2025 04:00:00",
+        "DataFine": "20/10/2025 18:00:00"
+    }
+]
