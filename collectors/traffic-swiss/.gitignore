@@ -1,0 +1,5 @@
+.env
+/target
+.vscode
+__debug
+tmp/

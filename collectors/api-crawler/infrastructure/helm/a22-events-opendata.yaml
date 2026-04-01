@@ -1,0 +1,31 @@
+# SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/api-crawler
+  pullPolicy: IfNotPresent
+  tag: "0.2.0" # Set this when upgrading chart with --set-value
+
+env:
+  MQ_CLIENT: dc-traffic-event-a22-opendata
+  PROVIDER: traffic-event/a22-opendata
+
+  CRON: "0 0/10 * * * *"
+  CONFIG_PATH: "/config/config.yaml"
+
+  SERVICE_NAME: dc-api-crawler-traffic-event-a22-opendata
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+envSecret:
+  A22_USERNAME: ""
+  A22_PASSWORD: ""
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
+
+configMap:
+  mountPath: "/config/"
+  files: {}

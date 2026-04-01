@@ -1,0 +1,33 @@
+# SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+rootContext: []
+stream: false
+
+auth:
+  type: custom
+  loginRequest:
+    url: "${A22_BASE_URL}/token"
+    method: POST
+    headers:
+      Content-Type: application/json
+    body:
+      request:
+        username: ${A22_USERNAME}
+        password: ${A22_PASSWORD}
+  extractFrom: body
+  extractSelector: .SubscribeResult.sessionId
+  injectInto: body
+  injectKey: request.sessionId
+  maxAgeSeconds: 86400
+
+steps:
+  - type: request
+    name: fetch_active_events
+    request:
+      url: "${A22_BASE_URL}/eventi/lista/attivi"
+      method: POST
+      headers:
+        Content-Type: application/json
+    resultTransformer: .Eventi_ListaAttiviResult
