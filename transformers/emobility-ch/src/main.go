@@ -186,7 +186,7 @@ func parseGoogleCoords(geo *GeoCoordinate) (float64, float64, error) {
 	return lat, lon, nil
 }
 
-func extractStationName(names []ChargingStationName) string {
+func extractStationName(names ChargingStationNameList) string {
 	for _, name := range names {
 		if name.Lang == "en" || name.Lang == "de" {
 			return name.Value
