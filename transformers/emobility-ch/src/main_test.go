@@ -17,11 +17,55 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func runTransformWithEncoding(t *testing.T, payload string) *bdpmock.BdpMock {
+func strPtr(value string) *string { return &value }
+func boolPtr(value bool) *bool   { return &value }
+
+func sampleRoot() Root {
+	return Root{
+		EVSEData: []EVSEOperator{
+			{
+				OperatorID:   "OP-1",
+				OperatorName: "Operator One",
+				EVSEDataRecord: []EVSEDataItem{
+					{
+						EvseID:            "CH*BFE*E1234567",
+						ChargingStationId: "ST-100",
+						GeoCoordinates:    &GeoCoordinate{Google: "46.4983 11.3548"},
+						ChargingStationNames: []ChargingStationName{{Lang: "en", Value: "Bolzano Station"}},
+						Address: &EVSEAddress{
+							Street:     strPtr("Via Stazione 1"),
+							City:       strPtr("Bolzano"),
+							PostalCode: strPtr("39100"),
+							Country:    strPtr("CH"),
+						},
+						Accessibility:       strPtr("Public"),
+						IsOpen24Hours:       boolPtr(true),
+						Plugs:               []string{"Type2"},
+						AuthenticationModes: []string{"DirectPayment"},
+						PaymentOptions:      []string{"Cash"},
+						RenewableEnergy:     boolPtr(true),
+					},
+				},
+			},
+		},
+		EVSEStatuses: []EVSEStatusOperator{
+			{
+				OperatorID:   "OP-1",
+				OperatorName: "Operator One",
+				EVSEStatusRecord: []EVSEStatusItem{
+					{EvseID: "CH*BFE*E1234567", EvseStatus: "Available"},
+				},
+			},
+		},
+	}
+}
+
+func runTransform(t *testing.T, payload string) *bdpmock.BdpMock {
 	t.Helper()
 
-	root, err := DecodePayload[Root](payload)
-	require.NoError(t, err, "DecodePayload failed")
+	var root Root
+	err := json.Unmarshal([]byte(payload), &root)
+	require.NoError(t, err, "json.Unmarshal failed")
 
 	ts := time.Date(2025, 3, 1, 12, 0, 0, 0, time.UTC)
 	raw := &rdb.Raw[Root]{
@@ -38,54 +82,19 @@ func runTransformWithEncoding(t *testing.T, payload string) *bdpmock.BdpMock {
 
 func TestTransform_PlainJSON(t *testing.T) {
 	root := sampleRoot()
-	payload := encodePlainJSON(t, root)
-	mock := runTransformWithEncoding(t, payload)
+	payload, err := json.Marshal(root)
+	require.NoError(t, err)
+	mock := runTransform(t, string(payload))
 
 	calls := mock.Requests()
 	assertExpectedBdpCalls(t, calls)
-}
-
-func TestTransform_Base64JSON(t *testing.T) {
-	root := sampleRoot()
-	payload := encodeBase64JSON(t, root)
-	mock := runTransformWithEncoding(t, payload)
-
-	calls := mock.Requests()
-	assertExpectedBdpCalls(t, calls)
-}
-
-func TestTransform_GzipBase64JSON(t *testing.T) {
-	root := sampleRoot()
-	payload := encodeGzipBase64JSON(t, root)
-	mock := runTransformWithEncoding(t, payload)
-
-	calls := mock.Requests()
-	assertExpectedBdpCalls(t, calls)
-}
-
-func TestTransform_AllEncodingsProduceSameOutput(t *testing.T) {
-	root := sampleRoot()
-
-	mockPlain := runTransformWithEncoding(t, encodePlainJSON(t, root))
-	mockB64 := runTransformWithEncoding(t, encodeBase64JSON(t, root))
-	mockGz64 := runTransformWithEncoding(t, encodeGzipBase64JSON(t, root))
-
-	reqPlain := mockPlain.Requests()
-	reqB64 := mockB64.Requests()
-	reqGz64 := mockGz64.Requests()
-
-	jsonPlain, _ := json.Marshal(reqPlain)
-	jsonB64, _ := json.Marshal(reqB64)
-	jsonGz64, _ := json.Marshal(reqGz64)
-
-	assert.JSONEq(t, string(jsonPlain), string(jsonB64), "base64 encoding produced different BDP calls than plain")
-	assert.JSONEq(t, string(jsonPlain), string(jsonGz64), "gzip+base64 encoding produced different BDP calls than plain")
 }
 
 func TestTransform_StationFields(t *testing.T) {
 	root := sampleRoot()
-	payload := encodePlainJSON(t, root)
-	mock := runTransformWithEncoding(t, payload)
+	payload, err := json.Marshal(root)
+	require.NoError(t, err)
+	mock := runTransform(t, string(payload))
 
 	calls := mock.Requests()
 
@@ -108,8 +117,9 @@ func TestTransform_StationFields(t *testing.T) {
 
 func TestTransform_StatusMeasurements(t *testing.T) {
 	root := sampleRoot()
-	payload := encodePlainJSON(t, root)
-	mock := runTransformWithEncoding(t, payload)
+	payload, err := json.Marshal(root)
+	require.NoError(t, err)
+	mock := runTransform(t, string(payload))
 
 	calls := mock.Requests()
 

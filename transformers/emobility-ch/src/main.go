@@ -45,7 +45,7 @@ func main() {
 	slog.Info("Starting transformer listener...")
 	listener := tr.NewTr[string](context.Background(), env.Env)
 
-	err = listener.Start(context.Background(), MultiFormatMiddleware[Root](TransformWithBdp(b)))
+	err = listener.Start(context.Background(), tr.RawString2JsonMiddleware[Root](TransformWithBdp(b)))
 	ms.FailOnError(context.Background(), err, "error while listening to queue")
 }
 
