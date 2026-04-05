@@ -1,0 +1,191 @@
+{
+  "@id": "https://api.discover.swiss/test/info/v2/skiresorts/ski_89_c",
+  "__api_crawler_lang": "it",
+  "identifier": "ski_89_c",
+  "type": "schema.org/SkiResort",
+  "name": "San Bernardino",
+  "description": "Comprensorio sciistico San Bernardino nelle Alpi grigionesi",
+  "autoTranslatedData": false,
+  "availableDataLanguage": ["de", "en", "fr", "it"],
+  "removed": false,
+  "license": "CC BY-NC-SA",
+  "lastModified": "2026-02-21T07:31:01.2666506+00:00",
+  "telephone": "+41 00 000 00 00",
+  "address": {
+    "addressLocality": "San Bernardino",
+    "email": "info@example.com",
+    "postalCode": "6565",
+    "streetAddress": "Cantonál 94",
+    "telephone": "+41 00 000 00 00"
+  },
+  "geo": {
+    "elevation": 2026.25,
+    "latitude": 46.46261814940998,
+    "longitude": 9.192175322137434
+  },
+  "image": {
+    "@id": "https://api.discover.swiss/test/info/v2/imageObjects/img_89_2qy1",
+    "identifier": "img_89_2qy1",
+    "name": "San Bernardino",
+    "type": "schema.org/ImageObject",
+    "contentUrl": "https://static.stnet.ch/wispo/images/2/picture-3721/3721-o.jpg",
+    "copyrightNotice": "Svizzera Turismo"
+  },
+  "photo": [],
+  "category": [
+    {
+      "@id": "https://api.discover.swiss/test/info/v2/categories/sui_01",
+      "identifier": "sui_01",
+      "name": "Attività",
+      "type": "schema.org/Category"
+    }
+  ],
+  "containedInPlace": [
+    {
+      "@id": "https://api.discover.swiss/test/info/v2/areas/osm_1684118",
+      "additionalType": "City",
+      "identifier": "osm_1684118",
+      "name": "Mesocco",
+      "type": "schema.org/AdministrativeArea"
+    },
+    {
+      "@id": "https://api.discover.swiss/test/info/v2/areas/osm_1686631",
+      "additionalType": "State",
+      "identifier": "osm_1686631",
+      "name": "Grigioni",
+      "type": "schema.org/AdministrativeArea"
+    },
+    {
+      "@id": "https://api.discover.swiss/test/info/v2/areas/osm_1688767",
+      "additionalType": "District",
+      "identifier": "osm_1688767",
+      "name": "Moësa",
+      "type": "schema.org/AdministrativeArea"
+    },
+    {
+      "@id": "https://api.discover.swiss/test/info/v2/areas/ds_moesano",
+      "additionalType": "TourismArea",
+      "identifier": "ds_moesano",
+      "name": "San Bernardino Mesolcina Calanca",
+      "type": "schema.org/AdministrativeArea"
+    }
+  ],
+  "dataGovernance": {
+    "origin": [
+      {
+        "datasource": "st",
+        "created": "2025-01-15T10:00:00+00:00",
+        "lastModified": "2026-02-21T05:59:27.027+00:00",
+        "license": "CC BY-NC-SA",
+        "provider": {
+          "acronym": "st",
+          "identifier": "st",
+          "name": "Svizzera Turismo",
+          "type": "schema.org/Partner"
+        },
+        "source": {
+          "acronym": "st",
+          "identifier": "st",
+          "name": "Svizzera Turismo",
+          "type": "schema.org/Partner"
+        },
+        "sourceId": "2"
+      }
+    ],
+    "source": {
+      "acronym": "st",
+      "identifier": "st",
+      "name": "Svizzera Turismo",
+      "type": "schema.org/Partner"
+    }
+  },
+  "seasonStart": "2025-12-01",
+  "seasonEnd": "2026-04-15",
+  "maxElevation": 2525,
+  "minElevation": 1600,
+  "crossCountrySummary": {
+    "totalLength": 15.5,
+    "totalOpen": 10.0
+  },
+  "hasSkiLift": [
+    {
+      "details": {
+        "@id": "https://api.discover.swiss/test/info/v2/tours/lift_001",
+        "identifier": "lift_001",
+        "type": "SkiLift",
+        "name": "Seggiovia Confin",
+        "description": "Moderna seggiovia a 4 posti verso la vetta",
+        "autoTranslatedData": false,
+        "availableDataLanguage": ["it"],
+        "removed": false,
+        "state": "open",
+        "stateTimestamp": "2026-02-21T06:00:00+00:00",
+        "geo": {
+          "latitude": 46.463,
+          "longitude": 9.193,
+          "elevation": 1800
+        },
+        "elevation": {
+          "maxAltitude": 2200,
+          "minAltitude": 1600,
+          "differential": 600
+        },
+        "containedInPlace": [
+          {
+            "@id": "https://api.discover.swiss/test/info/v2/areas/osm_1686631",
+            "additionalType": "State",
+            "identifier": "osm_1686631",
+            "name": "Grigioni",
+            "type": "schema.org/AdministrativeArea"
+          }
+        ]
+      }
+    }
+  ],
+  "hasSkiSlope": [
+    {
+      "details": {
+        "@id": "https://api.discover.swiss/test/info/v2/tours/slope_001",
+        "identifier": "slope_001",
+        "type": "Tour",
+        "additionalType": "SkiSlope",
+        "name": "Pista Confin",
+        "description": "Pista rossa dalla vetta a valle",
+        "autoTranslatedData": false,
+        "availableDataLanguage": ["it"],
+        "removed": false,
+        "state": "open",
+        "parking": "Grande parcheggio alla stazione a valle",
+        "geo": {
+          "latitude": 46.462,
+          "longitude": 9.191,
+          "elevation": 1900
+        },
+        "elevation": {
+          "maxAltitude": 2200,
+          "minAltitude": 1600,
+          "ascent": 0,
+          "descent": 600,
+          "differential": 600
+        },
+        "length": 2500,
+        "time": 15,
+        "rating": {
+          "difficulty": 2,
+          "technique": 2
+        },
+        "containedInPlace": [
+          {
+            "@id": "https://api.discover.swiss/test/info/v2/areas/osm_1686631",
+            "additionalType": "State",
+            "identifier": "osm_1686631",
+            "name": "Grigioni",
+            "type": "schema.org/AdministrativeArea"
+          }
+        ]
+      }
+    }
+  ],
+  "hasSnowPark": [],
+  "hasTobogganing": []
+}

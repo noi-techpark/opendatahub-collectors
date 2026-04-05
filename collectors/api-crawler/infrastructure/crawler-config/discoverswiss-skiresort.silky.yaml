@@ -1,0 +1,132 @@
+rootContext: []
+stream: true
+headers:
+  Accept: application/json
+  # Ocp-Apim-Subscription-Key: fill it in workflow on production (see .github/workflows/dc-multi-rest-poller-discoverswiss-lodging.yml) and hardcode it for development
+
+steps:
+  - type: forValues
+    values: ["it", "de", "en", "fr"]
+    as: language
+    steps:
+      - type: request
+        name: first-request
+        request:
+          url: https://api.discover.swiss/info/v2/skiresorts?project=noi-web
+          method: GET
+          headers:
+            Accept-Language: "{{ .language }}"
+          pagination:
+            nextPageUrlSelector: body:"https://api.discover.swiss/info/v2/skiresorts?project=noi-web&continuationToken=" + (.nextPageToken | tostring | gsub("#"; "%23") | gsub("\\+"; "%2B") )
+            stopOn:
+              - type: responseBody
+                expression: ".hasNextPage == false"
+        # 1) We need to normalize the data because "forEach" on fields requires the addressed field to exist. So, if a field is missing, fill it with an empty array.
+        # 2) __api_crawler_lang is required by the transformer because there is no information about the document language.
+        resultTransformer: |
+          .data |= map(. + { 
+            __api_crawler_lang: $ctx.language,
+            hasSkiSlope: (.hasSkiSlope // []),
+            hasSkiLift: (.hasSkiLift // []),
+            hasHiking: (.hasHiking // []),
+            hasTobogganing: (.hasTobogganing // []),
+            hasCrossCountry: (.hasCrossCountry // []),
+            hasSnowPark: (.hasSnowPark // [])
+          }) | .data
+        steps:
+          - type: forEach
+            name: "get Data"
+            path: .
+            as: SkiResort
+            steps:
+              - type: forEach
+                name: "foreach skiSlope"
+                path: .hasSkiSlope
+                as: SkiSlope
+                steps:
+                  - type: request
+                    name: "get skiSlope detail"
+                    request:
+                      # caused by a bug of discoverswiss, we need to "search" the element because addressing it with standard GET, it returns 404.
+                      # Same for the other items
+                      url: https://api.discover.swiss/info/v2/tours?identifiers={{ .SkiSlope.identifier }}&project=noi-web&
+                      method: GET
+                      headers:
+                        Accept-Language: "{{ .language }}"
+                    resultTransformer: .data[0]
+                    mergeOn: .details = $res
+
+              - type: forEach
+                name: "foreach skiLift"
+                path: .hasSkiLift
+                as: SkiLift
+                steps:
+                  - type: request
+                    name: "get skiLift detail"
+                    request:
+                      url: https://api.discover.swiss/info/v2/transportationSystems?identifiers={{ .SkiLift.identifier }}&project=noi-web&
+                      method: GET
+                      headers:
+                        Accept-Language: "{{ .language }}"
+                    resultTransformer: .data[0]
+                    mergeOn: .details = $res
+
+              - type: forEach
+                name: "foreach hiking"
+                path: .hasHiking
+                as: Hiking
+                steps:
+                  - type: request
+                    name: "get hiking detail"
+                    request:
+                      url: https://api.discover.swiss/info/v2/tours?identifiers={{ .Hiking.identifier }}&project=noi-web&
+                      method: GET
+                      headers:
+                        Accept-Language: "{{ .language }}"
+                    resultTransformer: .data[0]
+                    mergeOn: .details = $res
+
+              - type: forEach
+                name: "foreach tobogganing"
+                path: .hasTobogganing
+                as: Tobogganing
+                steps:
+                  - type: request
+                    name: "get tobogganing detail"
+                    request:
+                      url: https://api.discover.swiss/info/v2/tours?identifiers={{ .Tobogganing.identifier }}&project=noi-web&
+                      method: GET
+                      headers:
+                        Accept-Language: "{{ .language }}"
+                    resultTransformer: .data[0]
+                    mergeOn: .details = $res
+
+              - type: forEach
+                name: "foreach crossCountry"
+                path: .hasCrossCountry
+                as: CrossCountry
+                steps:
+                  - type: request
+                    name: "get crossCountry detail"
+                    request:
+                      url: https://api.discover.swiss/info/v2/tours?identifiers={{ .CrossCountry.identifier }}&project=noi-web&
+                      method: GET
+                      headers:
+                        Accept-Language: "{{ .language }}"
+                    resultTransformer: .data[0]
+                    mergeOn: .details = $res
+
+              - type: forEach
+                name: "foreach snowPark"
+                path: .hasSnowPark
+                as: SnowPark
+                steps:
+                  - type: request
+                    name: "get snowPark detail"
+                    request:
+                      url: https://api.discover.swiss/info/v2/localbusinesses?identifiers={{ .SnowPark.identifier }}&project=noi-web&
+                      method: GET
+                      headers:
+                        Accept-Language: "{{ .language }}"
+                    resultTransformer: .data[0]
+                    mergeOn: .details = $res
