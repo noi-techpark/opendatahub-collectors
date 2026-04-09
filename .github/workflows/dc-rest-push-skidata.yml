@@ -75,7 +75,7 @@ jobs:
     concurrency: dc-rest-push-skidata-prod
     environment: prod
     env:
-      VALUES_YAML: infrastructure/helm/values.test.yaml
+      VALUES_YAML: infrastructure/helm/values.prod.yaml
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
