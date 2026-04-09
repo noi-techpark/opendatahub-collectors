@@ -68,39 +68,38 @@ jobs:
           aws-eks-cluster-name: aws-main-eu-01
           aws-region: eu-west-1
 
-  # deploy-prod:
-  #   if: github.ref == 'refs/heads/prod'
-  #   needs: build
-  #   runs-on: ubuntu-24.04
-  #   concurrency: dc-rest-push-skidata-prod
-  #   environment: prod
-  #   env:
-  #     VALUES_YAML: infrastructure/helm/values.prod.yaml
-  #   steps:
-  #     - name: Checkout source code
-  #       uses: actions/checkout@v4
+  deploy-prod:
+    if: github.ref == 'refs/heads/prod' || github.ref == 'refs/heads/dev/skidata'
+    needs: build
+    runs-on: ubuntu-24.04
+    concurrency: dc-rest-push-skidata-prod
+    environment: prod
+    env:
+      VALUES_YAML: infrastructure/helm/values.test.yaml
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
 
-  #     - name: Customize values.yaml
-  #       working-directory: ${{ env.WORKING_DIRECTORY }}
-  #       env:
-  #         SKIDATA_CREDENTIALS: ${{ secrets.SKIDATA_PUSH_CREDENTIALS_JSON }}
-  #       run: |
-  #         yq -i '.image.repository="${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML }}
-  #         yq -i '.image.tag="${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
-  #         yq -i '.image.pullPolicy="IfNotPresent"' ${{ env.VALUES_YAML }}
-  #         yq -i '.env.LOGLEVEL = "INFO"' ${{ env.VALUES_YAML }}
-  #         yq -i '.envSecret.INBOUND_AUTH_USER = "${{ secrets.SKIDATA_PUSH_INBOUND_USER }}"' ${{ env.VALUES_YAML }}
-  #         yq -i '.envSecret.INBOUND_AUTH_PASS = "${{ secrets.SKIDATA_PUSH_INBOUND_PASS }}"' ${{ env.VALUES_YAML }}
-  #         yq -i '.envSecret.SKIDATA_CREDENTIALS_JSON = strenv(SKIDATA_CREDENTIALS)' ${{ env.VALUES_YAML }}
+      - name: Customize values.yaml
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        env:
+          SKIDATA_CREDENTIALS: ${{ secrets.SKIDATA_PUSH_CREDENTIALS_JSON }}
+        run: |
+          yq -i '.image.repository="${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML }}
+          yq -i '.image.tag="${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
+          yq -i '.image.pullPolicy="IfNotPresent"' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.INBOUND_AUTH_USER = "${{ secrets.SKIDATA_PUSH_INBOUND_USER }}"' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.INBOUND_AUTH_PASS = "${{ secrets.SKIDATA_PUSH_INBOUND_PASS }}"' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.SKIDATA_CREDENTIALS_JSON = strenv(SKIDATA_CREDENTIALS)' ${{ env.VALUES_YAML }}
 
-  #     - name: Deploy on cluster
-  #       uses: noi-techpark/github-actions/helm-deploy@v2
-  #       with:
-  #         k8s-name: ${{ env.K8S_NAME }}
-  #         k8s-namespace: ${{ env.KUBERNETES_NAMESPACE }}
-  #         chart-path: helm/generic-collector
-  #         values-file: ${{ env.WORKING_DIRECTORY }}/${{ env.VALUES_YAML }}
-  #         aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
-  #         aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
-  #         aws-eks-cluster-name: aws-main-eu-01
-  #         aws-region: eu-west-1
+      - name: Deploy on cluster
+        uses: noi-techpark/github-actions/helm-deploy@v2
+        with:
+          k8s-name: ${{ env.K8S_NAME }}
+          k8s-namespace: ${{ env.KUBERNETES_NAMESPACE }}
+          chart-path: helm/generic-collector
+          values-file: ${{ env.WORKING_DIRECTORY }}/${{ env.VALUES_YAML }}
+          aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
+          aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
+          aws-eks-cluster-name: aws-main-eu-01
+          aws-region: eu-west-1
