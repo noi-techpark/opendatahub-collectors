@@ -1,0 +1,16 @@
+[
+  {
+    "id": "announcement:traffic-event",
+    "name-it": "Evento di Traffico",
+    "name-de": "Verkehrsereignis",
+    "name-en": "Traffic Event",
+    "types": ["announcement"]
+  },
+  {
+    "id": "traffic-event:speed-limit",
+    "name-it": "Limite di Velocità Dinamico",
+    "name-de": "Dynamische Geschwindigkeitsbegrenzung",
+    "name-en": "Dynamic Speed Limit",
+    "types": ["announcement", "traffic-event"]
+  }
+]

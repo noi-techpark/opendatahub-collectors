@@ -73,16 +73,18 @@ type StationStatus struct {
 
 // GBFS Rental Hours (from system_hours.json)
 type RentalHour struct {
-	UserTypes []string `json:"user_types"`
-	Days      []string `json:"days"`
-	StartTime string   `json:"start_time"`
-	EndTime   string   `json:"end_time"`
+	UserTypes  []string `json:"user_types"`
+	Days       []string `json:"days"`
+	StartTime  string   `json:"start_time"`
+	EndTime    string   `json:"end_time"`
+	ProviderID string   `json:"provider_id"`
 }
 
 // GBFS System Region (from system_regions.json)
 type SystemRegion struct {
-	RegionID string `json:"region_id"`
-	Name     string `json:"name"`
+	RegionID   string `json:"region_id"`
+	Name       string `json:"name"`
+	ProviderID string `json:"provider_id"`
 }
 
 // GBFS Pricing Plan (from system_pricing_plans.json)
@@ -93,12 +95,21 @@ type PricingPlan struct {
 	Price       float64 `json:"price"`
 	IsTaxable   bool    `json:"is_taxable"`
 	Description string  `json:"description"`
+	ProviderID  string  `json:"provider_id"`
 }
 
 // GBFS Geofencing Zone (from external URL)
 type GeofencingZone struct {
-	Type     string        `json:"type"`
-	Features []interface{} `json:"features"` // GeoJSON features
+	Type     string `json:"type"`
+	Features []struct {
+		Type       string `json:"type"`
+		Geometry   any    `json:"geometry"`
+		Properties struct {
+			Name       string `json:"name"`
+			ProviderID string `json:"provider_id"`
+			Rules      []any  `json:"rules"`
+		} `json:"properties"`
+	} `json:"features"` // GeoJSON features
 }
 
 func (p Provider) GetStationType() string {
@@ -203,25 +214,25 @@ func (r Root) getMostCommonProviderType() string {
 // deduceProviderFromStationID tries to find a provider based on ID prefix/suffix in the station ID
 func (r Root) deduceProviderFromStationID(stationID string, providersMap map[string]Provider) *Provider {
 	stationIDLower := strings.ToLower(stationID)
-	
+
 	// Check against all known providers
 	for i := range r.Providers {
 		p := &r.Providers[i]
 		// Clean up provider ID key (e.g. "mobility" from "mobility")
-		// Often keys are like "mobility", "2em", "edrive". 
+		// Often keys are like "mobility", "2em", "edrive".
 		// Checks if stationID contains the provider ID (case insensitive)
 		// e.g. stationID "mobility:123" contains providerID "mobility"
 		pID := strings.ToLower(p.ProviderID)
-		
+
 		// Skip very short keys to avoid false positives if any exist (though unlikely in this dataset)
 		if len(pID) < 3 {
-			continue 
+			continue
 		}
 
 		if strings.Contains(stationIDLower, pID) {
 			return p
 		}
 	}
-	
+
 	return nil
 }

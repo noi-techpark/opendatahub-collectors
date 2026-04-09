@@ -1,0 +1,193 @@
+// SPDX-FileCopyrightText: 2026 NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"log/slog"
+	"strings"
+	"sync"
+	"time"
+
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/dc"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
+	"github.com/noi-techpark/opendatahub-go-sdk/tel"
+	"github.com/robfig/cron/v3"
+)
+
+var env struct {
+	dc.Env
+	CRON              string `default:"20 * * * * *"`
+	CRON_STATIC       string `default:"0 0 2 * * *"`
+	REALTIME_URL      string
+	STATIC_URL        string
+	AUTH_BEARER_TOKEN string
+}
+
+var (
+	stationsMu sync.RWMutex
+	stations   = make(map[string]StationDTO)
+	charIndex  = make(map[string]map[string]string) // stationID → measurementIndex → odhDataType
+)
+
+func main() {
+	ms.InitWithEnv(context.Background(), "", &env)
+	slog.Info("Starting dc-traffic-swiss...")
+
+	defer tel.FlushOnPanic()
+
+	collector := dc.NewDc[dc.EmptyData](context.Background(), env.Env)
+
+	// Fetch static data once at startup so stations are available immediately.
+	ms.FailOnError(context.Background(), runStaticCollection(context.Background(), collector), "Failed initial static collection")
+
+	c := cron.New(cron.WithSeconds())
+	c.AddFunc(env.CRON_STATIC, func() {
+		ms.FailOnError(context.Background(), runStaticCollection(context.Background(), collector), "failed scheduled static collection")
+	})
+	c.AddFunc(env.CRON, func() {
+		ms.FailOnError(context.Background(), runRealtimeCollection(context.Background(), collector), "failed scheduled realtime collection")
+	})
+	c.Run()
+}
+
+func runStaticCollection(ctx context.Context, collector *dc.Dc[dc.EmptyData]) error {
+	ctx, col := collector.StartCollection(ctx)
+	defer col.End(ctx)
+
+	data, err := FetchURL(env.STATIC_URL, "")
+	if err != nil {
+		slog.Error("static fetch failed", "err", err)
+		return err
+	}
+
+	parsed, chars, err := ParseStaticXML(data)
+	if err != nil {
+		slog.Error("static XML parse failed", "err", err)
+		return err
+	}
+
+	stationsMu.Lock()
+	for _, s := range parsed {
+		stations[s.ID] = s
+	}
+	for id, m := range chars {
+		charIndex[id] = m
+	}
+	stationsMu.Unlock()
+
+	root := Root{Stations: snapshotStations(), Measurements: nil}
+	if err := publishRoot(ctx, col, root); err != nil {
+		return err
+	}
+	slog.Info("static collection complete", "stations", len(parsed))
+	return nil
+}
+
+func runRealtimeCollection(ctx context.Context, collector *dc.Dc[dc.EmptyData]) error {
+	ctx, col := collector.StartCollection(ctx)
+	defer col.End(ctx)
+
+	data, err := FetchSOAP(env.REALTIME_URL, realtimeSoapAction, realtimeSoapBody, env.AUTH_BEARER_TOKEN)
+	if err != nil {
+		slog.Error("realtime fetch failed", "err", err)
+		return err
+	}
+
+	siteMeasurements, err := ParseRealtimeXML(data)
+	if err != nil {
+		slog.Error("realtime XML parse failed", "err", err)
+		return err
+	}
+
+	stationsMu.RLock()
+	chars := make(map[string]map[string]string, len(charIndex))
+	for k, v := range charIndex {
+		chars[k] = v
+	}
+	stationsMu.RUnlock()
+
+	var measurements []MeasurementDTO
+	for _, sm := range siteMeasurements {
+		ts, err := time.Parse(time.RFC3339Nano, sm.TimeDefault)
+		if err != nil {
+			ts, err = time.Parse(time.RFC3339, sm.TimeDefault)
+		}
+		if err != nil {
+			slog.Warn("bad timestamp in realtime feed", "raw", sm.TimeDefault, "err", err)
+			ts = time.Now()
+		}
+
+		idxMap, ok := chars[sm.SiteRef.ID]
+		if !ok {
+			continue
+		}
+
+		for _, mv := range sm.Values {
+			dt, ok := idxMap[mv.Index]
+			if !ok {
+				continue
+			}
+
+			var value float64
+			if strings.Contains(dt, "flow") {
+				value = mv.VehicleFlowRate
+			} else {
+				value = mv.SpeedValue
+			}
+
+			measurements = append(measurements, MeasurementDTO{
+				StationID: sm.SiteRef.ID,
+				DataType:  dt,
+				Value:     value,
+				Timestamp: ts,
+			})
+		}
+	}
+
+	if len(measurements) == 0 {
+		return nil
+	}
+
+	stationsMu.RLock()
+	allStations := snapshotStations()
+	stationsMu.RUnlock()
+
+	root := Root{Stations: allStations, Measurements: measurements}
+	if err := publishRoot(ctx, col, root); err != nil {
+		return err
+	}
+	slog.Info("realtime collection: published measurements", "count", len(measurements))
+	return nil
+}
+
+// snapshotStations returns a slice copy of all known stations.
+// Caller must NOT hold stationsMu (or must hold at least RLock).
+func snapshotStations() []StationDTO {
+	result := make([]StationDTO, 0, len(stations))
+	for _, s := range stations {
+		result = append(result, s)
+	}
+	return result
+}
+
+func publishRoot(ctx context.Context, col *dc.Collection, root Root) error {
+	jsonBytes, err := json.Marshal(root)
+	if err != nil {
+		slog.Error("marshal root failed", "err", err)
+		return err
+	}
+	if err := col.Publish(ctx, &rdb.RawAny{
+		Provider:  env.PROVIDER,
+		Timestamp: time.Now(),
+		Rawdata:   string(jsonBytes),
+	}); err != nil {
+		slog.Error("publish failed", "err", err)
+		return err
+	}
+	return nil
+}

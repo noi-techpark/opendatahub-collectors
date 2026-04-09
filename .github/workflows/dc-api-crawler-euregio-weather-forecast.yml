@@ -5,6 +5,7 @@ on:
     paths:
       - "collectors/api-crawler/**"
       - "!collectors/api-crawler/infrastructure/helm/*"
+      - "!collectors/api-crawler/infrastructure/crawler-config/*"
       - "collectors/api-crawler/infrastructure/helm/euregio-weather-forecast.*.yaml"
       - "collectors/api-crawler/infrastructure/crawler-config/euregio-weather-forecast.yaml"
       - ".github/workflows/dc-api-crawler-euregio-weather-forecast.yml"

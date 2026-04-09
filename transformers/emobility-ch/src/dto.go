@@ -4,10 +4,43 @@
 
 package main
 
+import (
+	"encoding/json"
+	"fmt"
+)
+
+// ChargingStationNameList handles the API inconsistency where this field
+// is sometimes a single object and sometimes an array.
+type ChargingStationNameList []ChargingStationName
+
+func (l *ChargingStationNameList) UnmarshalJSON(data []byte) error {
+	if len(data) == 0 || string(data) == "null" {
+		*l = nil
+		return nil
+	}
+	switch data[0] {
+	case '[':
+		var list []ChargingStationName
+		if err := json.Unmarshal(data, &list); err != nil {
+			return err
+		}
+		*l = list
+	case '{':
+		var single ChargingStationName
+		if err := json.Unmarshal(data, &single); err != nil {
+			return err
+		}
+		*l = []ChargingStationName{single}
+	default:
+		return fmt.Errorf("unexpected ChargingStationNames value: %s", data)
+	}
+	return nil
+}
+
 // Root holds the top-level payload structure from multi-rest-poller
 // Uses snake_case keys as delivered by the collector
 type Root struct {
-	EVSEData     []EVSEOperator     `json:"evse_data"`
+	EVSEData     []EVSEOperator       `json:"evse_data"`
 	EVSEStatuses []EVSEStatusOperator `json:"evse_statuses"`
 }
 
@@ -30,7 +63,7 @@ type EVSEDataItem struct {
 	ChargingPoolID                 *string               `json:"ChargingPoolID"`
 	ChargingStationId              string                `json:"ChargingStationId"`
 	ChargingStationLocationRef     interface{}           `json:"ChargingStationLocationReference"`
-	ChargingStationNames           []ChargingStationName `json:"ChargingStationNames"`
+	ChargingStationNames           ChargingStationNameList `json:"ChargingStationNames"`
 	ClearinghouseID                *string               `json:"ClearinghouseID"`
 	DynamicInfoAvailable           *string               `json:"DynamicInfoAvailable"`
 	DynamicPowerLevel              interface{}           `json:"DynamicPowerLevel"`
@@ -61,7 +94,7 @@ type EVSEAddress struct {
 	Country         *string `json:"Country"`
 	Floor           *string `json:"Floor"`
 	HouseNum        *string `json:"HouseNum"`
-	ParkingFacility *string `json:"ParkingFacility"`
+	ParkingFacility *bool   `json:"ParkingFacility"`
 	ParkingSpot     *string `json:"ParkingSpot"`
 	PostalCode      *string `json:"PostalCode"`
 	Region          *string `json:"Region"`
@@ -70,10 +103,10 @@ type EVSEAddress struct {
 }
 
 type ChargingFacility struct {
-	Power         interface{} `json:"Power"`
-	PowerType     *string     `json:"PowerType"`
-	Amperage      *int        `json:"Amperage"`
-	Voltage       *int        `json:"Voltage"`
+	Power         interface{} `json:"power"`
+	PowerType     *string     `json:"powertype"`
+	Amperage      interface{} `json:"Amperage"`
+	Voltage       interface{} `json:"Voltage"`
 	ChargingModes []string    `json:"ChargingModes"`
 }
 
@@ -89,12 +122,12 @@ type GeoCoordinate struct {
 // --- Real-Time Status Data Structures (OICP Format with Operator nesting) ---
 
 type EVSEStatusOperator struct {
-	OperatorID        string               `json:"OperatorID"`
-	OperatorName      string               `json:"OperatorName"`
-	EVSEStatusRecord  []EVSEStatusItem     `json:"EVSEStatusRecord"`
+	OperatorID       string           `json:"OperatorID"`
+	OperatorName     string           `json:"OperatorName"`
+	EVSEStatusRecord []EVSEStatusItem `json:"EVSEStatusRecord"`
 }
 
 type EVSEStatusItem struct {
-	EvseID       string `json:"EvseID"`
-	EvseStatus   string `json:"EvseStatus"`
+	EvseID     string `json:"EvseID"`
+	EvseStatus string `json:"EvseStatus"`
 }

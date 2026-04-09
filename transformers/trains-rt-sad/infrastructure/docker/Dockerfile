@@ -25,5 +25,7 @@ CMD ["go", "run", "main.go"]
 
 # TESTS
 FROM base AS test
+# for xmllint xml validation
+RUN apt update && apt-get install -y libxml2-utils
 WORKDIR /code
 CMD ["go", "test", "."]

@@ -84,7 +84,6 @@ func main() {
 
 	listener := tr.NewTr[string](ctx, env.Env)
 	err := listener.Start(ctx, func(ctx context.Context, r *rdb.Raw[string]) error {
-
 		// Every 24 hours there is a new Netex file. Make sure we're somewhat up to date
 		mu.Lock()
 		defer mu.Unlock()
@@ -97,6 +96,7 @@ func main() {
 			ms.FailOnError(ctx, err, "could not unmarshal netex")
 			cache = NewCache()
 			nTime = time.Now()
+			slog.Info("Successfully downloaded new NeTEx")
 		}
 
 		dto := Dto{}
@@ -132,12 +132,11 @@ func main() {
 }
 
 func raw2Siri(c *Cache, refTime time.Time, r Dto, n netex.PublicationDelivery) (Siri, error) {
-	producer := "TBD"
+	producer := "SAD"
 	respTs := time.Now().Format(time.RFC3339)
 	s := NewSiri()
 	s.ServiceDelivery.ProducerRef = producer
 	s.ServiceDelivery.ResponseTimestamp = respTs
-	s.ServiceDelivery.VehicleMonitoringDelivery.ProducerRef = producer
 	s.ServiceDelivery.VehicleMonitoringDelivery.ResponseTimestamp = respTs
 
 	locItaly, err := time.LoadLocation("Europe/Rome")
@@ -165,6 +164,9 @@ func raw2Siri(c *Cache, refTime time.Time, r Dto, n netex.PublicationDelivery) (
 
 		va := VehicleActivity{}
 		posTime := parseTs(upd.Position.Time)
+		if refTime.Before(posTime) {
+			slog.Warn("implausible posTime in the future", "Position.Time", upd.Position.Time, "parsed", posTime, "refTime", refTime, "train", train)
+		}
 		va.RecordedAtTime = posTime.Format(time.RFC3339)
 		va.ValidUntilTime = posTime.Add(time.Hour * 24).Format(time.RFC3339)
 		vj := &va.MonitoredVehicleJourney
@@ -183,7 +185,7 @@ func raw2Siri(c *Cache, refTime time.Time, r Dto, n netex.PublicationDelivery) (
 		}
 		vj.DirectionRef = nJourneyPattern.DirectionType
 
-		vj.FramedVehicleJourneyRef.DataFrameRef = refTime.Format(time.RFC3339)
+		vj.FramedVehicleJourneyRef.DataFrameRef = refTime.Format("2006-01-02")
 		vj.FramedVehicleJourneyRef.DatedVehicleJourneyRef = nJourney.Id
 
 		nLine := findLine(n, c, nJourney.LineRef.Ref)
@@ -220,14 +222,24 @@ func raw2Siri(c *Cache, refTime time.Time, r Dto, n netex.PublicationDelivery) (
 		vj.Delay = mapDelay(upd.Trip.Delay)
 		vj.VehicleRef = train //TODO: this is not correct, should be a valid ID, but there are no vehicles defined in the reference Netex. Sta does it like this on their other SIRI-VM though
 
+		if upd.Trip.Delay < -10 {
+			slog.Warn("Detected train with suspiciously large anticipation", "upd", upd)
+		}
+
 		s.ServiceDelivery.VehicleMonitoringDelivery.VehicleActivity = append(s.ServiceDelivery.VehicleMonitoringDelivery.VehicleActivity, va)
 	}
 	return s, nil
 }
 
 func mapDelay(d int) string {
-	// delay for Siri is in seconds. we assume our source is in minutes
-	return fmt.Sprintf("PT%dS", d*60)
+	// delay for Siri is in seconds, source is in minutes
+	delay := d * 60
+
+	if delay < 0 {
+		// xml time period format requiest the minus sign to be in front if negative
+		return fmt.Sprintf("-PT%dS", -delay)
+	}
+	return fmt.Sprintf("PT%dS", delay)
 }
 
 type Cache struct {

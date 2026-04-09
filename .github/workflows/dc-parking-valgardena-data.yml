@@ -19,7 +19,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    concurrency: dc-rest-poller-parking-valgardena-data-build
+    concurrency: dc-parking-valgardena-data-build
     steps:
     - name: Checkout source code
       uses: actions/checkout@v4
@@ -35,7 +35,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-22.04
-    concurrency: dc-rest-poller-parking-valgardena-data-test
+    concurrency: dc-parking-valgardena-data-test
     environment: test
     steps:
       - name: Checkout source code
@@ -53,7 +53,7 @@ jobs:
       - name: Deploy on cluster  
         uses: noi-techpark/github-actions/helm-deploy@v2
         with:
-          k8s-name: dc-rest-poller-parking-valgardena-data
+          k8s-name: dc-parking-valgardena-data
           k8s-namespace: collector
           chart-path: helm/generic-collector
           values-file: ${{ env.WORKING_DIRECTORY}}/${{ env.VALUES_YAML }}
@@ -66,7 +66,7 @@ jobs:
     if: github.ref == 'refs/heads/prod'
     needs: build
     runs-on: ubuntu-22.04
-    concurrency: dc-rest-poller-parking-valgardena-data-prod
+    concurrency: dc-parking-valgardena-data-prod
     environment: prod
     steps:
       - name: Checkout source code
@@ -84,7 +84,7 @@ jobs:
       - name: Deploy on cluster  
         uses: noi-techpark/github-actions/helm-deploy@v2
         with:
-          k8s-name: dc-rest-poller-parking-valgardena-data
+          k8s-name: dc-parking-valgardena-data
           k8s-namespace: collector
           chart-path: helm/generic-collector
           values-file: ${{ env.WORKING_DIRECTORY}}/${{ env.VALUES_YAML }}

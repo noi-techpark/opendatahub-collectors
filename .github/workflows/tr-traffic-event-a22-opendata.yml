@@ -1,0 +1,118 @@
+name: CI/CD tr-traffic-event-a22-opendata
+
+on: 
+  push:
+    paths:
+      - "transformers/traffic-event-a22-opendata/infrastructure/**"
+      - "transformers/traffic-event-a22-opendata/src/**"
+      - ".github/workflows/tr-traffic-event-a22-opendata.yml"
+
+env:
+  WORKING_DIRECTORY: transformers/traffic-event-a22-opendata
+  DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/tr-traffic-event-a22-opendata
+  DOCKER_TAG: ${{ github.sha }}
+  KUBERNETES_NAMESPACE: collector
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    concurrency: tr-traffic-event-a22-opendata-build
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    - name: Run tests
+      run: docker run --rm $(docker build -q . -f infrastructure/docker/Dockerfile --target test)
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+
+  build:
+    runs-on: ubuntu-24.04
+    concurrency: tr-traffic-event-a22-opendata-build
+    needs:
+      - test
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    - name: Build and push images
+      uses: noi-techpark/github-actions/docker-build-and-push@v2
+      with:
+        working-directory: ${{ env.WORKING_DIRECTORY }}/infrastructure
+        docker-username: ${{ github.actor }}
+        docker-password: ${{ secrets.GITHUB_TOKEN }}
+          
+  deploy-test:
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev/a22-events'
+    needs: 
+      - build
+    runs-on: ubuntu-24.04
+    concurrency: tr-traffic-event-a22-opendata-deploy-test
+    environment: test
+    env:
+      PROJECT_NAME: tr-traffic-event-a22-opendata
+      VALUES_YAML: infrastructure/helm/values.test.yaml
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Customize values.yaml
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          yq -i '
+            .image.repository="${{ env.DOCKER_IMAGE }}" |
+            .image.tag="${{ env.DOCKER_TAG }}" |
+            .image.pullPolicy="IfNotPresent" 
+          ' ${{ env.VALUES_YAML }}
+
+          yq -i '.envSecret.ODH_CORE_TOKEN_CLIENT_ID = "${{ secrets.A22_TR_DATAPROCESSOR_CLIENT_ID }}"' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.ODH_CORE_TOKEN_CLIENT_SECRET = "${{ secrets.A22_TR_DATAPROCESSOR_CLIENT_SECRET }}"' ${{ env.VALUES_YAML }}
+
+      - name: Deploy on cluster  
+        uses: noi-techpark/github-actions/helm-deploy@v2
+        with:
+          k8s-name: ${{ env.PROJECT_NAME }}
+          k8s-namespace: collector
+          chart-path: helm/generic-collector
+          values-file: ${{ env.WORKING_DIRECTORY }}/${{ env.VALUES_YAML }}
+          aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
+          aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
+          aws-eks-cluster-name: aws-main-eu-01
+          aws-region: eu-west-1
+
+  deploy-prod:
+    if: github.ref == 'refs/heads/prod'
+    needs: 
+      - build
+    runs-on: ubuntu-24.04
+    concurrency: tr-traffic-event-a22-opendata-deploy-prod
+    environment: prod
+    env:
+      PROJECT_NAME: tr-traffic-event-a22-opendata
+      VALUES_YAML: infrastructure/helm/values.prod.yaml
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Customize values.yaml
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          yq -i '
+            .image.repository="${{ env.DOCKER_IMAGE }}" |
+            .image.tag="${{ env.DOCKER_TAG }}" |
+            .image.pullPolicy="IfNotPresent" 
+          ' ${{ env.VALUES_YAML }}
+
+          yq -i '.envSecret.ODH_CORE_TOKEN_CLIENT_ID = "${{ secrets.A22_TR_DATAPROCESSOR_CLIENT_ID }}"' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.ODH_CORE_TOKEN_CLIENT_SECRET = "${{ secrets.A22_TR_DATAPROCESSOR_CLIENT_SECRET }}"' ${{ env.VALUES_YAML }}
+
+      - name: Deploy on cluster  
+        uses: noi-techpark/github-actions/helm-deploy@v2
+        with:
+          k8s-name: ${{ env.PROJECT_NAME }}
+          k8s-namespace: collector
+          chart-path: helm/generic-collector
+          values-file: ${{ env.WORKING_DIRECTORY }}/${{ env.VALUES_YAML }}
+          aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
+          aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
+          aws-eks-cluster-name: aws-main-eu-01
+          aws-region: eu-west-1

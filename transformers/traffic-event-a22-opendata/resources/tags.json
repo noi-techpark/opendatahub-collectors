@@ -1,0 +1,23 @@
+[
+  {
+    "id": "announcement:traffic-event",
+    "name-it": "Evento di Traffico",
+    "name-de": "Verkehrsereignis",
+    "name-en": "Traffic Event",
+    "types": ["announcement"]
+  },
+  {
+    "id": "traffic-event:road-work",
+    "name-it": "Cantiere Stradale",
+    "name-de": "Baustelle",
+    "name-en": "Road Work",
+    "types": ["announcement", "traffic-event"]
+  },
+  {
+    "id": "traffic-event:current",
+    "name-it": "Situazione Attuale",
+    "name-de": "Aktuelle Lage",
+    "name-en": "Current Situation",
+    "types": ["announcement", "traffic-event"]
+  }
+]

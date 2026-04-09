@@ -1,0 +1,39 @@
+# SPDX-FileCopyrightText: 2026 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-traffic-swiss
+  pullPolicy: IfNotPresent
+  tag: "0.1.0"
+
+env:
+  LOG_LEVEL: "INFO"
+  MQ_QUEUE: traffic-swiss.fedro
+  MQ_EXCHANGE: routed
+  MQ_KEY: traffic-swiss.fedro
+  MQ_CLIENT: tr-traffic-swiss
+
+  BDP_BASE_URL: http://bdp-core.core.svc.cluster.local
+  BDP_ORIGIN: FEDRO
+  BDP_PROVENANCE_NAME: tr-traffic-swiss
+  BDP_PROVENANCE_VERSION: "0.1.0"
+
+  RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
+
+  SERVICE_NAME: tr-traffic-swiss
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
+  - name: BDP_TOKEN_URL
+    secret: oauth-collector
+    key: tokenUri
+  - name: BDP_CLIENT_ID
+    secret: oauth-collector
+    key: clientId
+  - name: BDP_CLIENT_SECRET
+    secret: oauth-collector
+    key: clientSecret

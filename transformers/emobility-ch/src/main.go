@@ -45,7 +45,7 @@ func main() {
 	slog.Info("Starting transformer listener...")
 	listener := tr.NewTr[string](context.Background(), env.Env)
 
-	err = listener.Start(context.Background(), MultiFormatMiddleware[Root](TransformWithBdp(b)))
+	err = listener.Start(context.Background(), tr.RawString2JsonMiddleware[Root](TransformWithBdp(b)))
 	ms.FailOnError(context.Background(), err, "error while listening to queue")
 }
 
@@ -186,7 +186,7 @@ func parseGoogleCoords(geo *GeoCoordinate) (float64, float64, error) {
 	return lat, lon, nil
 }
 
-func extractStationName(names []ChargingStationName) string {
+func extractStationName(names ChargingStationNameList) string {
 	for _, name := range names {
 		if name.Lang == "en" || name.Lang == "de" {
 			return name.Value
