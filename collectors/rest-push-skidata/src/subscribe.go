@@ -5,6 +5,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -154,7 +155,7 @@ func getCountingCategories(cred FacilityCredential) ([]CountingCategory, error) 
 func enableNotifications(cred FacilityCredential) error {
 	url := cred.ApiURL(fmt.Sprintf("notifications/enable/%s", cred.Facility))
 
-	req, err := http.NewRequest(http.MethodPut, url, nil)
+	req, err := http.NewRequest(http.MethodPut, url, bytes.NewReader([]byte("[]")))
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
