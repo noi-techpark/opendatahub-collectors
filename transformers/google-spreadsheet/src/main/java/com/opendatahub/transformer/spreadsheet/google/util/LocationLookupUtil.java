@@ -33,7 +33,7 @@ public class LocationLookupUtil {
 					dto.setLongitude(coordinates[0]);
 					dto.setLatitude(coordinates[1]);
 				}
-			} catch (NominatimException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
