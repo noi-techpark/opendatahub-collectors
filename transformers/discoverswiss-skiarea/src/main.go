@@ -13,14 +13,13 @@ import (
 	"os"
 	"time"
 
-	"github.com/mitchellh/hashstructure/v2"
+	"github.com/noi-techpark/opendatahub-go-sdk/clib"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
 	"github.com/noi-techpark/opendatahub-go-sdk/tel"
 	"github.com/noi-techpark/opendatahub-go-sdk/tel/logger"
 	"opendatahub.com/tr-discoverswiss-skiarea/dto"
-	odhContentClient "opendatahub.com/tr-discoverswiss-skiarea/odh-content-client"
 	odhContentModel "opendatahub.com/tr-discoverswiss-skiarea/odh-content-model"
 )
 
@@ -44,167 +43,11 @@ var env struct {
 	ODH_CORE_TOKEN_URL           string
 }
 
-type skiAreaCache struct {
-	skiArea odhContentModel.SkiArea
-	hash    uint64
-}
-
-type poiCache struct {
-	poi  odhContentModel.ODHActivityPoi
-	hash uint64
-}
-
-type measuringpointCache struct {
-	mp   odhContentModel.MeasuringpointV2
-	hash uint64
-}
-
-var contentClient *odhContentClient.ContentClient
-var skiAreaCacheMap map[string]skiAreaCache
-var poiCacheMap map[string]poiCache
-var mpCacheMap map[string]measuringpointCache
+var contentClient clib.ContentAPI
+var skiAreaCache *clib.Cache[odhContentModel.SkiArea]
+var poiCache *clib.Cache[odhContentModel.ODHActivityPoi]
+var mpCache *clib.Cache[odhContentModel.MeasuringpointV2]
 var location *time.Location
-
-func loadExistingSkiAreas(ctx context.Context, contentClient *odhContentClient.ContentClient) (map[string]skiAreaCache, error) {
-	cache := map[string]skiAreaCache{}
-
-	type response struct {
-		Items       []odhContentModel.SkiArea `json:"Items"`
-		TotalPages  int                       `json:"TotalPages"`
-		CurrentPage int                       `json:"CurrentPage"`
-	}
-
-	currentPage := 1
-	totalPage := 99
-	for currentPage <= totalPage {
-		res := response{}
-
-		err := contentClient.Get(ctx,
-			"SkiArea",
-			map[string]string{
-				"active":     "true",
-				"source":     SOURCE,
-				"pageSize":   "200",
-				"pagenumber": fmt.Sprintf("%d", currentPage),
-			},
-			&res,
-		)
-		if err != nil {
-			return nil, err
-		}
-
-		for _, skiArea := range res.Items {
-			hash, err := hashstructure.Hash(skiArea, hashstructure.FormatV2, nil)
-			if err != nil {
-				return nil, fmt.Errorf("could not hash ski area: %v", err)
-			}
-
-			cache[getMappingId(skiArea.Mapping)] = skiAreaCache{
-				skiArea: skiArea,
-				hash:    hash,
-			}
-		}
-
-		currentPage += 1
-		totalPage = res.TotalPages
-	}
-
-	return cache, nil
-}
-
-func loadExistingPOIs(ctx context.Context, contentClient *odhContentClient.ContentClient) (map[string]poiCache, error) {
-	cache := map[string]poiCache{}
-
-	type response struct {
-		Items       []odhContentModel.ODHActivityPoi `json:"Items"`
-		TotalPages  int                              `json:"TotalPages"`
-		CurrentPage int                              `json:"CurrentPage"`
-	}
-
-	currentPage := 1
-	totalPage := 99
-	for currentPage <= totalPage {
-		res := response{}
-
-		err := contentClient.Get(ctx,
-			"ODHActivityPoi",
-			map[string]string{
-				"active":     "true",
-				"source":     SOURCE,
-				"pageSize":   "200",
-				"pagenumber": fmt.Sprintf("%d", currentPage),
-			},
-			&res,
-		)
-		if err != nil {
-			return nil, err
-		}
-
-		for _, poi := range res.Items {
-			hash, err := hashstructure.Hash(poi, hashstructure.FormatV2, nil)
-			if err != nil {
-				return nil, fmt.Errorf("could not hash POI: %v", err)
-			}
-
-			cache[getMappingId(poi.Mapping)] = poiCache{
-				poi:  poi,
-				hash: hash,
-			}
-		}
-
-		currentPage += 1
-		totalPage = res.TotalPages
-	}
-
-	return cache, nil
-}
-
-func loadExistingMeasuringpoints(ctx context.Context, contentClient *odhContentClient.ContentClient) (map[string]measuringpointCache, error) {
-	cache := map[string]measuringpointCache{}
-
-	type response struct {
-		Items       []odhContentModel.MeasuringpointV2 `json:"Items"`
-		TotalPages  int                                `json:"TotalPages"`
-		CurrentPage int                                `json:"CurrentPage"`
-	}
-
-	currentPage := 1
-	totalPage := 99
-	for currentPage <= totalPage {
-		res := response{}
-
-		err := contentClient.Get(ctx,
-			"Weather/Measuringpoint",
-			map[string]string{
-				"active":     "true",
-				"source":     SOURCE,
-				"pageSize":   "200",
-				"pagenumber": fmt.Sprintf("%d", currentPage),
-			},
-			&res,
-		)
-		if err != nil {
-			return nil, err
-		}
-
-		for _, mp := range res.Items {
-			hash, err := hashstructure.Hash(mp, hashstructure.FormatV2, nil)
-			if err != nil {
-				return nil, fmt.Errorf("could not hash measuringpoint: %v", err)
-			}
-
-			cache[getMappingId(mp.Mapping)] = measuringpointCache{
-				mp:   mp,
-				hash: hash,
-			}
-		}
-
-		currentPage += 1
-		totalPage = res.TotalPages
-	}
-
-	return cache, nil
-}
 
 func main() {
 	ms.InitWithEnv(context.Background(), "", &env)
@@ -215,7 +58,7 @@ func main() {
 	location, err = time.LoadLocation(PROVIDER_TIMEZONE)
 	ms.FailOnError(context.Background(), err, "failed to load timezone")
 
-	contentClient, err = odhContentClient.NewContentClient(odhContentClient.Config{
+	client, err := clib.NewContentClient(clib.Config{
 		BaseURL:      env.ODH_CORE_URL,
 		TokenURL:     env.ODH_CORE_TOKEN_URL,
 		ClientID:     env.ODH_CORE_TOKEN_CLIENT_ID,
@@ -223,24 +66,42 @@ func main() {
 		DisableOAuth: env.ODH_CORE_TOKEN_URL == "",
 	})
 	ms.FailOnError(context.Background(), err, "failed to create client")
+	contentClient = client
 
 	// Load existing entities from ODH API (skip if no URL configured, e.g. dry-run CLI)
 	if env.ODH_CORE_URL != "" {
 		slog.Info("Loading existing entities...", "url", env.ODH_CORE_URL)
 
-		skiAreaCacheMap, err = loadExistingSkiAreas(context.Background(), contentClient)
+		sourceFilter := map[string]string{
+			"active": "true",
+			"source": SOURCE,
+		}
+
+		skiAreaCache, err = clib.LoadExisting(context.Background(), contentClient, clib.LoadConfig[odhContentModel.SkiArea]{
+			EntityType:  "SkiArea",
+			QueryParams: sourceFilter,
+			IDFunc:      func(s odhContentModel.SkiArea) string { return getMappingId(s.Mapping) },
+		})
 		ms.FailOnError(context.Background(), err, "failed to load ski areas")
 
-		poiCacheMap, err = loadExistingPOIs(context.Background(), contentClient)
+		poiCache, err = clib.LoadExisting(context.Background(), contentClient, clib.LoadConfig[odhContentModel.ODHActivityPoi]{
+			EntityType:  "ODHActivityPoi",
+			QueryParams: sourceFilter,
+			IDFunc:      func(p odhContentModel.ODHActivityPoi) string { return getMappingId(p.Mapping) },
+		})
 		ms.FailOnError(context.Background(), err, "failed to load POIs")
 
-		mpCacheMap, err = loadExistingMeasuringpoints(context.Background(), contentClient)
+		mpCache, err = clib.LoadExisting(context.Background(), contentClient, clib.LoadConfig[odhContentModel.MeasuringpointV2]{
+			EntityType:  "Weather/Measuringpoint",
+			QueryParams: sourceFilter,
+			IDFunc:      func(m odhContentModel.MeasuringpointV2) string { return getMappingId(m.Mapping) },
+		})
 		ms.FailOnError(context.Background(), err, "failed to load measuringpoints")
 	} else {
 		slog.Info("ODH_CORE_URL not set, starting with empty cache")
-		skiAreaCacheMap = map[string]skiAreaCache{}
-		poiCacheMap = map[string]poiCache{}
-		mpCacheMap = map[string]measuringpointCache{}
+		skiAreaCache = clib.NewCache[odhContentModel.SkiArea]()
+		poiCache = clib.NewCache[odhContentModel.ODHActivityPoi]()
+		mpCache = clib.NewCache[odhContentModel.MeasuringpointV2]()
 	}
 
 	// CLI mode: go run . file1.json [file2.json ...]
@@ -299,13 +160,22 @@ func uploadWithOwnId(ctx context.Context, apiPath string, id string, payload int
 		slog.Info("Updated entity", "apiPath", apiPath, "id", id)
 		return nil
 	}
-	if !errors.Is(err, odhContentClient.ErrNoDataToUpdate) {
-		return fmt.Errorf("PUT %s/%s: %w", apiPath, id, err)
+	// clib returns ErrNoDataToUpdate for body "Data to update Not Found",
+	// but the API may also return 404 — handle both cases.
+	if errors.Is(err, clib.ErrNoDataToUpdate) || isNotFoundError(err) {
+		slog.Info("Creating entity", "apiPath", apiPath, "id", id)
+		return contentClient.Post(ctx, apiPath, map[string]string{"generateid": "false"}, payload)
 	}
+	return fmt.Errorf("PUT %s/%s: %w", apiPath, id, err)
+}
 
-	// Entity doesn't exist yet — create with our own ID
-	slog.Info("Creating entity", "apiPath", apiPath, "id", id)
-	return contentClient.Post(ctx, apiPath, map[string]string{"generateid": "false"}, payload)
+// isNotFoundError checks if the error is a 404 APIError from clib.
+func isNotFoundError(err error) bool {
+	var apiErr *clib.APIError
+	if errors.As(err, &apiErr) {
+		return apiErr.StatusCode == 404
+	}
+	return false
 }
 
 // processRaw is the shared core: transform, merge into cache, upload if changed.
@@ -327,90 +197,76 @@ func processRaw(ctx context.Context, raw dto.SkiArea, sourceTime time.Time) erro
 
 	setMappingSyncTime(result.SkiArea.Mapping, sourceTime)
 
-	// SkiArea merge (cache keyed by DiscoverSwiss mapping ID)
-	existing, exists := skiAreaCacheMap[raw.Identifier]
+	// SkiArea merge + change detection
+	existing, exists := skiAreaCache.Get(raw.Identifier)
 	if exists {
-		MergeSkiArea(&existing.skiArea, result.SkiArea)
+		MergeSkiArea(&existing.Entity, result.SkiArea)
 	} else {
-		existing = skiAreaCache{skiArea: result.SkiArea}
+		existing = clib.CacheEntry[odhContentModel.SkiArea]{Entity: result.SkiArea}
 	}
 
-	// Hash and compare
-	hash, err := hashstructure.Hash(existing.skiArea, hashstructure.FormatV2, nil)
+	hash, changed, err := skiAreaCache.HasChanged(raw.Identifier, existing.Entity)
 	if err != nil {
 		return fmt.Errorf("hash ski area: %w", err)
 	}
-
-	skiAreaChanged := hash != existing.hash
-	if skiAreaChanged {
-		skiAreaCacheMap[raw.Identifier] = skiAreaCache{
-			skiArea: existing.skiArea,
-			hash:    hash,
-		}
+	if changed {
+		skiAreaCache.Set(raw.Identifier, existing.Entity, hash)
 	}
 
-	// POI merge (cache keyed by DiscoverSwiss mapping ID)
+	// POI merge + change detection
 	var changedPOIs []odhContentModel.ODHActivityPoi
 	for _, poi := range result.POI {
 		mappingId := getMappingId(poi.Mapping)
 		setMappingSyncTime(poi.Mapping, sourceTime)
 
-		existingPOI, poiExists := poiCacheMap[mappingId]
+		existingPOI, poiExists := poiCache.Get(mappingId)
 		if poiExists {
-			MergePOI(&existingPOI.poi, poi)
+			MergePOI(&existingPOI.Entity, poi)
 		} else {
-			existingPOI = poiCache{poi: poi}
+			existingPOI = clib.CacheEntry[odhContentModel.ODHActivityPoi]{Entity: poi}
 		}
 
-		poiHash, err := hashstructure.Hash(existingPOI.poi, hashstructure.FormatV2, nil)
+		poiHash, poiChanged, err := poiCache.HasChanged(mappingId, existingPOI.Entity)
 		if err != nil {
 			return fmt.Errorf("hash POI: %w", err)
 		}
-
-		if poiHash != existingPOI.hash {
-			poiCacheMap[mappingId] = poiCache{
-				poi:  existingPOI.poi,
-				hash: poiHash,
-			}
-			changedPOIs = append(changedPOIs, existingPOI.poi)
+		if poiChanged {
+			poiCache.Set(mappingId, existingPOI.Entity, poiHash)
+			changedPOIs = append(changedPOIs, existingPOI.Entity)
 		}
 	}
 
-	// Measuringpoint merge (cache keyed by DiscoverSwiss mapping ID)
+	// Measuringpoint merge + change detection
 	var changedMPs []odhContentModel.MeasuringpointV2
 	for _, mp := range result.Measuringpoints {
 		mappingId := getMappingId(mp.Mapping)
 		setMappingSyncTime(mp.Mapping, sourceTime)
 
-		existingMP, mpExists := mpCacheMap[mappingId]
+		existingMP, mpExists := mpCache.Get(mappingId)
 		if mpExists {
-			MergeMeasuringpoint(&existingMP.mp, mp)
+			MergeMeasuringpoint(&existingMP.Entity, mp)
 		} else {
-			existingMP = measuringpointCache{mp: mp}
+			existingMP = clib.CacheEntry[odhContentModel.MeasuringpointV2]{Entity: mp}
 		}
 
-		mpHash, err := hashstructure.Hash(existingMP.mp, hashstructure.FormatV2, nil)
+		mpHash, mpChanged, err := mpCache.HasChanged(mappingId, existingMP.Entity)
 		if err != nil {
 			return fmt.Errorf("hash measuringpoint: %w", err)
 		}
-
-		if mpHash != existingMP.hash {
-			mpCacheMap[mappingId] = measuringpointCache{
-				mp:   existingMP.mp,
-				hash: mpHash,
-			}
-			changedMPs = append(changedMPs, existingMP.mp)
+		if mpChanged {
+			mpCache.Set(mappingId, existingMP.Entity, mpHash)
+			changedMPs = append(changedMPs, existingMP.Entity)
 		}
 	}
 
 	slog.Info("Uploading changed data",
-		"skiAreaChanged", skiAreaChanged,
+		"skiAreaChanged", changed,
 		"changedPOIs", len(changedPOIs),
 		"changedMPs", len(changedMPs))
 
 	// Upload ski area (generateid=false — we control the ID)
-	if skiAreaChanged {
-		if err := uploadWithOwnId(ctx, "SkiArea", *existing.skiArea.ID, existing.skiArea); err != nil {
+	if changed {
+		if err := uploadWithOwnId(ctx, "SkiArea", *existing.Entity.ID, existing.Entity); err != nil {
 			return fmt.Errorf("upload ski area: %w", err)
 		}
 	}
