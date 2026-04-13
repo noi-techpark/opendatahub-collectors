@@ -1,0 +1,17 @@
+{
+    "trafficSignalState": 0,
+    "name": "Totale",
+    "freeLimit": 489,
+    "level": 95,
+    "capacity": 490,
+    "occupancyLimit": 490,
+    "externalCounting": false,
+    "trafficSignalMode": 0,
+    "carpark": {
+      "name": "Demo",
+      "facilityNr": 600015,
+      "id": 0,
+      "shortName": "1"
+    },
+    "countingCategoryId": 3
+  }
