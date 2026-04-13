@@ -100,23 +100,23 @@ func healthCheck(cred FacilityCredential) error {
 }
 
 func subscribeFacility(cred FacilityCredential) error {
-	// categories, err := getCountingCategories(cred)
-	// if err != nil {
-	// 	return fmt.Errorf("failed to get counting categories: %w", err)
-	// }
+	categories, err := getCountingCategories(cred)
+	if err != nil {
+		return fmt.Errorf("failed to get counting categories: %w", err)
+	}
 
-	// seen := make(map[int]bool)
-	// carparkIds := make([]int, 0)
-	// for _, c := range categories {
-	// 	if !seen[c.CarparkId] {
-	// 		seen[c.CarparkId] = true
-	// 		carparkIds = append(carparkIds, c.CarparkId)
-	// 	}
-	// }
+	seen := make(map[int]bool)
+	carparkIds := make([]int, 0)
+	for _, c := range categories {
+		if !seen[c.CarparkId] {
+			seen[c.CarparkId] = true
+			carparkIds = append(carparkIds, c.CarparkId)
+		}
+	}
 
-	slog.Info("Fetched counting categories", "facility", cred.Facility)
+	slog.Info("Fetched counting categories", "facility", cred.Facility, "carparkIds", carparkIds)
 
-	err := enableNotifications(cred)
+	err = enableNotifications(cred, carparkIds)
 	if err != nil {
 		return fmt.Errorf("failed to enable notifications: %w", err)
 	}
@@ -152,10 +152,15 @@ func getCountingCategories(cred FacilityCredential) ([]CountingCategory, error) 
 	return categories, nil
 }
 
-func enableNotifications(cred FacilityCredential) error {
+func enableNotifications(cred FacilityCredential, carparkIds []int) error {
 	url := cred.ApiURL(fmt.Sprintf("notifications/enable/%s", cred.Facility))
 
-	req, err := http.NewRequest(http.MethodPut, url, bytes.NewReader([]byte("[]")))
+	body, err := json.Marshal(carparkIds)
+	if err != nil {
+		return fmt.Errorf("failed to marshal carpark ids: %w", err)
+	}
+
+	req, err := http.NewRequest(http.MethodPut, url, bytes.NewReader(body))
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
