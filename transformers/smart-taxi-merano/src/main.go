@@ -215,12 +215,12 @@ func msgReject(d *amqp091.Delivery) {
 }
 
 type payload struct {
-	Uid      string `json:"IdUtente"`
-	Nickname string `json:"Nickname"`
-	State    string `json:"Stato"`
-	Lat      string `json:"Latitudine"`
-	Long     string `json:"Longitudine"`
-	Time     string `json:"OraComunicazione"`
+	Uid      string `json:"_IdUtente"`
+	Nickname string `json:"_Nickname"`
+	State    string `json:"_Stato"`
+	Lat      string `json:"_Latitudine"`
+	Long     string `json:"_Longitudine"`
+	Time     string `json:"_OraComunicazione"`
 }
 
 type payloadArray []payload
