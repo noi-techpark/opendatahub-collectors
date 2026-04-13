@@ -17,7 +17,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     concurrency: tr-smart-taxi-merano-build
     permissions:
       packages: write
@@ -36,7 +36,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     needs: 
       - build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     concurrency: tr-smart-taxi-merano-deploy-test
     environment: test
     env:
@@ -74,7 +74,7 @@ jobs:
     if: github.ref == 'refs/heads/prod'
     needs: 
       - build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     concurrency: tr-smart-taxi-merano-deploy-prod
     environment: prod
     env:
