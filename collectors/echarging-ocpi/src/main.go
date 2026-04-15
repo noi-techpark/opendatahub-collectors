@@ -23,7 +23,8 @@ var cfg struct {
 	PULL_LOCATIONS_ENDPOINT string
 	PULL_LOCATIONS_CRON     string
 
-	OCPI_TOKENS []string
+	OCPI_TOKENS    []string
+	OCPI_PUBLIC_URL string
 }
 
 const ver string = "2.2"
@@ -78,6 +79,7 @@ func startEndpoint(rabbit mq.R) {
 		sloggin.IgnoreMethod("GET")))
 
 	r.GET("/health", health)
+	r.GET("/ocpi/emsp/versions", versions(cfg.OCPI_PUBLIC_URL, ver))
 
 	rEmsp := r.Group("/ocpi/emsp")
 	rEmsp.Use(tokenAuth(validTokens(cfg.OCPI_TOKENS)))

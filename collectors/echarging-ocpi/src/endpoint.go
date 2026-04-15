@@ -20,6 +20,23 @@ func health(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
+func versions(publicURL string, ver string) gin.HandlerFunc {
+	type versionEntry struct {
+		Version string `json:"version"`
+		URL     string `json:"url"`
+	}
+	data := []versionEntry{
+		{Version: ver, URL: publicURL + "/ocpi/emsp/" + ver},
+	}
+	return func(c *gin.Context) {
+		c.JSONP(http.StatusOK, OCPIResp[[]versionEntry]{
+			StatusCode: 1000,
+			Timestamp:  OCPIDateTime{time.Now()},
+			Data:       data,
+		})
+	}
+}
+
 func handlePush(rabbit mq.R, provider string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var body map[string]any
