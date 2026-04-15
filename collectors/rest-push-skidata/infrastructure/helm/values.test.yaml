@@ -39,6 +39,7 @@ env:
   MQ_CLIENT: "dc-rest-push-skidata"
   MQ_EXCHANGE: "ingress"
   SERVICE_NAME: "dc-rest-push-skidata"
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 
 envSecretRef:
   - name: MQ_URI
