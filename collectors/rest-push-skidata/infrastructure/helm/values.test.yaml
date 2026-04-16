@@ -38,6 +38,7 @@ env:
   PROVIDER: "skidata/parking-stations"
   MQ_CLIENT: "dc-rest-push-skidata"
   MQ_EXCHANGE: "ingress"
+  SKIDATA_BASE_URL: "https://car.webhost.skidata.com"
   SERVICE_NAME: "dc-rest-push-skidata"
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 

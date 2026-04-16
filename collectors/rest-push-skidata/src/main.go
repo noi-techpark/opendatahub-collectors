@@ -27,6 +27,7 @@ var env struct {
 	INBOUND_AUTH_USER string `required:"true"`
 	INBOUND_AUTH_PASS string `required:"true"`
 
+	SKIDATA_BASE_URL         string `required:"true"`
 	SKIDATA_CREDENTIALS_JSON string `required:"true"`
 }
 

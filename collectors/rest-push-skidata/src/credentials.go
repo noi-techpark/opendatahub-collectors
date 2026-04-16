@@ -13,12 +13,12 @@ type FacilityCredential struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Facility string `json:"facility"`
-	URL      string `json:"url"`
 }
 
-// ApiURL returns the full URL for a Skidata Dynamic Data API call.
+// ApiURL returns the full URL for a Skidata Dynamic Data API call,
+// using the global SKIDATA_BASE_URL from the environment.
 func (c FacilityCredential) ApiURL(path string) string {
-	return fmt.Sprintf("%s/bei/advconn/dynamicdata/v1/%s", c.URL, path)
+	return fmt.Sprintf("%s/bei/advconn/dynamicdata/v1/%s", env.SKIDATA_BASE_URL, path)
 }
 
 func ParseCredentials(jsonBlob string) ([]FacilityCredential, error) {
