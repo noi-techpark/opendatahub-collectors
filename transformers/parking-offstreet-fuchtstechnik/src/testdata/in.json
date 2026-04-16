@@ -1,0 +1,14 @@
+{
+    "id": "plan_de_gralba",
+    "name_IT": "Parcheggio Plan de Gralba",
+    "name_DE": "Plan de Gralba",
+    "latitude": 46.53474648514954,
+    "longitude": 11.769183545778686,
+    "capacity": 400,
+    "measurements": [
+        {
+            "timestamp": "2026-03-30 11:07:58",
+            "availability": 298
+        }
+    ]
+}
