@@ -41,7 +41,7 @@ env:
 envSecret:
   # List of valid tokens, no spaces etc.
   OCPI_TOKENS: ExampleToken1,ExampleToken2
-  PULL_LOCATIONS_ENDPOINT: https://testurl.com
+  PULL_LOCATIONS_ENDPOINT: https://demo.eu-neogy.charge.ampeco.tech/ocpi/2.2/sender/locations
   PULL_TOKEN: "***"
 
 envSecretRef:
