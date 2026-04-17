@@ -20,19 +20,23 @@ func health(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
-func versions(publicURL string, ver string) gin.HandlerFunc {
+func versions(ver string) gin.HandlerFunc {
 	type versionEntry struct {
 		Version string `json:"version"`
 		URL     string `json:"url"`
 	}
-	data := []versionEntry{
-		{Version: ver, URL: publicURL + "/ocpi/emsp/" + ver},
-	}
 	return func(c *gin.Context) {
+		scheme := "https"
+		if c.Request.TLS == nil {
+			scheme = "http"
+		}
+		baseURL := scheme + "://" + c.Request.Host
 		c.JSONP(http.StatusOK, OCPIResp[[]versionEntry]{
 			StatusCode: 1000,
 			Timestamp:  OCPIDateTime{time.Now()},
-			Data:       data,
+			Data: []versionEntry{
+				{Version: ver, URL: baseURL + "/ocpi/emsp/" + ver},
+			},
 		})
 	}
 }
