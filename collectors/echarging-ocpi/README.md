@@ -47,7 +47,7 @@ curl -X POST https://demo.eu-neogy.charge.ampeco.tech/ocpi/2.2/credentials \
   -H "Content-Type: application/json" \
   -d '{
     "token": "<Token B>",
-    "url": "https://neogy.ocpi.io.dev.testingmachine.eu/ocpi/emsp/versions",
+    "url": "https://neogy-ampeco.ocpi.io.dev.testingmachine.eu/ocpi/emsp/versions",
     "roles": [{"role": "EMSP", "party_id": "OpenDataHub", "country_code": "IT", "business_details": {"name": "Open Data Hub"}}]
   }'
 
