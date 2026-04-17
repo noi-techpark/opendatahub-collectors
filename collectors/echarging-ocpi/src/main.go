@@ -72,7 +72,9 @@ func startEndpoint(rabbit mq.R) {
 	r.Use(gin.Recovery())
 	r.Use(cors.Default())
 
-	r.Use(sloggin.New(slog.Default()))
+	r.Use(sloggin.NewWithFilters(
+		slog.Default(),
+		sloggin.IgnorePath("/health")))
 
 	r.GET("/health", health)
 	r.GET("/ocpi/emsp/versions", versions(ver))

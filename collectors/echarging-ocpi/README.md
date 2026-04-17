@@ -16,7 +16,19 @@ Up to date documents here: https://github.com/ocpi/ocpi
 At time of writing, only the `locations/evse` path is implemented, but additional endpoints should be fairly trivial to add once needed.
 
 ### Authentication
-The supplier will give you a Token A and a versions URL 
+
+Token types:
+- Token A: Given to you by the provider (CPO). Used to exchange secrets, and never after
+- Token B: Used by the CPO when pushing updates to our service
+- Token C: Used by us when pulling data from the CPO
+
+#### Pre-shared
+The supplier might immediately exchange tokens B and C via a separate channel, without using any token A.
+
+#### Token exchange handshake
+If the supplier just gives you a Token A and a versions URL, the exchange process is as follows:
+
+In short, we use Token A to POST a Token B to their service, to which they respond with a Token C
 
 If the token A is not already base64 encoded, do so with
 ```sh
@@ -50,6 +62,8 @@ curl -X POST https://demo.eu-neogy.charge.ampeco.tech/ocpi/2.2/credentials \
     "url": "https://neogy-ampeco.ocpi.io.dev.testingmachine.eu/ocpi/emsp/versions",
     "roles": [{"role": "EMSP", "party_id": "OpenDataHub", "country_code": "IT", "business_details": {"name": "Open Data Hub"}}]
   }'
+  
+{"status_code":1000,"status_message":"Success","timestamp":"2026-04-17T09:47:20Z","data":{"token":"xxxxxxxxxxxxxxxxxx","url":"https://demo.eu-neogy.charge.ampeco.tech/ocpi/versions","roles":[{"party_id":"NEO","country_code":"IT","role":"CPO","business_details":{"name":"Demo Neogy"}}]}}
 
 ```
 The request will return with a `Token C`, which is to be used as env variable `PULL_TOKEN`
