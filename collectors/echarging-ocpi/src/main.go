@@ -74,7 +74,8 @@ func startEndpoint(rabbit mq.R) {
 
 	r.Use(sloggin.NewWithFilters(
 		slog.Default(),
-		sloggin.IgnorePath("/health")))
+		// ignore paths that are not /ocpi, such as health or favicon etc.
+		sloggin.AcceptPathPrefix("/ocpi")))
 
 	r.GET("/health", health)
 	r.GET("/ocpi/emsp/versions", versions(ver))
