@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	StationTypeBikeParking  = "BikeParking"
+	StationTypeBikeParking    = "BikeParking"
 	StationTypeParkingStation = "ParkingStation"
 
 	Origin = "SBB"
@@ -25,14 +25,14 @@ const (
 )
 
 const (
-	DataTypePredictedForecastedOccupancy  = "predictedForecastedOccupancy"
+	DataTypePredictedForecastedOccupancy   = "predictedForecastedOccupancy"
 	DataTypeCurrentEstimatedOccupancy      = "currentEstimatedOccupancy"
 	DataTypeCurrentEstimatedOccupancyLevel = "currentEstimatedOccupancyLevel"
 )
 
 // Measurement field names to exclude from car parking metadata
 var carParkingMeasurementFields = map[string]bool{
-	DataTypePredictedForecastedOccupancy:  true,
+	DataTypePredictedForecastedOccupancy:   true,
 	DataTypeCurrentEstimatedOccupancy:      true,
 	DataTypeCurrentEstimatedOccupancyLevel: true,
 }
@@ -184,7 +184,7 @@ func processCarParking(bdp bdplib.Bdp, fc GeoJSONFeatureCollection, ts int64) ([
 		// Add measurements (only if values are non-nil)
 		if v, ok := props[DataTypePredictedForecastedOccupancy]; ok && v != nil {
 			dataMap.AddRecord(station.Id, DataTypePredictedForecastedOccupancy,
-				bdplib.CreateRecord(ts, v, Period))
+				bdplib.CreateRecord(ts, map[string]any{"predictions": v}, Period))
 		}
 
 		if v, ok := props[DataTypeCurrentEstimatedOccupancy]; ok && v != nil {
