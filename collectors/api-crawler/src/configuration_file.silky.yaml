@@ -1,0 +1,25 @@
+# SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+# SPDX-License-Identifier: CC0-1.0
+
+rootContext: {}
+stream: false
+
+steps:
+  - type: forValues
+    name: Iterate over languages
+    values: ["de", "it", "en", "ru", "jp", "us"]
+    as: language
+    steps:
+
+      - type: request
+        name: "Fetch wine companies (language={{ .language }})"
+        request:
+          url: "https://suedtirolwein.secure.consisto.net/companies.ashx?lang={{ .language }}"
+          method: GET
+          headers:
+            Accept: application/xml
+          responseType: text        # ← tell the framework NOT to JSON-decode the response
+
+        resultTransformer: "{ rawXml: . }"
+
+        mergeOn: ". + {\"companies\": (.companies // {}) | .[$ctx.language] = .}"
