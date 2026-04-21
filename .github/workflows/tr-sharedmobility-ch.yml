@@ -67,7 +67,6 @@ jobs:
             yq -i '.image.pullPolicy = "IfNotPresent"' ${{ env.VALUES_YAML }}
             yq -i '.env.BDP_PROVENANCE_NAME="${{ env.PROJECT_NAME }}"' ${{ env.VALUES_YAML }}
             yq -i '.env.BDP_PROVENANCE_VERSION="${{github.sha}}"' ${{ env.VALUES_YAML }}
-            yq -i '.env.RAW_DATA_BRIDGE_ENDPOINT="http://raw-data-bridge-2.core.svc.cluster.local:2000"' ${{ env.VALUES_YAML }}
 
       - name: Deploy on cluster
         uses: noi-techpark/github-actions/helm-deploy@v2
