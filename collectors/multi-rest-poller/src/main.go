@@ -41,7 +41,7 @@ var env struct {
 
 	AUTH_BEARER_TOKEN string
 
-	RAW_WRITER_BASE_URL string
+	RAW_WRITER_BASE_URL string `default:"http://raw-writer-2.core.svc.cluster.local"`
 }
 
 func sendRaw(baseURL, provider string, timestamp time.Time, data string, contentType string) error {
