@@ -8,8 +8,6 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"sort"
-	"strings"
 
 	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
@@ -26,10 +24,12 @@ const (
 	DataTypeIsInstalled     = "is-installed"
 	DataTypeIsRenting       = "is-renting"
 	DataTypeIsReturning     = "is-returning"
-	DataTypeAvailability    = "availability"
-	DataTypeInMaintenance   = "in-maintenance"
+	DataTypeFreeBikeStatus  = "free-bike-status"
 
 	Period = 300 // 5 minutes
+
+	swissLat = 46.8182
+	swissLon = 8.2275
 )
 
 func TransformWithBdp(bdp bdplib.Bdp) tr.Handler[Root] {
@@ -38,23 +38,48 @@ func TransformWithBdp(bdp bdplib.Bdp) tr.Handler[Root] {
 	}
 }
 
+// expandGeoBounds recursively walks a GeoJSON coordinates value (decoded as any)
+// and expands the bounding box to include every [lon, lat] leaf pair.
+func expandGeoBounds(v any, minLat, maxLat, minLon, maxLon *float64) {
+	arr, ok := v.([]any)
+	if !ok {
+		return
+	}
+	if len(arr) == 2 {
+		lon, lonOK := arr[0].(float64)
+		lat, latOK := arr[1].(float64)
+		if lonOK && latOK {
+			if lat < *minLat {
+				*minLat = lat
+			}
+			if lat > *maxLat {
+				*maxLat = lat
+			}
+			if lon < *minLon {
+				*minLon = lon
+			}
+			if lon > *maxLon {
+				*maxLon = lon
+			}
+			return
+		}
+	}
+	for _, item := range arr {
+		expandGeoBounds(item, minLat, maxLat, minLon, maxLon)
+	}
+}
+
 func bool2Int(b bool) int {
 	if b {
 		return 1
-	} else {
-		return 0
 	}
+	return 0
 }
 
 func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) error {
 	ts := payload.Timestamp.UnixMilli()
 
-	// 1. Create maps for quick lookup
-	providersMap := make(map[string]Provider)
-	for _, p := range payload.Rawdata.Providers {
-		providersMap[p.ProviderID] = p
-	}
-
+	// 1. Build lookup maps
 	regionsMap := make(map[string]SystemRegion)
 	for _, r := range payload.Rawdata.SystemRegions {
 		regionsMap[r.RegionID] = r
@@ -65,332 +90,214 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 		stationStatusMap[s.StationID] = s
 	}
 
-	// 2. Group stations and vehicles by region to calculate centroids
-	regionStations := make(map[string][]StationInformation)
+	// 2. Group stations and free bikes by provider
+	stationsByProvider := make(map[string][]StationInformation)
 	for _, s := range payload.Rawdata.StationInformation {
-		if s.RegionID != "" {
-			regionStations[s.RegionID] = append(regionStations[s.RegionID], s)
-		}
+		stationsByProvider[s.ProviderID] = append(stationsByProvider[s.ProviderID], s)
 	}
 
-	// 3. Transform Virtual Service Stations (one per region)
-	virtualStations := make(map[string]bdplib.Station)
-	virtualStationTypes := make(map[string]string)
+	freeBikesByProvider := make(map[string][]FreeBikeStatus)
+	for _, v := range payload.Rawdata.FreeBikeStatus {
+		freeBikesByProvider[v.ProviderID] = append(freeBikesByProvider[v.ProviderID], v)
+	}
 
-	for regionID, region := range regionsMap {
-		// Calculate centroid
-		var lat, lon float64
-		count := 0
-		for _, s := range regionStations[regionID] {
-			lat += s.Lat
-			lon += s.Lon
-			count++
-		}
-		if count > 0 {
-			lat /= float64(count)
-			lon /= float64(count)
-		}
+	// 3. Create one virtual station per provider, compute aggregated measurements
+	providerStationsByType := make(map[string][]bdplib.Station)
+	providerDataMapsByType := make(map[string]*bdplib.DataMap)
+	providerStationIDByProviderID := make(map[string]string)
 
-		// Determine station type from providers
-		// According to spec: "The stationtype field should be defined according the field vehicle_type in the providers web-service"
-		// If all providers have the same vehicle type, use that type; otherwise use the most common type
-		stationType := StationTypeGenericSharing
-		typeCount := make(map[string]int)
-		if len(payload.Rawdata.Providers) > 0 {
-			firstType := payload.Rawdata.Providers[0].GetStationType()
-			allSameType := true
-			for _, p := range payload.Rawdata.Providers {
-				providerType := p.GetStationType()
-				typeCount[providerType]++
-				if providerType != firstType {
-					allSameType = false
-				}
-			}
-			if allSameType {
-				stationType = firstType
-			} else {
-				// Use the most common provider type instead of generic
-				maxCount := 0
-				mostCommonType := StationTypeGenericSharing
-				for providerType, count := range typeCount {
-					if count > maxCount {
-						maxCount = count
-						mostCommonType = providerType
-					}
-				}
-				stationType = mostCommonType
-			}
+	for i := range payload.Rawdata.Providers {
+		p := &payload.Rawdata.Providers[i]
+		stationType := p.GetStationType()
+
+		if providerDataMapsByType[stationType] == nil {
+			dm := bdp.CreateDataMap()
+			providerDataMapsByType[stationType] = &dm
 		}
 
-		bdpStation := bdplib.CreateStation(fmt.Sprintf("%s:re:%s", bdp.GetOrigin(), regionID), region.Name, stationType, lat, lon, bdp.GetOrigin())
+		providerStationID := fmt.Sprintf("%s:pr:%s", bdp.GetOrigin(), p.ProviderID)
+		providerStationIDByProviderID[p.ProviderID] = providerStationID
+
+		bdpStation := bdplib.CreateStation(providerStationID, p.Name, stationType, 0, 0, bdp.GetOrigin())
 		bdpStation.MetaData = make(map[string]any)
-		// Per spec Table 2: providers, system_pricing_plans, geofencing_zones, system_hours → METADATA
-		// Note: Spec mentions filtering by provider_id, but without provider_id in SystemRegion,
-		// we store all providers/plans/hours/zones for the region as metadata
-		// Only add non-empty metadata to avoid null pointer issues
 
-		if len(payload.Rawdata.Providers) > 0 {
-			sort.Slice(payload.Rawdata.Providers, func(i, j int) bool {
-				return payload.Rawdata.Providers[i].ProviderID < payload.Rawdata.Providers[j].ProviderID
-			})
-			bdpStation.MetaData["providers"] = payload.Rawdata.Providers
+		var plans []PricingPlan
+		for _, plan := range payload.Rawdata.Plans {
+			if plan.ProviderID == p.ProviderID {
+				plans = append(plans, plan)
+			}
+		}
+		if len(plans) > 0 {
+			bdpStation.MetaData["system_pricing_plans"] = plans
 		}
 
-		if len(payload.Rawdata.Plans) > 0 {
-			sort.Slice(payload.Rawdata.Plans, func(i, j int) bool {
-				return payload.Rawdata.Plans[i].PlanID < payload.Rawdata.Plans[j].PlanID
-			})
-			bdpStation.MetaData["system_pricing_plans"] = payload.Rawdata.Plans
+		var hours []RentalHour
+		for _, h := range payload.Rawdata.SystemHours {
+			if h.ProviderID == p.ProviderID {
+				hours = append(hours, h)
+			}
+		}
+		if len(hours) > 0 {
+			bdpStation.MetaData["system_hours"] = hours
 		}
 
-		if len(payload.Rawdata.GeofencingZones.Features) > 0 {
-			sort.Slice(payload.Rawdata.GeofencingZones.Features, func(i, j int) bool {
-				return payload.Rawdata.GeofencingZones.Features[i].Properties.ProviderID < payload.Rawdata.GeofencingZones.Features[j].Properties.ProviderID
-			})
-			bdpStation.MetaData["geofencing_zones"] = payload.Rawdata.GeofencingZones
+		var geoFeatures []any
+		minLat, maxLat := 90.0, -90.0
+		minLon, maxLon := 180.0, -180.0
+		for _, f := range payload.Rawdata.GeofencingZones.Features {
+			if f.Properties.ProviderID == p.ProviderID {
+				geoFeatures = append(geoFeatures, f)
+				if geom, ok := f.Geometry.(map[string]any); ok {
+					expandGeoBounds(geom["coordinates"], &minLat, &maxLat, &minLon, &maxLon)
+				}
+			}
+		}
+		if len(geoFeatures) > 0 {
+			bdpStation.MetaData["geofencing_zones"] = map[string]any{
+				"type":     payload.Rawdata.GeofencingZones.Type,
+				"features": geoFeatures,
+			}
 		}
 
-		if len(payload.Rawdata.SystemHours) > 0 {
-			sort.Slice(payload.Rawdata.SystemHours, func(i, j int) bool {
-				return payload.Rawdata.SystemHours[i].ProviderID < payload.Rawdata.SystemHours[j].ProviderID
-			})
-			bdpStation.MetaData["system_hours"] = payload.Rawdata.SystemHours
+		provLat, provLon := swissLat, swissLon
+		if minLat <= maxLat {
+			provLat = (minLat + maxLat) / 2
+			provLon = (minLon + maxLon) / 2
+		}
+		bdpStation.Latitude = provLat
+		bdpStation.Longitude = provLon
+
+		providerStationsByType[stationType] = append(providerStationsByType[stationType], bdpStation)
+
+		// Aggregated number-available: sum from physical stations + available free bikes
+		numAvailable := 0
+		numDocksAvailable := 0
+
+		for _, s := range stationsByProvider[p.ProviderID] {
+			if status, ok := stationStatusMap[s.StationID]; ok {
+				numAvailable += status.NumBikesAvailable
+				numDocksAvailable += status.NumDocksAvailable
+			}
 		}
 
-		virtualStations[regionID] = bdpStation
-		virtualStationTypes[regionID] = stationType
+		for _, v := range freeBikesByProvider[p.ProviderID] {
+			if !v.IsReserved && !v.IsDisabled {
+				numAvailable++
+			}
+		}
+
+		dm := providerDataMapsByType[stationType]
+		dm.AddRecord(providerStationID, DataTypeNumberAvailable, bdplib.CreateRecord(ts, numAvailable, Period))
+		dm.AddRecord(providerStationID, DataTypeDocksAvailable, bdplib.CreateRecord(ts, numDocksAvailable, Period))
+
+		if bikes := freeBikesByProvider[p.ProviderID]; len(bikes) > 0 {
+			records := make([]FreeBikeStatusRecord, len(bikes))
+			for i, b := range bikes {
+				records[i] = FreeBikeStatusRecord{
+					BikeID:             b.BikeID,
+					Lat:                b.Lat,
+					Lon:                b.Lon,
+					IsReserved:         b.IsReserved,
+					IsDisabled:         b.IsDisabled,
+					VehicleTypeID:      b.VehicleTypeID,
+					PricingPlanID:      b.PricingPlanID,
+					CurrentRangeMeters: b.CurrentRangeMeters,
+				}
+			}
+			dm.AddRecord(providerStationID, DataTypeFreeBikeStatus, bdplib.CreateRecord(ts, map[string]any{
+				"free_bike_status": records,
+			}, Period))
+		}
 	}
 
-	// 4. Transform Physical Stations
-	// Group physical stations by their station type (based on parent virtual station type)
-	physicalStationsByType := make(map[string]map[string]bdplib.Station)
+	// 4. Create physical stations as children of their provider station
+	physicalStationsByType := make(map[string][]bdplib.Station)
 	physicalDataMapsByType := make(map[string]*bdplib.DataMap)
 
+	providerTypeByID := make(map[string]string)
+	for _, p := range payload.Rawdata.Providers {
+		providerTypeByID[p.ProviderID] = p.GetStationType()
+	}
+
 	for _, s := range payload.Rawdata.StationInformation {
-		// Determine station type from parent virtual station
-		stationType := GetStationTypeForPhysicalStation(StationTypeGenericSharing)
-		if s.RegionID != "" && s.RegionID != ":" && len(s.RegionID) > 1 {
-			// Clean up malformed region IDs (e.g., "velospot:" -> try to find matching region)
-			regionID := s.RegionID
-			if strings.HasSuffix(regionID, ":") {
-				// Try to find a region that starts with this prefix
-				for rID := range virtualStationTypes {
-					if strings.HasPrefix(rID, strings.TrimSuffix(regionID, ":")) {
-						regionID = rID
-						break
-					}
-				}
-			}
-
-			if parentType, ok := virtualStationTypes[regionID]; ok {
-				stationType = GetStationTypeForPhysicalStation(parentType)
-			} else {
-				// If region not found, use the most common provider type as fallback
-				mostCommonType := payload.Rawdata.getMostCommonProviderType()
-				stationType = GetStationTypeForPhysicalStation(mostCommonType)
-			}
-		} else {
-			// No region_id or malformed, use most common provider type initially
-			mostCommonType := payload.Rawdata.getMostCommonProviderType()
-			stationType = GetStationTypeForPhysicalStation(mostCommonType)
+		if s.ProviderID == "" {
+			slog.Warn("Skipping station without provider_id", "station_id", s.StationID)
+			continue
 		}
 
-		// Fallback/Correction: If the determined type is Generic or Bike (default),
-		// try to deduce a more specific provider from the StationID itself.
-		// This fixes "Orphan" stations (no region) that actually belong to CarProviders (e.g. "mobility:123")
-		if (stationType == GetStationTypeForPhysicalStation(StationTypeGenericSharing) ||
-			stationType == GetStationTypeForPhysicalStation("BikeSharingService")) && s.RegionID == "" {
-
-			if deducedProvider := payload.Rawdata.deduceProviderFromStationID(s.StationID, providersMap); deducedProvider != nil {
-				stationType = GetStationTypeForPhysicalStation(deducedProvider.GetStationType())
-
-				// Create a virtual region for this provider if it doesn't exist
-				// Use the provider ID as the region key
-				targetRegionID := deducedProvider.ProviderID
-
-				// Deduplicate: Check if we already created a virtual station for this provider/region
-				if _, exists := virtualStations[targetRegionID]; !exists {
-					// Create new virtual station (Region)
-					// ID format: <origin>:re:<provider_id>
-					regionStationID := fmt.Sprintf("%s:re:%s", bdp.GetOrigin(), targetRegionID)
-					bdpRegionStation := bdplib.CreateStation(regionStationID, deducedProvider.Name, deducedProvider.GetStationType(), 0, 0, bdp.GetOrigin())
-
-					// Add minimal metadata
-					bdpRegionStation.MetaData = make(map[string]any)
-					// We could add the provider info here if needed
-
-					virtualStations[targetRegionID] = bdpRegionStation
-					virtualStationTypes[targetRegionID] = deducedProvider.GetStationType()
-				}
-			}
+		serviceType := providerTypeByID[s.ProviderID]
+		if serviceType == "" {
+			serviceType = StationTypeGenericSharing
 		}
+		stationType := GetStationTypeForPhysicalStation(serviceType)
 
-		// Initialize maps for this station type if needed
-		if physicalStationsByType[stationType] == nil {
-			physicalStationsByType[stationType] = make(map[string]bdplib.Station)
-			dataMap := bdp.CreateDataMap()
-			physicalDataMapsByType[stationType] = &dataMap
+		if physicalDataMapsByType[stationType] == nil {
+			dm := bdp.CreateDataMap()
+			physicalDataMapsByType[stationType] = &dm
 		}
 
 		bdpStation := bdplib.CreateStation(fmt.Sprintf("%s:st:%s", bdp.GetOrigin(), s.StationID), s.Name, stationType, s.Lat, s.Lon, bdp.GetOrigin())
+		bdpStation.MetaData = make(map[string]any)
 
-		parentRegionID := s.RegionID
-
-		if parentRegionID == "" {
-			if deducedProvider := payload.Rawdata.deduceProviderFromStationID(s.StationID, providersMap); deducedProvider != nil {
-				parentRegionID = deducedProvider.ProviderID
-			}
+		if region, ok := regionsMap[s.RegionID]; ok {
+			bdpStation.MetaData["region_id"] = region.RegionID
+			bdpStation.MetaData["region_name"] = region.Name
 		}
 
-		if parentRegionID != "" {
-			if startWithColon := strings.HasSuffix(parentRegionID, ":"); startWithColon {
-			}
+		bdpStation.ParentStation = providerStationIDByProviderID[s.ProviderID]
 
-			if vs, ok := virtualStations[parentRegionID]; ok {
-				bdpStation.ParentStation = vs.Id
-			}
-		}
-		physicalStationsByType[stationType][s.StationID] = bdpStation
+		physicalStationsByType[stationType] = append(physicalStationsByType[stationType], bdpStation)
 
-		// Real-time measurements
 		if status, ok := stationStatusMap[s.StationID]; ok {
-			metricName := mapStationTypeToMetric(stationType)
-			physicalDataMapsByType[stationType].AddRecord(bdpStation.Id, metricName, bdplib.CreateRecord(ts, status.NumBikesAvailable, Period))
-			physicalDataMapsByType[stationType].AddRecord(bdpStation.Id, DataTypeDocksAvailable, bdplib.CreateRecord(ts, status.NumDocksAvailable, Period))
-			physicalDataMapsByType[stationType].AddRecord(bdpStation.Id, DataTypeIsInstalled, bdplib.CreateRecord(ts, bool2Int(status.IsInstalled), Period))
-			physicalDataMapsByType[stationType].AddRecord(bdpStation.Id, DataTypeIsRenting, bdplib.CreateRecord(ts, bool2Int(status.IsRenting), Period))
-			physicalDataMapsByType[stationType].AddRecord(bdpStation.Id, DataTypeIsReturning, bdplib.CreateRecord(ts, bool2Int(status.IsReturning), Period))
+			dm := physicalDataMapsByType[stationType]
+			dm.AddRecord(bdpStation.Id, DataTypeNumberAvailable, bdplib.CreateRecord(ts, status.NumBikesAvailable, Period))
+			dm.AddRecord(bdpStation.Id, DataTypeDocksAvailable, bdplib.CreateRecord(ts, status.NumDocksAvailable, Period))
+			dm.AddRecord(bdpStation.Id, DataTypeIsInstalled, bdplib.CreateRecord(ts, bool2Int(status.IsInstalled), Period))
+			dm.AddRecord(bdpStation.Id, DataTypeIsRenting, bdplib.CreateRecord(ts, bool2Int(status.IsRenting), Period))
+			dm.AddRecord(bdpStation.Id, DataTypeIsReturning, bdplib.CreateRecord(ts, bool2Int(status.IsReturning), Period))
 		}
 	}
 
-	// 5. Transform Vehicles
-	// Group vehicles by their station type (based on vehicle_type_id)
-	vehicleStationsByType := make(map[string]map[string]bdplib.Station)
-	vehicleDataMapsByType := make(map[string]*bdplib.DataMap)
-
-	for _, v := range payload.Rawdata.FreeBikeStatus {
-		// Determine vehicle type from vehicle_type_id
-		vehicleServiceType := payload.Rawdata.GetVehicleTypeFromVehicleTypeID(v.VehicleTypeID, providersMap)
-		vehicleStationType := GetStationTypeForVehicle(vehicleServiceType)
-
-		// Initialize maps for this vehicle type if needed
-		if vehicleStationsByType[vehicleStationType] == nil {
-			vehicleStationsByType[vehicleStationType] = make(map[string]bdplib.Station)
-			dataMap := bdp.CreateDataMap()
-			vehicleDataMapsByType[vehicleStationType] = &dataMap
-		}
-
-		// Pointprojection empty, location in measurementJSON (per spec line 141)
-		bdpStation := bdplib.CreateStation(fmt.Sprintf("%s:vh:%s", bdp.GetOrigin(), v.BikeID), v.BikeID, vehicleStationType, 0, 0, bdp.GetOrigin())
-		// Vehicles don't have parent stations per specification
-		vehicleStationsByType[vehicleStationType][v.BikeID] = bdpStation
-
-		// Location in measurementJSON (per spec: "It is proposed to leave the point projection empty and to manage it as measurementJSON")
-		location := map[string]float64{
-			"lat": v.Lat,
-			"lon": v.Lon,
-		}
-		measurementJSON := map[string]any{
-			"location": location,
-		}
-
-		// Real-time measurements (per spec lines 153-154)
-		availability := bool2Int(!v.IsReserved && !v.IsDisabled)
-		inMaintenance := bool2Int(v.IsDisabled)
-
-		vehicleDataMapsByType[vehicleStationType].AddRecord(bdpStation.Id, DataTypeAvailability, bdplib.CreateRecord(ts, availability, Period))
-		vehicleDataMapsByType[vehicleStationType].AddRecord(bdpStation.Id, DataTypeInMaintenance, bdplib.CreateRecord(ts, inMaintenance, Period))
-		// Store location in measurementJSON via status-details data type
-		vehicleDataMapsByType[vehicleStationType].AddRecord(bdpStation.Id, "status-details", bdplib.CreateRecord(ts, measurementJSON, Period))
-	}
-
-	// 6. Sync and Push
-	// Sync virtual stations first (parents)
-	// We need to group virtual stations by their type because SyncStations takes one type at a time
-	typeGroupedVirtual := make(map[string][]bdplib.Station)
-	for regionID, s := range virtualStations {
-		sType := virtualStationTypes[regionID]
-		typeGroupedVirtual[sType] = append(typeGroupedVirtual[sType], s)
-	}
-	for sType, stations := range typeGroupedVirtual {
-		slog.Info("Syncing virtual stations", "type", sType, "count", len(stations))
+	// 5. Sync provider stations first (parents), then physical stations (children)
+	for sType, stations := range providerStationsByType {
+		slog.Info("Syncing provider stations", "type", sType, "count", len(stations))
 		if err := bdp.SyncStations(sType, stations, true, true); err != nil {
 			return err
 		}
 	}
 
-	// Sync physical stations grouped by type
-	for stationType, stations := range physicalStationsByType {
-		slog.Info("Syncing physical stations", "type", stationType, "count", len(stations))
-		if err := bdp.SyncStations(stationType, values(stations), true, true); err != nil {
+	for sType, stations := range physicalStationsByType {
+		slog.Info("Syncing physical stations", "type", sType, "count", len(stations))
+		if err := bdp.SyncStations(sType, stations, true, true); err != nil {
 			return err
 		}
 	}
 
-	// Sync vehicles grouped by type
-	for vehicleType, vehicles := range vehicleStationsByType {
-		slog.Info("Syncing vehicles", "type", vehicleType, "count", len(vehicles))
-		if err := bdp.SyncStations(vehicleType, values(vehicles), true, true); err != nil {
+	for sType, dataMap := range providerDataMapsByType {
+		if err := bdp.PushData(sType, *dataMap); err != nil {
 			return err
 		}
 	}
 
-	// Push data for physical stations grouped by type
-	for stationType, dataMap := range physicalDataMapsByType {
-		if err := bdp.PushData(stationType, *dataMap); err != nil {
+	for sType, dataMap := range physicalDataMapsByType {
+		if err := bdp.PushData(sType, *dataMap); err != nil {
 			return err
 		}
 	}
-
-	// Push data for vehicles grouped by type
-	for vehicleType, dataMap := range vehicleDataMapsByType {
-		if err := bdp.PushData(vehicleType, *dataMap); err != nil {
-			return err
-		}
-	}
-
-	// Virtual stations might not have periodic data besides metadata in sync,
-	// but we could push data if there were aggregated measurements.
 
 	return nil
 }
 
-func values[M ~map[K]V, K comparable, V any](m M) []V {
-	r := make([]V, 0, len(m))
-	for _, v := range m {
-		r = append(r, v)
-	}
-	return r
-}
-
 func SyncDataTypes(bdp bdplib.Bdp) error {
-	// Station data types (same for all sharing mobility station types)
-	stationDataTypes := []bdplib.DataType{
+	dataTypes := []bdplib.DataType{
 		bdplib.CreateDataType(DataTypeNumberAvailable, "", "number of available vehicles", "Instantaneous"),
 		bdplib.CreateDataType(DataTypeDocksAvailable, "", "number of available docks", "Instantaneous"),
 		bdplib.CreateDataType(DataTypeIsInstalled, "", "is the station installed", "Instantaneous"),
 		bdplib.CreateDataType(DataTypeIsRenting, "", "is the station renting", "Instantaneous"),
 		bdplib.CreateDataType(DataTypeIsReturning, "", "is the station returning", "Instantaneous"),
-		bdplib.CreateDataType("CarsharingCar", "", "number of available cars", "Instantaneous"),
-		bdplib.CreateDataType("Bicycle", "", "number of available bicycles", "Instantaneous"),
-		bdplib.CreateDataType("ScooterSharingVehicle", "", "number of available scooters", "Instantaneous"),
+		bdplib.CreateDataType(DataTypeFreeBikeStatus, "", "free floating bike statuses as JSON", "Instantaneous"),
 	}
-
-	// Vehicle data types (same for all sharing mobility vehicle types)
-	vehicleDataTypes := []bdplib.DataType{
-		bdplib.CreateDataType(DataTypeAvailability, "", "is the vehicle available", "Instantaneous"),
-		bdplib.CreateDataType(DataTypeInMaintenance, "", "is the vehicle in maintenance", "Instantaneous"),
-		bdplib.CreateDataType("status-details", "", "detailed status and location", "Instantaneous"),
-	}
-
-	// Sync data types (they will be associated with the appropriate station types when used)
-	if err := bdp.SyncDataTypes(stationDataTypes); err != nil {
-		return err
-	}
-	if err := bdp.SyncDataTypes(vehicleDataTypes); err != nil {
-		return err
-	}
-	return nil
+	return bdp.SyncDataTypes(dataTypes)
 }
 
 var env tr.Env
@@ -409,17 +316,4 @@ func main() {
 	err := listener.Start(context.Background(), TransformWithBdp(b))
 
 	ms.FailOnError(context.Background(), err, "error while listening to queue")
-}
-
-func mapStationTypeToMetric(stationType string) string {
-	switch stationType {
-	case GetStationTypeForPhysicalStation("CarSharingService"):
-		return "CarsharingCar"
-	case GetStationTypeForPhysicalStation("BikeSharingService"):
-		return "Bicycle"
-	case GetStationTypeForPhysicalStation("ScooterSharingService"):
-		return "ScooterSharingVehicle"
-	default:
-		return DataTypeNumberAvailable
-	}
 }
