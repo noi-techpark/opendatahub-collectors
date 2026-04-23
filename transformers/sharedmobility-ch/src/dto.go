@@ -4,8 +4,6 @@
 
 package main
 
-import "strings"
-
 // Root holds the top-level fields as mapped by the multi-rest-poller.
 type Root struct {
 	Providers          []Provider           `json:"providers"`
@@ -40,16 +38,30 @@ type SystemInformation struct {
 
 // GBFS Station Information (from station_information.json)
 type StationInformation struct {
-	StationID string  `json:"station_id"`
-	Name      string  `json:"name"`
-	Lat       float64 `json:"lat"`
-	Lon       float64 `json:"lon"`
-	RegionID  string  `json:"region_id"`
-	Address   string  `json:"address"`
+	StationID  string  `json:"station_id"`
+	Name       string  `json:"name"`
+	Lat        float64 `json:"lat"`
+	Lon        float64 `json:"lon"`
+	RegionID   string  `json:"region_id"`
+	Address    string  `json:"address"`
+	ProviderID string  `json:"provider_id"`
 }
 
 // GBFS Free Bike Status (from free_bike_status.json)
 type FreeBikeStatus struct {
+	BikeID             string  `json:"bike_id"`
+	Lat                float64 `json:"lat"`
+	Lon                float64 `json:"lon"`
+	IsReserved         bool    `json:"is_reserved"`
+	IsDisabled         bool    `json:"is_disabled"`
+	VehicleTypeID      string  `json:"vehicle_type_id"`
+	PricingPlanID      string  `json:"pricing_plan_id"`
+	CurrentRangeMeters float64 `json:"current_range_meters"`
+	ProviderID         string  `json:"provider_id"`
+}
+
+// FreeBikeStatusRecord is FreeBikeStatus without provider_id, used for provider-level measurements.
+type FreeBikeStatusRecord struct {
 	BikeID             string  `json:"bike_id"`
 	Lat                float64 `json:"lat"`
 	Lon                float64 `json:"lon"`
@@ -69,6 +81,7 @@ type StationStatus struct {
 	IsRenting         bool   `json:"is_renting"`
 	IsReturning       bool   `json:"is_returning"`
 	LastReported      int64  `json:"last_reported"`
+	ProviderID        string `json:"provider_id"`
 }
 
 // GBFS Rental Hours (from system_hours.json)
@@ -138,101 +151,4 @@ func GetStationTypeForPhysicalStation(serviceType string) string {
 	default:
 		return "SharingMobilityStation"
 	}
-}
-
-// GetStationTypeForVehicle converts a service type to a vehicle station type
-// e.g., "BikeSharingService" -> "BikeSharingVehicle"
-func GetStationTypeForVehicle(serviceType string) string {
-	switch serviceType {
-	case "ScooterSharingService":
-		return "ScooterSharingVehicle"
-	case "BikeSharingService":
-		return "Bicycle"
-	case "CarSharingService":
-		return "CarsharingCar"
-	default:
-		return "SharingMobilityVehicle"
-	}
-}
-
-// GetVehicleTypeFromVehicleTypeID attempts to determine vehicle type from vehicle_type_id
-// by looking it up in providers. Returns the most common vehicle type if not found.
-func (r Root) GetVehicleTypeFromVehicleTypeID(vehicleTypeID string, providersMap map[string]Provider) string {
-	if vehicleTypeID == "" {
-		return r.getMostCommonProviderType()
-	}
-
-	// 1. Try exact match
-	if provider, ok := providersMap[vehicleTypeID]; ok {
-		return provider.GetStationType()
-	}
-
-	// 2. Try splitting composite IDs (e.g. "provider:1" -> "provider")
-	parts := strings.Split(vehicleTypeID, ":")
-	if len(parts) > 1 {
-		providerID := parts[0]
-		if provider, ok := providersMap[providerID]; ok {
-			return provider.GetStationType()
-		}
-	}
-
-	// 3. Fallback: check if any provider ID matches the vehicleTypeID directly (legacy check)
-	for _, provider := range r.Providers {
-		if provider.ProviderID == vehicleTypeID {
-			return provider.GetStationType()
-		}
-	}
-
-	return r.getMostCommonProviderType()
-}
-
-// getMostCommonProviderType returns the most common vehicle type among providers
-func (r Root) getMostCommonProviderType() string {
-	if len(r.Providers) == 0 {
-		return "SharingMobilityService"
-	}
-
-	typeCount := make(map[string]int)
-	for _, provider := range r.Providers {
-		stationType := provider.GetStationType()
-		typeCount[stationType]++
-	}
-
-	// Find the most common type
-	maxCount := 0
-	mostCommonType := "SharingMobilityService"
-	for stationType, count := range typeCount {
-		if count > maxCount {
-			maxCount = count
-			mostCommonType = stationType
-		}
-	}
-
-	return mostCommonType
-}
-
-// deduceProviderFromStationID tries to find a provider based on ID prefix/suffix in the station ID
-func (r Root) deduceProviderFromStationID(stationID string, providersMap map[string]Provider) *Provider {
-	stationIDLower := strings.ToLower(stationID)
-
-	// Check against all known providers
-	for i := range r.Providers {
-		p := &r.Providers[i]
-		// Clean up provider ID key (e.g. "mobility" from "mobility")
-		// Often keys are like "mobility", "2em", "edrive".
-		// Checks if stationID contains the provider ID (case insensitive)
-		// e.g. stationID "mobility:123" contains providerID "mobility"
-		pID := strings.ToLower(p.ProviderID)
-
-		// Skip very short keys to avoid false positives if any exist (though unlikely in this dataset)
-		if len(pID) < 3 {
-			continue
-		}
-
-		if strings.Contains(stationIDLower, pID) {
-			return p
-		}
-	}
-
-	return nil
 }
