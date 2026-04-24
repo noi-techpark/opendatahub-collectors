@@ -1,0 +1,842 @@
+{
+  "TotalResults": 1,
+  "TotalPages": 1,
+  "CurrentPage": 1,
+  "PreviousPage": null,
+  "NextPage": null,
+  "Seed": null,
+  "Items": [
+    {
+      "Id": "smgpoi1564siag",
+      "Self": "https://tourism.api.opendatahub.com/v1/ODHActivityPoi/smgpoi1564siag",
+      "Tags": [
+        {
+          "Id": "culture attractions",
+          "Name": "Culture & Attractions",
+          "Self": "https://tourism.api.opendatahub.com/v1/Tag/culture attractions",
+          "Type": "odhcategory",
+          "Source": "idm",
+          "TagEntry": null
+        },
+        {
+          "Id": "museums",
+          "Name": "Museums",
+          "Self": "https://tourism.api.opendatahub.com/v1/Tag/museums",
+          "Type": "odhcategory",
+          "Source": "idm",
+          "TagEntry": null
+        },
+        {
+          "Id": "museums art",
+          "Name": "Museums Art",
+          "Self": "https://tourism.api.opendatahub.com/v1/Tag/museums art",
+          "Type": "odhcategory",
+          "Source": "idm",
+          "TagEntry": null
+        },
+        {
+          "Id": "museums culture",
+          "Name": "Museums Culture",
+          "Self": "https://tourism.api.opendatahub.com/v1/Tag/museums culture",
+          "Type": "odhcategory",
+          "Source": "idm",
+          "TagEntry": null
+        },
+        {
+          "Id": "poi",
+          "Name": "Poi",
+          "Self": "https://tourism.api.opendatahub.com/v1/Tag/poi",
+          "Type": "odhcategory",
+          "Source": "idm",
+          "TagEntry": null
+        },
+        {
+          "Id": "siag:museum:accessfordisabledvisitors",
+          "Name": "Access for disabled visitors",
+          "Self": "https://tourism.api.opendatahub.com/v1/Tag/siag:museum:accessfordisabledvisitors",
+          "Type": "museumservice",
+          "Source": "siag",
+          "TagEntry": null
+        },
+        {
+          "Id": "siag:museum:art",
+          "Name": "Art",
+          "Self": "https://tourism.api.opendatahub.com/v1/Tag/siag:museum:art",
+          "Type": "museumcategory",
+          "Source": "siag",
+          "TagEntry": null
+        },
+        {
+          "Id": "siag:museum:culture",
+          "Name": "culture",
+          "Self": "https://tourism.api.opendatahub.com/v1/Tag/siag:museum:culture",
+          "Type": "museumcategory",
+          "Source": "siag",
+          "TagEntry": null
+        },
+        {
+          "Id": "siag:museum:etnography",
+          "Name": "Etnography",
+          "Self": "https://tourism.api.opendatahub.com/v1/Tag/siag:museum:etnography",
+          "Type": "museumtag",
+          "Source": "siag",
+          "TagEntry": null
+        },
+        {
+          "Id": "siag:museum:gastronomicchoice",
+          "Name": "Gastronomic choice",
+          "Self": "https://tourism.api.opendatahub.com/v1/Tag/siag:museum:gastronomicchoice",
+          "Type": "museumservice",
+          "Source": "siag",
+          "TagEntry": null
+        },
+        {
+          "Id": "siag:museum:offersforchildren",
+          "Name": "Offers for children",
+          "Self": "https://tourism.api.opendatahub.com/v1/Tag/siag:museum:offersforchildren",
+          "Type": "museumservice",
+          "Source": "siag",
+          "TagEntry": null
+        },
+        {
+          "Id": "siag:museum:parking",
+          "Name": "Parking",
+          "Self": "https://tourism.api.opendatahub.com/v1/Tag/siag:museum:parking",
+          "Type": "museumservice",
+          "Source": "siag",
+          "TagEntry": null
+        },
+        {
+          "Id": "siag:museum:privatpreson",
+          "Name": "Privat preson",
+          "Self": "https://tourism.api.opendatahub.com/v1/Tag/siag:museum:privatpreson",
+          "Type": "museumsupporter",
+          "Source": "siag",
+          "TagEntry": null
+        }
+      ],
+      "Type": null,
+      "AgeTo": null,
+      "Areas": [],
+      "SmgId": null,
+      "_Meta": {
+        "Id": "smgpoi1564siag",
+        "Type": "odhactivitypoi",
+        "Source": "siag",
+        "Reduced": false,
+        "LastUpdate": "2026-03-20T04:35:27.0344956+00:00",
+        "UpdateInfo": {
+          "Revision": 24,
+          "UpdatedBy": "siag.museum.import",
+          "UpdateSource": "http://tourism.importer.opendatahub.com/Siag/Museum",
+          "UpdateHistory": [
+            {
+              "UpdatedBy": "lts.push.import",
+              "LastUpdate": "2025-11-06T03:40:04.060376+00:00",
+              "UpdateSource": "http://tourism.importer.opendatahub.bz.it/Raven/odhactivitypoi"
+            },
+            {
+              "UpdatedBy": "lts.push.import",
+              "LastUpdate": "2025-11-11T03:40:04.1922368+00:00",
+              "UpdateSource": "http://tourism.importer.opendatahub.com/Raven/odhactivitypoi"
+            },
+            {
+              "UpdatedBy": "siag.museum.import",
+              "LastUpdate": "2026-03-20T04:35:27.0344956+00:00",
+              "UpdateSource": "http://tourism.importer.opendatahub.com/Siag/Museum"
+            }
+          ]
+        }
+      },
+      "Active": true,
+      "AreaId": null,
+      "Detail": {
+        "de": {
+          "Title": "Al Plan Dolomites Hotel Museum",
+          "Header": null,
+          "BaseText": "<p>Wanduhren, Schnitzereien, Masken, Flaschenst&ouml;psel, Korkenzieher, Pfeifen, Kaffeem&uuml;hlen und K&uuml;chenger&auml;te, religi&ouml;se Gegenst&auml;nde,&nbsp;Oldtimer und Motorr&auml;der, etwa mehrere Vespas,&nbsp;z&auml;hlen zur privaten Sammlung der Familie Trebo. Die Objekte erz&auml;hlen Geschichten aus den letzten 150 Jahren und sind auf die unterschiedlichen R&auml;ume des Hotels verteilt.</p>",
+          "Keywords": null,
+          "Language": "de",
+          "MetaDesc": "Alle Informationen zu aktuellen Ausstellungen • Öffnungszeiten • Kontakt • Preise. Al Plan Dolomites Hotel Museum freut sich auf Ihr Kommen!",
+          "AuthorTip": null,
+          "IntroText": "",
+          "MetaTitle": "Al Plan Dolomites Hotel Museum • Museen in Südtirol",
+          "SubHeader": null,
+          "SafetyInfo": null,
+          "ParkingInfo": null,
+          "GetThereText": null,
+          "EquipmentInfo": null,
+          "AdditionalText": null,
+          "PublicTransportationInfo": null
+        },
+        "en": {
+          "Title": "Al Plan Dolomites Hotel Museum",
+          "Header": null,
+          "BaseText": "<p>Wall clocks, carvings, masks, bottle stoppers, corkscrews, pipes, coffee grinders and kitchen equipment, religious objects, antique cars and motorcycles, such as several Vespas, are part of the Trebo family&rsquo;s private collection. The objects tell stories from the last 150 years and are distributed across different rooms of the hotel.</p>",
+          "Keywords": null,
+          "Language": "en",
+          "MetaDesc": "All information about • current exhibitions • opening times • contact and • pricing! Al Plan Dolomites Hotel Museum is looking forward to your visit.",
+          "AuthorTip": null,
+          "IntroText": null,
+          "MetaTitle": "Al Plan Dolomites Hotel Museum • Museums in South Tyrol",
+          "SubHeader": null,
+          "SafetyInfo": null,
+          "ParkingInfo": null,
+          "GetThereText": null,
+          "EquipmentInfo": null,
+          "AdditionalText": null,
+          "PublicTransportationInfo": null
+        },
+        "it": {
+          "Title": "Al Plan Dolomites Hotel Museo",
+          "Header": null,
+          "BaseText": "<p>Orologi a muro, opere in legno intagliato, maschere, tappi di bottiglia, cavatappi, pipe, macinini per il caff&egrave; e utensili da cucina, oggetti religiosi, oldtimer e motociclette, come diversi modelli di Vespa: fanno parte della collezione della famiglia Trebo. Raccontano storie anche di 150 anni fa e sono disseminati nei diversi locali dell&rsquo;hotel.</p>",
+          "Keywords": null,
+          "Language": "it",
+          "MetaDesc": "Tutte le informazioni su • mostre e eventi artistici • orari d'apertura • contatti e • prezzi. Archeoparc Velturno vi aspetta!",
+          "AuthorTip": null,
+          "IntroText": null,
+          "MetaTitle": "Al Plan Dolomites Hotel Museo • Musei in Alto Adige",
+          "SubHeader": null,
+          "SafetyInfo": null,
+          "ParkingInfo": null,
+          "GetThereText": "",
+          "EquipmentInfo": null,
+          "AdditionalText": null,
+          "PublicTransportationInfo": null
+        }
+      },
+      "IsOpen": false,
+      "Number": null,
+      "Source": "siag",
+      "TagIds": [
+        "culture attractions",
+        "museums",
+        "museums art",
+        "museums culture",
+        "poi",
+        "siag:museum:accessfordisabledvisitors",
+        "siag:museum:art",
+        "siag:museum:culture",
+        "siag:museum:etnography",
+        "siag:museum:gastronomicchoice",
+        "siag:museum:offersforchildren",
+        "siag:museum:parking",
+        "siag:museum:privatpreson"
+      ],
+      "AgeFrom": null,
+      "AreaIds": null,
+      "GpsInfo": [
+        {
+          "Default": null,
+          "Gpstype": "position",
+          "Altitude": 0,
+          "Geometry": null,
+          "Latitude": 46.6377536,
+          "Longitude": 12.033979,
+          "AltitudeUnitofMeasure": "m"
+        }
+      ],
+      "LTSTags": null,
+      "Mapping": {
+        "siag": {
+          "museId": "1564",
+          "gemeindeId": "8808"
+        }
+      },
+      "ODHTags": [
+        {
+          "Id": "museen kultur",
+          "Self": "https://tourism.api.opendatahub.com/v1/ODHTag/museen kultur"
+        },
+        {
+          "Id": "museen kunst",
+          "Self": "https://tourism.api.opendatahub.com/v1/ODHTag/museen kunst"
+        },
+        {
+          "Id": "poi",
+          "Self": "https://tourism.api.opendatahub.com/v1/ODHTag/poi"
+        },
+        {
+          "Id": "kultur sehenswürdigkeiten",
+          "Self": "https://tourism.api.opendatahub.com/v1/ODHTag/kultur sehenswürdigkeiten"
+        },
+        {
+          "Id": "museen",
+          "Self": "https://tourism.api.opendatahub.com/v1/ODHTag/museen"
+        }
+      ],
+      "PoiType": null,
+      "Ratings": null,
+      "SmgTags": [
+        "museen kultur",
+        "museen kunst",
+        "poi",
+        "kultur sehenswürdigkeiten",
+        "museen"
+      ],
+      "SubType": null,
+      "CustomId": "1564",
+      "GpsTrack": null,
+      "OwnerRid": null,
+      "DishRates": null,
+      "FeetClimb": false,
+      "GpsPoints": {
+        "position": {
+          "Default": null,
+          "Gpstype": "position",
+          "Altitude": 0,
+          "Geometry": null,
+          "Latitude": 46.6377536,
+          "Longitude": 12.033979,
+          "AltitudeUnitofMeasure": "m"
+        }
+      },
+      "Highlight": null,
+      "OdhActive": true,
+      "Shortname": "Al Plan Dolomites Hotel Museum",
+      "SmgActive": true,
+      "WayNumber": null,
+      "Difficulty": null,
+      "DistrictId": "79CBD61951C911D18F1400A02427D15E",
+      "Exposition": null,
+      "Facilities": null,
+      "HasRentals": false,
+      "IsPrepared": false,
+      "LastChange": "2025-11-11T15:17:58.5174718+00:00",
+      "VideoItems": {},
+      "ChildPoiIds": null,
+      "FirstImport": "2016-04-13T11:26:50.9132533",
+      "HasLanguage": [
+        "de",
+        "it",
+        "en"
+      ],
+      "IsWithLigth": false,
+      "LicenseInfo": {
+        "Author": "",
+        "License": "CC0",
+        "ClosedData": false,
+        "LicenseHolder": "http://www.provinz.bz.it/kunst-kultur/museen"
+      },
+      "PoiProperty": {
+        "de": [
+          {
+            "Name": "openingtimes",
+            "Value": "<p>Dez-M&auml;rz, Juni-Sep<br />t&auml;glich ge&ouml;ffnet 10-18 Uhr</p>"
+          },
+          {
+            "Name": "entry",
+            "Value": "<p>Eintritt frei</p>"
+          },
+          {
+            "Name": "tags",
+            "Value": "Volkskunde"
+          },
+          {
+            "Name": "categories",
+            "Value": "Kunst, Kultur"
+          },
+          {
+            "Name": "service",
+            "Value": "Behindertengerecht, Gastronomisches Angebot, Parkplatz, Familienfreundliches Museum"
+          },
+          {
+            "Name": "supporter",
+            "Value": "Privatperson"
+          }
+        ],
+        "en": [
+          {
+            "Name": "openingtimes",
+            "Value": "<p>Dec-March, Juni-Sep<br />open daily 10 am-6 pm</p>"
+          },
+          {
+            "Name": "entry",
+            "Value": "<p>free access</p>"
+          },
+          {
+            "Name": "tags",
+            "Value": "Etnography"
+          },
+          {
+            "Name": "categories",
+            "Value": "Art, culture"
+          },
+          {
+            "Name": "service",
+            "Value": "Access for disabled visitors, Gastronomic choice, Parking, offers for children"
+          },
+          {
+            "Name": "supporter",
+            "Value": "Privat preson"
+          }
+        ],
+        "it": [
+          {
+            "Name": "openingtimes",
+            "Value": "<p>dic-marzo, giu-sett<br />aperto tutti i giorni ore 10-18</p>"
+          },
+          {
+            "Name": "entry",
+            "Value": "<p>Ingresso libero</p>"
+          },
+          {
+            "Name": "tags",
+            "Value": "Etnografia"
+          },
+          {
+            "Name": "categories",
+            "Value": "Arte, cultura"
+          },
+          {
+            "Name": "service",
+            "Value": "Accessibile ai disabili, offerta gastronomica, Parcheggio, museo per famiglie"
+          },
+          {
+            "Name": "supporter",
+            "Value": "Museo privato"
+          }
+        ]
+      },
+      "PoiServices": [
+        "Behindertengerecht",
+        "Gastronomisches Angebot",
+        "Parkplatz",
+        "Familienfreundliches Museum"
+      ],
+      "PublishedOn": [],
+      "RunToValley": false,
+      "ContactInfos": {
+        "de": {
+          "Tax": null,
+          "Url": "http://www.alplan.it",
+          "Vat": null,
+          "Area": null,
+          "City": "St. Vigil in Enneberg",
+          "Email": "info@alplan.it",
+          "Region": null,
+          "Address": "Ciasè Straße 11",
+          "LogoUrl": null,
+          "Surname": null,
+          "ZipCode": "39030",
+          "Language": "de",
+          "Faxnumber": "",
+          "Givenname": null,
+          "NamePrefix": null,
+          "RegionCode": null,
+          "CompanyName": "Al Plan Dolomites Hotel Museum",
+          "CountryCode": "IT",
+          "CountryName": "Italien",
+          "Phonenumber": "+39 0474 501025"
+        },
+        "en": {
+          "Tax": null,
+          "Url": "http://www.alplan.it",
+          "Vat": null,
+          "Area": null,
+          "City": "St. Vigil in Enneberg",
+          "Email": "info@alplan.it",
+          "Region": null,
+          "Address": "",
+          "LogoUrl": null,
+          "Surname": null,
+          "ZipCode": "39030",
+          "Language": "en",
+          "Faxnumber": "",
+          "Givenname": null,
+          "NamePrefix": null,
+          "RegionCode": null,
+          "CompanyName": "",
+          "CountryCode": "IT",
+          "CountryName": "Italy",
+          "Phonenumber": "+39 0474 501025"
+        },
+        "it": {
+          "Tax": null,
+          "Url": "http://www.alplan.it",
+          "Vat": null,
+          "Area": null,
+          "City": "San Vigilio a Marebbe",
+          "Email": "info@alplan.it",
+          "Region": null,
+          "Address": "via Ciasè, 11",
+          "LogoUrl": null,
+          "Surname": null,
+          "ZipCode": "39030",
+          "Language": "it",
+          "Faxnumber": "",
+          "Givenname": null,
+          "NamePrefix": null,
+          "RegionCode": null,
+          "CompanyName": "Al Plan Dolomites Hotel Museo",
+          "CountryCode": "IT",
+          "CountryName": "Italia",
+          "Phonenumber": "+39 0474 501025"
+        }
+      },
+      "DistanceInfo": {
+        "DistanceToDistrict": 8884,
+        "DistanceToMunicipality": 8597
+      },
+      "ImageGallery": [
+        {
+          "Width": null,
+          "Height": null,
+          "License": null,
+          "ValidTo": "2000-12-31T00:00:00",
+          "ImageUrl": "https://musport.prov.bz.it/musport/servlet/resource?id=1305",
+          "CopyRight": null,
+          "ImageDesc": {
+            "de": "Wanduhrensammlung im Al Plan Dolomites Hotel Museum",
+            "en": "Collection of wall clocks in the Al Plan Dolomites Hotel Museum",
+            "it": "Collezione di orologi a muro al Al Plan Dolomites Hotel Museo"
+          },
+          "ImageName": "P1160775.JPG",
+          "ImageTags": null,
+          "ValidFrom": "2000-01-01T00:00:00",
+          "ImageTitle": {
+            "de": "Al Plan Dolomites Hotel Museum",
+            "en": "Al Plan Dolomites Hotel Museum",
+            "it": "Al Plan Dolomites Hotel Museo"
+          },
+          "ImageSource": "siag",
+          "IsInGallery": true,
+          "ImageAltText": {},
+          "ListPosition": 5,
+          "LicenseHolder": null
+        },
+        {
+          "Width": null,
+          "Height": null,
+          "License": null,
+          "ValidTo": "2000-12-31T00:00:00",
+          "ImageUrl": "https://musport.prov.bz.it/musport/servlet/resource?id=1306",
+          "CopyRight": null,
+          "ImageDesc": {
+            "de": "Maskensammlung im Al Plan Dolomites Hotel Museum",
+            "en": "Collection of masks in the Al Plan Dolomites Hotel Museum",
+            "it": "Collezione di maschere al Al Plan Dolomites Hotel Museo"
+          },
+          "ImageName": "P1160779.JPG",
+          "ImageTags": null,
+          "ValidFrom": "2000-01-01T00:00:00",
+          "ImageTitle": {
+            "de": "Al Plan Dolomites Hotel Museum",
+            "en": "Al Plan Dolomites Hotel Museum",
+            "it": "Al Plan Dolomites Hotel Museo"
+          },
+          "ImageSource": "siag",
+          "IsInGallery": true,
+          "ImageAltText": {},
+          "ListPosition": 7,
+          "LicenseHolder": null
+        },
+        {
+          "Width": null,
+          "Height": null,
+          "License": null,
+          "ValidTo": "2000-12-31T00:00:00",
+          "ImageUrl": "https://musport.prov.bz.it/musport/servlet/resource?id=1627",
+          "CopyRight": null,
+          "ImageDesc": {
+            "de": "",
+            "en": "",
+            "it": ""
+          },
+          "ImageName": "_D5N7267.jpg",
+          "ImageTags": null,
+          "ValidFrom": "2000-01-01T00:00:00",
+          "ImageTitle": {
+            "de": "Al Plan Dolomites Hotel Museo",
+            "en": "Al Plan Dolomites Hotel Museum",
+            "it": "Al Plan Dolomites Hotel Museum"
+          },
+          "ImageSource": "siag",
+          "IsInGallery": true,
+          "ImageAltText": {},
+          "ListPosition": 0,
+          "LicenseHolder": null
+        },
+        {
+          "Width": null,
+          "Height": null,
+          "License": null,
+          "ValidTo": "2000-12-31T00:00:00",
+          "ImageUrl": "https://musport.prov.bz.it/musport/servlet/resource?id=1304",
+          "CopyRight": null,
+          "ImageDesc": {
+            "de": "Flaschenstöpselsammlung im Al Plan Dolomites Hotel Museum",
+            "en": "Collection of bottle caps in the Al Plan Dolomites Hotel Museum",
+            "it": "Collezioni di tappi di bottiglia al Al Plan Dolomites Hotel Museo"
+          },
+          "ImageName": "P1160748.JPG",
+          "ImageTags": null,
+          "ValidFrom": "2000-01-01T00:00:00",
+          "ImageTitle": {
+            "de": "Al Plan Dolomites Hotel Museum",
+            "en": "Al Plan Dolomites Hotel Museum",
+            "it": "Al Plan Dolomites Hotel Museo"
+          },
+          "ImageSource": "siag",
+          "IsInGallery": true,
+          "ImageAltText": {},
+          "ListPosition": 2,
+          "LicenseHolder": null
+        },
+        {
+          "Width": null,
+          "Height": null,
+          "License": null,
+          "ValidTo": "2000-12-31T00:00:00",
+          "ImageUrl": "https://musport.prov.bz.it/musport/servlet/resource?id=1628",
+          "CopyRight": null,
+          "ImageDesc": {
+            "de": "",
+            "en": "",
+            "it": ""
+          },
+          "ImageName": "_D5N7037.jpg",
+          "ImageTags": null,
+          "ValidFrom": "2000-01-01T00:00:00",
+          "ImageTitle": {
+            "de": "Al Plan Dolomites Hotel Museo",
+            "en": "Al Plan Dolomites Hotel Museum",
+            "it": "Al Plan Dolomites Hotel Museum"
+          },
+          "ImageSource": "siag",
+          "IsInGallery": true,
+          "ImageAltText": {},
+          "ListPosition": 4,
+          "LicenseHolder": null
+        },
+        {
+          "Width": null,
+          "Height": null,
+          "License": null,
+          "ValidTo": "2000-12-31T00:00:00",
+          "ImageUrl": "https://musport.prov.bz.it/musport/servlet/resource?id=1302",
+          "CopyRight": null,
+          "ImageDesc": {
+            "de": "Sammlung von Küchengeräten im Al Plan Dolomites Hotel Museum",
+            "en": "Collection of kitchen Utensils in the Al Plan Dolomites Hotel Museum",
+            "it": "Collezione di utensili di cucina al Al Plan Dolomites Hotel Museo"
+          },
+          "ImageName": "P1160735.JPG",
+          "ImageTags": null,
+          "ValidFrom": "2000-01-01T00:00:00",
+          "ImageTitle": {
+            "de": "Al Plan Dolomites Hotel Museum",
+            "en": "Al Plan Dolomites Hotel Museum",
+            "it": "Al Plan Dolomites Hotel Museo"
+          },
+          "ImageSource": "siag",
+          "IsInGallery": true,
+          "ImageAltText": {},
+          "ListPosition": 6,
+          "LicenseHolder": null
+        }
+      ],
+      "LocationInfo": {
+        "TvInfo": {
+          "Id": "5228230151CA11D18F1400A02427D15E",
+          "Name": {
+            "cs": "La Val/La Valle",
+            "de": "Wengen",
+            "en": "La Val/La Valle",
+            "fr": "La Val/La Valle",
+            "it": "La Val",
+            "nl": "La Val/La Valle",
+            "pl": "La Val/La Valle",
+            "ru": "Ла-Валь/La Valle"
+          },
+          "Self": "https://tourism.api.opendatahub.com/v1/TourismAssociation/5228230151CA11D18F1400A02427D15E"
+        },
+        "AreaInfo": null,
+        "RegionInfo": {
+          "Id": "D2633A26C24E11D18F1B006097B8970B",
+          "Name": {
+            "cs": "Oblast Alta Badia Dolomity",
+            "de": "Dolomitenregion Alta Badia",
+            "en": "Dolomites Region Alta Badia",
+            "fr": "Région des Dolomites Alta Badia",
+            "it": "Regione dolomitica Alta Badia",
+            "nl": "Dolomietenregio Alta Badia",
+            "pl": "Region Alta Badia w Dolomitach",
+            "ru": "Регион Альта-Бадия Доломиты"
+          },
+          "Self": "https://tourism.api.opendatahub.com/v1/Region/D2633A26C24E11D18F1B006097B8970B"
+        },
+        "DistrictInfo": {
+          "Id": "79CBD61951C911D18F1400A02427D15E",
+          "Name": {
+            "cs": "La Val/La Val",
+            "de": "La Val",
+            "en": "La Val/La Val",
+            "fr": "La Val/La Val",
+            "it": "La Val",
+            "nl": "La Val/La Val",
+            "pl": "La Val/La Val",
+            "ru": "Ла-Валле"
+          },
+          "Self": "https://tourism.api.opendatahub.com/v1/District/79CBD61951C911D18F1400A02427D15E"
+        },
+        "MunicipalityInfo": {
+          "Id": "1292EAF0E46B49A4A56A75C0EEA4EDC3",
+          "Name": {
+            "cs": "La Val",
+            "de": "La Val",
+            "en": "La Val",
+            "fr": "La Val",
+            "it": "La Val",
+            "nl": "La Val",
+            "pl": "La Val",
+            "ru": "Ла-Валь"
+          },
+          "Self": "https://tourism.api.opendatahub.com/v1/Municipality/1292EAF0E46B49A4A56A75C0EEA4EDC3"
+        }
+      },
+      "MasterPoiIds": null,
+      "AltitudeSumUp": null,
+      "BikeTransport": null,
+      "CategoryCodes": null,
+      "LiftAvailable": false,
+      "DistanceLength": null,
+      "RelatedContent": null,
+      "SyncUpdateMode": "full",
+      "AltitudeSumDown": null,
+      "HasFreeEntrance": true,
+      "OutdooractiveID": null,
+      "CapacityCeremony": null,
+      "CopyrightChecked": null,
+      "DistanceDuration": null,
+      "AdditionalContact": null,
+      "OperationSchedule": null,
+      "AdditionalPoiInfos": {
+        "cs": {
+          "Novelty": null,
+          "PoiType": null,
+          "SubType": null,
+          "Language": "cs",
+          "MainType": null,
+          "Categories": [
+            "Muzea umění",
+            "Muzea kultura",
+            "Muzea"
+          ]
+        },
+        "de": {
+          "Novelty": null,
+          "PoiType": null,
+          "SubType": null,
+          "Language": "de",
+          "MainType": null,
+          "Categories": [
+            "Museen Kunst",
+            "Museen Kultur",
+            "Museen"
+          ]
+        },
+        "en": {
+          "Novelty": null,
+          "PoiType": null,
+          "SubType": null,
+          "Language": "en",
+          "MainType": null,
+          "Categories": [
+            "Museums Art",
+            "Museums Culture",
+            "Museums"
+          ]
+        },
+        "fr": {
+          "Novelty": null,
+          "PoiType": null,
+          "SubType": null,
+          "Language": "fr",
+          "MainType": null,
+          "Categories": [
+            "Musées d’art",
+            "Musées culturels",
+            "Musées"
+          ]
+        },
+        "it": {
+          "Novelty": null,
+          "PoiType": null,
+          "SubType": null,
+          "Language": "it",
+          "MainType": null,
+          "Categories": [
+            "Musei arte",
+            "Musei cultura",
+            "Musei"
+          ]
+        },
+        "nl": {
+          "Novelty": null,
+          "PoiType": null,
+          "SubType": null,
+          "Language": "nl",
+          "MainType": null,
+          "Categories": [
+            "Musea Kunst",
+            "Musea Cultuur",
+            "Musea"
+          ]
+        },
+        "pl": {
+          "Novelty": null,
+          "PoiType": null,
+          "SubType": null,
+          "Language": "pl",
+          "MainType": null,
+          "Categories": [
+            "Muzea sztuka",
+            "Muzea kultura",
+            "Muzea"
+          ]
+        },
+        "ru": {
+          "Novelty": null,
+          "PoiType": null,
+          "SubType": null,
+          "Language": "ru",
+          "MainType": null,
+          "Categories": [
+            "Музеи – искусство",
+            "Музеи – культура",
+            "Музеи"
+          ]
+        }
+      },
+      "AltitudeDifference": null,
+      "MaxSeatingCapacity": null,
+      "AltitudeLowestPoint": null,
+      "ODHActivityPoiTypes": [],
+      "SyncSourceInterface": "museumdata",
+      "AdditionalProperties": {
+        "SiagMuseumDataProperties": {
+          "Entry": {
+            "de": "<p>Eintritt frei</p>",
+            "en": "<p>free access</p>",
+            "it": "<p>Ingresso libero</p>"
+          },
+          "Supporter": {
+            "de": "Privatperson",
+            "en": "Privat preson",
+            "it": "Museo privato"
+          },
+          "OpeningTimes": {
+            "de": "<p>Dez-M&auml;rz, Juni-Sep<br />t&auml;glich ge&ouml;ffnet 10-18 Uhr</p>",
+            "en": "<p>Dec-March, Juni-Sep<br />open daily 10 am-6 pm</p>",
+            "it": "<p>dic-marzo, giu-sett<br />aperto tutti i giorni ore 10-18</p>"
+          }
+        }
+      },
+      "AltitudeHighestPoint": null,
+      "TourismorganizationId": "5228230151CA11D18F1400A02427D15E",
+      "OutdooractiveElevationID": null
+    }
+  ]
+}
