@@ -23,7 +23,7 @@ func Test_Transform_Snapshot(t *testing.T) {
 	poiCache = clib.NewCache[odhContentModel.ODHActivityPoi]()
 
 	var raw dto.RawData
-	err := testsuite.LoadInputData(&raw, "testdata/in.json")
+	err := testsuite.LoadInputData(&raw, "testdata/in_small.json")
 	if err != nil {
 		t.Fatalf("failed to load test data: %v", err)
 	}
@@ -71,7 +71,7 @@ func Test_Transform_Deactivation(t *testing.T) {
 	poiCache.Set(existingID, existingPOI, 0)
 
 	var raw dto.RawData
-	err := testsuite.LoadInputData(&raw, "testdata/in.json")
+	err := testsuite.LoadInputData(&raw, "testdata/in_small.json")
 	if err != nil {
 		t.Fatalf("failed to load test data: %v", err)
 	}
@@ -107,7 +107,7 @@ func Test_Transform_EmptyLanguages(t *testing.T) {
 
 	// Only DE populated, all other languages nil/empty
 	var raw dto.RawData
-	err := testsuite.LoadInputData(&raw, "testdata/in.json")
+	err := testsuite.LoadInputData(&raw, "testdata/in_small.json")
 	if err != nil {
 		t.Fatalf("failed to load test data: %v", err)
 	}
