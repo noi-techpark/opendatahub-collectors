@@ -236,7 +236,11 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 			physicalDataMapsByType[stationType] = &dm
 		}
 
-		bdpStation := bdplib.CreateStation(fmt.Sprintf("%s:st:%s", bdp.GetOrigin(), s.StationID), s.Name, stationType, s.Lat, s.Lon, bdp.GetOrigin())
+		name := s.Name
+		if name == "" {
+			name = s.StationID
+		}
+		bdpStation := bdplib.CreateStation(fmt.Sprintf("%s:st:%s", bdp.GetOrigin(), s.StationID), name, stationType, s.Lat, s.Lon, bdp.GetOrigin())
 		bdpStation.MetaData = make(map[string]any)
 
 		if region, ok := regionsMap[s.RegionID]; ok {
