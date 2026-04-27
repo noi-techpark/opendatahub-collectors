@@ -69,7 +69,7 @@ jobs:
           aws-region: eu-west-1
 
   deploy-prod:
-    if: github.ref == 'refs/heads/prod'
+    if: github.ref == 'refs/heads/prod' || github.ref == 'refs/heads/dev/skidata'
     needs: build
     runs-on: ubuntu-24.04
     concurrency: dc-rest-push-skidata-prod
