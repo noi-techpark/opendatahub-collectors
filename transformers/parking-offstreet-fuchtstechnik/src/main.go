@@ -6,6 +6,8 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"log/slog"
 	"os"
@@ -60,9 +62,24 @@ func main() {
 
 	slog.Info("Starting transformer listener...")
 
-	listener := tr.NewTr[ParkingEvent](context.Background(), env)
-	err = listener.Start(context.Background(), TransformWithBdp(b))
+	listener := tr.NewTr[string](context.Background(), env)
+	err = listener.Start(context.Background(), Base64Decode(TransformWithBdp(b)))
 	ms.FailOnError(context.Background(), err, "error while listening to queue")
+}
+
+func Base64Decode[P any](h tr.Handler[P]) tr.Handler[string] {
+	return func(ctx context.Context, r *rdb.Raw[string]) error {
+		pRaw := rdb.Raw[P]{Provider: r.Provider, Timestamp: r.Timestamp}
+		decoded, err := base64.StdEncoding.DecodeString(r.Rawdata)
+		if err != nil {
+			return fmt.Errorf("middleware failed decode base64 rawdata string: %w", err)
+		}
+		err = json.Unmarshal([]byte(decoded), &pRaw.Rawdata)
+		if err != nil {
+			return fmt.Errorf("middleware failed parsing rawdata string to json: %w", err)
+		}
+		return h(ctx, &pRaw)
+	}
 }
 
 func TransformWithBdp(bdp bdplib.Bdp) tr.Handler[ParkingEvent] {
