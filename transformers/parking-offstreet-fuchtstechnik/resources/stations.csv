@@ -1,2 +1,5 @@
 id,facility_id,name,municipality,name_en,name_it,name_de,standard_name,netex_type,netex_vehicletypes,netex_layout,netex_hazard_prohibited,netex_charging,netex_surveillance,netex_reservation,lat,lon
+Passo Sella,Passo Sella,Parcheggio Passo Sella,,,Parcheggio Passo Sella,Parkplatz Sellajoch,,,,,,,,,46.50966636105615,11.757409288384858
+Piz la Ila,Piz la Ila,Parcheggio Piz la Ila,,,Parcheggio Piz la Ila,Parkplatz Piz la Ila,,,,,,,,,46.58175077626076,11.901868200019756
+Seceda,Seceda,Parcheggio Seceda,,,Parcheggio Seceda,Parkplatz Seceda,,,,,,,,,46.5767041101668,11.67531905524029
 plan_de_gralba,plan_de_gralba,Parcheggio Plan de Gralba,Selva di Val Gardena,Plan de Gralba,Parcheggio Plan de Gralba,Plan de Gralba,Parcheggio Plan de Gralba,parkAndRide,allPassengerVehicles,openSpace,true,false,true,noReservations,46.53474648514954,11.769183545778686
