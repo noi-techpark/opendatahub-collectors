@@ -8,7 +8,6 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"math"
 	"sort"
 	"strconv"
 	"strings"
@@ -237,9 +236,15 @@ func mapToPoi(c dto.WineCompany, lang string, de dto.WineCompany, ts time.Time) 
 	shortname := c.Title
 
 	// PoiServices from DE wines (language-neutral list)
-	var poiServices []string
+	poiServices := []string{}
 	if de.Wines != "" {
 		poiServices = strings.Split(de.Wines, ",")
+	}
+
+	// AdditionalContact — empty slice by default, populated if importers exist
+	additionalContacts := buildAdditionalContacts(c, lang)
+	if additionalContacts == nil {
+		additionalContacts = []odhContentModel.AdditionalContact{}
 	}
 
 	return odhContentModel.ODHActivityPoi{
@@ -275,7 +280,7 @@ func mapToPoi(c dto.WineCompany, lang string, de dto.WineCompany, ts time.Time) 
 		PoiServices:         poiServices,
 		Detail:              map[string]*odhContentModel.DetailGeneric{lang: buildDetail(c, lang)},
 		ContactInfos:        map[string]*odhContentModel.ContactInfo{lang: buildContactInfo(c, lang)},
-		AdditionalContact:   buildAdditionalContacts(c, lang),
+		AdditionalContact:   additionalContacts,
 		ImageGallery:        buildImageGallery(de),
 		PoiProperty:         map[string][]odhContentModel.PoiPropertyEntry{lang: buildPoiProperty(c)},
 	}
@@ -308,8 +313,10 @@ func mergeLang(poi *odhContentModel.ODHActivityPoi, c dto.WineCompany, lang stri
 	}
 	poi.PoiProperty[lang] = buildPoiProperty(c)
 
-	mergeAdditionalContacts(poi, buildAdditionalContacts(c, lang))
+	// Add importer contacts for this language
+	poi.AdditionalContact = append(poi.AdditionalContact, buildAdditionalContacts(c, lang)...)
 
+	// Update ImageTitle/Desc/Alt with this language's meta if present
 	if c.ImageMetaTitle != "" && len(poi.ImageGallery) > 0 {
 		if poi.ImageGallery[0].ImageTitle == nil {
 			poi.ImageGallery[0].ImageTitle = map[string]string{}
@@ -330,26 +337,18 @@ func mergeLang(poi *odhContentModel.ODHActivityPoi, c dto.WineCompany, lang stri
 	}
 }
 
-// ── Field builders ────────────────────────────────────────────────────────────
-
-func buildMapping(c dto.WineCompany) map[string]string {
-	return map[string]string{
-		"id": c.ID,
-	}
-}
-
 // buildDetail maps to our extended DetailGeneric which adds Header, SubHeader, IntroText.
 // Header = slogan, SubHeader = subtitle, IntroText = quote (matching C# parser).
 func buildDetail(c dto.WineCompany, lang string) *odhContentModel.DetailGeneric {
 	return &odhContentModel.DetailGeneric{
 		DetailGeneric: clib.DetailGeneric{
 			Language: &lang,
-			Title:    nullableString(c.Title),
-			BaseText: nullableString(c.CompanyDescription),
+			Title:    ptrOf(c.Title),
+			BaseText: ptrOf(c.CompanyDescription),
 		},
 		Header:    ptrOf(c.Slogan),
 		SubHeader: ptrOf(c.Subtitle),
-		IntroText: nullableString(c.Quote),
+		IntroText: ptrOf(c.Quote),
 	}
 }
 
@@ -392,29 +391,15 @@ func buildAdditionalContacts(c dto.WineCompany, lang string) []odhContentModel.A
 		return nil
 	}
 
-	contacts := make([]odhContentModel.AdditionalContact, 0, len(importers))
-	seen := make(map[string]struct{}, len(importers))
+	var contacts []odhContentModel.AdditionalContact
 	for _, imp := range importers {
 		website := imp.ImporterHomepage
 		if website != "" && !strings.Contains(website, "http") {
 			website = "http://" + website
 		}
-		key := strings.Join([]string{
-			strings.TrimSpace(imp.ImporterName),
-			strings.TrimSpace(imp.ImporterAddress),
-			strings.TrimSpace(imp.ImporterZipCode),
-			strings.TrimSpace(imp.ImporterPlace),
-			strings.TrimSpace(imp.ImporterPhone),
-			strings.TrimSpace(imp.ImporterEmail),
-			strings.TrimSpace(website),
-		}, "|")
-		if _, ok := seen[key]; ok {
-			continue
-		}
-		seen[key] = struct{}{}
 		contacts = append(contacts, odhContentModel.AdditionalContact{
 			Type:        "wineimporter",
-			Description: imp.ImporterContactPerson,
+			Description: imp.ImporterDescription,
 			ContactInfo: &odhContentModel.ContactInfo{
 				Language:    lang,
 				CompanyName: imp.ImporterName,
@@ -430,56 +415,29 @@ func buildAdditionalContacts(c dto.WineCompany, lang string) []odhContentModel.A
 	return contacts
 }
 
-func mergeAdditionalContacts(poi *odhContentModel.ODHActivityPoi, contacts []odhContentModel.AdditionalContact) {
-	if len(contacts) == 0 {
-		return
-	}
-	if poi.AdditionalContact == nil {
-		poi.AdditionalContact = []odhContentModel.AdditionalContact{}
-	}
-	seen := make(map[string]struct{}, len(poi.AdditionalContact))
-	for _, existing := range poi.AdditionalContact {
-		seen[additionalContactKey(existing)] = struct{}{}
-	}
-	for _, contact := range contacts {
-		key := additionalContactKey(contact)
-		if _, ok := seen[key]; ok {
-			continue
-		}
-		seen[key] = struct{}{}
-		poi.AdditionalContact = append(poi.AdditionalContact, contact)
-	}
-}
-
-func additionalContactKey(c odhContentModel.AdditionalContact) string {
-	var companyName, address, zipCode, city, phone, email, url, desc string
-	if c.ContactInfo != nil {
-		companyName = c.ContactInfo.CompanyName
-		address = c.ContactInfo.Address
-		zipCode = c.ContactInfo.ZipCode
-		city = c.ContactInfo.City
-		phone = c.ContactInfo.Phonenumber
-		email = c.ContactInfo.Email
-		url = c.ContactInfo.Url
-	}
-	desc = c.Description
-	return strings.Join([]string{c.Type, desc, companyName, address, zipCode, city, phone, email, url}, "|")
-}
-
 // buildGpsInfo uses DE company data with validation (matching C# parser checks).
 func buildGpsInfo(de dto.WineCompany) []odhContentModel.GpsData {
-	lat, okLat := parseCoordWithOK(de.Latitude)
-	lon, okLon := parseCoordWithOK(de.Longitude)
+	lat := de.Latitude
+	lon := de.Longitude
 
-	if !okLat || !okLon || !isValidCoordinate(lat, lon) {
-		return nil
+	if lat == "" || lon == "" || lat == "0" || lon == "0" {
+		return []odhContentModel.GpsData{}
+	}
+	if strings.Contains(lat, "°") || strings.Contains(lon, "°") {
+		return []odhContentModel.GpsData{}
+	}
+
+	latF := parseCoord(lat)
+	lonF := parseCoord(lon)
+	if latF == 0 && lonF == 0 {
+		return []odhContentModel.GpsData{}
 	}
 
 	return []odhContentModel.GpsData{
 		{
 			Gpstype:   ptrOf("position"),
-			Latitude:  lat,
-			Longitude: lon,
+			Latitude:  latF,
+			Longitude: lonF,
 		},
 	}
 }
@@ -499,6 +457,9 @@ func buildImageGallery(de dto.WineCompany) []odhContentModel.ImageGalleryEntry {
 			LicenseHolder: LICENSE_HOLDER,
 			IsInGallery:   true,
 			ListPosition:  0,
+			ImageTitle:    map[string]string{},
+			ImageDesc:     map[string]string{},
+			ImageAltText:  map[string]string{},
 		}
 		// Seed DE image meta — other languages added via mergeLang
 		if de.ImageMetaTitle != "" {
@@ -572,7 +533,7 @@ func buildPoiProperty(c dto.WineCompany) []odhContentModel.PoiPropertyEntry {
 	add("imagesparklingwineproducer", c.ImageSparklingWineProducer)
 	add("socialsinstagram", c.SocialsInstagram)
 	add("socialsfacebook", c.SocialsFacebook)
-	add("socialslinkedin", c.SocialsLinkedIn)
+	add("socialslinkedIn", c.SocialsLinkedIn)
 	add("socialspinterest", c.SocialsPinterest)
 	add("socialstiktok", c.SocialsTikTok)
 	add("socialsyoutube", c.SocialsYouTube)
@@ -603,7 +564,7 @@ func buildAdditionalProperties(byLang map[string]dto.WineCompany) *odhContentMod
 		p.HasVisits = parseBool(de.HasVisits)
 		p.HasOvernights = parseBool(de.HasOvernights)
 		p.HasBiowine = parseBool(de.HasBioWine)
-		p.HasAccommodation = parseBool(de.HasAccomodation)
+		p.HasAccommodation = nullableBool(de.HasAccomodation)
 		p.HasOnlineshop = parseBool(de.HasOnlineShop)
 		p.HasDeliveryservice = parseBool(de.HasDeliveryService)
 		p.HasDirectSales = parseBool(de.HasDirectSales)
@@ -694,34 +655,16 @@ func buildAdditionalProperties(byLang map[string]dto.WineCompany) *odhContentMod
 
 // ── Utility ───────────────────────────────────────────────────────────────────
 
-func isValidCoordinate(lat, lon float64) bool {
-	if math.IsNaN(lat) || math.IsNaN(lon) || math.IsInf(lat, 0) || math.IsInf(lon, 0) {
-		return false
-	}
-	if lat == 0 && lon == 0 {
-		return false
-	}
-	if lat < -90 || lat > 90 || lon < -180 || lon > 180 {
-		return false
-	}
-	return true
-}
-
 func parseBool(s string) bool {
 	return strings.EqualFold(s, "true")
 }
 
-func parseCoordWithOK(s string) (float64, bool) {
+func parseCoord(s string) float64 {
 	s = strings.TrimSpace(strings.ReplaceAll(s, ",", "."))
 	v, err := strconv.ParseFloat(s, 64)
 	if err != nil {
-		return 0, false
+		return 0
 	}
-	return v, true
-}
-
-func parseCoord(s string) float64 {
-	v, _ := parseCoordWithOK(s)
 	return v
 }
 
@@ -730,6 +673,15 @@ func nullableString(s string) *string {
 		return nil
 	}
 	return &s
+}
+
+// nullableBool returns nil if the source string is empty, otherwise parses and returns a *bool.
+func nullableBool(s string) *bool {
+	if s == "" {
+		return nil
+	}
+	v := parseBool(s)
+	return &v
 }
 
 func ptrOf[T any](v T) *T { return &v }
