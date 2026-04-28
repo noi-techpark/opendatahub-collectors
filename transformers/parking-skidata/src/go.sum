@@ -102,6 +102,8 @@ github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 h1:C3w9PqII01/Oq
 github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
 github.com/noi-techpark/go-bdp-client v1.5.1 h1:RhDAZ9iHZzcnaMWJqWnknI2rxFo+CZYGWRWJ9G/0nRs=
 github.com/noi-techpark/go-bdp-client v1.5.1/go.mod h1:NxydqYHt62Vm08ycpkippCb4FOsQDNL2GTghVZbdOg0=
+github.com/noi-techpark/go-timeseries-client v0.0.0-20250822084439-8aae699d91e0 h1:WsGKe9o0N4dgQrAzNR0moNs2UzjwSLNFge9KQgUKlj8=
+github.com/noi-techpark/go-timeseries-client v0.0.0-20250822084439-8aae699d91e0/go.mod h1:HzbXTeKGUegflWeRfgwfQFduX7P7YrZydBfVzeW0D4s=
 github.com/noi-techpark/opendatahub-go-sdk/clib v0.0.1 h1:xpykmflwExs1ba+GQamZ8WH2aHNvBUQ4pPrAguO0M+w=
 github.com/noi-techpark/opendatahub-go-sdk/clib v0.0.1/go.mod h1:UhZDGhoLJZrmnMAAc+3RX27tNNKOkLEKLBbhqa6oELY=
 github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.7 h1:2TuicpDK+LP5K7WODisOcVkagpgm0XE/BNtx1nD/dbE=

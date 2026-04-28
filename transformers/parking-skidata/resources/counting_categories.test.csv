@@ -1,0 +1,4 @@
+facility_id,carpark_id,counting_category_id,name,capacity,occupancy_limit,free_limit
+0600015,0,1,SostaBreve,104,104,103
+0600015,0,2,Abbonati,141,141,140
+0600015,0,3,Totale,245,245,244

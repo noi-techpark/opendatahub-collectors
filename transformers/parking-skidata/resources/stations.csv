@@ -1,3 +1,38 @@
-id,facility_id,name,municipality,name_en,name_it,name_de,standard_name,netex_type,netex_vehicletypes,netex_layout,netex_hazard_prohibited,netex_charging,netex_surveillance,netex_reservation,lat,lon
-600015,600015,Parcheggio Demo,Bolzano - Bozen,Demo,Demo,Demo,Parcheggio Demo,urbanParking,allPassengerVehicles,openSpace,true,true,true,noReservations,46.49067,11.33982
-600015_0,600015_0,Parcheggio Demo 1,Bolzano - Bozen,Demo 1,Demo 1,Demo 1,Parcheggio Demo 1,urbanParking,allPassengerVehicles,openSpace,true,true,true,noReservations,46.49067,11.33982
+id,station_type,parent_id,carpark_id,name,municipality,name_en,name_it,name_de,standard_name,netex_type,netex_vehicletypes,netex_layout,netex_hazard_prohibited,netex_charging,netex_surveillance,netex_reservation,lat,lon
+0404467,ParkingFacility,,,,,,,,,,,,,,,,0,0
+0404467_0,ParkingStation,0404467,0,,,,,,,,,,,,,,0,0
+0406009,ParkingFacility,,,,,,,,,,,,,,,,0,0
+0406009_0,ParkingStation,0406009,0,,,,,,,,,,,,,,0,0
+0600015,ParkingFacility,,,Parcheggio Demo,Bolzano - Bozen,Demo,Demo,Demo,Parcheggio Demo,urbanParking,allPassengerVehicles,openSpace,true,true,true,noReservations,46.49067,11.33982
+0600015_0,ParkingStation,0600015,0,Parcheggio Demo 1,Bolzano - Bozen,Demo 1,Demo 1,Demo 1,Parcheggio Demo 1,urbanParking,allPassengerVehicles,openSpace,true,true,true,noReservations,46.49067,11.33982
+0601336,ParkingFacility,,,,,,,,,,,,,,,,0,0
+0601336_0,ParkingStation,0601336,0,,,,,,,,,,,,,,0,0
+0601336_1,ParkingStation,0601336,1,,,,,,,,,,,,,,0,0
+0601336_2,ParkingStation,0601336,2,,,,,,,,,,,,,,0,0
+0601393,ParkingFacility,,,,,,,,,,,,,,,,0,0
+0601393_0,ParkingStation,0601393,0,,,,,,,,,,,,,,0,0
+0601393_1,ParkingStation,0601393,1,,,,,,,,,,,,,,0,0
+0601393_2,ParkingStation,0601393,2,,,,,,,,,,,,,,0,0
+0602581,ParkingFacility,,,,,,,,,,,,,,,,0,0
+0602581_0,ParkingStation,0602581,0,,,,,,,,,,,,,,0,0
+0602581_1,ParkingStation,0602581,1,,,,,,,,,,,,,,0,0
+0603001,ParkingFacility,,,,,,,,,,,,,,,,0,0
+0603001_0,ParkingStation,0603001,0,,,,,,,,,,,,,,0,0
+0607242,ParkingFacility,,,,,,,,,,,,,,,,0,0
+0607242_0,ParkingStation,0607242,0,,,,,,,,,,,,,,0,0
+0607440,ParkingFacility,,,,,,,,,,,,,,,,0,0
+0607440_0,ParkingStation,0607440,0,,,,,,,,,,,,,,0,0
+0607440_1,ParkingStation,0607440,1,,,,,,,,,,,,,,0,0
+0607440_2,ParkingStation,0607440,2,,,,,,,,,,,,,,0,0
+0607861,ParkingFacility,,,,,,,,,,,,,,,,0,0
+0607861_0,ParkingStation,0607861,0,,,,,,,,,,,,,,0,0
+0608935,ParkingFacility,,,,,,,,,,,,,,,,0,0
+0608935_0,ParkingStation,0608935,0,,,,,,,,,,,,,,0,0
+0609008,ParkingFacility,,,,,,,,,,,,,,,,0,0
+0609008_0,ParkingStation,0609008,0,,,,,,,,,,,,,,0,0
+0609008_1,ParkingStation,0609008,1,,,,,,,,,,,,,,0,0
+0609420,ParkingFacility,,,,,,,,,,,,,,,,0,0
+0609420_0,ParkingStation,0609420,0,,,,,,,,,,,,,,0,0
+0609420_1,ParkingStation,0609420,1,,,,,,,,,,,,,,0,0
+0609701,ParkingFacility,,,,,,,,,,,,,,,,0,0
+0609701_0,ParkingStation,0609701,0,,,,,,,,,,,,,,0,0

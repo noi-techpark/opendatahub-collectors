@@ -1,0 +1,3 @@
+id,station_type,parent_id,carpark_id,name,municipality,name_en,name_it,name_de,standard_name,netex_type,netex_vehicletypes,netex_layout,netex_hazard_prohibited,netex_charging,netex_surveillance,netex_reservation,lat,lon
+0600015,ParkingFacility,,,Parcheggio Demo,Bolzano - Bozen,Demo,Demo,Demo,Parcheggio Demo,urbanParking,allPassengerVehicles,openSpace,true,true,true,noReservations,46.49067,11.33982
+0600015_0,ParkingStation,0600015,0,Parcheggio Demo 1,Bolzano - Bozen,Demo 1,Demo 1,Demo 1,Parcheggio Demo 1,urbanParking,allPassengerVehicles,openSpace,true,true,true,noReservations,46.49067,11.33982

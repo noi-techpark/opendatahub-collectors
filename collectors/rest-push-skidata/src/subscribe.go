@@ -13,25 +13,18 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/hashicorp/go-retryablehttp"
 	"github.com/noi-techpark/opendatahub-go-sdk/tel"
+	"opendatahub.com/rest-push-skidata/skidata"
 )
 
-type CountingCategory struct {
-	CarparkId          int    `json:"carparkId"`
-	CountingCategoryId int    `json:"countingCategoryId"`
-	Name               string `json:"name"`
-	Capacity           int    `json:"capacity"`
-	OccupancyLimit     int    `json:"occupancyLimit"`
-	FreeLimit          int    `json:"freeLimit"`
-}
+// CountingCategory is re-exported from the shared skidata package so existing
+// references in this package keep working.
+type CountingCategory = skidata.CountingCategory
 
 var httpClient *http.Client
 
 func init() {
-	rc := retryablehttp.NewClient()
-	rc.Logger = nil
-	httpClient = rc.StandardClient()
+	httpClient = skidata.NewHTTPClient()
 }
 
 func SubscribeAll(creds []FacilityCredential) {
@@ -78,7 +71,7 @@ func manageFacility(cred FacilityCredential) {
 }
 
 func healthCheck(cred FacilityCredential) error {
-	url := cred.ApiURL("health")
+	url := skidata.ApiURL(env.SKIDATA_BASE_URL, "health")
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -100,7 +93,7 @@ func healthCheck(cred FacilityCredential) error {
 }
 
 func subscribeFacility(cred FacilityCredential) error {
-	categories, err := getCountingCategories(cred)
+	categories, err := skidata.GetCountingCategories(httpClient, env.SKIDATA_BASE_URL, cred)
 	if err != nil {
 		return fmt.Errorf("failed to get counting categories: %w", err)
 	}
@@ -123,37 +116,8 @@ func subscribeFacility(cred FacilityCredential) error {
 	return nil
 }
 
-func getCountingCategories(cred FacilityCredential) ([]CountingCategory, error) {
-	url := cred.ApiURL(fmt.Sprintf("countingcategories/%s", cred.Facility))
-
-	req, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create request: %w", err)
-	}
-	req.SetBasicAuth(cred.Username, cred.Password)
-	req.Header.Set("Accept", "application/json")
-
-	resp, err := httpClient.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("request failed: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(resp.Body)
-		return nil, fmt.Errorf("counting categories returned %d: %s", resp.StatusCode, string(body))
-	}
-
-	var categories []CountingCategory
-	err = json.NewDecoder(resp.Body).Decode(&categories)
-	if err != nil {
-		return nil, fmt.Errorf("failed to decode counting categories: %w", err)
-	}
-	return categories, nil
-}
-
 func enableNotifications(cred FacilityCredential, carparkIds []int) error {
-	url := cred.ApiURL(fmt.Sprintf("notifications/enable/%s", cred.Facility))
+	url := skidata.ApiURL(env.SKIDATA_BASE_URL, fmt.Sprintf("notifications/enable/%s", cred.Facility))
 
 	body, err := json.Marshal(carparkIds)
 	if err != nil {

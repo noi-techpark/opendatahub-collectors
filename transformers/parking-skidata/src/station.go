@@ -16,7 +16,9 @@ import (
 // Station represents one row from the stations CSV.
 type Station struct {
 	ID                    string  `csv:"id"`
-	StationID             string  `csv:"facility_id"`
+	StationType           string  `csv:"station_type"`
+	ParentID              string  `csv:"parent_id"`
+	CarparkID             int     `csv:"carpark_id"`
 	Name                  string  `csv:"name"`
 	Municipality          string  `csv:"municipality"`
 	NameEn                string  `csv:"name_en"`
@@ -48,15 +50,24 @@ func ReadStations(filename string) Stations {
 	return facilities
 }
 
-// GetStationByID returns a pointer to a Station with the matching StationID (facility_id column).
-// Returns nil if no matching record is found.
-func (s Stations) GetStationByID(facilityID string) *Station {
-	for _, f := range s {
-		if f.StationID == facilityID {
-			return &f
+// ReadStationsOptional reads a stations CSV file like ReadStations, but
+// returns an empty slice if the file does not exist (instead of failing).
+// It is used to merge in optional sources like a `*.dev.csv` overlay that
+// is excluded from production builds via .dockerignore.
+func ReadStationsOptional(filename string) Stations {
+	f, err := os.Open(filename)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
 		}
+		ms.FailOnError(context.Background(), err, "failed opening optional csv file")
 	}
-	return nil
+	defer f.Close()
+
+	var facilities Stations
+	err = gocsv.UnmarshalFile(f, &facilities)
+	ms.FailOnError(context.Background(), err, "failed unmarshalling optional csv")
+	return facilities
 }
 
 // ToMetadata converts the Station into a map suitable for BDP station metadata.

@@ -1,0 +1,53 @@
+[
+  {
+    "trafficSignalState": 0,
+    "name": "Abbonati",
+    "freeLimit": 150,
+    "level": 65,
+    "capacity": 150,
+    "occupancyLimit": 150,
+    "externalCounting": false,
+    "trafficSignalMode": 0,
+    "carpark": {
+      "name": "Demo",
+      "facilityNr": 601336,
+      "id": 0,
+      "shortName": "1"
+    },
+    "countingCategoryId": 2
+  },
+  {
+    "trafficSignalState": 0,
+    "name": "Totale",
+    "freeLimit": 372,
+    "level": 100,
+    "capacity": 372,
+    "occupancyLimit": 372,
+    "externalCounting": false,
+    "trafficSignalMode": 0,
+    "carpark": {
+      "name": "Demo",
+      "facilityNr": 601336,
+      "id": 1,
+      "shortName": "2"
+    },
+    "countingCategoryId": 3
+  },
+  {
+    "trafficSignalState": 0,
+    "name": "Meusburger",
+    "freeLimit": 21,
+    "level": 4,
+    "capacity": 21,
+    "occupancyLimit": 21,
+    "externalCounting": false,
+    "trafficSignalMode": 0,
+    "carpark": {
+      "name": "Demo",
+      "facilityNr": 601336,
+      "id": 0,
+      "shortName": "1"
+    },
+    "countingCategoryId": 4
+  }
+]

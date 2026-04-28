@@ -29,6 +29,15 @@ env:
   SERVICE_NAME: tr-parking-skidata
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 
+  # Production: load only the synced base CSVs. Set to "test" in lower
+  # environments to additionally load resources/*.dev.csv overlay rows.
+  RESOURCES_OVERLAY: ""
+
+  # OpenDataHub time-series API used at startup to hydrate the in-memory
+  # cache with the latest free/occupied per (carpark, category).
+  TS_API_BASE_URL: https://mobility.api.opendatahub.com
+  TS_API_REFERER: tr-parking-skidata
+
 envSecretRef:
   - name: MQ_URI
     secret: rabbitmq-svcbind
@@ -42,3 +51,7 @@ envSecretRef:
   - name: ODH_CLIENT_SECRET
     secret: oauth-collector
     key: clientSecret
+  # Same OAuth realm reused by the timeseries client at startup.
+  - name: TS_API_TOKEN_URL
+    secret: oauth-collector
+    key: tokenUri
