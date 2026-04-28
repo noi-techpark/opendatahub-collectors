@@ -117,7 +117,7 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[ParkingEven
 		dataMap.AddRecord(station.Id, dataTypeOccupied, bdplib.CreateRecord(tsMs, occupied, measurementPeriod))
 	}
 
-	if err := bdp.SyncStations(stationType, []bdplib.Station{station}, true, false); err != nil {
+	if err := bdp.SyncStations(stationType, []bdplib.Station{station}, true, true); err != nil {
 		return fmt.Errorf("failed to sync station: %w", err)
 	}
 	if err := bdp.PushData(stationType, dataMap); err != nil {
