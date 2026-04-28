@@ -16,7 +16,7 @@ env:
   LOG_LEVEL: "DEBUG"
   MQ_QUEUE: fuchtstechnik.parking-stations
   MQ_EXCHANGE: routed
-  MQ_KEY: fuchtstechnik.parking-stations
+  MQ_KEY: fuchstechnik.parking-stations
   MQ_CLIENT: tr-parking-offstreet-fuchtstechnik
 
   BDP_BASE_URL: http://bdp-core.core.svc.cluster.local
