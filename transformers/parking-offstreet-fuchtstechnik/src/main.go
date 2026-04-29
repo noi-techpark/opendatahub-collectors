@@ -30,11 +30,26 @@ const (
 	dataTypeFree     = "free"
 	dataTypeOccupied = "occupied"
 
-	// measurementTimestampLayout matches "2026-03-30 11:07:58" (UTC assumed).
+	// measurementTimestampLayout matches "2026-03-30 11:07:58". The
+	// provider emits naive local time (Europe/Rome), without a timezone
+	// indicator — see measurementLocation below.
 	measurementTimestampLayout = "2006-01-02 15:04:05"
 
 	measurementPeriod = 0
 )
+
+// measurementLocation is the timezone the provider's naive timestamps
+// are interpreted in. Loaded once at package init so each event parse
+// doesn't repeat the (relatively expensive) tzdata lookup.
+var measurementLocation = mustLoadLocation("Europe/Rome")
+
+func mustLoadLocation(name string) *time.Location {
+	loc, err := time.LoadLocation(name)
+	if err != nil {
+		panic(fmt.Sprintf("failed to load timezone %q: %v", name, err))
+	}
+	return loc
+}
 
 var env tr.Env
 var stations Stations
@@ -104,7 +119,11 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[ParkingEven
 
 	dataMap := bdp.CreateDataMap()
 	for _, m := range event.Measurements {
-		ts, err := time.Parse(measurementTimestampLayout, m.Timestamp)
+		// ParseInLocation interprets the wall-clock string in Europe/Rome,
+		// then UnixMilli() yields the correct UTC epoch — without this,
+		// CEST/CET-local times would be stored as if they were UTC and
+		// land 1–2 hours in the future.
+		ts, err := time.ParseInLocation(measurementTimestampLayout, m.Timestamp, measurementLocation)
 		if err != nil {
 			return fmt.Errorf("failed to parse measurement timestamp %q: %w", m.Timestamp, err)
 		}
