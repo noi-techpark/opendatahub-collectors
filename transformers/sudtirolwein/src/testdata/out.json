@@ -1,585 +1,590 @@
 {
-  "posts": [
+  "posts": [],
+  "puts": [],
+  "putMultiples": [
     {
       "apiPath": "ODHActivityPoi",
-      "queryParams": { "generateid": "false" },
-      "payload": {
-        "Id": "smgpoi7f8602e3-d52c-4d40-9c96-3fd01ea71452suedtirolwein",
-        "LicenseInfo": {
-          "Author": "",
-          "License": "CC0",
-          "ClosedData": false,
-          "LicenseHolder": "https://www.suedtirolwein.com/"
-        },
-        "Shortname": "Altissimus Hedwigsberg",
-        "Active": true,
-        "LastChange": "2026-01-15T10:00:00Z",
-        "HasLanguage": ["de", "it", "en", "ru", "jp", "us"],
-        "Mapping": {
-          "suedtirolwein": { "id": "7f8602e3-d52c-4d40-9c96-3fd01ea71452" }
-        },
-        "Source": "suedtirolwein",
-        "TagIds": [
-          "28CDEF87206E464D9B179FBCAF506457",
-          "6EFED925DF3B4EF5B69495E994F446AC",
-          "eating drinking",
-          "gastronomy",
-          "wineries"
-        ],
-        "GpsInfo": [
-          { "Gpstype": "position", "Latitude": 46.381478, "Longitude": 11.2527 }
-        ],
-        "SmgTags": ["gastronomy", "essen trinken", "weinkellereien"],
-        "Detail": {
-          "de": {
-            "BaseText": "An einem sonnenverw\u0026ouml;hnten Nordhang im oberen Vinschgau liegt auf \u0026uuml;ber 1000 Metern H\u0026ouml;he ein Weinberg, den es laut Skeptikern gar nicht geben d\u0026uuml;rfte: zu hoch gelegen, zu weit oben im kargen Vinschgau. Davon lie\u0026szlig; sich der Agronom Eduard Bernhart nicht einsch\u0026uuml;chtern, er sah weniger die Herausforderungen als vielmehr das Potenzial des Steilhangs. \u0026bdquo;Mir erschien der Hang ideal\u0026ldquo;, so die Einsch\u0026auml;tzung Bernharts.\n\u003cbr /\u003e\n\u003cbr /\u003e\n2018 bis 2022 hat er den Weinberg Schritt f\u0026uuml;r Schritt mit Riesling- und Blauburgunderreben bestockt. \u0026bdquo;Beide Sorten kommen mit der k\u0026uuml;rzeren Vegetationsperiode in der H\u0026ouml;he zurecht, wenn man die Kulturma\u0026szlig;nahmen den Bedingungen der Grenzlage anpasst\u0026ldquo;, erkl\u0026auml;rt Bernhart. \u0026bdquo;Die Lage ist einzigartig, weil der Hang den ganzen Tag von der Sonne beschienen wird, wenig Niederschlag f\u0026auml;llt, der Vinschger Wind die Trauben trocken h\u0026auml;lt und die gro\u0026szlig;en Temperaturunterschiede zwischen Tag und Nacht f\u0026uuml;r eine besondere Aromatik sorgen.\u0026ldquo;\n\u003cbr /\u003e\n\u003cbr /\u003e\nF\u0026uuml;r die Weine hei\u0026szlig;t dies: \u0026bdquo;Sie werden hier knackiger\u0026ldquo;, sagt Bernhart, \u0026bdquo;Frische, Finesse und Eleganz kommen in H\u0026ouml;henlagen besser zum Vorschein und trotzdem haben die Weine K\u0026ouml;rper und Struktur\u0026ldquo;. Letztendlich pr\u0026auml;gen aber nicht nur die H\u0026ouml;henmeter die Altissimus-Weine, sondern auch die Philosophie ihres Winzers: \u0026bdquo;Wenn man Riesling zu jung trinkt, verschenkt man sein Potenzial\u0026ldquo;, so Bernhart. \u0026bdquo;Hat ein Wein Qualit\u0026auml;t, sollte man ihn liegen und reifen lassen.\u0026ldquo; Bei Altissimus mindestens zwei Jahre.",
-            "Title": "Altissimus Hedwigsberg",
-            "Language": "de",
-            "Header": "",
-            "SubHeader": "",
-            "IntroText": "„Frische, Finesse und Eleganz kommen in Höhenlagen besser zum Vorschein und trotzdem haben die Weine Körper und Struktur.“"
+      "payload": [
+        {
+          "Id": "7f8602e3-d52c-4d40-9c96-3fd01ea71452",
+          "LicenseInfo": {
+            "Author": "",
+            "License": "CC0",
+            "ClosedData": false,
+            "LicenseHolder": "https://www.suedtirolwein.com/"
           },
-          "en": {
-            "BaseText": "On a sun-drenched slope in the upper Val Venosta, at over 1000 meters above sea level, lies a vineyard that, according to skeptics, shouldn't even exist: too high, too extreme, in the barren land of the Val Venosta. The agronomist Eduard Bernhart was not discouraged: more than the challenges, it was the potential of the steep slope that struck him. \"That slope seemed ideal to me right away,\" says Bernhart.\n\u003cbr /\u003e\n\u003cbr /\u003e\nFrom 2018 to 2022, he gradually planted the vineyard with Riesling and Pinot Noir vines. \"Both varieties adapt to the shorter growing period at high altitude, as long as the cultural practices are suited to the extreme conditions of the location,\" explains Bernhart. \"The position is unique: the slope is sun-drenched all day, rainfall is scarce, the wind of the Val Venosta keeps the grapes dry, and the large temperature fluctuations between day and night impart a particular aromatic quality.\"\n\u003cbr /\u003e\n\u003cbr /\u003e\n\"At high altitude, the wines turn out crisper and livelier,\" explains Bernhart. \"Freshness, finesse, and elegance emerge more strongly, without sacrificing body and structure.\" In the end, however, it's not just the altitude that defines Altissimus wines, but also the philosophy of their winemaker: \"Drinking a Riesling too young means wasting its potential,\" says Bernhart. \"If a wine has quality, it should be allowed to rest and mature.\" For Altissimus, at least two years.",
-            "Title": "Altissimus Hedwigsberg",
-            "Language": "en",
-            "Header": "",
-            "SubHeader": "",
-            "IntroText": "\"Freshness, finesse, and elegance emerge more strongly at high altitude, yet the wines still have body and structure.\""
+          "Shortname": "Altissimus Hedwigsberg",
+          "Active": true,
+          "LastChange": "2026-01-15T10:00:00Z",
+          "HasLanguage": ["de", "it", "en", "ru", "jp", "us"],
+          "Mapping": {
+            "suedtirolwein": { "id": "7f8602e3-d52c-4d40-9c96-3fd01ea71452" }
           },
-          "it": {
-            "BaseText": "Su un pendio esposto al sole nella parte alta della Val Venosta, a oltre 1000 metri di altitudine, si trova un vigneto che, secondo gli scettici, non dovrebbe nemmeno esistere: troppo in alto, troppo estremo, nel magro territorio della Val Venosta. L\u0026rsquo;agronomo Eduard Bernhart non si lasci\u0026ograve; scoraggiare: pi\u0026ugrave; che le difficolt\u0026agrave;, fu il potenziale del ripido pendio a colpirlo. \u0026ldquo;Quel versante mi \u0026egrave; sembrato subito ideale\u0026rdquo;, afferma Bernhart.\n\u003cbr /\u003e\n\u003cbr /\u003e\nDal 2018 al 2022 ha impiantato passo dopo passo il vigneto con viti di Riesling e Pinot nero. \u0026ldquo;Entrambe le variet\u0026agrave; si adattano al periodo vegetativo pi\u0026ugrave; breve in quota, purch\u0026eacute; le pratiche colturali siano adeguate alle condizioni estreme del luogo\u0026rdquo;, spiega Bernhart. \u0026ldquo;La posizione \u0026egrave; unica: il pendio \u0026egrave; esposto al sole per tutto il giorno, le precipitazioni sono scarse, il vento della Val Venosta mantiene asciutti i grappoli e i forti sbalzi termici tra il giorno e la notte conferiscono un\u0026rsquo;aromaticit\u0026agrave; particolare.\u0026rdquo;\n\u003cbr /\u003e\n\u003cbr /\u003e\n\u0026ldquo;In quota i vini risultano pi\u0026ugrave; croccanti e vivaci\u0026rdquo;, spiega Bernhart. \u0026ldquo;La freschezza, la finezza e l\u0026rsquo;eleganza emergono con pi\u0026ugrave; forza, senza rinunciare a corpo e struttura\u0026rdquo;. Alla fine, per\u0026ograve;, non sono solo i metri di altitudine a definire i vini Altissimus, ma anche la filosofia del loro viticoltore: \u0026ldquo;Bere un Riesling troppo giovane significa sprecarne il potenziale\u0026rdquo;, afferma Bernhart. \u0026ldquo;Se un vino ha qualit\u0026agrave;, bisogna lasciarlo riposare e maturare\u0026rdquo;. Per Altissimus, per almeno due anni.",
-            "Title": "Altissimus Hedwigsberg",
-            "Language": "it",
-            "Header": "",
-            "SubHeader": "",
-            "IntroText": "“Freschezza, finezza ed eleganza emergono con più forza in alta quota, e tuttavia i vini hanno corpo e struttura.”"
-          },
-          "jp": {
-            "BaseText": "On a sun-drenched slope in the upper Val Venosta, at over 1000 meters above sea level, lies a vineyard that, according to skeptics, shouldn't even exist: too high, too extreme, in the barren land of the Val Venosta. The agronomist Eduard Bernhart was not discouraged: more than the challenges, it was the potential of the steep slope that struck him. \"That slope seemed ideal to me right away,\" says Bernhart.\n\u003cbr /\u003e\n\u003cbr /\u003e\nFrom 2018 to 2022, he gradually planted the vineyard with Riesling and Pinot Noir vines. \"Both varieties adapt to the shorter growing period at high altitude, as long as the cultural practices are suited to the extreme conditions of the location,\" explains Bernhart. \"The position is unique: the slope is sun-drenched all day, rainfall is scarce, the wind of the Val Venosta keeps the grapes dry, and the large temperature fluctuations between day and night impart a particular aromatic quality.\"\n\u003cbr /\u003e\n\u003cbr /\u003e\n\"At high altitude, the wines turn out crisper and livelier,\" explains Bernhart. \"Freshness, finesse, and elegance emerge more strongly, without sacrificing body and structure.\" In the end, however, it's not just the altitude that defines Altissimus wines, but also the philosophy of their winemaker: \"Drinking a Riesling too young means wasting its potential,\" says Bernhart. \"If a wine has quality, it should be allowed to rest and mature.\" For Altissimus, at least two years.",
-            "Title": "Altissimus Hedwigsberg",
-            "Language": "jp",
-            "Header": "",
-            "SubHeader": "",
-            "IntroText": "\"Freshness, finesse, and elegance emerge more strongly at high altitude, yet the wines still have body and structure.\""
-          },
-          "ru": {
-            "BaseText": "On a sun-drenched slope in the upper Val Venosta, at over 1000 meters above sea level, lies a vineyard that, according to skeptics, shouldn't even exist: too high, too extreme, in the barren land of the Val Venosta. The agronomist Eduard Bernhart was not discouraged: more than the challenges, it was the potential of the steep slope that struck him. \"That slope seemed ideal to me right away,\" says Bernhart.\n\u003cbr /\u003e\n\u003cbr /\u003e\nFrom 2018 to 2022, he gradually planted the vineyard with Riesling and Pinot Noir vines. \"Both varieties adapt to the shorter growing period at high altitude, as long as the cultural practices are suited to the extreme conditions of the location,\" explains Bernhart. \"The position is unique: the slope is sun-drenched all day, rainfall is scarce, the wind of the Val Venosta keeps the grapes dry, and the large temperature fluctuations between day and night impart a particular aromatic quality.\"\n\u003cbr /\u003e\n\u003cbr /\u003e\n\"At high altitude, the wines turn out crisper and livelier,\" explains Bernhart. \"Freshness, finesse, and elegance emerge more strongly, without sacrificing body and structure.\" In the end, however, it's not just the altitude that defines Altissimus wines, but also the philosophy of their winemaker: \"Drinking a Riesling too young means wasting its potential,\" says Bernhart. \"If a wine has quality, it should be allowed to rest and mature.\" For Altissimus, at least two years.",
-            "Title": "Altissimus Hedwigsberg",
-            "Language": "ru",
-            "Header": "",
-            "SubHeader": "",
-            "IntroText": "\"Freshness, finesse, and elegance emerge more strongly at high altitude, yet the wines still have body and structure.\""
-          },
-          "us": {
-            "BaseText": "On a sun-drenched slope in the upper Val Venosta, at over 1000 meters above sea level, lies a vineyard that, according to skeptics, shouldn't even exist: too high, too extreme, in the barren land of the Val Venosta. The agronomist Eduard Bernhart was not discouraged: more than the challenges, it was the potential of the steep slope that struck him. \"That slope seemed ideal to me right away,\" says Bernhart.\n\u003cbr /\u003e\n\u003cbr /\u003e\nFrom 2018 to 2022, he gradually planted the vineyard with Riesling and Pinot Noir vines. \"Both varieties adapt to the shorter growing period at high altitude, as long as the cultural practices are suited to the extreme conditions of the location,\" explains Bernhart. \"The position is unique: the slope is sun-drenched all day, rainfall is scarce, the wind of the Val Venosta keeps the grapes dry, and the large temperature fluctuations between day and night impart a particular aromatic quality.\"\n\u003cbr /\u003e\n\u003cbr /\u003e\n\"At high altitude, the wines turn out crisper and livelier,\" explains Bernhart. \"Freshness, finesse, and elegance emerge more strongly, without sacrificing body and structure.\" In the end, however, it's not just the altitude that defines Altissimus wines, but also the philosophy of their winemaker: \"Drinking a Riesling too young means wasting its potential,\" says Bernhart. \"If a wine has quality, it should be allowed to rest and mature.\" For Altissimus, at least two years.",
-            "Title": "Altissimus Hedwigsberg",
-            "Language": "us",
-            "Header": "",
-            "SubHeader": "",
-            "IntroText": "\"Freshness, finesse, and elegance emerge more strongly at high altitude, yet the wines still have body and structure.\""
-          }
-        },
-        "ContactInfos": {
-          "de": {
-            "Language": "de",
-            "Email": "info@altissimus.it",
-            "Phonenumber": "+39 338 845 1678",
-            "Url": "http://www.altissimus.it",
-            "Address": "Schlinig 29",
-            "City": "Mals",
-            "ZipCode": "39024",
-            "CountryCode": "IT",
-            "CountryName": "Italien",
-            "CompanyName": "Altissimus Hedwigsberg",
-            "LogoUrl": "https://intranet.suedtirolwein.com/media/8563a6ba-d801-40ee-be81-144ed1e784af/logo-altissimus.png"
-          },
-          "en": {
-            "Language": "en",
-            "Email": "info@altissimus.it",
-            "Phonenumber": "+39 338 845 1678",
-            "Url": "http://www.altissimus.it",
-            "Address": "Schlinig 29",
-            "City": "Malles",
-            "ZipCode": "39024",
-            "CountryCode": "IT",
-            "CountryName": "Italy",
-            "CompanyName": "Altissimus Hedwigsberg",
-            "LogoUrl": "https://intranet.suedtirolwein.com/media/8563a6ba-d801-40ee-be81-144ed1e784af/logo-altissimus.png"
-          },
-          "it": {
-            "Language": "it",
-            "Email": "info@altissimus.it",
-            "Phonenumber": "+39 338 845 1678",
-            "Url": "http://www.altissimus.it",
-            "Address": "Schlinig 29",
-            "City": "Malles",
-            "ZipCode": "39024",
-            "CountryCode": "IT",
-            "CountryName": "Italia",
-            "CompanyName": "Altissimus Hedwigsberg",
-            "LogoUrl": "https://intranet.suedtirolwein.com/media/8563a6ba-d801-40ee-be81-144ed1e784af/logo-altissimus.png"
-          },
-          "jp": {
-            "Language": "jp",
-            "Email": "info@altissimus.it",
-            "Phonenumber": "+39 338 845 1678",
-            "Url": "http://www.altissimus.it",
-            "Address": "Schlinig 29",
-            "City": "Malles",
-            "ZipCode": "39024",
-            "CountryCode": "IT",
-            "CountryName": "Italy",
-            "CompanyName": "Altissimus Hedwigsberg",
-            "LogoUrl": "https://intranet.suedtirolwein.com/media/8563a6ba-d801-40ee-be81-144ed1e784af/logo-altissimus.png"
-          },
-          "ru": {
-            "Language": "ru",
-            "Email": "info@altissimus.it",
-            "Phonenumber": "+39 338 845 1678",
-            "Url": "http://www.altissimus.it",
-            "Address": "Schlinig 29",
-            "City": "Malles",
-            "ZipCode": "39024",
-            "CountryCode": "IT",
-            "CountryName": "Italy",
-            "CompanyName": "Altissimus Hedwigsberg",
-            "LogoUrl": "https://intranet.suedtirolwein.com/media/8563a6ba-d801-40ee-be81-144ed1e784af/logo-altissimus.png"
-          },
-          "us": {
-            "Language": "us",
-            "Email": "info@altissimus.it",
-            "Phonenumber": "+39 338 845 1678",
-            "Url": "http://www.altissimus.it",
-            "Address": "Schlinig 29",
-            "City": "Malles",
-            "ZipCode": "39024",
-            "CountryCode": "IT",
-            "CountryName": "Italy",
-            "CompanyName": "Altissimus Hedwigsberg",
-            "LogoUrl": "https://intranet.suedtirolwein.com/media/8563a6ba-d801-40ee-be81-144ed1e784af/logo-altissimus.png"
-          }
-        },
-        "AdditionalContact": [
-          {
-            "Type": "wineimporter",
-            "ContactInfos": {
+          "Source": "suedtirolwein",
+          "TagIds": [
+            "28CDEF87206E464D9B179FBCAF506457",
+            "6EFED925DF3B4EF5B69495E994F446AC",
+            "eating drinking",
+            "gastronomy",
+            "wineries"
+          ],
+          "GpsInfo": [
+            {
+              "Gpstype": "position",
+              "Latitude": 46.381478,
+              "Longitude": 11.2527
+            }
+          ],
+          "SmgTags": ["gastronomy", "essen trinken", "weinkellereien"],
+          "Detail": {
+            "de": {
+              "BaseText": "An einem sonnenverw\u0026ouml;hnten Nordhang im oberen Vinschgau liegt auf \u0026uuml;ber 1000 Metern H\u0026ouml;he ein Weinberg, den es laut Skeptikern gar nicht geben d\u0026uuml;rfte: zu hoch gelegen, zu weit oben im kargen Vinschgau. Davon lie\u0026szlig; sich der Agronom Eduard Bernhart nicht einsch\u0026uuml;chtern, er sah weniger die Herausforderungen als vielmehr das Potenzial des Steilhangs. \u0026bdquo;Mir erschien der Hang ideal\u0026ldquo;, so die Einsch\u0026auml;tzung Bernharts.\n\u003cbr /\u003e\n\u003cbr /\u003e\n2018 bis 2022 hat er den Weinberg Schritt f\u0026uuml;r Schritt mit Riesling- und Blauburgunderreben bestockt. \u0026bdquo;Beide Sorten kommen mit der k\u0026uuml;rzeren Vegetationsperiode in der H\u0026ouml;he zurecht, wenn man die Kulturma\u0026szlig;nahmen den Bedingungen der Grenzlage anpasst\u0026ldquo;, erkl\u0026auml;rt Bernhart. \u0026bdquo;Die Lage ist einzigartig, weil der Hang den ganzen Tag von der Sonne beschienen wird, wenig Niederschlag f\u0026auml;llt, der Vinschger Wind die Trauben trocken h\u0026auml;lt und die gro\u0026szlig;en Temperaturunterschiede zwischen Tag und Nacht f\u0026uuml;r eine besondere Aromatik sorgen.\u0026ldquo;\n\u003cbr /\u003e\n\u003cbr /\u003e\nF\u0026uuml;r die Weine hei\u0026szlig;t dies: \u0026bdquo;Sie werden hier knackiger\u0026ldquo;, sagt Bernhart, \u0026bdquo;Frische, Finesse und Eleganz kommen in H\u0026ouml;henlagen besser zum Vorschein und trotzdem haben die Weine K\u0026ouml;rper und Struktur\u0026ldquo;. Letztendlich pr\u0026auml;gen aber nicht nur die H\u0026ouml;henmeter die Altissimus-Weine, sondern auch die Philosophie ihres Winzers: \u0026bdquo;Wenn man Riesling zu jung trinkt, verschenkt man sein Potenzial\u0026ldquo;, so Bernhart. \u0026bdquo;Hat ein Wein Qualit\u0026auml;t, sollte man ihn liegen und reifen lassen.\u0026ldquo; Bei Altissimus mindestens zwei Jahre.",
+              "Title": "Altissimus Hedwigsberg",
               "Language": "de",
-              "Email": "thomas.henke@weinraum.de",
-              "Phonenumber": "+49 881 122 327 66",
-              "Url": "https://www.weinraum.de/",
-              "Address": "Propst Hartl Str. 10",
-              "City": "Polling",
-              "ZipCode": "82398",
-              "CompanyName": "weinraum weinversand"
-            }
-          },
-          {
-            "Type": "wineimporter",
-            "ContactInfos": {
-              "Language": "it",
-              "Email": "thomas.henke@weinraum.de",
-              "Phonenumber": "+49 881 122 327 66",
-              "Url": "https://www.weinraum.de/",
-              "Address": "Propst Hartl Str. 10",
-              "City": "Polling",
-              "ZipCode": "82398",
-              "CompanyName": "weinraum weinversand"
-            }
-          },
-          {
-            "Type": "wineimporter",
-            "ContactInfos": {
+              "Header": "",
+              "SubHeader": "",
+              "IntroText": "„Frische, Finesse und Eleganz kommen in Höhenlagen besser zum Vorschein und trotzdem haben die Weine Körper und Struktur.“"
+            },
+            "en": {
+              "BaseText": "On a sun-drenched slope in the upper Val Venosta, at over 1000 meters above sea level, lies a vineyard that, according to skeptics, shouldn't even exist: too high, too extreme, in the barren land of the Val Venosta. The agronomist Eduard Bernhart was not discouraged: more than the challenges, it was the potential of the steep slope that struck him. \"That slope seemed ideal to me right away,\" says Bernhart.\n\u003cbr /\u003e\n\u003cbr /\u003e\nFrom 2018 to 2022, he gradually planted the vineyard with Riesling and Pinot Noir vines. \"Both varieties adapt to the shorter growing period at high altitude, as long as the cultural practices are suited to the extreme conditions of the location,\" explains Bernhart. \"The position is unique: the slope is sun-drenched all day, rainfall is scarce, the wind of the Val Venosta keeps the grapes dry, and the large temperature fluctuations between day and night impart a particular aromatic quality.\"\n\u003cbr /\u003e\n\u003cbr /\u003e\n\"At high altitude, the wines turn out crisper and livelier,\" explains Bernhart. \"Freshness, finesse, and elegance emerge more strongly, without sacrificing body and structure.\" In the end, however, it's not just the altitude that defines Altissimus wines, but also the philosophy of their winemaker: \"Drinking a Riesling too young means wasting its potential,\" says Bernhart. \"If a wine has quality, it should be allowed to rest and mature.\" For Altissimus, at least two years.",
+              "Title": "Altissimus Hedwigsberg",
               "Language": "en",
-              "Email": "thomas.henke@weinraum.de",
-              "Phonenumber": "+49 881 122 327 66",
-              "Url": "https://www.weinraum.de/",
-              "Address": "Propst Hartl Str. 10",
-              "City": "Polling",
-              "ZipCode": "82398",
-              "CompanyName": "weinraum weinversand"
-            }
-          },
-          {
-            "Type": "wineimporter",
-            "ContactInfos": {
-              "Language": "ru",
-              "Email": "thomas.henke@weinraum.de",
-              "Phonenumber": "+49 881 122 327 66",
-              "Url": "https://www.weinraum.de/",
-              "Address": "Propst Hartl Str. 10",
-              "City": "Polling",
-              "ZipCode": "82398",
-              "CompanyName": "weinraum weinversand"
-            }
-          },
-          {
-            "Type": "wineimporter",
-            "ContactInfos": {
+              "Header": "",
+              "SubHeader": "",
+              "IntroText": "\"Freshness, finesse, and elegance emerge more strongly at high altitude, yet the wines still have body and structure.\""
+            },
+            "it": {
+              "BaseText": "Su un pendio esposto al sole nella parte alta della Val Venosta, a oltre 1000 metri di altitudine, si trova un vigneto che, secondo gli scettici, non dovrebbe nemmeno esistere: troppo in alto, troppo estremo, nel magro territorio della Val Venosta. L\u0026rsquo;agronomo Eduard Bernhart non si lasci\u0026ograve; scoraggiare: pi\u0026ugrave; che le difficolt\u0026agrave;, fu il potenziale del ripido pendio a colpirlo. \u0026ldquo;Quel versante mi \u0026egrave; sembrato subito ideale\u0026rdquo;, afferma Bernhart.\n\u003cbr /\u003e\n\u003cbr /\u003e\nDal 2018 al 2022 ha impiantato passo dopo passo il vigneto con viti di Riesling e Pinot nero. \u0026ldquo;Entrambe le variet\u0026agrave; si adattano al periodo vegetativo pi\u0026ugrave; breve in quota, purch\u0026eacute; le pratiche colturali siano adeguate alle condizioni estreme del luogo\u0026rdquo;, spiega Bernhart. \u0026ldquo;La posizione \u0026egrave; unica: il pendio \u0026egrave; esposto al sole per tutto il giorno, le precipitazioni sono scarse, il vento della Val Venosta mantiene asciutti i grappoli e i forti sbalzi termici tra il giorno e la notte conferiscono un\u0026rsquo;aromaticit\u0026agrave; particolare.\u0026rdquo;\n\u003cbr /\u003e\n\u003cbr /\u003e\n\u0026ldquo;In quota i vini risultano pi\u0026ugrave; croccanti e vivaci\u0026rdquo;, spiega Bernhart. \u0026ldquo;La freschezza, la finezza e l\u0026rsquo;eleganza emergono con pi\u0026ugrave; forza, senza rinunciare a corpo e struttura\u0026rdquo;. Alla fine, per\u0026ograve;, non sono solo i metri di altitudine a definire i vini Altissimus, ma anche la filosofia del loro viticoltore: \u0026ldquo;Bere un Riesling troppo giovane significa sprecarne il potenziale\u0026rdquo;, afferma Bernhart. \u0026ldquo;Se un vino ha qualit\u0026agrave;, bisogna lasciarlo riposare e maturare\u0026rdquo;. Per Altissimus, per almeno due anni.",
+              "Title": "Altissimus Hedwigsberg",
+              "Language": "it",
+              "Header": "",
+              "SubHeader": "",
+              "IntroText": "“Freschezza, finezza ed eleganza emergono con più forza in alta quota, e tuttavia i vini hanno corpo e struttura.”"
+            },
+            "jp": {
+              "BaseText": "On a sun-drenched slope in the upper Val Venosta, at over 1000 meters above sea level, lies a vineyard that, according to skeptics, shouldn't even exist: too high, too extreme, in the barren land of the Val Venosta. The agronomist Eduard Bernhart was not discouraged: more than the challenges, it was the potential of the steep slope that struck him. \"That slope seemed ideal to me right away,\" says Bernhart.\n\u003cbr /\u003e\n\u003cbr /\u003e\nFrom 2018 to 2022, he gradually planted the vineyard with Riesling and Pinot Noir vines. \"Both varieties adapt to the shorter growing period at high altitude, as long as the cultural practices are suited to the extreme conditions of the location,\" explains Bernhart. \"The position is unique: the slope is sun-drenched all day, rainfall is scarce, the wind of the Val Venosta keeps the grapes dry, and the large temperature fluctuations between day and night impart a particular aromatic quality.\"\n\u003cbr /\u003e\n\u003cbr /\u003e\n\"At high altitude, the wines turn out crisper and livelier,\" explains Bernhart. \"Freshness, finesse, and elegance emerge more strongly, without sacrificing body and structure.\" In the end, however, it's not just the altitude that defines Altissimus wines, but also the philosophy of their winemaker: \"Drinking a Riesling too young means wasting its potential,\" says Bernhart. \"If a wine has quality, it should be allowed to rest and mature.\" For Altissimus, at least two years.",
+              "Title": "Altissimus Hedwigsberg",
               "Language": "jp",
-              "Email": "thomas.henke@weinraum.de",
-              "Phonenumber": "+49 881 122 327 66",
-              "Url": "https://www.weinraum.de/",
-              "Address": "Propst Hartl Str. 10",
-              "City": "Polling",
-              "ZipCode": "82398",
-              "CompanyName": "weinraum weinversand"
+              "Header": "",
+              "SubHeader": "",
+              "IntroText": "\"Freshness, finesse, and elegance emerge more strongly at high altitude, yet the wines still have body and structure.\""
+            },
+            "ru": {
+              "BaseText": "On a sun-drenched slope in the upper Val Venosta, at over 1000 meters above sea level, lies a vineyard that, according to skeptics, shouldn't even exist: too high, too extreme, in the barren land of the Val Venosta. The agronomist Eduard Bernhart was not discouraged: more than the challenges, it was the potential of the steep slope that struck him. \"That slope seemed ideal to me right away,\" says Bernhart.\n\u003cbr /\u003e\n\u003cbr /\u003e\nFrom 2018 to 2022, he gradually planted the vineyard with Riesling and Pinot Noir vines. \"Both varieties adapt to the shorter growing period at high altitude, as long as the cultural practices are suited to the extreme conditions of the location,\" explains Bernhart. \"The position is unique: the slope is sun-drenched all day, rainfall is scarce, the wind of the Val Venosta keeps the grapes dry, and the large temperature fluctuations between day and night impart a particular aromatic quality.\"\n\u003cbr /\u003e\n\u003cbr /\u003e\n\"At high altitude, the wines turn out crisper and livelier,\" explains Bernhart. \"Freshness, finesse, and elegance emerge more strongly, without sacrificing body and structure.\" In the end, however, it's not just the altitude that defines Altissimus wines, but also the philosophy of their winemaker: \"Drinking a Riesling too young means wasting its potential,\" says Bernhart. \"If a wine has quality, it should be allowed to rest and mature.\" For Altissimus, at least two years.",
+              "Title": "Altissimus Hedwigsberg",
+              "Language": "ru",
+              "Header": "",
+              "SubHeader": "",
+              "IntroText": "\"Freshness, finesse, and elegance emerge more strongly at high altitude, yet the wines still have body and structure.\""
+            },
+            "us": {
+              "BaseText": "On a sun-drenched slope in the upper Val Venosta, at over 1000 meters above sea level, lies a vineyard that, according to skeptics, shouldn't even exist: too high, too extreme, in the barren land of the Val Venosta. The agronomist Eduard Bernhart was not discouraged: more than the challenges, it was the potential of the steep slope that struck him. \"That slope seemed ideal to me right away,\" says Bernhart.\n\u003cbr /\u003e\n\u003cbr /\u003e\nFrom 2018 to 2022, he gradually planted the vineyard with Riesling and Pinot Noir vines. \"Both varieties adapt to the shorter growing period at high altitude, as long as the cultural practices are suited to the extreme conditions of the location,\" explains Bernhart. \"The position is unique: the slope is sun-drenched all day, rainfall is scarce, the wind of the Val Venosta keeps the grapes dry, and the large temperature fluctuations between day and night impart a particular aromatic quality.\"\n\u003cbr /\u003e\n\u003cbr /\u003e\n\"At high altitude, the wines turn out crisper and livelier,\" explains Bernhart. \"Freshness, finesse, and elegance emerge more strongly, without sacrificing body and structure.\" In the end, however, it's not just the altitude that defines Altissimus wines, but also the philosophy of their winemaker: \"Drinking a Riesling too young means wasting its potential,\" says Bernhart. \"If a wine has quality, it should be allowed to rest and mature.\" For Altissimus, at least two years.",
+              "Title": "Altissimus Hedwigsberg",
+              "Language": "us",
+              "Header": "",
+              "SubHeader": "",
+              "IntroText": "\"Freshness, finesse, and elegance emerge more strongly at high altitude, yet the wines still have body and structure.\""
             }
           },
-          {
-            "Type": "wineimporter",
-            "ContactInfos": {
+          "ContactInfos": {
+            "de": {
+              "Language": "de",
+              "Email": "info@altissimus.it",
+              "Phonenumber": "+39 338 845 1678",
+              "Url": "http://www.altissimus.it",
+              "Address": "Schlinig 29",
+              "City": "Mals",
+              "ZipCode": "39024",
+              "CountryCode": "IT",
+              "CountryName": "Italien",
+              "CompanyName": "Altissimus Hedwigsberg",
+              "LogoUrl": "https://intranet.suedtirolwein.com/media/8563a6ba-d801-40ee-be81-144ed1e784af/logo-altissimus.png"
+            },
+            "en": {
+              "Language": "en",
+              "Email": "info@altissimus.it",
+              "Phonenumber": "+39 338 845 1678",
+              "Url": "http://www.altissimus.it",
+              "Address": "Schlinig 29",
+              "City": "Malles",
+              "ZipCode": "39024",
+              "CountryCode": "IT",
+              "CountryName": "Italy",
+              "CompanyName": "Altissimus Hedwigsberg",
+              "LogoUrl": "https://intranet.suedtirolwein.com/media/8563a6ba-d801-40ee-be81-144ed1e784af/logo-altissimus.png"
+            },
+            "it": {
+              "Language": "it",
+              "Email": "info@altissimus.it",
+              "Phonenumber": "+39 338 845 1678",
+              "Url": "http://www.altissimus.it",
+              "Address": "Schlinig 29",
+              "City": "Malles",
+              "ZipCode": "39024",
+              "CountryCode": "IT",
+              "CountryName": "Italia",
+              "CompanyName": "Altissimus Hedwigsberg",
+              "LogoUrl": "https://intranet.suedtirolwein.com/media/8563a6ba-d801-40ee-be81-144ed1e784af/logo-altissimus.png"
+            },
+            "jp": {
+              "Language": "jp",
+              "Email": "info@altissimus.it",
+              "Phonenumber": "+39 338 845 1678",
+              "Url": "http://www.altissimus.it",
+              "Address": "Schlinig 29",
+              "City": "Malles",
+              "ZipCode": "39024",
+              "CountryCode": "IT",
+              "CountryName": "Italy",
+              "CompanyName": "Altissimus Hedwigsberg",
+              "LogoUrl": "https://intranet.suedtirolwein.com/media/8563a6ba-d801-40ee-be81-144ed1e784af/logo-altissimus.png"
+            },
+            "ru": {
+              "Language": "ru",
+              "Email": "info@altissimus.it",
+              "Phonenumber": "+39 338 845 1678",
+              "Url": "http://www.altissimus.it",
+              "Address": "Schlinig 29",
+              "City": "Malles",
+              "ZipCode": "39024",
+              "CountryCode": "IT",
+              "CountryName": "Italy",
+              "CompanyName": "Altissimus Hedwigsberg",
+              "LogoUrl": "https://intranet.suedtirolwein.com/media/8563a6ba-d801-40ee-be81-144ed1e784af/logo-altissimus.png"
+            },
+            "us": {
               "Language": "us",
-              "Email": "thomas.henke@weinraum.de",
-              "Phonenumber": "+49 881 122 327 66",
-              "Url": "https://www.weinraum.de/",
-              "Address": "Propst Hartl Str. 10",
-              "City": "Polling",
-              "ZipCode": "82398",
-              "CompanyName": "weinraum weinversand"
+              "Email": "info@altissimus.it",
+              "Phonenumber": "+39 338 845 1678",
+              "Url": "http://www.altissimus.it",
+              "Address": "Schlinig 29",
+              "City": "Malles",
+              "ZipCode": "39024",
+              "CountryCode": "IT",
+              "CountryName": "Italy",
+              "CompanyName": "Altissimus Hedwigsberg",
+              "LogoUrl": "https://intranet.suedtirolwein.com/media/8563a6ba-d801-40ee-be81-144ed1e784af/logo-altissimus.png"
             }
-          }
-        ],
-        "ImageGallery": [
-          {
-            "ImageUrl": "https://intranet.suedtirolwein.com/media/8237f7d6-5616-48eb-a5f9-6af1d9a8d95c/altissimus0033.jpg",
-            "ImageDesc": {
-              "de": "Weinberg Altissimus auf 1000 Metern",
-              "en": "Weinberg Altissimus auf 1000 Metern",
-              "it": "Weinberg Altissimus auf 1000 Metern",
-              "jp": "Weinberg Altissimus auf 1000 Metern",
-              "ru": "Weinberg Altissimus auf 1000 Metern",
-              "us": "Weinberg Altissimus auf 1000 Metern"
-            },
-            "ImageTitle": {
-              "de": "altissimus0033",
-              "en": "altissimus0033",
-              "it": "altissimus0033",
-              "jp": "altissimus0033",
-              "ru": "altissimus0033",
-              "us": "altissimus0033"
-            },
-            "ImageAltText": {
-              "de": "Altissimus Weinberg Vinschgau",
-              "en": "Altissimus Weinberg Vinschgau",
-              "it": "Altissimus Weinberg Vinschgau",
-              "jp": "Altissimus Weinberg Vinschgau",
-              "ru": "Altissimus Weinberg Vinschgau",
-              "us": "Altissimus Weinberg Vinschgau"
-            },
-            "CopyRight": "Suedtirol Wein",
-            "ImageSource": "SuedtirolWein",
-            "LicenseHolder": "https://www.suedtirolwein.com/",
-            "IsInGallery": true,
-            "ListPosition": 0
-          }
-        ],
-        "PoiProperty": {
-          "de": [
+          },
+          "AdditionalContact": [
             {
-              "Name": "quote",
-              "Value": "„Frische, Finesse und Eleganz kommen in Höhenlagen besser zum Vorschein und trotzdem haben die Weine Körper und Struktur.“"
+              "Type": "wineimporter",
+              "ContactInfos": {
+                "Language": "de",
+                "Email": "thomas.henke@weinraum.de",
+                "Phonenumber": "+49 881 122 327 66",
+                "Url": "https://www.weinraum.de/",
+                "Address": "Propst Hartl Str. 10",
+                "City": "Polling",
+                "ZipCode": "82398",
+                "CompanyName": "weinraum weinversand"
+              }
             },
             {
-              "Name": "quoteauthor",
-              "Value": "Eduard Bernhart, Agronom und Kopf von Altissimus"
-            },
-            { "Name": "h1", "Value": "Hoch, höher, Altissimus" },
-            {
-              "Name": "h2",
-              "Value": "Auf über 1000 Metern finden frische, elegante, strukturreiche Weine ihren Ursprung"
-            },
-            { "Name": "farmname", "Value": "Altissimus Hedwigsberg" },
-            { "Name": "openingtimeswineshop", "Value": "auf Anfrage" },
-            { "Name": "openingtimesguides", "Value": "auf Anfrage" },
-            { "Name": "hasvisits", "Value": "True" },
-            { "Name": "hasovernights", "Value": "False" },
-            { "Name": "hasbiowine", "Value": "False" },
-            { "Name": "hasaccomodation", "Value": "False" },
-            { "Name": "isvinumhotel", "Value": "False" },
-            { "Name": "isanteprima", "Value": "False" },
-            { "Name": "iswinestories", "Value": "False" },
-            { "Name": "iswinesummit", "Value": "False" },
-            { "Name": "issparklingwineassociation", "Value": "False" },
-            { "Name": "iswinery", "Value": "False" },
-            { "Name": "iswineryassociation", "Value": "False" },
-            { "Name": "hasonlineshop", "Value": "False" },
-            { "Name": "hasdeliveryservice", "Value": "True" },
-            { "Name": "hasdirectsales", "Value": "True" },
-            { "Name": "isskyalpspartner", "Value": "False" },
-            { "Name": "wines", "Value": "Blauburgunder,Riesling" },
-            {
-              "Name": "socialsinstagram",
-              "Value": "https://www.instagram.com/altissimus_hedwigsberg/"
-            }
-          ],
-          "en": [
-            {
-              "Name": "quote",
-              "Value": "\"Freshness, finesse, and elegance emerge more strongly at high altitude, yet the wines still have body and structure.\""
+              "Type": "wineimporter",
+              "ContactInfos": {
+                "Language": "it",
+                "Email": "thomas.henke@weinraum.de",
+                "Phonenumber": "+49 881 122 327 66",
+                "Url": "https://www.weinraum.de/",
+                "Address": "Propst Hartl Str. 10",
+                "City": "Polling",
+                "ZipCode": "82398",
+                "CompanyName": "weinraum weinversand"
+              }
             },
             {
-              "Name": "quoteauthor",
-              "Value": "Eduard Bernhart, agronomist and head of Altissimus."
+              "Type": "wineimporter",
+              "ContactInfos": {
+                "Language": "en",
+                "Email": "thomas.henke@weinraum.de",
+                "Phonenumber": "+49 881 122 327 66",
+                "Url": "https://www.weinraum.de/",
+                "Address": "Propst Hartl Str. 10",
+                "City": "Polling",
+                "ZipCode": "82398",
+                "CompanyName": "weinraum weinversand"
+              }
             },
-            { "Name": "h1", "Value": "High, higher, Altissimus" },
             {
-              "Name": "h2",
-              "Value": "At over 1000 meters, fresh, elegant, and full-bodied wines are born."
+              "Type": "wineimporter",
+              "ContactInfos": {
+                "Language": "ru",
+                "Email": "thomas.henke@weinraum.de",
+                "Phonenumber": "+49 881 122 327 66",
+                "Url": "https://www.weinraum.de/",
+                "Address": "Propst Hartl Str. 10",
+                "City": "Polling",
+                "ZipCode": "82398",
+                "CompanyName": "weinraum weinversand"
+              }
             },
-            { "Name": "farmname", "Value": "Altissimus Hedwigsberg" },
-            { "Name": "openingtimeswineshop", "Value": "upon request" },
-            { "Name": "openingtimesguides", "Value": "upon request" },
-            { "Name": "hasvisits", "Value": "True" },
-            { "Name": "hasovernights", "Value": "False" },
-            { "Name": "hasbiowine", "Value": "False" },
-            { "Name": "hasaccomodation", "Value": "False" },
-            { "Name": "isvinumhotel", "Value": "False" },
-            { "Name": "isanteprima", "Value": "False" },
-            { "Name": "iswinestories", "Value": "False" },
-            { "Name": "iswinesummit", "Value": "False" },
-            { "Name": "issparklingwineassociation", "Value": "False" },
-            { "Name": "iswinery", "Value": "False" },
-            { "Name": "iswineryassociation", "Value": "False" },
-            { "Name": "hasonlineshop", "Value": "False" },
-            { "Name": "hasdeliveryservice", "Value": "True" },
-            { "Name": "hasdirectsales", "Value": "True" },
-            { "Name": "isskyalpspartner", "Value": "False" },
-            { "Name": "wines", "Value": "Pinot Noir,Riesling" },
             {
-              "Name": "socialsinstagram",
-              "Value": "https://www.instagram.com/altissimus_hedwigsberg/"
+              "Type": "wineimporter",
+              "ContactInfos": {
+                "Language": "jp",
+                "Email": "thomas.henke@weinraum.de",
+                "Phonenumber": "+49 881 122 327 66",
+                "Url": "https://www.weinraum.de/",
+                "Address": "Propst Hartl Str. 10",
+                "City": "Polling",
+                "ZipCode": "82398",
+                "CompanyName": "weinraum weinversand"
+              }
+            },
+            {
+              "Type": "wineimporter",
+              "ContactInfos": {
+                "Language": "us",
+                "Email": "thomas.henke@weinraum.de",
+                "Phonenumber": "+49 881 122 327 66",
+                "Url": "https://www.weinraum.de/",
+                "Address": "Propst Hartl Str. 10",
+                "City": "Polling",
+                "ZipCode": "82398",
+                "CompanyName": "weinraum weinversand"
+              }
             }
           ],
-          "it": [
+          "ImageGallery": [
             {
-              "Name": "quote",
-              "Value": "“Freschezza, finezza ed eleganza emergono con più forza in alta quota, e tuttavia i vini hanno corpo e struttura.”"
-            },
-            {
-              "Name": "quoteauthor",
-              "Value": "Eduard Bernhart, agronomo e capo di Altissimus"
-            },
-            { "Name": "h1", "Value": "Alto, più alto, Altissimus" },
-            {
-              "Name": "h2",
-              "Value": "A oltre 1000 metri nascono vini freschi, eleganti e ricchi di struttura"
-            },
-            { "Name": "farmname", "Value": "Altissimus Hedwigsberg" },
-            { "Name": "openingtimeswineshop", "Value": "su richiesta" },
-            { "Name": "openingtimesguides", "Value": "su richiesta" },
-            { "Name": "hasvisits", "Value": "True" },
-            { "Name": "hasovernights", "Value": "False" },
-            { "Name": "hasbiowine", "Value": "False" },
-            { "Name": "hasaccomodation", "Value": "False" },
-            { "Name": "isvinumhotel", "Value": "False" },
-            { "Name": "isanteprima", "Value": "False" },
-            { "Name": "iswinestories", "Value": "False" },
-            { "Name": "iswinesummit", "Value": "False" },
-            { "Name": "issparklingwineassociation", "Value": "False" },
-            { "Name": "iswinery", "Value": "False" },
-            { "Name": "iswineryassociation", "Value": "False" },
-            { "Name": "hasonlineshop", "Value": "False" },
-            { "Name": "hasdeliveryservice", "Value": "True" },
-            { "Name": "hasdirectsales", "Value": "True" },
-            { "Name": "isskyalpspartner", "Value": "False" },
-            { "Name": "wines", "Value": "Pinot nero,Riesling" },
-            {
-              "Name": "socialsinstagram",
-              "Value": "https://www.instagram.com/altissimus_hedwigsberg/"
+              "ImageUrl": "https://intranet.suedtirolwein.com/media/8237f7d6-5616-48eb-a5f9-6af1d9a8d95c/altissimus0033.jpg",
+              "ImageDesc": {
+                "de": "Weinberg Altissimus auf 1000 Metern",
+                "en": "Weinberg Altissimus auf 1000 Metern",
+                "it": "Weinberg Altissimus auf 1000 Metern",
+                "jp": "Weinberg Altissimus auf 1000 Metern",
+                "ru": "Weinberg Altissimus auf 1000 Metern",
+                "us": "Weinberg Altissimus auf 1000 Metern"
+              },
+              "ImageTitle": {
+                "de": "altissimus0033",
+                "en": "altissimus0033",
+                "it": "altissimus0033",
+                "jp": "altissimus0033",
+                "ru": "altissimus0033",
+                "us": "altissimus0033"
+              },
+              "ImageAltText": {
+                "de": "Altissimus Weinberg Vinschgau",
+                "en": "Altissimus Weinberg Vinschgau",
+                "it": "Altissimus Weinberg Vinschgau",
+                "jp": "Altissimus Weinberg Vinschgau",
+                "ru": "Altissimus Weinberg Vinschgau",
+                "us": "Altissimus Weinberg Vinschgau"
+              },
+              "CopyRight": "Suedtirol Wein",
+              "ImageSource": "SuedtirolWein",
+              "LicenseHolder": "https://www.suedtirolwein.com/",
+              "IsInGallery": true,
+              "ListPosition": 0
             }
           ],
-          "jp": [
-            {
-              "Name": "quote",
-              "Value": "\"Freshness, finesse, and elegance emerge more strongly at high altitude, yet the wines still have body and structure.\""
-            },
-            { "Name": "h1", "Value": "High, higher, Altissimus" },
-            {
-              "Name": "h2",
-              "Value": "At over 1000 meters, fresh, elegant, and full-bodied wines are born."
-            },
-            { "Name": "farmname", "Value": "Altissimus Hedwigsberg" },
-            { "Name": "openingtimeswineshop", "Value": "upon request" },
-            { "Name": "openingtimesguides", "Value": "upon request" },
-            { "Name": "hasvisits", "Value": "True" },
-            { "Name": "hasovernights", "Value": "False" },
-            { "Name": "hasbiowine", "Value": "False" },
-            { "Name": "hasaccomodation", "Value": "False" },
-            { "Name": "isvinumhotel", "Value": "False" },
-            { "Name": "isanteprima", "Value": "False" },
-            { "Name": "iswinestories", "Value": "False" },
-            { "Name": "iswinesummit", "Value": "False" },
-            { "Name": "issparklingwineassociation", "Value": "False" },
-            { "Name": "iswinery", "Value": "False" },
-            { "Name": "iswineryassociation", "Value": "False" },
-            { "Name": "hasonlineshop", "Value": "False" },
-            { "Name": "hasdeliveryservice", "Value": "True" },
-            { "Name": "hasdirectsales", "Value": "True" },
-            { "Name": "isskyalpspartner", "Value": "False" },
-            { "Name": "wines", "Value": "Pinot Noir,Riesling" },
-            {
-              "Name": "socialsinstagram",
-              "Value": "https://www.instagram.com/altissimus_hedwigsberg/"
+          "PoiProperty": {
+            "de": [
+              {
+                "Name": "quote",
+                "Value": "„Frische, Finesse und Eleganz kommen in Höhenlagen besser zum Vorschein und trotzdem haben die Weine Körper und Struktur.“"
+              },
+              {
+                "Name": "quoteauthor",
+                "Value": "Eduard Bernhart, Agronom und Kopf von Altissimus"
+              },
+              { "Name": "h1", "Value": "Hoch, höher, Altissimus" },
+              {
+                "Name": "h2",
+                "Value": "Auf über 1000 Metern finden frische, elegante, strukturreiche Weine ihren Ursprung"
+              },
+              { "Name": "farmname", "Value": "Altissimus Hedwigsberg" },
+              { "Name": "openingtimeswineshop", "Value": "auf Anfrage" },
+              { "Name": "openingtimesguides", "Value": "auf Anfrage" },
+              { "Name": "hasvisits", "Value": "True" },
+              { "Name": "hasovernights", "Value": "False" },
+              { "Name": "hasbiowine", "Value": "False" },
+              { "Name": "hasaccomodation", "Value": "False" },
+              { "Name": "isvinumhotel", "Value": "False" },
+              { "Name": "isanteprima", "Value": "False" },
+              { "Name": "iswinestories", "Value": "False" },
+              { "Name": "iswinesummit", "Value": "False" },
+              { "Name": "issparklingwineassociation", "Value": "False" },
+              { "Name": "iswinery", "Value": "False" },
+              { "Name": "iswineryassociation", "Value": "False" },
+              { "Name": "hasonlineshop", "Value": "False" },
+              { "Name": "hasdeliveryservice", "Value": "True" },
+              { "Name": "hasdirectsales", "Value": "True" },
+              { "Name": "isskyalpspartner", "Value": "False" },
+              { "Name": "wines", "Value": "Blauburgunder,Riesling" },
+              {
+                "Name": "socialsinstagram",
+                "Value": "https://www.instagram.com/altissimus_hedwigsberg/"
+              }
+            ],
+            "en": [
+              {
+                "Name": "quote",
+                "Value": "\"Freshness, finesse, and elegance emerge more strongly at high altitude, yet the wines still have body and structure.\""
+              },
+              {
+                "Name": "quoteauthor",
+                "Value": "Eduard Bernhart, agronomist and head of Altissimus."
+              },
+              { "Name": "h1", "Value": "High, higher, Altissimus" },
+              {
+                "Name": "h2",
+                "Value": "At over 1000 meters, fresh, elegant, and full-bodied wines are born."
+              },
+              { "Name": "farmname", "Value": "Altissimus Hedwigsberg" },
+              { "Name": "openingtimeswineshop", "Value": "upon request" },
+              { "Name": "openingtimesguides", "Value": "upon request" },
+              { "Name": "hasvisits", "Value": "True" },
+              { "Name": "hasovernights", "Value": "False" },
+              { "Name": "hasbiowine", "Value": "False" },
+              { "Name": "hasaccomodation", "Value": "False" },
+              { "Name": "isvinumhotel", "Value": "False" },
+              { "Name": "isanteprima", "Value": "False" },
+              { "Name": "iswinestories", "Value": "False" },
+              { "Name": "iswinesummit", "Value": "False" },
+              { "Name": "issparklingwineassociation", "Value": "False" },
+              { "Name": "iswinery", "Value": "False" },
+              { "Name": "iswineryassociation", "Value": "False" },
+              { "Name": "hasonlineshop", "Value": "False" },
+              { "Name": "hasdeliveryservice", "Value": "True" },
+              { "Name": "hasdirectsales", "Value": "True" },
+              { "Name": "isskyalpspartner", "Value": "False" },
+              { "Name": "wines", "Value": "Pinot Noir,Riesling" },
+              {
+                "Name": "socialsinstagram",
+                "Value": "https://www.instagram.com/altissimus_hedwigsberg/"
+              }
+            ],
+            "it": [
+              {
+                "Name": "quote",
+                "Value": "“Freschezza, finezza ed eleganza emergono con più forza in alta quota, e tuttavia i vini hanno corpo e struttura.”"
+              },
+              {
+                "Name": "quoteauthor",
+                "Value": "Eduard Bernhart, agronomo e capo di Altissimus"
+              },
+              { "Name": "h1", "Value": "Alto, più alto, Altissimus" },
+              {
+                "Name": "h2",
+                "Value": "A oltre 1000 metri nascono vini freschi, eleganti e ricchi di struttura"
+              },
+              { "Name": "farmname", "Value": "Altissimus Hedwigsberg" },
+              { "Name": "openingtimeswineshop", "Value": "su richiesta" },
+              { "Name": "openingtimesguides", "Value": "su richiesta" },
+              { "Name": "hasvisits", "Value": "True" },
+              { "Name": "hasovernights", "Value": "False" },
+              { "Name": "hasbiowine", "Value": "False" },
+              { "Name": "hasaccomodation", "Value": "False" },
+              { "Name": "isvinumhotel", "Value": "False" },
+              { "Name": "isanteprima", "Value": "False" },
+              { "Name": "iswinestories", "Value": "False" },
+              { "Name": "iswinesummit", "Value": "False" },
+              { "Name": "issparklingwineassociation", "Value": "False" },
+              { "Name": "iswinery", "Value": "False" },
+              { "Name": "iswineryassociation", "Value": "False" },
+              { "Name": "hasonlineshop", "Value": "False" },
+              { "Name": "hasdeliveryservice", "Value": "True" },
+              { "Name": "hasdirectsales", "Value": "True" },
+              { "Name": "isskyalpspartner", "Value": "False" },
+              { "Name": "wines", "Value": "Pinot nero,Riesling" },
+              {
+                "Name": "socialsinstagram",
+                "Value": "https://www.instagram.com/altissimus_hedwigsberg/"
+              }
+            ],
+            "jp": [
+              {
+                "Name": "quote",
+                "Value": "\"Freshness, finesse, and elegance emerge more strongly at high altitude, yet the wines still have body and structure.\""
+              },
+              { "Name": "h1", "Value": "High, higher, Altissimus" },
+              {
+                "Name": "h2",
+                "Value": "At over 1000 meters, fresh, elegant, and full-bodied wines are born."
+              },
+              { "Name": "farmname", "Value": "Altissimus Hedwigsberg" },
+              { "Name": "openingtimeswineshop", "Value": "upon request" },
+              { "Name": "openingtimesguides", "Value": "upon request" },
+              { "Name": "hasvisits", "Value": "True" },
+              { "Name": "hasovernights", "Value": "False" },
+              { "Name": "hasbiowine", "Value": "False" },
+              { "Name": "hasaccomodation", "Value": "False" },
+              { "Name": "isvinumhotel", "Value": "False" },
+              { "Name": "isanteprima", "Value": "False" },
+              { "Name": "iswinestories", "Value": "False" },
+              { "Name": "iswinesummit", "Value": "False" },
+              { "Name": "issparklingwineassociation", "Value": "False" },
+              { "Name": "iswinery", "Value": "False" },
+              { "Name": "iswineryassociation", "Value": "False" },
+              { "Name": "hasonlineshop", "Value": "False" },
+              { "Name": "hasdeliveryservice", "Value": "True" },
+              { "Name": "hasdirectsales", "Value": "True" },
+              { "Name": "isskyalpspartner", "Value": "False" },
+              { "Name": "wines", "Value": "Pinot Noir,Riesling" },
+              {
+                "Name": "socialsinstagram",
+                "Value": "https://www.instagram.com/altissimus_hedwigsberg/"
+              }
+            ],
+            "ru": [
+              {
+                "Name": "quote",
+                "Value": "\"Freshness, finesse, and elegance emerge more strongly at high altitude, yet the wines still have body and structure.\""
+              },
+              { "Name": "h1", "Value": "High, higher, Altissimus" },
+              {
+                "Name": "h2",
+                "Value": "At over 1000 meters, fresh, elegant, and full-bodied wines are born."
+              },
+              { "Name": "farmname", "Value": "Altissimus Hedwigsberg" },
+              { "Name": "openingtimeswineshop", "Value": "upon request" },
+              { "Name": "openingtimesguides", "Value": "upon request" },
+              { "Name": "hasvisits", "Value": "True" },
+              { "Name": "hasovernights", "Value": "False" },
+              { "Name": "hasbiowine", "Value": "False" },
+              { "Name": "hasaccomodation", "Value": "False" },
+              { "Name": "isvinumhotel", "Value": "False" },
+              { "Name": "isanteprima", "Value": "False" },
+              { "Name": "iswinestories", "Value": "False" },
+              { "Name": "iswinesummit", "Value": "False" },
+              { "Name": "issparklingwineassociation", "Value": "False" },
+              { "Name": "iswinery", "Value": "False" },
+              { "Name": "iswineryassociation", "Value": "False" },
+              { "Name": "hasonlineshop", "Value": "False" },
+              { "Name": "hasdeliveryservice", "Value": "True" },
+              { "Name": "hasdirectsales", "Value": "True" },
+              { "Name": "isskyalpspartner", "Value": "False" },
+              { "Name": "wines", "Value": "Пино Нуар,Рислинг" },
+              {
+                "Name": "socialsinstagram",
+                "Value": "https://www.instagram.com/altissimus_hedwigsberg/"
+              }
+            ],
+            "us": [
+              {
+                "Name": "quote",
+                "Value": "\"Freshness, finesse, and elegance emerge more strongly at high altitude, yet the wines still have body and structure.\""
+              },
+              { "Name": "h1", "Value": "High, higher, Altissimus" },
+              {
+                "Name": "h2",
+                "Value": "At over 1000 meters, fresh, elegant, and full-bodied wines are born."
+              },
+              { "Name": "farmname", "Value": "Altissimus Hedwigsberg" },
+              { "Name": "openingtimeswineshop", "Value": "upon request" },
+              { "Name": "openingtimesguides", "Value": "upon request" },
+              { "Name": "hasvisits", "Value": "True" },
+              { "Name": "hasovernights", "Value": "False" },
+              { "Name": "hasbiowine", "Value": "False" },
+              { "Name": "hasaccomodation", "Value": "False" },
+              { "Name": "isvinumhotel", "Value": "False" },
+              { "Name": "isanteprima", "Value": "False" },
+              { "Name": "iswinestories", "Value": "False" },
+              { "Name": "iswinesummit", "Value": "False" },
+              { "Name": "issparklingwineassociation", "Value": "False" },
+              { "Name": "iswinery", "Value": "False" },
+              { "Name": "iswineryassociation", "Value": "False" },
+              { "Name": "hasonlineshop", "Value": "False" },
+              { "Name": "hasdeliveryservice", "Value": "True" },
+              { "Name": "hasdirectsales", "Value": "True" },
+              { "Name": "isskyalpspartner", "Value": "False" },
+              { "Name": "wines", "Value": "Pinot Noir,Riesling" },
+              {
+                "Name": "socialsinstagram",
+                "Value": "https://www.instagram.com/altissimus_hedwigsberg/"
+              }
+            ]
+          },
+          "PoiServices": ["Blauburgunder", "Riesling"],
+          "AdditionalProperties": {
+            "SuedtirolWeinCompanyDataProperties": {
+              "H1": {
+                "de": "Hoch, höher, Altissimus",
+                "en": "High, higher, Altissimus",
+                "it": "Alto, più alto, Altissimus",
+                "jp": "High, higher, Altissimus",
+                "ru": "High, higher, Altissimus",
+                "us": "High, higher, Altissimus"
+              },
+              "H2": {
+                "de": "Auf über 1000 Metern finden frische, elegante, strukturreiche Weine ihren Ursprung",
+                "en": "At over 1000 meters, fresh, elegant, and full-bodied wines are born.",
+                "it": "A oltre 1000 metri nascono vini freschi, eleganti e ricchi di struttura",
+                "jp": "At over 1000 meters, fresh, elegant, and full-bodied wines are born.",
+                "ru": "At over 1000 meters, fresh, elegant, and full-bodied wines are born.",
+                "us": "At over 1000 meters, fresh, elegant, and full-bodied wines are born."
+              },
+              "Quote": {
+                "de": "„Frische, Finesse und Eleganz kommen in Höhenlagen besser zum Vorschein und trotzdem haben die Weine Körper und Struktur.“",
+                "en": "\"Freshness, finesse, and elegance emerge more strongly at high altitude, yet the wines still have body and structure.\"",
+                "it": "“Freschezza, finezza ed eleganza emergono con più forza in alta quota, e tuttavia i vini hanno corpo e struttura.”",
+                "jp": "\"Freshness, finesse, and elegance emerge more strongly at high altitude, yet the wines still have body and structure.\"",
+                "ru": "\"Freshness, finesse, and elegance emerge more strongly at high altitude, yet the wines still have body and structure.\"",
+                "us": "\"Freshness, finesse, and elegance emerge more strongly at high altitude, yet the wines still have body and structure.\""
+              },
+              "QuoteAuthor": {
+                "de": "Eduard Bernhart, Agronom und Kopf von Altissimus",
+                "en": "Eduard Bernhart, agronomist and head of Altissimus.",
+                "it": "Eduard Bernhart, agronomo e capo di Altissimus"
+              },
+              "OpeningtimesWineshop": {
+                "de": "auf Anfrage",
+                "en": "upon request",
+                "it": "su richiesta",
+                "jp": "upon request",
+                "ru": "upon request",
+                "us": "upon request"
+              },
+              "OpeningtimesGuides": {
+                "de": "auf Anfrage",
+                "en": "upon request",
+                "it": "su richiesta",
+                "jp": "upon request",
+                "ru": "upon request",
+                "us": "upon request"
+              },
+              "Wines": ["Blauburgunder", "Riesling"],
+              "HasVisits": true,
+              "HasOvernights": false,
+              "HasBiowine": false,
+              "HasAccommodation": false,
+              "HasOnlineshop": false,
+              "HasDeliveryservice": true,
+              "HasDirectSales": true,
+              "IsVinumHotel": false,
+              "IsAnteprima": false,
+              "IsWineStories": false,
+              "IsWineSummit": false,
+              "IsSparklingWineassociation": false,
+              "IsWinery": false,
+              "IsWineryAssociation": false,
+              "IsSkyalpsPartner": false,
+              "OnlineShopurl": null,
+              "DeliveryServiceUrl": null,
+              "SocialsInstagram": "https://www.instagram.com/altissimus_hedwigsberg/",
+              "SocialsFacebook": null,
+              "SocialsLinkedIn": null,
+              "SocialsPinterest": null,
+              "SocialsTiktok": null,
+              "SocialsYoutube": null,
+              "SocialsTwitter": null,
+              "H1SparklingWineproducer": null,
+              "H2SparklingWineproducer": null,
+              "ImageSparklingWineproducer": null,
+              "DescriptionSparklingWineproducer": null
             }
-          ],
-          "ru": [
-            {
-              "Name": "quote",
-              "Value": "\"Freshness, finesse, and elegance emerge more strongly at high altitude, yet the wines still have body and structure.\""
-            },
-            { "Name": "h1", "Value": "High, higher, Altissimus" },
-            {
-              "Name": "h2",
-              "Value": "At over 1000 meters, fresh, elegant, and full-bodied wines are born."
-            },
-            { "Name": "farmname", "Value": "Altissimus Hedwigsberg" },
-            { "Name": "openingtimeswineshop", "Value": "upon request" },
-            { "Name": "openingtimesguides", "Value": "upon request" },
-            { "Name": "hasvisits", "Value": "True" },
-            { "Name": "hasovernights", "Value": "False" },
-            { "Name": "hasbiowine", "Value": "False" },
-            { "Name": "hasaccomodation", "Value": "False" },
-            { "Name": "isvinumhotel", "Value": "False" },
-            { "Name": "isanteprima", "Value": "False" },
-            { "Name": "iswinestories", "Value": "False" },
-            { "Name": "iswinesummit", "Value": "False" },
-            { "Name": "issparklingwineassociation", "Value": "False" },
-            { "Name": "iswinery", "Value": "False" },
-            { "Name": "iswineryassociation", "Value": "False" },
-            { "Name": "hasonlineshop", "Value": "False" },
-            { "Name": "hasdeliveryservice", "Value": "True" },
-            { "Name": "hasdirectsales", "Value": "True" },
-            { "Name": "isskyalpspartner", "Value": "False" },
-            { "Name": "wines", "Value": "Пино Нуар,Рислинг" },
-            {
-              "Name": "socialsinstagram",
-              "Value": "https://www.instagram.com/altissimus_hedwigsberg/"
-            }
-          ],
-          "us": [
-            {
-              "Name": "quote",
-              "Value": "\"Freshness, finesse, and elegance emerge more strongly at high altitude, yet the wines still have body and structure.\""
-            },
-            { "Name": "h1", "Value": "High, higher, Altissimus" },
-            {
-              "Name": "h2",
-              "Value": "At over 1000 meters, fresh, elegant, and full-bodied wines are born."
-            },
-            { "Name": "farmname", "Value": "Altissimus Hedwigsberg" },
-            { "Name": "openingtimeswineshop", "Value": "upon request" },
-            { "Name": "openingtimesguides", "Value": "upon request" },
-            { "Name": "hasvisits", "Value": "True" },
-            { "Name": "hasovernights", "Value": "False" },
-            { "Name": "hasbiowine", "Value": "False" },
-            { "Name": "hasaccomodation", "Value": "False" },
-            { "Name": "isvinumhotel", "Value": "False" },
-            { "Name": "isanteprima", "Value": "False" },
-            { "Name": "iswinestories", "Value": "False" },
-            { "Name": "iswinesummit", "Value": "False" },
-            { "Name": "issparklingwineassociation", "Value": "False" },
-            { "Name": "iswinery", "Value": "False" },
-            { "Name": "iswineryassociation", "Value": "False" },
-            { "Name": "hasonlineshop", "Value": "False" },
-            { "Name": "hasdeliveryservice", "Value": "True" },
-            { "Name": "hasdirectsales", "Value": "True" },
-            { "Name": "isskyalpspartner", "Value": "False" },
-            { "Name": "wines", "Value": "Pinot Noir,Riesling" },
-            {
-              "Name": "socialsinstagram",
-              "Value": "https://www.instagram.com/altissimus_hedwigsberg/"
-            }
-          ]
-        },
-        "PoiServices": ["Blauburgunder", "Riesling"],
-        "AdditionalProperties": {
-          "SuedtirolWeinCompanyDataProperties": {
-            "H1": {
-              "de": "Hoch, höher, Altissimus",
-              "en": "High, higher, Altissimus",
-              "it": "Alto, più alto, Altissimus",
-              "jp": "High, higher, Altissimus",
-              "ru": "High, higher, Altissimus",
-              "us": "High, higher, Altissimus"
-            },
-            "H2": {
-              "de": "Auf über 1000 Metern finden frische, elegante, strukturreiche Weine ihren Ursprung",
-              "en": "At over 1000 meters, fresh, elegant, and full-bodied wines are born.",
-              "it": "A oltre 1000 metri nascono vini freschi, eleganti e ricchi di struttura",
-              "jp": "At over 1000 meters, fresh, elegant, and full-bodied wines are born.",
-              "ru": "At over 1000 meters, fresh, elegant, and full-bodied wines are born.",
-              "us": "At over 1000 meters, fresh, elegant, and full-bodied wines are born."
-            },
-            "Quote": {
-              "de": "„Frische, Finesse und Eleganz kommen in Höhenlagen besser zum Vorschein und trotzdem haben die Weine Körper und Struktur.“",
-              "en": "\"Freshness, finesse, and elegance emerge more strongly at high altitude, yet the wines still have body and structure.\"",
-              "it": "“Freschezza, finezza ed eleganza emergono con più forza in alta quota, e tuttavia i vini hanno corpo e struttura.”",
-              "jp": "\"Freshness, finesse, and elegance emerge more strongly at high altitude, yet the wines still have body and structure.\"",
-              "ru": "\"Freshness, finesse, and elegance emerge more strongly at high altitude, yet the wines still have body and structure.\"",
-              "us": "\"Freshness, finesse, and elegance emerge more strongly at high altitude, yet the wines still have body and structure.\""
-            },
-            "QuoteAuthor": {
-              "de": "Eduard Bernhart, Agronom und Kopf von Altissimus",
-              "en": "Eduard Bernhart, agronomist and head of Altissimus.",
-              "it": "Eduard Bernhart, agronomo e capo di Altissimus"
-            },
-            "OpeningtimesWineshop": {
-              "de": "auf Anfrage",
-              "en": "upon request",
-              "it": "su richiesta",
-              "jp": "upon request",
-              "ru": "upon request",
-              "us": "upon request"
-            },
-            "OpeningtimesGuides": {
-              "de": "auf Anfrage",
-              "en": "upon request",
-              "it": "su richiesta",
-              "jp": "upon request",
-              "ru": "upon request",
-              "us": "upon request"
-            },
-            "Wines": ["Blauburgunder", "Riesling"],
-            "HasVisits": true,
-            "HasOvernights": false,
-            "HasBiowine": false,
-            "HasAccommodation": false,
-            "HasOnlineshop": false,
-            "HasDeliveryservice": true,
-            "HasDirectSales": true,
-            "IsVinumHotel": false,
-            "IsAnteprima": false,
-            "IsWineStories": false,
-            "IsWineSummit": false,
-            "IsSparklingWineassociation": false,
-            "IsWinery": false,
-            "IsWineryAssociation": false,
-            "IsSkyalpsPartner": false,
-            "OnlineShopurl": null,
-            "DeliveryServiceUrl": null,
-            "SocialsInstagram": "https://www.instagram.com/altissimus_hedwigsberg/",
-            "SocialsFacebook": null,
-            "SocialsLinkedIn": null,
-            "SocialsPinterest": null,
-            "SocialsTiktok": null,
-            "SocialsYoutube": null,
-            "SocialsTwitter": null,
-            "H1SparklingWineproducer": null,
-            "H2SparklingWineproducer": null,
-            "ImageSparklingWineproducer": null,
-            "DescriptionSparklingWineproducer": null
-          }
-        },
-        "SmgActive": true,
-        "PublishedOn": [],
-        "SyncUpdateMode": "Full",
-        "SyncSourceInterface": "suedtirolweincompany",
-        "HasFreeEntrance": false
-      }
+          },
+          "SmgActive": true,
+          "PublishedOn": [],
+          "SyncUpdateMode": "Full",
+          "SyncSourceInterface": "suedtirolweincompany",
+          "HasFreeEntrance": false
+        }
+      ]
     }
   ],
-  "puts": [],
-  "putMultiples": [],
   "gets": []
 }

@@ -217,7 +217,7 @@ func companiesFromLang(ld *dto.LangData) []dto.WineCompany {
 
 func buildID(c dto.WineCompany) string {
 	if c.ID != "" {
-		return fmt.Sprintf("smgpoi%ssuedtirolwein", c.ID)
+		return fmt.Sprintf("%s", c.ID)
 	}
 	return ""
 }
