@@ -12,6 +12,9 @@ import (
 	"log/slog"
 	"os"
 	"time"
+	// Embed the tzdata database into the binary so time.LoadLocation
+	// works on minimal base images (e.g. alpine) that don't ship tzdata.
+	_ "time/tzdata"
 
 	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"github.com/noi-techpark/opendatahub-go-sdk/clib"
