@@ -27,7 +27,6 @@ services:
     networks:
       - ingestion
     environment:
-      - CORE_URL=${CORE_URL}
       - ODH_CORE_URL=${ODH_CORE_URL}
       - SKIP_SSL_VERIFY=${SKIP_SSL_VERIFY}
       - INSECURE_SKIP_VERIFY=${INSECURE_SKIP_VERIFY}

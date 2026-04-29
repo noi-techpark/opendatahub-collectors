@@ -60,13 +60,27 @@ func main() {
 	})
 	ms.FailOnError(context.Background(), err, "failed to create client")
 
-	poiCache, err = clib.LoadExisting(context.Background(), contentClient, clib.LoadConfig[odhContentModel.ODHActivityPoi]{
+	// Use a minimal stub to avoid time-parsing failures on ODH's non-RFC3339
+	// timestamps (e.g. "2023-05-24T14:26:57.3413155" without timezone).
+	type poiStub struct {
+		ID *string `json:"Id"`
+	}
+	stubCache, err := clib.LoadExisting(context.Background(), contentClient, clib.LoadConfig[poiStub]{
 		EntityType:  ENTITY_TYPE,
 		QueryParams: map[string]string{"source": SOURCE},
-		IDFunc:      func(p odhContentModel.ODHActivityPoi) string { return *p.Generic.ID },
+		IDFunc: func(p poiStub) string {
+			if p.ID == nil {
+				return ""
+			}
+			return *p.ID
+		},
 	})
 	ms.FailOnError(context.Background(), err, "failed to load existing POIs")
 
+	poiCache = clib.NewCache[odhContentModel.ODHActivityPoi]()
+	for id := range stubCache.Entries() {
+		poiCache.Set(id, odhContentModel.ODHActivityPoi{}, 0)
+	}
 	slog.Info("Loaded existing POIs", "count", len(poiCache.Entries()))
 
 	listener := tr.NewTr[string](context.Background(), env.Env)
@@ -150,6 +164,7 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 	}
 	sort.Strings(sortedIDs)
 
+	var toUpsert []odhContentModel.ODHActivityPoi
 	for _, id := range sortedIDs {
 		poi := pois[id]
 		hash, changed, err := poiCache.HasChanged(id, poi)
@@ -157,58 +172,35 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 			logger.Get(ctx).Error("Failed to hash POI", "id", id, "error", err)
 			continue
 		}
-
-		_, exists := poiCache.Get(id)
-
-		if !exists {
-			postErr := contentClient.Post(ctx, ENTITY_TYPE, map[string]string{"generateid": "false"}, poi)
-			if postErr == nil {
-				poiCache.Set(id, poi, hash)
-				logger.Get(ctx).Info("Created new POI", "id", id)
-				continue
-			}
-			if !strings.Contains(postErr.Error(), "data exists already") {
-				logger.Get(ctx).Error("API Post failed", "id", id, "error", postErr)
-				continue
-			}
-			logger.Get(ctx).Warn("POST returned 'data exists already', recovering with PUT", "id", id)
-			if err := contentClient.Put(ctx, ENTITY_TYPE, id, poi); err != nil {
-				logger.Get(ctx).Error("API Put failed (recovery)", "id", id, "error", err)
-				continue
-			}
+		if changed {
 			poiCache.Set(id, poi, hash)
-			logger.Get(ctx).Info("Recovered stale-cache POI via PUT", "id", id)
-		} else if changed {
-			if err := contentClient.Put(ctx, ENTITY_TYPE, id, poi); err != nil {
-				logger.Get(ctx).Error("API Put failed", "id", id, "error", err)
-				continue
-			}
-			poiCache.Set(id, poi, hash)
-			logger.Get(ctx).Info("Updated existing POI", "id", id)
+			toUpsert = append(toUpsert, poi)
+		}
+	}
+
+	if len(toUpsert) > 0 {
+		logger.Get(ctx).Info("Upserting changed POIs", "count", len(toUpsert))
+		if err := contentClient.PutMultiple(ctx, ENTITY_TYPE, toUpsert); err != nil {
+			return fmt.Errorf("failed to upsert POIs: %w", err)
 		}
 	}
 
 	// Deactivate records no longer in source
-	cacheIDs := make([]string, 0, len(poiCache.Entries()))
-	for id := range poiCache.Entries() {
-		cacheIDs = append(cacheIDs, id)
-	}
-	for _, id := range cacheIDs {
+	var toDeactivate []odhContentModel.ODHActivityPoi
+	for id, entry := range poiCache.Entries() {
 		if _, ok := seen[id]; ok {
-			continue
-		}
-		entry, stillExists := poiCache.Get(id)
-		if !stillExists {
 			continue
 		}
 		poi := entry.Entity
 		poi.Active = false
-		if err := contentClient.Put(ctx, ENTITY_TYPE, id, poi); err != nil {
-			logger.Get(ctx).Error("Failed to deactivate POI", "id", id, "error", err)
-			continue
-		}
+		toDeactivate = append(toDeactivate, poi)
 		poiCache.Delete(id)
-		logger.Get(ctx).Info("Deactivated missing wine company", "id", id)
+		logger.Get(ctx).Info("Deactivating missing wine company", "id", id)
+	}
+	if len(toDeactivate) > 0 {
+		if err := contentClient.PutMultiple(ctx, ENTITY_TYPE, toDeactivate); err != nil {
+			return fmt.Errorf("failed to deactivate POIs: %w", err)
+		}
 	}
 
 	return nil
@@ -235,13 +227,11 @@ func mapToPoi(c dto.WineCompany, lang string, de dto.WineCompany, ts time.Time) 
 	source := SOURCE
 	shortname := c.Title
 
-	// PoiServices from DE wines (language-neutral list)
 	poiServices := []string{}
 	if de.Wines != "" {
 		poiServices = strings.Split(de.Wines, ",")
 	}
 
-	// AdditionalContact — empty slice by default, populated if importers exist
 	additionalContacts := buildAdditionalContacts(c, lang)
 	if additionalContacts == nil {
 		additionalContacts = []odhContentModel.AdditionalContact{}
@@ -313,32 +303,30 @@ func mergeLang(poi *odhContentModel.ODHActivityPoi, c dto.WineCompany, lang stri
 	}
 	poi.PoiProperty[lang] = buildPoiProperty(c)
 
-	// Add importer contacts for this language
 	poi.AdditionalContact = append(poi.AdditionalContact, buildAdditionalContacts(c, lang)...)
 
-	// Update ImageTitle/Desc/Alt with this language's meta if present
-	if c.ImageMetaTitle != "" && len(poi.ImageGallery) > 0 {
-		if poi.ImageGallery[0].ImageTitle == nil {
-			poi.ImageGallery[0].ImageTitle = map[string]string{}
+	if len(poi.ImageGallery) > 0 {
+		if c.ImageMetaTitle != "" {
+			if poi.ImageGallery[0].ImageTitle == nil {
+				poi.ImageGallery[0].ImageTitle = map[string]string{}
+			}
+			poi.ImageGallery[0].ImageTitle[lang] = c.ImageMetaTitle
 		}
-		poi.ImageGallery[0].ImageTitle[lang] = c.ImageMetaTitle
-	}
-	if c.ImageMetaDescription != "" && len(poi.ImageGallery) > 0 {
-		if poi.ImageGallery[0].ImageDesc == nil {
-			poi.ImageGallery[0].ImageDesc = map[string]string{}
+		if c.ImageMetaDescription != "" {
+			if poi.ImageGallery[0].ImageDesc == nil {
+				poi.ImageGallery[0].ImageDesc = map[string]string{}
+			}
+			poi.ImageGallery[0].ImageDesc[lang] = c.ImageMetaDescription
 		}
-		poi.ImageGallery[0].ImageDesc[lang] = c.ImageMetaDescription
-	}
-	if c.ImageMetaAlt != "" && len(poi.ImageGallery) > 0 {
-		if poi.ImageGallery[0].ImageAltText == nil {
-			poi.ImageGallery[0].ImageAltText = map[string]string{}
+		if c.ImageMetaAlt != "" {
+			if poi.ImageGallery[0].ImageAltText == nil {
+				poi.ImageGallery[0].ImageAltText = map[string]string{}
+			}
+			poi.ImageGallery[0].ImageAltText[lang] = c.ImageMetaAlt
 		}
-		poi.ImageGallery[0].ImageAltText[lang] = c.ImageMetaAlt
 	}
 }
 
-// buildDetail maps to our extended DetailGeneric which adds Header, SubHeader, IntroText.
-// Header = slogan, SubHeader = subtitle, IntroText = quote (matching C# parser).
 func buildDetail(c dto.WineCompany, lang string) *odhContentModel.DetailGeneric {
 	return &odhContentModel.DetailGeneric{
 		DetailGeneric: clib.DetailGeneric{
@@ -381,7 +369,6 @@ func buildContactInfo(c dto.WineCompany, lang string) *odhContentModel.ContactIn
 	}
 }
 
-// buildAdditionalContacts maps importer data into AdditionalContact entries.
 func buildAdditionalContacts(c dto.WineCompany, lang string) []odhContentModel.AdditionalContact {
 	if c.Importers == nil {
 		return nil
@@ -415,7 +402,6 @@ func buildAdditionalContacts(c dto.WineCompany, lang string) []odhContentModel.A
 	return contacts
 }
 
-// buildGpsInfo uses DE company data with validation (matching C# parser checks).
 func buildGpsInfo(de dto.WineCompany) []odhContentModel.GpsData {
 	lat := de.Latitude
 	lon := de.Longitude
@@ -434,16 +420,10 @@ func buildGpsInfo(de dto.WineCompany) []odhContentModel.GpsData {
 	}
 
 	return []odhContentModel.GpsData{
-		{
-			Gpstype:   ptrOf("position"),
-			Latitude:  latF,
-			Longitude: lonF,
-		},
+		{Gpstype: ptrOf("position"), Latitude: latF, Longitude: lonF},
 	}
 }
 
-// buildImageGallery uses DE company data for images.
-// imageMeta is a map of lang->title/desc/alt for multilingual image metadata.
 func buildImageGallery(de dto.WineCompany) []odhContentModel.ImageGalleryEntry {
 	var gallery []odhContentModel.ImageGalleryEntry
 	seen := map[string]bool{}
@@ -461,15 +441,14 @@ func buildImageGallery(de dto.WineCompany) []odhContentModel.ImageGalleryEntry {
 			ImageDesc:     map[string]string{},
 			ImageAltText:  map[string]string{},
 		}
-		// Seed DE image meta — other languages added via mergeLang
 		if de.ImageMetaTitle != "" {
-			entry.ImageTitle = map[string]string{"de": de.ImageMetaTitle}
+			entry.ImageTitle["de"] = de.ImageMetaTitle
 		}
 		if de.ImageMetaDescription != "" {
-			entry.ImageDesc = map[string]string{"de": de.ImageMetaDescription}
+			entry.ImageDesc["de"] = de.ImageMetaDescription
 		}
 		if de.ImageMetaAlt != "" {
-			entry.ImageAltText = map[string]string{"de": de.ImageMetaAlt}
+			entry.ImageAltText["de"] = de.ImageMetaAlt
 		}
 		gallery = append(gallery, entry)
 	}
@@ -542,7 +521,6 @@ func buildPoiProperty(c dto.WineCompany) []odhContentModel.PoiPropertyEntry {
 	return props
 }
 
-// buildAdditionalProperties builds the structured SuedtirolWein-specific properties.
 func buildAdditionalProperties(byLang map[string]dto.WineCompany) *odhContentModel.SuedtirolWeinCompanyDataProperties {
 	if len(byLang) == 0 {
 		return nil
@@ -559,7 +537,6 @@ func buildAdditionalProperties(byLang map[string]dto.WineCompany) *odhContentMod
 		CompanyHoliday:          map[string]string{},
 	}
 
-	// Use DE for boolean flags and language-neutral fields
 	if de, ok := byLang["de"]; ok {
 		p.HasVisits = parseBool(de.HasVisits)
 		p.HasOvernights = parseBool(de.HasOvernights)
@@ -576,11 +553,9 @@ func buildAdditionalProperties(byLang map[string]dto.WineCompany) *odhContentMod
 		p.IsWinery = parseBool(de.IsWinery)
 		p.IsWineryAssociation = parseBool(de.IsWineryAssociation)
 		p.IsSkyalpsPartner = parseBool(de.IsSkyAlpsPartner)
-
 		if de.Wines != "" {
 			p.Wines = strings.Split(de.Wines, ",")
 		}
-
 		p.OnlineShopurl = nullableString(de.OnlineShopURL)
 		p.DeliveryServiceUrl = nullableString(de.DeliveryServiceURL)
 		p.SocialsInstagram = nullableString(de.SocialsInstagram)
@@ -596,7 +571,6 @@ func buildAdditionalProperties(byLang map[string]dto.WineCompany) *odhContentMod
 		p.DescriptionSparklingWineproducer = nullableString(de.DescriptionSparklingWineProducer)
 	}
 
-	// Populate multilingual maps from all languages
 	for lang, c := range byLang {
 		if c.H1 != "" {
 			p.H1[lang] = c.H1
@@ -624,7 +598,6 @@ func buildAdditionalProperties(byLang map[string]dto.WineCompany) *odhContentMod
 		}
 	}
 
-	// Nil out empty maps for clean JSON
 	if len(p.H1) == 0 {
 		p.H1 = nil
 	}
@@ -675,7 +648,6 @@ func nullableString(s string) *string {
 	return &s
 }
 
-// nullableBool returns nil if the source string is empty, otherwise parses and returns a *bool.
 func nullableBool(s string) *bool {
 	if s == "" {
 		return nil
