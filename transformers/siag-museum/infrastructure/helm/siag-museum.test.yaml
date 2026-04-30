@@ -1,25 +1,24 @@
 image:
-  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-gtfs-to-trip
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-siag-museum
   pullPolicy: IfNotPresent
 
 env:
   LOG_LEVEL: INFO
 
-  SOURCE: skyalps
-  TRIP_TAGS: "trip:flight"
+  SOURCE: siag.museum
   
   # content writer
   ODH_CORE_URL: https://api.tourism.testingmachine.eu/v1
   ODH_CORE_TOKEN_URL: https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token
 
-  MQ_QUEUE: tr-gtfs-to-trip-skyalps
-  MQ_EXCHANGE: transformed
-  MQ_KEY: gtfs-api.skyalps.#
-  MQ_CLIENT: tr-gtfs-to-trip-skyalps
+  MQ_QUEUE: siag.museum
+  MQ_EXCHANGE: routed
+  MQ_KEY: siag.museum
+  MQ_CLIENT: tr-siag-museum
 
   RAW_DATA_BRIDGE_ENDPOINT: "http://raw-data-bridge.core.svc.cluster.local:2000"
 
-  SERVICE_NAME: tr-gtfs-to-trip-skyalps
+  SERVICE_NAME: tr-siag-museum
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 
 envSecret:
