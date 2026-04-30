@@ -1,0 +1,56 @@
+rootContext: {}
+stream: false
+ 
+auth:
+  type: custom
+  loginRequest:
+    url: "https://auth-api.eu-venueops.com/token"
+    method: POST
+    headers:
+      Content-Type: application/json
+    body:
+      clientId:
+      clientSecret:
+  extractFrom: body
+  extractSelector: .accessToken
+  injectInto: bearer
+  maxAgeSeconds: 86400
+ 
+steps:
+    - type: request
+      name: "Get all rooms"
+      request:
+          url: "https://api.eu-venueops.com/v1/general-setup/rooms"
+          method: GET
+          headers:
+            Accept: application/json
+      # Store full room objects — published in the final message under .rooms
+      mergeOn: ".rooms = $res"
+ 
+    - type: forEach
+      name: "Get events per room"
+      # Inline id extraction: iterates over .rooms and yields each .id
+      path: ".rooms[].id"
+      as: roomId
+      steps:
+          - type: request
+            name: "Get events for room"
+            parallelism:
+              maxConcurrency: 10
+            request:
+                url: "https://api.eu-venueops.com/v1/events/query-by-date-range"
+                method: POST
+                headers:
+                  Accept: application/json
+                  Content-Type: application/json
+                body:
+                    venueIds:
+                        - "venue-1-A"   # replace with actual venue ID
+                    roomIds:
+                        - "{{ .roomId }}"
+                    includeBookedSpaces: true
+                    start: '{{ now | date "2006-01-02" }}'                                                                                                                                                                                                
+                    end: '{{ now | dateModify "8760h" | date "2006-01-02" }}'
+            mergeWithContext:
+                name: root
+                rule: ".events = ((.events // []) + $res | unique_by(.id))"
