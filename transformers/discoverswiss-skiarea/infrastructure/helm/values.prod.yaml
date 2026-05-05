@@ -17,7 +17,7 @@ env:
 
   ODH_CORE_URL: "https://tourism.api.opendatahub.com/v1"
   ODH_CORE_TOKEN_URL: "https://auth.opendatahub.com/auth/realms/noi/protocol/openid-connect/token"
-  ODH_CORE_TOKEN_CLIENT_ID: "odh-api-core-discoverswiss"
+  ODH_CORE_TOKEN_CLIENT_ID: "discoverswiss-skidata"
   RAW_DATA_BRIDGE_ENDPOINT: "http://raw-data-bridge.core.svc.cluster.local:2000"
 
   SERVICE_NAME: tr-discoverswiss-skiarea

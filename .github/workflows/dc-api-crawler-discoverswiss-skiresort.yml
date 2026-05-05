@@ -48,7 +48,7 @@ jobs:
       - name: Customize values.yaml
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
-          yq -i '.headers["Ocp-Apim-Subscription-Key"] = "${{ secrets.HTTP_HEADER_SUBSCRIPTION_DISCOVERSWISS }}"' "${{ env.HTTP_CONFIG_PATH }}"
+          yq -i '.headers["Ocp-Apim-Subscription-Key"] = "${{ secrets.DISCOVERSWISS_SUBSCRIPTION_INFOCENTER_PROD }}"' "${{ env.HTTP_CONFIG_PATH }}"
 
           yq -i '.image.repository="${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML}}
           yq -i '.image.tag="${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
