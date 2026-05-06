@@ -35,7 +35,7 @@ env:
   MQ_EXCHANGE: ingress
   PORT: 8080
   PROVIDER: echarging-ocpi/neogy-ampeco
-  PULL_LOCATIONS_CRON: "0/10 * * * *"
+  PULL_LOCATIONS_CRON: "*/10 * * * *"
 
 envSecret:
   # List of valid tokens, no spaces etc.
