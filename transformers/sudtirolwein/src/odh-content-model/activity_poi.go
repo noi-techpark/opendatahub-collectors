@@ -5,6 +5,7 @@
 package odhContentModel
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -60,6 +61,34 @@ func (ft *FlexibleTime) UnmarshalJSON(b []byte) error {
 	return fmt.Errorf("could not parse time %s: %w", s, err)
 }
 
+// FlexibleMap handles fields that can be either a plain string or a multilingual map.
+type FlexibleMap map[string]string
+
+func (fm *FlexibleMap) UnmarshalJSON(b []byte) error {
+	if len(b) == 0 || string(b) == "null" {
+		return nil
+	}
+
+	// 1. Try to unmarshal as a map
+	var m map[string]string
+	if err := json.Unmarshal(b, &m); err == nil {
+		*fm = m
+		return nil
+	}
+
+	// 2. Try to unmarshal as a plain string
+	var s string
+	if err := json.Unmarshal(b, &s); err == nil {
+		if s == "" {
+			return nil
+		}
+		*fm = map[string]string{"de": s}
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal flexible map from %s", string(b))
+}
+
 // DetailGeneric extends clib.DetailGeneric with additional fields the ODH API supports
 // but which are not yet in the SDK struct.
 type DetailGeneric struct {
@@ -72,13 +101,13 @@ type DetailGeneric struct {
 type ODHActivityPoi struct {
 	Generic
 
-	Detail               map[string]*DetailGeneric     `json:"Detail"`
-	ContactInfos         map[string]*ContactInfo       `json:"ContactInfos"`
-	AdditionalContact    []AdditionalContact           `json:"AdditionalContact"`
-	ImageGallery         []ImageGalleryEntry           `json:"ImageGallery"`
-	PoiProperty          map[string][]PoiPropertyEntry `json:"PoiProperty"`
-	PoiServices          []string                      `json:"PoiServices"`
-	AdditionalProperties *AdditionalProperties         `json:"AdditionalProperties,omitempty"`
+	Detail               map[string]*DetailGeneric      `json:"Detail"`
+	ContactInfos         map[string]*ContactInfo        `json:"ContactInfos"`
+	AdditionalContact    map[string][]AdditionalContact `json:"AdditionalContact,omitempty"`
+	ImageGallery         []ImageGalleryEntry            `json:"ImageGallery"`
+	PoiProperty          map[string][]PoiPropertyEntry  `json:"PoiProperty"`
+	PoiServices          []string                       `json:"PoiServices"`
+	AdditionalProperties *AdditionalProperties          `json:"AdditionalProperties,omitempty"`
 
 	SmgActive           bool     `json:"SmgActive"`
 	PublishedOn         []string `json:"PublishedOn"`
@@ -87,10 +116,19 @@ type ODHActivityPoi struct {
 	HasFreeEntrance     bool     `json:"HasFreeEntrance"`
 }
 
+// Metadata matches the _Meta field in ODH entities but uses FlexibleTime for robustness.
+type Metadata struct {
+	ID         string        `json:"Id"`
+	Type       string        `json:"Type"`
+	LastUpdate *FlexibleTime `json:"LastUpdate,omitempty"`
+	Source     string        `json:"Source"`
+	Reduced    bool          `json:"Reduced"`
+}
+
 // Generic matches the pattern used across transformers in the monorepo.
 type Generic struct {
 	ID          *string                      `json:"Id,omitempty"`
-	Meta        *clib.Metadata               `json:"_Meta,omitempty"`
+	Meta        *Metadata                    `json:"_Meta,omitempty"`
 	LicenseInfo *LicenseInfo                 `json:"LicenseInfo,omitempty"`
 	Shortname   *string                      `json:"Shortname,omitempty"`
 	Active      bool                         `json:"Active"`
@@ -177,22 +215,22 @@ type SiagMuseumDataProperties struct {
 // SuedtirolWeinCompanyDataProperties holds structured wine company data
 // with multilingual maps for text fields and booleans for flags.
 type SuedtirolWeinCompanyDataProperties struct {
-	H1          map[string]string `json:"H1,omitempty"`
-	H2          map[string]string `json:"H2,omitempty"`
-	Quote       map[string]string `json:"Quote,omitempty"`
-	QuoteAuthor map[string]string `json:"QuoteAuthor,omitempty"`
+	H1          FlexibleMap `json:"H1,omitempty"`
+	H2          FlexibleMap `json:"H2,omitempty"`
+	Quote       FlexibleMap `json:"Quote,omitempty"`
+	QuoteAuthor FlexibleMap `json:"QuoteAuthor,omitempty"`
 
-	OpeningTimesWineShop    map[string]string `json:"OpeningtimesWineshop,omitempty"`
-	OpeningTimesGuides      map[string]string `json:"OpeningtimesGuides,omitempty"`
-	OpeningTimesGastronomie map[string]string `json:"OpeningtimesGastronomie,omitempty"`
-	CompanyHoliday          map[string]string `json:"CompanyHoliday,omitempty"`
+	OpeningTimesWineShop    FlexibleMap `json:"OpeningtimesWineshop,omitempty"`
+	OpeningTimesGuides      FlexibleMap `json:"OpeningtimesGuides,omitempty"`
+	OpeningTimesGastronomie FlexibleMap `json:"OpeningtimesGastronomie,omitempty"`
+	CompanyHoliday          FlexibleMap `json:"CompanyHoliday,omitempty"`
 
 	Wines []string `json:"Wines,omitempty"`
 
 	HasVisits                  bool  `json:"HasVisits"`
 	HasOvernights              bool  `json:"HasOvernights"`
 	HasBiowine                 bool  `json:"HasBiowine"`
-	HasAccommodation           *bool `json:"HasAccommodation"` // nullable — source field hasaccomodation may be absent
+	HasAccommodation           *bool `json:"HasAccommodation,omitempty"`
 	HasOnlineshop              bool  `json:"HasOnlineshop"`
 	HasDeliveryservice         bool  `json:"HasDeliveryservice"`
 	HasDirectSales             bool  `json:"HasDirectSales"`
@@ -205,19 +243,19 @@ type SuedtirolWeinCompanyDataProperties struct {
 	IsWineryAssociation        bool  `json:"IsWineryAssociation"`
 	IsSkyalpsPartner           bool  `json:"IsSkyalpsPartner"`
 
-	OnlineShopurl      *string `json:"OnlineShopurl"`
-	DeliveryServiceUrl *string `json:"DeliveryServiceUrl"`
+	OnlineShopurl      *string `json:"OnlineShopurl,omitempty"`
+	DeliveryServiceUrl *string `json:"DeliveryServiceUrl,omitempty"`
 
-	SocialsInstagram *string `json:"SocialsInstagram"`
-	SocialsFacebook  *string `json:"SocialsFacebook"`
-	SocialsLinkedIn  *string `json:"SocialsLinkedIn"`
-	SocialsPinterest *string `json:"SocialsPinterest"`
-	SocialsTiktok    *string `json:"SocialsTiktok"`
-	SocialsYoutube   *string `json:"SocialsYoutube"`
-	SocialsTwitter   *string `json:"SocialsTwitter"`
+	SocialsInstagram *string `json:"SocialsInstagram,omitempty"`
+	SocialsFacebook  *string `json:"SocialsFacebook,omitempty"`
+	SocialsLinkedIn  *string `json:"SocialsLinkedIn,omitempty"`
+	SocialsPinterest *string `json:"SocialsPinterest,omitempty"`
+	SocialsTiktok    *string `json:"SocialsTiktok,omitempty"`
+	SocialsYoutube   *string `json:"SocialsYoutube,omitempty"`
+	SocialsTwitter   *string `json:"SocialsTwitter,omitempty"`
 
-	H1SparklingWineproducer          *string `json:"H1SparklingWineproducer"`
-	H2SparklingWineproducer          *string `json:"H2SparklingWineproducer"`
-	ImageSparklingWineproducer       *string `json:"ImageSparklingWineproducer"`
-	DescriptionSparklingWineproducer *string `json:"DescriptionSparklingWineproducer"`
+	H1SparklingWineproducer          *string `json:"H1SparklingWineproducer,omitempty"`
+	H2SparklingWineproducer          *string `json:"H2SparklingWineproducer,omitempty"`
+	ImageSparklingWineproducer       *string `json:"ImageSparklingWineproducer,omitempty"`
+	DescriptionSparklingWineproducer *string `json:"DescriptionSparklingWineproducer,omitempty"`
 }

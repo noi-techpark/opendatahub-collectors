@@ -1,0 +1,19 @@
+rootContext: {}
+stream: false
+
+steps:
+  - type: forValues
+    name: Iterate over languages
+    values: ["de", "it", "en", "ru", "jp", "us"]
+    as: language
+    steps:
+
+      - type: request
+        name: "Fetch wine companies (language={{ .language }})"
+        request:
+          url: "https://suedtirolwein.secure.consisto.net/companies.ashx?lang={{ .language }}"
+          method: GET
+
+        resultTransformer: "."
+
+        mergeOn: .[$ctx.language] = $res
