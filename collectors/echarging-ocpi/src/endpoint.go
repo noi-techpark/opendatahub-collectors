@@ -131,6 +131,7 @@ func validTokens(tokens []string) map[string]struct{} {
 func tokenAuth(ts map[string]struct{}) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		header := c.Request.Header.Get("Authorization")
+		slog.Info("Auth header passed", "header", header)
 
 		var token string
 		if _, err := fmt.Sscanf(header, "Token %s", &token); err != nil {
