@@ -37,7 +37,7 @@ jobs:
     environment: test
     env:
       PROJECT_NAME: tr-echarging-ocpi-neogy
-      VALUES_YAML: infrastructure/helm/neogy-ampeco.yaml
+      VALUES_YAML: infrastructure/helm/neogy.yaml
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4

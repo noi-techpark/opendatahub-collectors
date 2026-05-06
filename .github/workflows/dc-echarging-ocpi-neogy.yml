@@ -14,7 +14,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     concurrency: dc-echarging-ocpi-neogy-build
     steps:
     - name: Checkout source code
@@ -31,11 +31,11 @@ jobs:
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feat/neogy-ampeco'
     needs: 
       - build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     concurrency: dc-echarging-ocpi-neogy-deploy-test
     environment: test
     env:
-      VALUES_YAML: collectors/echarging-ocpi/infrastructure/helm/neogy.yaml
+      VALUES_YAML: collectors/echarging-ocpi/infrastructure/helm/neogy-ampeco.yaml
       K8S_NAME: dc-echarging-ocpi-neogy
     steps:
       - name: Checkout source code
@@ -75,7 +75,7 @@ jobs:
     if: github.ref == 'refs/heads/prod'
     needs: 
       - build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     concurrency: dc-echarging-ocpi-neogy-deploy-prod
     environment: prod
     env:
