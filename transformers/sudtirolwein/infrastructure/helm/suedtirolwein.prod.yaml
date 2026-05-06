@@ -1,25 +1,25 @@
 image:
-  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-gtfs-to-trip
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/dc-sudtirolwein
   pullPolicy: IfNotPresent
 
 env:
   LOG_LEVEL: INFO
 
-  SOURCE: skyalps
-  TRIP_TAGS: "trip:flight"
+  SOURCE: suedtirolwein
 
   # content writer
   ODH_CORE_URL: https://tourism.api.opendatahub.com/v1
   ODH_CORE_TOKEN_URL: https://auth.opendatahub.com/auth/realms/noi/protocol/openid-connect/token
 
-  MQ_QUEUE: tr-gtfs-to-trip-skyalps
-  MQ_EXCHANGE: transformed
-  MQ_KEY: gtfs-api.skyalps.#
-  MQ_CLIENT: tr-gtfs-to-trip-skyalps
+  MQ_QUEUE: sudtirolwein
+  MQ_EXCHANGE: routed
+  MQ_KEY: suedtirolwein.companies
+  MQ_CLIENT: dc-sudtirolwein
+
 
   RAW_DATA_BRIDGE_ENDPOINT: "http://raw-data-bridge.core.svc.cluster.local:2000"
 
-  SERVICE_NAME: tr-gtfs-to-trip-skyalps
+  SERVICE_NAME: dc-sudtirolwein
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 
 envSecret:
