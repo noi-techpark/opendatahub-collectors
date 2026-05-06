@@ -7,7 +7,7 @@ FROM golang:1.25-bookworm as base
 FROM base as build-env
 WORKDIR /app
 COPY src/. .
-COPY resources/. ./resources
+#COPY resources/. ./resources
 RUN go mod download
 RUN CGO_ENABLED=0 GOOS=linux go build -o main
 
