@@ -22,9 +22,9 @@ func health(c *gin.Context) {
 
 func baseURL(c *gin.Context) string {
 	scheme := "https"
-	if c.Request.TLS == nil {
-		scheme = "http"
-	}
+	// if c.Request.TLS == nil {
+	// 	scheme = "http"
+	// }
 	return scheme + "://" + c.Request.Host
 }
 
