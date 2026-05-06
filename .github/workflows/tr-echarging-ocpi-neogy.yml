@@ -15,7 +15,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     concurrency: tr-echarging-ocpi-build
     steps:
     - name: Checkout source code
@@ -32,12 +32,12 @@ jobs:
     if: github.ref == 'refs/heads/main'
     needs: 
       - build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     concurrency: tr-echarging-ocpi-deploy-neogy-test
     environment: test
     env:
       PROJECT_NAME: tr-echarging-ocpi-neogy
-      VALUES_YAML: infrastructure/helm/neogy.yaml
+      VALUES_YAML: infrastructure/helm/neogy-ampeco.yaml
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -70,7 +70,7 @@ jobs:
     if: github.ref == 'refs/heads/prod'
     needs: 
       - build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     concurrency: tr-echarging-ocpi-deploy-neogy-prod
     environment: prod
     env:

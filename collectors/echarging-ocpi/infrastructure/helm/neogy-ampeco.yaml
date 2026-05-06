@@ -1,0 +1,49 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/dc-echarging-ocpi
+  pullPolicy: IfNotPresent
+  tag: 
+
+service:
+  enabled: true
+  type: ClusterIP
+  port: 8080
+  health:
+    delay: 10
+    path: /health
+
+ingress:
+  enabled: true
+
+  annotations:
+    cert-manager.io/issuer: "letsencrypt-prod"
+
+  className: nginx
+  tls:
+    - hosts:
+      - neogy.ocpi.io.dev.testingmachine.eu
+      secretName: tls-ocpi-neogy
+  hosts:
+    - host: neogy.ocpi.io.dev.testingmachine.eu
+      paths: 
+        - path: "/"
+          pathType: Prefix
+            
+env:
+  GIN_MODE: release
+  LOG_LEVEL: DEBUG
+  MQ_CLIENT: dc-echarging-ocpi-driwe
+  MQ_EXCHANGE: ingress
+  PORT: 8080
+  PROVIDER: echarging-ocpi/neogy-ampeco
+  PULL_LOCATIONS_CRON: "0 0,4,8,12,16 * * *"
+
+envSecret:
+  # List of valid tokens, no spaces etc.
+  OCPI_TOKENS: ExampleToken1,ExampleToken2
+  PULL_LOCATIONS_ENDPOINT: https://cp.neogy.it/ocpi/2.2/sender/locations
+  PULL_TOKEN: "***"
+
+envSecretRef:
+  - name: MQ_URI 
+    secret: rabbitmq-svcbind
+    key: uri

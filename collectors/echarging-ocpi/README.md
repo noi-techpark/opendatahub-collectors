@@ -50,8 +50,10 @@ curl -H 'Authorization: Token <Token A>' https://demo.eu-neogy.charge.ampeco.tec
 ```
 
 Once obtained the credentials endpoint, you must send it your `Token B`, a randomly generated base64 encoded string that you will use to authenticate incoming (from our perspective) requests.  
-This will go into env variable `OCPI_TOKENS`  
-You also send them the URL your service responds under. They will likely verify this is reachable in the loop so make sure it exists.  
+This will go (base64 encoded) into env variable `OCPI_TOKENS`.
+You also send them the URL your service responds under. 
+They will likely verify this is reachable in the loop so make sure that your endpoint has the OCPI_TOKENS set and is available before doing the next request.  
+
 
 ```sh
 curl -X POST https://demo.eu-neogy.charge.ampeco.tech/ocpi/2.2/credentials \
@@ -66,6 +68,7 @@ curl -X POST https://demo.eu-neogy.charge.ampeco.tech/ocpi/2.2/credentials \
 {"status_code":1000,"status_message":"Success","timestamp":"2026-04-17T09:47:20Z","data":{"token":"xxxxxxxxxxxxxxxxxx","url":"https://demo.eu-neogy.charge.ampeco.tech/ocpi/versions","roles":[{"party_id":"NEO","country_code":"IT","role":"CPO","business_details":{"name":"Demo Neogy"}}]}}
 
 ```
-The request will return with a `Token C`, which is to be used as env variable `PULL_TOKEN`
+The request will return with a `Token C`, which is to be used as env variable `PULL_TOKEN` in base64 encoding
 
 
+there is a scipt `ocpi-handshake.sh` that works for Neogy Ampeco at least
