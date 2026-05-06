@@ -10,9 +10,9 @@ imagePullSecrets:
 
 env:
   LOG_LEVEL: "DEBUG"
-  MQ_QUEUE: discoverswiss-skiarea.skiarea
+  MQ_QUEUE: api-crawler.discoverswiss-skiresort
   MQ_EXCHANGE: routed
-  MQ_KEY: discoverswiss-skiarea.skiarea
+  MQ_KEY: api-crawler.discoverswiss-skiresort
   MQ_CLIENT: tr-discoverswiss-skiarea
 
   ODH_CORE_URL: "https://tourism.api.opendatahub.testingmachine.eu/v1"
