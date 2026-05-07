@@ -219,16 +219,28 @@ func raw2Siri(c *Cache, refTime time.Time, r Dto, n netex.PublicationDelivery) (
 		vj.InCongestion = false
 		vj.VehicleLocation.Latitude = float32(upd.Position.Latitude)
 		vj.VehicleLocation.Longitude = float32(upd.Position.Longitude)
-		vj.Delay = mapDelay(upd.Trip.Delay)
-		vj.VehicleRef = train //TODO: this is not correct, should be a valid ID, but there are no vehicles defined in the reference Netex. Sta does it like this on their other SIRI-VM though
-
-		if upd.Trip.Delay < -10 {
-			slog.Warn("Detected train with suspiciously large anticipation", "upd", upd)
+		delay := upd.Trip.Delay
+		scheduledStart, err := journeyScheduledStart(nJourney, tripTime, locItaly)
+		if err != nil {
+			return s, fmt.Errorf("could not determine scheduled start for train %s: %w", train, err)
 		}
+		if delay < 0 && refTime.Before(scheduledStart) {
+			slog.Info("suppressing negative delay before scheduled journey start", "train", train, "delay", delay, "scheduledStart", scheduledStart)
+			delay = 0
+		}
+		vj.Delay = mapDelay(delay)
+		vj.VehicleRef = train //TODO: this is not correct, should be a valid ID, but there are no vehicles defined in the reference Netex. Sta does it like this on their other SIRI-VM though
 
 		s.ServiceDelivery.VehicleMonitoringDelivery.VehicleActivity = append(s.ServiceDelivery.VehicleMonitoringDelivery.VehicleActivity, va)
 	}
 	return s, nil
+}
+
+func journeyScheduledStart(j *netex.ServiceJourney, date time.Time, loc *time.Location) (time.Time, error) {
+	if j.DepartureTime == "" {
+		return time.Time{}, fmt.Errorf("journey %s has no DepartureTime", j.Id)
+	}
+	return time.ParseInLocation("2006-01-02 15:04:05", date.Format("2006-01-02")+" "+j.DepartureTime, loc)
 }
 
 func mapDelay(d int) string {
