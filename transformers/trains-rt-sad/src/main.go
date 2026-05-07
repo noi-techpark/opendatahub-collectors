@@ -225,7 +225,7 @@ func raw2Siri(c *Cache, refTime time.Time, r Dto, n netex.PublicationDelivery) (
 			return s, fmt.Errorf("could not determine scheduled start for train %s: %w", train, err)
 		}
 		if delay < 0 && refTime.Before(scheduledStart) {
-			slog.Info("suppressing negative delay before scheduled journey start", "train", train, "delay", delay, "scheduledStart", scheduledStart)
+			slog.Warn("suppressing negative delay before scheduled journey start", "train", train, "delay", delay, "scheduledStart", scheduledStart)
 			delay = 0
 		}
 		vj.Delay = mapDelay(delay)
