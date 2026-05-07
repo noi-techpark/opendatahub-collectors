@@ -11,9 +11,9 @@ env:
   ODH_CORE_URL: https://tourism.api.opendatahub.testingmachine.eu/v1
   ODH_CORE_TOKEN_URL: https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token
 
-  MQ_QUEUE: api-crawler.siag-museum
+  MQ_QUEUE: api-crawler.siag-museums
   MQ_EXCHANGE: routed
-  MQ_KEY: api-crawler.siag-museum
+  MQ_KEY: api-crawler.siag-museums
   MQ_CLIENT: tr-siag-museum
 
   RAW_DATA_BRIDGE_ENDPOINT: "http://raw-data-bridge.core.svc.cluster.local:2000"
