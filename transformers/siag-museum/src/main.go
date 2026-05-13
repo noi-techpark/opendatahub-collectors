@@ -78,8 +78,13 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 
 	pois := map[string]odhContentModel.ODHActivityPoi{}
 	// seen tracks every id present in the current source batch.
-	// It is populated once here and never written again inside the upsert loop.
 	seen := map[string]struct{}{}
+
+	// tagDefs accumulates all unique tags encountered in this batch so they
+	// can be synced to the Tag endpoint before we touch any POI records.
+	// We use a map keyed by tag ID to deduplicate, then convert to a slice
+	// for SyncTags (which expects clib.TagDefs, i.e. []clib.TagDef).
+	tagDefsMap := map[string]clib.TagDef{}
 
 	for _, batch := range []struct {
 		lang    string
@@ -93,6 +98,8 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 			id := buildID(museum)
 			seen[id] = struct{}{}
 
+			collectTagDefs(museum.Elements, tagDefsMap)
+
 			if existing, ok := pois[id]; ok {
 				mergeLang(&existing, museum, batch.lang)
 				pois[id] = existing
@@ -100,6 +107,23 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 				pois[id] = mapToPoi(museum, batch.lang)
 			}
 		}
+	}
+
+	// Convert deduplicated map to the slice type clib.SyncTags expects.
+	tagDefs := make(clib.TagDefs, 0, len(tagDefsMap))
+	for _, def := range tagDefsMap {
+		tagDefs = append(tagDefs, def)
+	}
+
+	// Sync all tags discovered in this batch to the ODH Tag endpoint.
+	// clib.SyncTags POSTs each tag and ignores ErrAlreadyExists, so it is
+	// safe to call on every run — new tags get created, existing ones are
+	// left untouched.
+	if err := clib.SyncTags(ctx, contentClient, tagDefs, clib.SyncTagsConfig{
+		Source: SOURCE,
+	}); err != nil {
+		// Log and continue: a tag-sync failure must not block POI updates.
+		logger.Get(ctx).Error("Failed to sync tags", "error", err)
 	}
 
 	sortedIDs := make([]string, 0, len(pois))
@@ -119,31 +143,20 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 		_, exists := poiCache.Get(id)
 
 		if !exists {
-			// FIX: attempt POST, but if the API reports the record already
-			// exists (cache was stale / out-of-sync), fall through to PUT
-			// so we don't keep retrying POST on every run and the cache is
-			// brought back in sync.
+			// Attempt POST; if the API reports the record already exists
+			// (stale cache), fall through to PUT to reconcile.
 			postErr := contentClient.Post(ctx, ENTITY_TYPE, map[string]string{"generateid": "false"}, poi)
 			if postErr == nil {
-				// Happy path: newly created.
 				poiCache.Set(id, poi, hash)
 				logger.Get(ctx).Info("Created new POI", "id", id)
 				continue
 			}
 
-			// Check whether the API rejected the POST because the record
-			// already exists.  The error message from the API is
-			// "data exists already" (observed in production logs).
 			if !strings.Contains(postErr.Error(), "data exists already") {
-				// Genuine, unrecoverable POST error — skip this record.
 				logger.Get(ctx).Error("API Post failed", "id", id, "error", postErr)
 				continue
 			}
 
-			// The record lives in the API but not in our cache.
-			// Fall through to PUT so we repair the drift and update the
-			// cache entry.  We treat this as a forced "changed" situation
-			// because we must reconcile the state.
 			logger.Get(ctx).Warn("POST returned 'data exists already', recovering with PUT", "id", id)
 			if err := contentClient.Put(ctx, ENTITY_TYPE, id, poi); err != nil {
 				logger.Get(ctx).Error("API Put failed (recovery)", "id", id, "error", err)
@@ -153,7 +166,6 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 			logger.Get(ctx).Info("Recovered stale-cache POI via PUT", "id", id)
 
 		} else if changed {
-			// EXISTING RECORD that has actually changed: use Put.
 			if err := contentClient.Put(ctx, ENTITY_TYPE, id, poi); err != nil {
 				logger.Get(ctx).Error("API Put failed", "id", id, "error", err)
 				continue
@@ -161,11 +173,10 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 			poiCache.Set(id, poi, hash)
 			logger.Get(ctx).Info("Updated existing POI", "id", id)
 		}
-		// If exists && !changed, nothing to do — skip silently.
+		// exists && !changed → nothing to do
 	}
 
-	// DEACTIVATION: Items in cache but not in the current source batch.
-	// Snapshot the keys first so we don't mutate the map while iterating.
+	// DEACTIVATION: Items in cache that are absent from the current batch.
 	cacheIDs := make([]string, 0, len(poiCache.Entries()))
 	for id := range poiCache.Entries() {
 		cacheIDs = append(cacheIDs, id)
@@ -178,7 +189,6 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 
 		entry, stillExists := poiCache.Get(id)
 		if !stillExists {
-			// Already removed in a previous iteration (shouldn't happen, but be safe).
 			continue
 		}
 
@@ -195,6 +205,62 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 	}
 
 	return nil
+}
+
+// collectTagDefs inspects a museum's elements and merges every tag it carries
+// into the provided deduplication map.  The map key is the tag ID; values are
+// clib.TagDef structs using the NameDe/NameIt/NameEn fields that clib expects.
+func collectTagDefs(e dto.SiagElements, defs map[string]clib.TagDef) {
+	// addDef handles taxonomy tags (categories, services, offerings) whose
+	// display name is pipe-separated: "de|it|de|en".
+	addDef := func(codename, name string) {
+		id := "siag:museum:" + codename
+		if _, exists := defs[id]; exists {
+			return
+		}
+		defs[id] = clib.TagDef{
+			ID:     id,
+			NameDe: langName(name, "de"),
+			NameIt: langName(name, "it"),
+			NameEn: langName(name, "en"),
+			Types:  []string{"MuseumData"},
+		}
+	}
+
+	// addSimple handles boolean-flag tags (paramuseum, provincial_museum,
+	// museum_association) that share the same label in every language.
+	addSimple := func(id, displayName string) {
+		if _, exists := defs[id]; exists {
+			return
+		}
+		defs[id] = clib.TagDef{
+			ID:     id,
+			NameDe: displayName,
+			NameIt: displayName,
+			NameEn: displayName,
+			Types:  []string{"MuseumData"},
+		}
+	}
+
+	for _, t := range e.MuseumCategories.Value {
+		addDef(t.Codename, t.Name)
+	}
+	for _, t := range e.MuseumServices.Value {
+		addDef(t.Codename, t.Name)
+	}
+	for _, t := range e.MuseumOfferings.Value {
+		addDef(t.Codename, t.Name)
+	}
+
+	if choiceIsYes(e.Paramuseum) {
+		addSimple("siag:museum:paramuseum", "Paramuseum")
+	}
+	if choiceIsYes(e.ProvincialMuseum) {
+		addSimple("siag:museum:provincial_museum", "Provincial museum")
+	}
+	if choiceIsYes(e.MuseumAssociation) {
+		addSimple("siag:museum:museum_association", "Museum association")
+	}
 }
 
 // buildID generates the ODH Id: "smgpoi{numericId}siag"
