@@ -89,3 +89,42 @@ func Test_download(t *testing.T) {
 		t.Fatal("could not download latest netex", err)
 	}
 }
+
+// Test_Convert performs an offline SIRI conversion.
+func Test_Convert(t *testing.T) {
+	// Comment out this skip to run the tool. THis way it isn't run on normal unit testing
+	t.SkipNow()
+	const (
+		netexPath  = "./convert/netex.xml"
+		jsonPath   = "./convert/input.json"
+		outputPath = "./convert/siri" // written as /tmp/siri.json and /tmp/siri.xml
+	)
+	refTime := time.Date(2026, 5, 12, 11, 45, 0, 0, time.UTC)
+
+	netexBytes, err := os.ReadFile(netexPath)
+	assert.NilError(t, err)
+	var n netex.PublicationDelivery
+	err = xml.Unmarshal(netexBytes, &n)
+	assert.NilError(t, err)
+
+	jsonBytes, err := os.ReadFile(jsonPath)
+	assert.NilError(t, err)
+	var dto Dto
+	err = json.Unmarshal(jsonBytes, &dto)
+	assert.NilError(t, err)
+
+	s, err := raw2Siri(NewCache(), refTime, dto, n)
+	assert.NilError(t, err)
+
+	outJSON, err := json.MarshalIndent(s, "", "  ")
+	assert.NilError(t, err)
+	err = os.WriteFile(outputPath+".json", outJSON, 0644)
+	assert.NilError(t, err)
+
+	outXML, err := xml.MarshalIndent(s, "", "  ")
+	assert.NilError(t, err)
+	err = os.WriteFile(outputPath+".xml", outXML, 0644)
+	assert.NilError(t, err)
+
+	t.Logf("written %s.json and %s.xml (%d vehicle activities)", outputPath, outputPath, len(s.ServiceDelivery.VehicleMonitoringDelivery.VehicleActivity))
+}
