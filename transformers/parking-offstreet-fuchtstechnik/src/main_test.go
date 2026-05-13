@@ -68,7 +68,7 @@ func TestStations(t *testing.T) {
 	require.Equal(t, "Selva di Val Gardena", meta["municipality"])
 	netex, ok := meta["netex_parking"].(map[string]any)
 	require.True(t, ok, "netex_parking should be a nested map")
-	require.Equal(t, "parkAndRide", netex["type"])
+	require.Equal(t, "parkingZone", netex["type"])
 	require.Equal(t, false, netex["charging"])
 	require.Equal(t, "noReservations", netex["reservation"])
 }
