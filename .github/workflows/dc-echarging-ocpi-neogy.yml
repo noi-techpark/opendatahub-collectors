@@ -27,49 +27,49 @@ jobs:
         docker-username: ${{ github.actor }}
         docker-password: ${{ secrets.GITHUB_TOKEN }}
           
-  deploy-test:
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feat/neogy-ampeco'
-    needs: 
-      - build
-    runs-on: ubuntu-24.04
-    concurrency: dc-echarging-ocpi-neogy-deploy-test
-    environment: test
-    env:
-      VALUES_YAML: collectors/echarging-ocpi/infrastructure/helm/neogy-ampeco.yaml
-      K8S_NAME: dc-echarging-ocpi-neogy
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
+  # deploy-test:
+  #   if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feat/neogy-ampeco'
+  #   needs: 
+  #     - build
+  #   runs-on: ubuntu-24.04
+  #   concurrency: dc-echarging-ocpi-neogy-deploy-test
+  #   environment: test
+  #   env:
+  #     VALUES_YAML: collectors/echarging-ocpi/infrastructure/helm/neogy-ampeco.yaml
+  #     K8S_NAME: dc-echarging-ocpi-neogy
+  #   steps:
+  #     - name: Checkout source code
+  #       uses: actions/checkout@v4
 
-      - name: Write environment-specific Helm values
-        run: |
-          cat <<EOF > override.yml
-          image:
-            repository:  ${{ env.DOCKER_IMAGE }}
-            tag:  ${{ env.DOCKER_TAG }}
-            pullPolicy: "IfNotPresent"
-          env:
-            LOG_LEVEL: "INFO"
-          envSecret:
-            OCPI_TOKENS: ${{ secrets.ECHARGING_OCPI_NEOGY_TOKEN_B }}
-            PULL_TOKEN: "${{ secrets.ECHARGING_OCPI_NEOGY_TOKEN_C }}"
-          EOF
+  #     - name: Write environment-specific Helm values
+  #       run: |
+  #         cat <<EOF > override.yml
+  #         image:
+  #           repository:  ${{ env.DOCKER_IMAGE }}
+  #           tag:  ${{ env.DOCKER_TAG }}
+  #           pullPolicy: "IfNotPresent"
+  #         env:
+  #           LOG_LEVEL: "INFO"
+  #         envSecret:
+  #           OCPI_TOKENS: ${{ secrets.ECHARGING_OCPI_NEOGY_TOKEN_B }}
+  #           PULL_TOKEN: "${{ secrets.ECHARGING_OCPI_NEOGY_TOKEN_C }}"
+  #         EOF
 
 
-          # Merge yaml files https://mikefarah.gitbook.io/yq/operators/multiply-merge
-          yq -i '. *= load("override.yml")' ${{env.VALUES_YAML}}
+  #         # Merge yaml files https://mikefarah.gitbook.io/yq/operators/multiply-merge
+  #         yq -i '. *= load("override.yml")' ${{env.VALUES_YAML}}
 
-      - name: Deploy on cluster  
-        uses: noi-techpark/github-actions/helm-deploy@v2
-        with:
-          k8s-name: ${{ env.K8S_NAME }}
-          k8s-namespace: collector
-          chart-path: helm/generic-collector
-          values-file: ${{ env.VALUES_YAML }}
-          aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
-          aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
-          aws-eks-cluster-name: aws-main-eu-01
-          aws-region: eu-west-1
+  #     - name: Deploy on cluster  
+  #       uses: noi-techpark/github-actions/helm-deploy@v2
+  #       with:
+  #         k8s-name: ${{ env.K8S_NAME }}
+  #         k8s-namespace: collector
+  #         chart-path: helm/generic-collector
+  #         values-file: ${{ env.VALUES_YAML }}
+  #         aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
+  #         aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
+  #         aws-eks-cluster-name: aws-main-eu-01
+  #         aws-region: eu-west-1
 
   deploy-prod:
     if: github.ref == 'refs/heads/prod'
