@@ -11,10 +11,6 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
-	"time"
-	// Embed the tzdata database into the binary so time.LoadLocation
-	// works on minimal base images (e.g. alpine) that don't ship tzdata.
-	_ "time/tzdata"
 
 	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"github.com/noi-techpark/opendatahub-go-sdk/clib"
@@ -33,26 +29,8 @@ const (
 	dataTypeFree     = "free"
 	dataTypeOccupied = "occupied"
 
-	// measurementTimestampLayout matches "2026-03-30 11:07:58". The
-	// provider emits naive local time (Europe/Rome), without a timezone
-	// indicator — see measurementLocation below.
-	measurementTimestampLayout = "2006-01-02 15:04:05"
-
 	measurementPeriod = 0
 )
-
-// measurementLocation is the timezone the provider's naive timestamps
-// are interpreted in. Loaded once at package init so each event parse
-// doesn't repeat the (relatively expensive) tzdata lookup.
-var measurementLocation = mustLoadLocation("Europe/Rome")
-
-func mustLoadLocation(name string) *time.Location {
-	loc, err := time.LoadLocation(name)
-	if err != nil {
-		panic(fmt.Sprintf("failed to load timezone %q: %v", name, err))
-	}
-	return loc
-}
 
 var env tr.Env
 var stations Stations
@@ -120,18 +98,17 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[ParkingEven
 
 	station := buildStation(bdp, event)
 
+	// Use the ingest timestamp (rdb's payload.Timestamp) instead of the
+	// provider's measurements[].timestamp. The provider's value is a
+	// naive local string that has shown two failure modes (no timezone
+	// indicator, and an AM/PM bug at midnight that emits "12:XX" instead
+	// of "00:XX"). The ingest timestamp is the moment the push hit our
+	// edge, which is within a second of the actual measurement — good
+	// enough for parking availability and immune to both bugs.
+	tsMs := payload.Timestamp.UnixMilli()
+
 	dataMap := bdp.CreateDataMap()
 	for _, m := range event.Measurements {
-		// ParseInLocation interprets the wall-clock string in Europe/Rome,
-		// then UnixMilli() yields the correct UTC epoch — without this,
-		// CEST/CET-local times would be stored as if they were UTC and
-		// land 1–2 hours in the future.
-		ts, err := time.ParseInLocation(measurementTimestampLayout, m.Timestamp, measurementLocation)
-		if err != nil {
-			return fmt.Errorf("failed to parse measurement timestamp %q: %w", m.Timestamp, err)
-		}
-		tsMs := ts.UnixMilli()
-
 		free := m.Availability
 		occupied := event.Capacity - m.Availability
 
