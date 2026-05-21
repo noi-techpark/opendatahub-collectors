@@ -1,0 +1,58 @@
+# SPDX-FileCopyrightText: 2025 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-parking-skidata
+  pullPolicy: IfNotPresent
+  tag: ""
+
+imagePullSecrets:
+  - name: container-registry-r
+
+env:
+  LOG_LEVEL: "DEBUG"
+  MQ_QUEUE: skidata.parking-stations
+  MQ_EXCHANGE: routed
+  MQ_KEY: skidata.parking-stations
+  MQ_CLIENT: tr-parking-skidata
+
+  BDP_BASE_URL: http://bdp-core.core.svc.cluster.local
+  BDP_PROVENANCE_VERSION:
+  BDP_PROVENANCE_NAME: tr-parking-skidata
+  BDP_ORIGIN: skidata_dynamicdata
+
+  RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
+
+  SERVICE_NAME: tr-parking-skidata
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+  # Pull in the *.test.csv overlay rows (e.g. the 0600015 demo facility) on
+  # top of the synced production CSVs. Leave empty/unset in prod.
+  RESOURCES_OVERLAY: test
+
+  # OpenDataHub time-series API used at startup to hydrate the in-memory
+  # cache with the latest free/occupied per (carpark, category). Leave
+  # TS_API_BASE_URL empty to skip hydration (cache warms up from events).
+  TS_API_BASE_URL: https://mobility.api.opendatahub.testingmachine.eu
+  TS_API_REFERER: tr-parking-skidata
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
+  - name: ODH_TOKEN_URL
+    secret: oauth-collector
+    key: tokenUri
+  - name: ODH_CLIENT_ID
+    secret: oauth-collector
+    key: clientId
+  - name: ODH_CLIENT_SECRET
+    secret: oauth-collector
+    key: clientSecret
+  # Same OAuth realm reused by the timeseries client at startup.
+  - name: TS_API_TOKEN_URL
+    secret: oauth-collector
+    key: tokenUri
