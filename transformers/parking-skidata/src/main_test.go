@@ -6,11 +6,13 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"testing"
 	"time"
 
 	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"github.com/noi-techpark/go-bdp-client/bdpmock"
+	"github.com/noi-techpark/opendatahub-go-sdk/clib"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	"github.com/noi-techpark/opendatahub-go-sdk/testsuite"
 	"github.com/stretchr/testify/require"
@@ -133,6 +135,72 @@ func TestStations(t *testing.T) {
 	require.Equal(t, "ParkingStation", child.StationType)
 	require.Equal(t, "0600015", child.ParentID)
 	require.Equal(t, 0, child.CarparkID)
+}
+
+// TestStationsReferentialIntegrity validates the real stations.csv the
+// same way BDP does at sync time: every ParkingStation must point at a
+// ParkingFacility that exists in the same data set, and the child id must
+// be exactly "<parent_id>_<carpark_id>". This catches CSV mutations — e.g.
+// a spreadsheet stripping the leading zero from a numeric parent_id, or
+// demo rows leaking from the overlay into the base — at test time instead
+// of as a 400 "could not find parent station" panic in production.
+//
+// It runs against both configs: the production set (base CSV only, what
+// ships) and the test set (base + .test.csv overlay, what the rest of the
+// suite runs on). Neither may contain an orphan child or a duplicate id.
+func TestStationsReferentialIntegrity(t *testing.T) {
+	t.Run("production", func(t *testing.T) {
+		assertStationsValid(t, ReadStations("../resources/stations.csv"))
+	})
+	t.Run("with_test_overlay", func(t *testing.T) {
+		assertStationsValid(t, append(
+			ReadStations("../resources/stations.csv"),
+			ReadStationsOptional("../resources/stations.test.csv")...,
+		))
+	})
+}
+
+func assertStationsValid(t *testing.T, s Stations) {
+	t.Helper()
+
+	parentURNs := map[string]bool{}
+	seen := map[string]bool{}
+	for _, row := range s {
+		require.NotEmptyf(t, row.ID, "row with empty id")
+		require.Falsef(t, seen[row.ID], "duplicate station id %q", row.ID)
+		seen[row.ID] = true
+
+		switch row.StationType {
+		case stationTypeParent:
+			require.Emptyf(t, row.ParentID, "ParkingFacility %q must not have a parent_id", row.ID)
+			parentURNs[clib.GenerateID(ID_TEMPLATE, row.ID)] = true
+		case stationType:
+			// validated in the second pass, once every parent is known
+		default:
+			t.Fatalf("station %q has unknown station_type %q", row.ID, row.StationType)
+		}
+	}
+
+	for _, row := range s {
+		if row.StationType != stationType {
+			continue
+		}
+		require.NotEmptyf(t, row.ParentID, "ParkingStation %q has empty parent_id", row.ID)
+
+		// id, parent_id and carpark_id must be mutually consistent, mirroring
+		// how Transform derives childProviderID ("%s_%d") from the event.
+		wantID := fmt.Sprintf("%s_%d", row.ParentID, row.CarparkID)
+		require.Equalf(t, wantID, row.ID,
+			"ParkingStation id %q inconsistent with parent_id=%q carpark_id=%d",
+			row.ID, row.ParentID, row.CarparkID)
+
+		// Referential integrity: the ParentStation URN sent to BDP must
+		// resolve to a ParkingFacility in this data set.
+		parentURN := clib.GenerateID(ID_TEMPLATE, row.ParentID)
+		require.Truef(t, parentURNs[parentURN],
+			"ParkingStation %q references parent_id %q (%s) with no matching ParkingFacility row",
+			row.ID, row.ParentID, parentURN)
+	}
 }
 
 func TestCountingCategories(t *testing.T) {
