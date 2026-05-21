@@ -5,24 +5,14 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
+	"opendatahub.com/rest-push-skidata/skidata"
 )
 
-type FacilityCredential struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Facility string `json:"facility"`
-	URL      string `json:"url"`
-}
+// FacilityCredential is the in-package alias for skidata.FacilityCredential
+// so existing references in this package keep working unchanged.
+type FacilityCredential = skidata.FacilityCredential
 
-// ApiURL returns the full URL for a Skidata Dynamic Data API call.
-func (c FacilityCredential) ApiURL(path string) string {
-	return fmt.Sprintf("%s/bei/advconn/dynamicdata/v1/%s", c.URL, path)
-}
-
+// ParseCredentials parses the JSON blob from SKIDATA_CREDENTIALS_JSON.
 func ParseCredentials(jsonBlob string) ([]FacilityCredential, error) {
-	var creds []FacilityCredential
-	err := json.Unmarshal([]byte(jsonBlob), &creds)
-	return creds, err
+	return skidata.ParseCredentials([]byte(jsonBlob))
 }

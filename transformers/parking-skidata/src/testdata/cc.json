@@ -1,0 +1,26 @@
+[
+  {
+    "carparkId": 0,
+    "countingCategoryId": 1,
+    "name": "SostaBreve",
+    "capacity": 104,
+    "occupancyLimit": 104,
+    "freeLimit": 103
+  },
+  {
+    "carparkId": 0,
+    "countingCategoryId": 2,
+    "name": "Abbonati",
+    "capacity": 141,
+    "occupancyLimit": 141,
+    "freeLimit": 140
+  },
+  {
+    "carparkId": 0,
+    "countingCategoryId": 3,
+    "name": "Totale",
+    "capacity": 245,
+    "occupancyLimit": 245,
+    "freeLimit": 244
+  }
+]
