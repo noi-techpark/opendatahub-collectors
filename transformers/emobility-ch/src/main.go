@@ -145,20 +145,22 @@ func syncDataTypes(bdp bdplib.Bdp) error {
 	return bdp.SyncDataTypes([]bdplib.DataType{dtNumberAvailable, dtPlugStatus})
 }
 
-// processStaticData groups EVSEs by ChargingStationId, validates consistency within each group,
+// processStaticData groups EVSEs by OperatorID + ChargingStationId, validates consistency within each group,
 // and returns a slice of EChargingPlug stations and a slice of EChargingStation parent stations.
 func processStaticData(evseOperators []EVSEOperator) (plugStations []bdplib.Station, parentStations []bdplib.Station, err error) {
 	type stationGroup struct {
-		evses []EVSEDataItem
+		evses        []EVSEDataItem
+		operatorID   string
+		operatorName string
 	}
 	groups := make(map[string]*stationGroup)
 	groupOrder := make([]string, 0) // preserve operator order for determinism
 
 	for _, operator := range evseOperators {
 		for _, evse := range operator.EVSEDataRecord {
-			sid := evse.ChargingStationId
+			sid := operator.OperatorID + ": " + evse.ChargingStationId
 			if _, ok := groups[sid]; !ok {
-				groups[sid] = &stationGroup{}
+				groups[sid] = &stationGroup{operatorID: operator.OperatorID, operatorName: operator.OperatorName}
 				groupOrder = append(groupOrder, sid)
 			}
 			groups[sid].evses = append(groups[sid].evses, evse)
@@ -188,13 +190,6 @@ func processStaticData(evseOperators []EVSEOperator) (plugStations []bdplib.Stat
 				refLat, refLon = lat, lon
 				refName = extractStationName(evse.ChargingStationNames)
 			} else {
-				// Warn if EVSEs under the same station report different station-level fields
-				name := extractStationName(evse.ChargingStationNames)
-				if name != refName {
-					slog.Warn("EVSE under same station has different name",
-						"stationID", stationID, "evseID", evse.EvseID,
-						"expected", refName, "got", name)
-				}
 				if math.Abs(lat-refLat) > 0.001 || math.Abs(lon-refLon) > 0.001 {
 					slog.Warn("EVSE under same station has different coordinates",
 						"stationID", stationID, "evseID", evse.EvseID,
@@ -204,24 +199,14 @@ func processStaticData(evseOperators []EVSEOperator) (plugStations []bdplib.Stat
 			}
 		}
 
-		if refEVSE == nil {
-			slog.Warn("No valid EVSE for station, skipping", "stationID", stationID)
-			continue
-		}
-
-		stationName := refName
-		if stationName == "" {
-			stationName = stationID
-		}
-
 		parent := bdplib.Station{
 			Id:          stationID,
-			Name:        stationName,
+			Name:        refName,
 			Latitude:    refLat,
 			Longitude:   refLon,
 			Origin:      Origin,
 			StationType: StationTypeStation,
-			MetaData:    buildStationMetadata(refEVSE),
+			MetaData:    buildStationMetadata(refEVSE, group.operatorID, group.operatorName),
 		}
 		parentStations = append(parentStations, parent)
 
@@ -233,7 +218,7 @@ func processStaticData(evseOperators []EVSEOperator) (plugStations []bdplib.Stat
 			}
 			plug := bdplib.Station{
 				Id:            evse.EvseID,
-				Name:          stationName,
+				Name:          refName,
 				Latitude:      lat,
 				Longitude:     lon,
 				Origin:        Origin,
@@ -284,10 +269,12 @@ func extractStationName(names ChargingStationNameList) string {
 }
 
 // buildStationMetadata returns metadata fields that are common to all EVSEs under a station.
-func buildStationMetadata(evse *EVSEDataItem) map[string]interface{} {
+func buildStationMetadata(evse *EVSEDataItem, operatorID string, operatorName string) map[string]interface{} {
 	metadata := make(map[string]interface{})
 
 	metadata["chargingStationId"] = evse.ChargingStationId
+	metadata["operatorID"] = operatorID
+	metadata["operatorName"] = operatorName
 
 	if evse.Address != nil {
 		if evse.Address.Street != nil {
