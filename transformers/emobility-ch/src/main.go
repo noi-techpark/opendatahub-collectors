@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"log/slog"
 	"math"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -158,7 +159,7 @@ func processStaticData(evseOperators []EVSEOperator) (plugStations []bdplib.Stat
 
 	for _, operator := range evseOperators {
 		for _, evse := range operator.EVSEDataRecord {
-			sid := operator.OperatorID + ": " + evse.ChargingStationId
+			sid := operator.OperatorID + ":" + evse.ChargingStationId
 			if _, ok := groups[sid]; !ok {
 				groups[sid] = &stationGroup{operatorID: operator.OperatorID, operatorName: operator.OperatorName}
 				groupOrder = append(groupOrder, sid)
@@ -256,16 +257,21 @@ func parseGoogleCoords(geo *GeoCoordinate) (float64, float64, error) {
 	return lat, lon, nil
 }
 
+// Prefer english, deterministic fallback
 func extractStationName(names ChargingStationNameList) string {
 	for _, name := range names {
-		if name.Lang == "en" || name.Lang == "de" {
+		if name.Lang == "en" {
 			return name.Value
 		}
 	}
-	if len(names) > 0 {
-		return names[0].Value
+	if len(names) == 0 {
+		return ""
 	}
-	return ""
+	sorted := slices.Clone([]ChargingStationName(names))
+	slices.SortFunc(sorted, func(a, b ChargingStationName) int {
+		return strings.Compare(a.Lang, b.Lang)
+	})
+	return sorted[0].Value
 }
 
 // buildStationMetadata returns metadata fields that are common to all EVSEs under a station.

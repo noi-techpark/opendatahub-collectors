@@ -108,7 +108,7 @@ func TestTransform_PlugStationFields(t *testing.T) {
 	assert.InDelta(t, 46.4983, plug.Latitude, 0.0001)
 	assert.InDelta(t, 11.3548, plug.Longitude, 0.0001)
 	assert.Equal(t, Origin, plug.Origin)
-	assert.Equal(t, "OP-1: ST-100", plug.ParentStation)
+	assert.Equal(t, "OP-1:ST-100", plug.ParentStation)
 
 	meta := plug.MetaData
 	assert.Equal(t, "CH*BFE*E1234567", meta["evseID"])
@@ -129,7 +129,7 @@ func TestTransform_ParentStationFields(t *testing.T) {
 	require.Len(t, parents[0].Stations, 1)
 	parent := parents[0].Stations[0]
 
-	assert.Equal(t, "OP-1: ST-100", parent.Id)
+	assert.Equal(t, "OP-1:ST-100", parent.Id)
 	assert.Equal(t, "Bolzano Station", parent.Name)
 	assert.InDelta(t, 46.4983, parent.Latitude, 0.0001)
 	assert.InDelta(t, 11.3548, parent.Longitude, 0.0001)
@@ -178,7 +178,7 @@ func TestTransform_NumberAvailableMeasurement(t *testing.T) {
 	require.NoError(t, err)
 	dmStr := string(dmJSON)
 
-	assert.Contains(t, dmStr, "OP-1: ST-100", "DataMap should reference parent station id")
+	assert.Contains(t, dmStr, "OP-1:ST-100", "DataMap should reference parent station id")
 	assert.Contains(t, dmStr, dtNumberAvailable.Name, "DataMap should contain number-available datatype")
 	// single EVSE with status "Available" → count = 1
 	assert.Contains(t, dmStr, "1", "available count should be 1")
