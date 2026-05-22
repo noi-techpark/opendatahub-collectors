@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
+	"math"
 	"strconv"
 	"strings"
 
@@ -20,11 +21,23 @@ import (
 )
 
 const (
-	StationType     = "EChargingPlug"
-	DataTypeStatus  = "echarging-plug-status"
-	Origin          = "BFE" // Swiss Federal Office of Energy
-	Period          = 600   // 10 minutes
+	StationTypePlug    = "EChargingPlug"
+	StationTypeStation = "EChargingStation"
+	Origin             = "BFE" // Swiss Federal Office of Energy
+	Period             = 600   // 10 minutes
+	DataTypeStatus     = "echarging-plug-status-oicp"
 )
+
+var dtNumberAvailable = bdplib.DataType{
+	Name:        "number-available",
+	Description: "number of available vehicles / charging points",
+	Rtype:       "Instantaneous",
+}
+var dtPlugStatus = bdplib.DataType{
+	Name:        DataTypeStatus,
+	Description: "Current state of echarging plug according to OCPI standard",
+	Rtype:       "",
+}
 
 var env struct {
 	tr.Env
@@ -63,24 +76,25 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 
 	ts := payload.Timestamp.UnixMilli()
 
-	// Step 1: Process static data (EVSE locations/stations)
-	stations, err := processStaticData(payload.Rawdata.EVSEData)
+	// Step 1: Process static data — build parent EChargingStation and child EChargingPlug stations
+	plugStations, parentStations, err := processStaticData(payload.Rawdata.EVSEData)
 	if err != nil {
 		return fmt.Errorf("processing static data: %w", err)
 	}
 
-	err = bdp.SyncStations(StationType, stations, false, false)
+	err = bdp.SyncStations(StationTypeStation, parentStations, false, false)
 	if err != nil {
-		return fmt.Errorf("syncing stations: %w", err)
+		return fmt.Errorf("syncing parent stations: %w", err)
 	}
+	slog.Info("Synced parent stations", "count", len(parentStations))
 
-	slog.Info("Synced stations", "count", len(stations))
+	err = bdp.SyncStations(StationTypePlug, plugStations, false, false)
+	if err != nil {
+		return fmt.Errorf("syncing plug stations: %w", err)
+	}
+	slog.Info("Synced plug stations", "count", len(plugStations))
 
-	// Step 2: Process real-time status data
-	dataMap := bdp.CreateDataMap()
-	statusCount := 0
-
-	// Create status lookup map (flatten operator structure)
+	// Step 2: Build EVSE status lookup
 	statusByEvseID := make(map[string]string)
 	for _, statusOperator := range payload.Rawdata.EVSEStatuses {
 		for _, status := range statusOperator.EVSEStatusRecord {
@@ -88,79 +102,150 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 		}
 	}
 
-	// Push status measurements for all known stations
-	for _, station := range stations {
-		evseID := station.Id // Station ID is BFE:EvseID
-
-		if status, ok := statusByEvseID[evseID]; ok {
-			// Convert OICP status to value
-			statusValue := convertStatusToValue(status)
-			
-			record := bdplib.CreateRecord(ts, statusValue, Period)
-			dataMap.AddRecord(evseID, DataTypeStatus, record)
+	// Step 3: Push plug-level status measurements
+	plugDataMap := bdp.CreateDataMap()
+	statusCount := 0
+	for _, plug := range plugStations {
+		if status, ok := statusByEvseID[plug.Id]; ok {
+			record := bdplib.CreateRecord(ts, status, Period)
+			plugDataMap.AddRecord(plug.Id, dtPlugStatus.Name, record)
 			statusCount++
 		}
 	}
-
-	err = bdp.PushData(StationType, dataMap)
+	err = bdp.PushData(StationTypePlug, plugDataMap)
 	if err != nil {
-		return fmt.Errorf("pushing data: %w", err)
+		return fmt.Errorf("pushing plug data: %w", err)
+	}
+	slog.Info("Pushed plug status measurements", "count", statusCount)
+
+	// Step 4: Push parent-level number-available measurements
+	availableByParent := make(map[string]int)
+	for _, plug := range plugStations {
+		if statusByEvseID[plug.Id] == "Available" {
+			availableByParent[plug.ParentStation]++
+		}
 	}
 
-	slog.Info("Pushed status measurements", "count", statusCount)
+	stationDataMap := bdp.CreateDataMap()
+	for _, parent := range parentStations {
+		count := availableByParent[parent.Id]
+		record := bdplib.CreateRecord(ts, count, Period)
+		stationDataMap.AddRecord(parent.Id, dtNumberAvailable.Name, record)
+	}
+	err = bdp.PushData(StationTypeStation, stationDataMap)
+	if err != nil {
+		return fmt.Errorf("pushing station data: %w", err)
+	}
+	slog.Info("Pushed station number-available measurements", "count", len(parentStations))
+
 	return nil
 }
 
 func syncDataTypes(bdp bdplib.Bdp) error {
-	dataTypes := []bdplib.DataType{
-		bdplib.CreateDataType(
-			DataTypeStatus,
-			"state",
-			"Current status of echarging plug (OICP standard)",
-			"Instantaneous",
-		),
-	}
-	return bdp.SyncDataTypes(dataTypes)
+	return bdp.SyncDataTypes([]bdplib.DataType{dtNumberAvailable, dtPlugStatus})
 }
 
-func processStaticData(evseOperators []EVSEOperator) ([]bdplib.Station, error) {
-	stations := make([]bdplib.Station, 0)
+// processStaticData groups EVSEs by ChargingStationId, validates consistency within each group,
+// and returns a slice of EChargingPlug stations and a slice of EChargingStation parent stations.
+func processStaticData(evseOperators []EVSEOperator) (plugStations []bdplib.Station, parentStations []bdplib.Station, err error) {
+	type stationGroup struct {
+		evses []EVSEDataItem
+	}
+	groups := make(map[string]*stationGroup)
+	groupOrder := make([]string, 0) // preserve operator order for determinism
 
-	// Flatten operator structure
 	for _, operator := range evseOperators {
 		for _, evse := range operator.EVSEDataRecord {
-			// Parse coordinates
-			lat, lon, err := parseGoogleCoords(evse.GeoCoordinates)
-			if err != nil {
-				slog.Warn("Skipping EVSE with invalid coordinates",
-					"evseID", evse.EvseID, "err", err)
-				continue
+			sid := evse.ChargingStationId
+			if _, ok := groups[sid]; !ok {
+				groups[sid] = &stationGroup{}
+				groupOrder = append(groupOrder, sid)
 			}
-
-			// Extract station name
-			stationName := extractStationName(evse.ChargingStationNames)
-			if stationName == "" {
-				stationName = evse.ChargingStationId
-			}
-
-			// Build metadata
-			metadata := buildMetadata(&evse)
-
-			station := bdplib.Station{
-				Id:          evse.EvseID,
-				Name:        stationName,
-				Latitude:    lat,
-				Longitude:   lon,
-				Origin:      Origin,
-				StationType: StationType,
-				MetaData:    metadata,
-			}
-
-			stations = append(stations, station)
+			groups[sid].evses = append(groups[sid].evses, evse)
 		}
 	}
 
-	return stations, nil
+	plugStations = make([]bdplib.Station, 0)
+	parentStations = make([]bdplib.Station, 0)
+
+	for _, stationID := range groupOrder {
+		group := groups[stationID]
+
+		// Find first EVSE with valid coords as the reference for station-level fields
+		var refEVSE *EVSEDataItem
+		var refLat, refLon float64
+		var refName string
+
+		for i := range group.evses {
+			evse := &group.evses[i]
+			lat, lon, parseErr := parseGoogleCoords(evse.GeoCoordinates)
+			if parseErr != nil {
+				slog.Warn("Skipping EVSE with invalid coordinates", "evseID", evse.EvseID, "err", parseErr)
+				continue
+			}
+			if refEVSE == nil {
+				refEVSE = evse
+				refLat, refLon = lat, lon
+				refName = extractStationName(evse.ChargingStationNames)
+			} else {
+				// Warn if EVSEs under the same station report different station-level fields
+				name := extractStationName(evse.ChargingStationNames)
+				if name != refName {
+					slog.Warn("EVSE under same station has different name",
+						"stationID", stationID, "evseID", evse.EvseID,
+						"expected", refName, "got", name)
+				}
+				if math.Abs(lat-refLat) > 0.001 || math.Abs(lon-refLon) > 0.001 {
+					slog.Warn("EVSE under same station has different coordinates",
+						"stationID", stationID, "evseID", evse.EvseID,
+						"expectedLat", refLat, "expectedLon", refLon,
+						"gotLat", lat, "gotLon", lon)
+				}
+			}
+		}
+
+		if refEVSE == nil {
+			slog.Warn("No valid EVSE for station, skipping", "stationID", stationID)
+			continue
+		}
+
+		stationName := refName
+		if stationName == "" {
+			stationName = stationID
+		}
+
+		parent := bdplib.Station{
+			Id:          stationID,
+			Name:        stationName,
+			Latitude:    refLat,
+			Longitude:   refLon,
+			Origin:      Origin,
+			StationType: StationTypeStation,
+			MetaData:    buildStationMetadata(refEVSE),
+		}
+		parentStations = append(parentStations, parent)
+
+		for i := range group.evses {
+			evse := &group.evses[i]
+			lat, lon, parseErr := parseGoogleCoords(evse.GeoCoordinates)
+			if parseErr != nil {
+				continue // already warned above
+			}
+			plug := bdplib.Station{
+				Id:            evse.EvseID,
+				Name:          stationName,
+				Latitude:      lat,
+				Longitude:     lon,
+				Origin:        Origin,
+				StationType:   StationTypePlug,
+				ParentStation: stationID,
+				MetaData:      buildPlugMetadata(evse),
+			}
+			plugStations = append(plugStations, plug)
+		}
+	}
+
+	return plugStations, parentStations, nil
 }
 
 func parseGoogleCoords(geo *GeoCoordinate) (float64, float64, error) {
@@ -198,14 +283,12 @@ func extractStationName(names ChargingStationNameList) string {
 	return ""
 }
 
-func buildMetadata(evse *EVSEDataItem) map[string]interface{} {
+// buildStationMetadata returns metadata fields that are common to all EVSEs under a station.
+func buildStationMetadata(evse *EVSEDataItem) map[string]interface{} {
 	metadata := make(map[string]interface{})
 
-	// Core identifiers
-	metadata["evseID"] = evse.EvseID
 	metadata["chargingStationId"] = evse.ChargingStationId
 
-	// Address information
 	if evse.Address != nil {
 		if evse.Address.Street != nil {
 			metadata["street"] = *evse.Address.Street
@@ -221,15 +304,25 @@ func buildMetadata(evse *EVSEDataItem) map[string]interface{} {
 		}
 	}
 
-	// Accessibility
 	if evse.Accessibility != nil {
 		metadata["accessibility"] = *evse.Accessibility
 	}
 	if evse.IsOpen24Hours != nil {
 		metadata["isOpen24Hours"] = *evse.IsOpen24Hours
 	}
+	if evse.HotlinePhoneNumber != nil {
+		metadata["hotlinePhoneNumber"] = *evse.HotlinePhoneNumber
+	}
 
-	// Technical details
+	return metadata
+}
+
+// buildPlugMetadata returns metadata fields that are specific to an individual EVSE/plug.
+func buildPlugMetadata(evse *EVSEDataItem) map[string]interface{} {
+	metadata := make(map[string]interface{})
+
+	metadata["evseID"] = evse.EvseID
+
 	if len(evse.Plugs) > 0 {
 		metadata["plugs"] = evse.Plugs
 	}
@@ -243,34 +336,9 @@ func buildMetadata(evse *EVSEDataItem) map[string]interface{} {
 	if len(evse.PaymentOptions) > 0 {
 		metadata["paymentOptions"] = evse.PaymentOptions
 	}
-
-	// Energy info
 	if evse.RenewableEnergy != nil {
 		metadata["renewableEnergy"] = *evse.RenewableEnergy
 	}
 
-	// Contact
-	if evse.HotlinePhoneNumber != nil {
-		metadata["hotlinePhoneNumber"] = *evse.HotlinePhoneNumber
-	}
-
 	return metadata
-}
-
-func convertStatusToValue(status string) float64 {
-	// OICP Status codes mapping to numeric values
-	switch status {
-	case "Available":
-		return 1.0
-	case "Occupied":
-		return 2.0
-	case "Reserved":
-		return 3.0
-	case "Unknown":
-		return 0.0
-	case "OutOfService":
-		return -1.0
-	default:
-		return 0.0
-	}
 }

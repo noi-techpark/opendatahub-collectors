@@ -137,14 +137,20 @@ func TestIntegration_Transform(t *testing.T) {
 
 	calls := b.(*bdpmock.BdpMock).Requests()
 
-	assert.Contains(t, calls.SyncedStations, StationType, "expected station sync")
-	assert.Contains(t, calls.SyncedData, StationType, "expected status data push")
+	assert.Contains(t, calls.SyncedStations, StationTypeStation, "expected station sync for parent type")
+	assert.Contains(t, calls.SyncedStations, StationTypePlug, "expected station sync for plug type")
+	assert.Contains(t, calls.SyncedData, StationTypePlug, "expected status data push")
+	assert.Contains(t, calls.SyncedData, StationTypeStation, "expected number-available data push")
 
-	var totalStations int
-	for _, batch := range calls.SyncedStations[StationType] {
-		totalStations += len(batch.Stations)
+	var totalPlugs, totalParents int
+	for _, batch := range calls.SyncedStations[StationTypePlug] {
+		totalPlugs += len(batch.Stations)
 	}
-	t.Logf("synced %d stations", totalStations)
-	assert.Greater(t, totalStations, 0, "expected at least one station to be synced")
+	for _, batch := range calls.SyncedStations[StationTypeStation] {
+		totalParents += len(batch.Stations)
+	}
+	t.Logf("synced %d plug stations, %d parent stations", totalPlugs, totalParents)
+	assert.Greater(t, totalPlugs, 0, "expected at least one plug station")
+	assert.Greater(t, totalParents, 0, "expected at least one parent station")
+	assert.LessOrEqual(t, totalParents, totalPlugs, "parent count should not exceed plug count")
 }
-

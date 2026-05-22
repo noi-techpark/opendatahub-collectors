@@ -18,7 +18,7 @@ import (
 )
 
 func strPtr(value string) *string { return &value }
-func boolPtr(value bool) *bool   { return &value }
+func boolPtr(value bool) *bool    { return &value }
 
 func sampleRoot() Root {
 	return Root{
@@ -28,9 +28,9 @@ func sampleRoot() Root {
 				OperatorName: "Operator One",
 				EVSEDataRecord: []EVSEDataItem{
 					{
-						EvseID:            "CH*BFE*E1234567",
-						ChargingStationId: "ST-100",
-						GeoCoordinates:    &GeoCoordinate{Google: "46.4983 11.3548"},
+						EvseID:               "CH*BFE*E1234567",
+						ChargingStationId:    "ST-100",
+						GeoCoordinates:       &GeoCoordinate{Google: "46.4983 11.3548"},
 						ChargingStationNames: []ChargingStationName{{Lang: "en", Value: "Bolzano Station"}},
 						Address: &EVSEAddress{
 							Street:     strPtr("Via Stazione 1"),
@@ -90,7 +90,7 @@ func TestTransform_PlainJSON(t *testing.T) {
 	assertExpectedBdpCalls(t, calls)
 }
 
-func TestTransform_StationFields(t *testing.T) {
+func TestTransform_PlugStationFields(t *testing.T) {
 	root := sampleRoot()
 	payload, err := json.Marshal(root)
 	require.NoError(t, err)
@@ -98,21 +98,48 @@ func TestTransform_StationFields(t *testing.T) {
 
 	calls := mock.Requests()
 
-	stations := calls.SyncedStations[StationType]
-	require.Len(t, stations, 1)
-	require.Len(t, stations[0].Stations, 1)
-	station := stations[0].Stations[0]
+	plugs := calls.SyncedStations[StationTypePlug]
+	require.Len(t, plugs, 1)
+	require.Len(t, plugs[0].Stations, 1)
+	plug := plugs[0].Stations[0]
 
-	assert.Equal(t, "CH*BFE*E1234567", station.Id)
-	assert.Equal(t, "Bolzano Station", station.Name)
-	assert.InDelta(t, 46.4983, station.Latitude, 0.0001)
-	assert.InDelta(t, 11.3548, station.Longitude, 0.0001)
-	assert.Equal(t, Origin, station.Origin)
+	assert.Equal(t, "CH*BFE*E1234567", plug.Id)
+	assert.Equal(t, "Bolzano Station", plug.Name)
+	assert.InDelta(t, 46.4983, plug.Latitude, 0.0001)
+	assert.InDelta(t, 11.3548, plug.Longitude, 0.0001)
+	assert.Equal(t, Origin, plug.Origin)
+	assert.Equal(t, "ST-100", plug.ParentStation)
 
-	meta := station.MetaData
+	meta := plug.MetaData
 	assert.Equal(t, "CH*BFE*E1234567", meta["evseID"])
+	assert.NotContains(t, meta, "city", "city is station-level and should not appear in plug metadata")
+	assert.NotContains(t, meta, "chargingStationId", "chargingStationId is station-level and should not appear in plug metadata")
+}
+
+func TestTransform_ParentStationFields(t *testing.T) {
+	root := sampleRoot()
+	payload, err := json.Marshal(root)
+	require.NoError(t, err)
+	mock := runTransform(t, string(payload))
+
+	calls := mock.Requests()
+
+	parents := calls.SyncedStations[StationTypeStation]
+	require.Len(t, parents, 1)
+	require.Len(t, parents[0].Stations, 1)
+	parent := parents[0].Stations[0]
+
+	assert.Equal(t, "ST-100", parent.Id)
+	assert.Equal(t, "Bolzano Station", parent.Name)
+	assert.InDelta(t, 46.4983, parent.Latitude, 0.0001)
+	assert.InDelta(t, 11.3548, parent.Longitude, 0.0001)
+	assert.Equal(t, Origin, parent.Origin)
+
+	meta := parent.MetaData
 	assert.Equal(t, "ST-100", meta["chargingStationId"])
 	assert.Equal(t, "Bolzano", meta["city"])
+	assert.Equal(t, "Public", meta["accessibility"])
+	assert.Equal(t, true, meta["isOpen24Hours"])
 }
 
 func TestTransform_StatusMeasurements(t *testing.T) {
@@ -123,7 +150,7 @@ func TestTransform_StatusMeasurements(t *testing.T) {
 
 	calls := mock.Requests()
 
-	statusData := calls.SyncedData[StationType]
+	statusData := calls.SyncedData[StationTypePlug]
 	require.NotEmpty(t, statusData, "expected e-mobility status data push")
 
 	dmJSON, err := json.Marshal(statusData)
@@ -134,14 +161,41 @@ func TestTransform_StatusMeasurements(t *testing.T) {
 	assert.Contains(t, dmStr, DataTypeStatus, "DataMap should contain status datatype")
 }
 
+func TestTransform_NumberAvailableMeasurement(t *testing.T) {
+	root := sampleRoot()
+	payload, err := json.Marshal(root)
+	require.NoError(t, err)
+	mock := runTransform(t, string(payload))
+
+	calls := mock.Requests()
+
+	stationData := calls.SyncedData[StationTypeStation]
+	require.NotEmpty(t, stationData, "expected number-available data push for parent station")
+
+	dmJSON, err := json.Marshal(stationData)
+	require.NoError(t, err)
+	dmStr := string(dmJSON)
+
+	assert.Contains(t, dmStr, "ST-100", "DataMap should reference parent station id")
+	assert.Contains(t, dmStr, dtNumberAvailable.Name, "DataMap should contain number-available datatype")
+	// single EVSE with status "Available" → count = 1
+	assert.Contains(t, dmStr, "1", "available count should be 1")
+}
+
 func assertExpectedBdpCalls(t *testing.T, calls bdpmock.BdpMockCalls) {
 	t.Helper()
 
-	assert.Contains(t, calls.SyncedStations, StationType, "expected station sync for e-mobility type")
+	assert.Contains(t, calls.SyncedStations, StationTypeStation, "expected station sync for parent type")
+	assert.Contains(t, calls.SyncedStations, StationTypePlug, "expected station sync for plug type")
 
-	stations := calls.SyncedStations[StationType]
-	require.Len(t, stations, 1)
-	assert.Len(t, stations[0].Stations, 1)
+	parents := calls.SyncedStations[StationTypeStation]
+	require.Len(t, parents, 1)
+	assert.Len(t, parents[0].Stations, 1)
 
-	assert.Contains(t, calls.SyncedData, StationType, "expected status data push")
+	plugs := calls.SyncedStations[StationTypePlug]
+	require.Len(t, plugs, 1)
+	assert.Len(t, plugs[0].Stations, 1)
+
+	assert.Contains(t, calls.SyncedData, StationTypePlug, "expected status data push")
+	assert.Contains(t, calls.SyncedData, StationTypeStation, "expected number-available data push")
 }
