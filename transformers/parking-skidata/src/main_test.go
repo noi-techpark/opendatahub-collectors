@@ -339,6 +339,32 @@ func TestTransform_MultiCategorySequence(t *testing.T) {
 	bdpmock.CompareBdpMockCalls(t, out, req)
 }
 
+// TestAddKnownRecord_PrunesUnregistered verifies that records for
+// datatypes not registered via syncDataTypes (e.g. per-floor counting
+// categories absent from counting_categories.csv) are dropped before
+// pushing, while registered datatypes pass through.
+func TestAddKnownRecord_PrunesUnregistered(t *testing.T) {
+	loadTestFixtures(t) // populates knownDataTypes from the loaded categories
+
+	// Sanity: the floor datatypes the live feed sends are NOT registered.
+	require.False(t, knownDataTypes["free_1_ug"])
+	require.False(t, knownDataTypes["free_eg"])
+	require.True(t, knownDataTypes["free"])
+	require.True(t, knownDataTypes["free_short_stay"])
+
+	dm := bdplib.DataMap{Name: "(default)", Branch: map[string]bdplib.DataMap{}}
+	addKnownRecord(&dm, "child", "free", 1, 10)           // registered
+	addKnownRecord(&dm, "child", "free_short_stay", 1, 5) // registered
+	addKnownRecord(&dm, "child", "free_1_ug", 1, 7)       // floor → pruned
+	addKnownRecord(&dm, "child", "free_eg", 1, 3)         // floor → pruned
+
+	branch := dm.Branch["child"].Branch
+	require.Contains(t, branch, "free")
+	require.Contains(t, branch, "free_short_stay")
+	require.NotContains(t, branch, "free_1_ug")
+	require.NotContains(t, branch, "free_eg")
+}
+
 func TestCarparkOverall_Cat3Wins(t *testing.T) {
 	c := NewCache()
 	c.Set("0600015_0", "free_short_stay", 80, 1)
