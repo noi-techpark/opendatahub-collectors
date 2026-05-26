@@ -161,7 +161,8 @@ func GetEncoder(c RootConfig) func(d any) (string, error) {
 // extractData attempts to extract a value using a JSONPath selector.
 // If an "index out of range" error occurs, it returns nil
 func extractData(result []byte, selector_type, selector string) (interface{}, error) {
-	if selector_type == "json" {
+	switch selector_type {
+	case "json":
 		slog.Debug("extracting with json selector", "selector", selector)
 
 		var jsonData interface{}
@@ -182,7 +183,7 @@ func extractData(result []byte, selector_type, selector string) (interface{}, er
 			return val, nil
 		}
 		return jsonData, nil
-	} else if selector_type == "string" {
+	case "string":
 		return string(result), nil
 	}
 	// TODO do xml extractor using https://github.com/antchfx/xmlquery

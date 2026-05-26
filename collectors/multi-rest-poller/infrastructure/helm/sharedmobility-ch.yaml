@@ -9,6 +9,7 @@ env:
 
   CRON: "0 */5 * * * *"
   HTTP_CONFIG_PATH: "/config/http-config.yaml"
+  RAW_WRITER_REST_BASE_URL: http://raw-writer-2.core.svc.cluster.local
   SERVICE_NAME: dc-multi-rest-poller-sharedmobility-ch
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 
