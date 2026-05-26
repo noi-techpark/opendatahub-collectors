@@ -155,7 +155,7 @@ func loadResources(resourcesDir string) {
 // categories absent from counting_categories.csv, such as per-floor
 // counts) are skipped here so we never push records BDP would reject with
 // "Type not found". Fails open if the set is uninitialised, to avoid
-// silently dropping everything when resources weren't loaded.
+// silently dropping everything when resources weren't loaded .
 func addKnownRecord(dm *bdplib.DataMap, scode, datatype string, ts int64, value int) {
 	if len(knownDataTypes) > 0 && !knownDataTypes[datatype] {
 		slog.Debug("skipping unregistered datatype", "datatype", datatype, "scode", scode)
