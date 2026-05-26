@@ -16,6 +16,7 @@ import (
 
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/dc"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	"github.com/noi-techpark/opendatahub-go-sdk/tel"
 	"github.com/noi-techpark/opendatahub-go-sdk/tel/logger"
 	"github.com/robfig/cron/v3"
@@ -41,7 +42,7 @@ var env struct {
 
 	AUTH_BEARER_TOKEN string
 
-	RAW_WRITER_BASE_URL string `default:"http://raw-writer-2.core.svc.cluster.local"`
+	RAW_WRITER_REST_BASE_URL string
 }
 
 func sendRaw(baseURL, provider string, timestamp time.Time, data string, contentType string) error {
@@ -132,8 +133,16 @@ func main() {
 						)
 					}
 
-					err = sendRaw(env.RAW_WRITER_BASE_URL, env.PROVIDER, time.Now(), enc_data, contentType)
-					ms.FailOnError(pubCtx, err, "failed to send raw data", "err", err)
+					if env.RAW_WRITER_REST_BASE_URL != "" {
+						err = sendRaw(env.RAW_WRITER_REST_BASE_URL, env.PROVIDER, time.Now(), enc_data, contentType)
+					} else {
+						err = col.Publish(pubCtx, &rdb.RawAny{
+							Provider:  env.PROVIDER,
+							Timestamp: time.Now(),
+							Rawdata:   enc_data,
+						})
+					}
+					ms.FailOnError(pubCtx, err, "failed to publish", "err", err)
 					pubSpan.End()
 				}
 			}
@@ -147,8 +156,16 @@ func main() {
 			enc_data, err := encoder(data)
 			ms.FailOnError(ctx, err, "failed to encode data", "err", err, "data", data)
 
-			err = sendRaw(env.RAW_WRITER_BASE_URL, env.PROVIDER, time.Now(), enc_data, contentType)
-			ms.FailOnError(ctx, err, "failed to send raw data", "err", err)
+			if env.RAW_WRITER_REST_BASE_URL != "" {
+				err = sendRaw(env.RAW_WRITER_REST_BASE_URL, env.PROVIDER, time.Now(), enc_data, contentType)
+			} else {
+				err = col.Publish(ctx, &rdb.RawAny{
+					Provider:  env.PROVIDER,
+					Timestamp: time.Now(),
+					Rawdata:   enc_data,
+				})
+			}
+			ms.FailOnError(ctx, err, "failed to publish", "err", err)
 		}
 
 		logger.Get(ctx).Info("collection completed", "runtime_ms", time.Since(jobstart).Milliseconds())
