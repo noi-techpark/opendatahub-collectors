@@ -22,7 +22,6 @@ import (
 )
 
 const (
-	SOURCE      = "skidata"
 	ID_TEMPLATE = "urn:parking:skidata"
 
 	stationTypeParent = "ParkingFacility"
@@ -37,9 +36,9 @@ var env struct {
 	// Time-series API used to hydrate the in-memory cache at startup.
 	// The same OAuth client_id/secret is used for both BDP writes and
 	// timeseries reads (mirrors the pattern in people-flow-systems-me).
-	TS_API_BASE_URL string `default:""`
+	TS_API_BASE_URL  string `default:""`
 	TS_API_TOKEN_URL string `default:""`
-	TS_API_REFERER  string `default:"tr-parking-skidata"`
+	TS_API_REFERER   string `default:"tr-parking-skidata"`
 }
 
 var stations Stations
@@ -252,10 +251,10 @@ func syncAllStations(bdp bdplib.Bdp) error {
 		"parking_facilities", len(parents),
 		"parking_stations", len(children))
 
-	if err := bdp.SyncStations(stationTypeParent, parents, true, false); err != nil {
+	if err := bdp.SyncStations(stationTypeParent, parents, true, true); err != nil {
 		return fmt.Errorf("sync parents: %w", err)
 	}
-	if err := bdp.SyncStations(stationType, children, true, false); err != nil {
+	if err := bdp.SyncStations(stationType, children, true, true); err != nil {
 		return fmt.Errorf("sync children: %w", err)
 	}
 	return nil
