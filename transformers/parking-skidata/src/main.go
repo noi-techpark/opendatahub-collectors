@@ -46,6 +46,15 @@ var categories CountingCategories
 var cache *Cache
 var urnToProviderID map[string]string
 
+// knownDataTypes is the set of BDP datatype names this transformer has
+// registered via syncDataTypes (derived from the loaded counting
+// categories). Records for any other datatype are dropped before pushing:
+// the Skidata feed sometimes reports counting categories that aren't in
+// counting_categories.csv (e.g. per-floor "EG"/"1.UG"/"1.OG"), whose
+// datatypes don't exist in BDP — pushing them just yields server-side
+// "Type not found" skips.
+var knownDataTypes map[string]bool
+
 func main() {
 	ms.InitWithEnv(context.Background(), "", &env)
 	slog.Info("Starting parking-skidata transformer...")
@@ -119,17 +128,40 @@ func loadResources(resourcesDir string) {
 	if overlay == "" {
 		slog.Info("No RESOURCES_OVERLAY set; loading base CSVs only",
 			"stations", len(stations), "categories", len(categories))
+	} else {
+		suffix := "." + overlay + ".csv"
+		overlayStations := ReadStationsOptional(resourcesDir + "/stations" + suffix)
+		overlayCategories := ReadCountingCategoriesOptional(resourcesDir + "/counting_categories" + suffix)
+		stations = append(stations, overlayStations...)
+		categories = append(categories, overlayCategories...)
+		slog.Info("Loaded CSVs with overlay",
+			"overlay", overlay,
+			"stations", len(stations), "extra_stations", len(overlayStations),
+			"categories", len(categories), "extra_categories", len(overlayCategories))
+	}
+
+	// Build the registered-datatype set from the final category list. This
+	// mirrors exactly what syncDataTypes registers, so Transform can drop
+	// records for unregistered (e.g. per-floor) categories before pushing.
+	knownDataTypes = map[string]bool{}
+	for _, name := range allDataTypeNames(categories) {
+		knownDataTypes[name] = true
+	}
+	slog.Info("Registered datatype set built", "count", len(knownDataTypes))
+}
+
+// addKnownRecord adds a measurement to dm only if its datatype was
+// registered via syncDataTypes. Unregistered datatypes (counting
+// categories absent from counting_categories.csv, such as per-floor
+// counts) are skipped here so we never push records BDP would reject with
+// "Type not found". Fails open if the set is uninitialised, to avoid
+// silently dropping everything when resources weren't loaded.
+func addKnownRecord(dm *bdplib.DataMap, scode, datatype string, ts int64, value int) {
+	if len(knownDataTypes) > 0 && !knownDataTypes[datatype] {
+		slog.Debug("skipping unregistered datatype", "datatype", datatype, "scode", scode)
 		return
 	}
-	suffix := "." + overlay + ".csv"
-	overlayStations := ReadStationsOptional(resourcesDir + "/stations" + suffix)
-	overlayCategories := ReadCountingCategoriesOptional(resourcesDir + "/counting_categories" + suffix)
-	stations = append(stations, overlayStations...)
-	categories = append(categories, overlayCategories...)
-	slog.Info("Loaded CSVs with overlay",
-		"overlay", overlay,
-		"stations", len(stations), "extra_stations", len(overlayStations),
-		"categories", len(categories), "extra_categories", len(overlayCategories))
+	dm.AddRecord(scode, datatype, bdplib.CreateRecord(ts, value, measurementPeriod))
 }
 
 func TransformWithBdp(bdp bdplib.Bdp) tr.Handler[ParkingEvent] {
@@ -182,10 +214,11 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[ParkingEven
 	cache.Set(childProviderID, d.freeType(), free, ts)
 	cache.Set(childProviderID, d.occupiedType(), occupied, ts)
 
-	// 2. Per-category carpark measurement.
+	// 2. Per-category carpark measurement. Dropped if the category's
+	//    datatype isn't registered (see addKnownRecord).
 	carparkData := bdp.CreateDataMap()
-	carparkData.AddRecord(childID, d.freeType(), bdplib.CreateRecord(ts, free, measurementPeriod))
-	carparkData.AddRecord(childID, d.occupiedType(), bdplib.CreateRecord(ts, occupied, measurementPeriod))
+	addKnownRecord(&carparkData, childID, d.freeType(), ts, free)
+	addKnownRecord(&carparkData, childID, d.occupiedType(), ts, occupied)
 
 	// 3. Carpark overall = cat-3 (Totale) only. The per-category records
 	//    above give granularity but are never summed into the overall
@@ -194,10 +227,10 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[ParkingEven
 	//    `free`/`occupied`. Nothing is published until a cat-3 value exists.
 	if d.suffix != "" {
 		if v, ok := cache.CarparkOverall(childProviderID, "free"); ok {
-			carparkData.AddRecord(childID, "free", bdplib.CreateRecord(ts, v, measurementPeriod))
+			addKnownRecord(&carparkData, childID, "free", ts, v)
 		}
 		if v, ok := cache.CarparkOverall(childProviderID, "occupied"); ok {
-			carparkData.AddRecord(childID, "occupied", bdplib.CreateRecord(ts, v, measurementPeriod))
+			addKnownRecord(&carparkData, childID, "occupied", ts, v)
 		}
 	}
 
@@ -207,13 +240,13 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[ParkingEven
 
 	// 4. Facility-level aggregates (overall + per-category).
 	facilityData := bdp.CreateDataMap()
-	facilityData.AddRecord(parentID, "free", bdplib.CreateRecord(ts, cache.FacilityOverall(parentProviderID, "free"), measurementPeriod))
-	facilityData.AddRecord(parentID, "occupied", bdplib.CreateRecord(ts, cache.FacilityOverall(parentProviderID, "occupied"), measurementPeriod))
+	addKnownRecord(&facilityData, parentID, "free", ts, cache.FacilityOverall(parentProviderID, "free"))
+	addKnownRecord(&facilityData, parentID, "occupied", ts, cache.FacilityOverall(parentProviderID, "occupied"))
 	// Per-category facility totals — skip cat 3 because that's already
 	// the overall (would push the same record twice on the parent URN).
 	if d.suffix != "" {
-		facilityData.AddRecord(parentID, d.freeType(), bdplib.CreateRecord(ts, cache.FacilityPerCategory(parentProviderID, d.freeType()), measurementPeriod))
-		facilityData.AddRecord(parentID, d.occupiedType(), bdplib.CreateRecord(ts, cache.FacilityPerCategory(parentProviderID, d.occupiedType()), measurementPeriod))
+		addKnownRecord(&facilityData, parentID, d.freeType(), ts, cache.FacilityPerCategory(parentProviderID, d.freeType()))
+		addKnownRecord(&facilityData, parentID, d.occupiedType(), ts, cache.FacilityPerCategory(parentProviderID, d.occupiedType()))
 	}
 
 	if err := bdp.PushData(stationTypeParent, facilityData); err != nil {
