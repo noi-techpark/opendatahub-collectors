@@ -187,9 +187,11 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[ParkingEven
 	carparkData.AddRecord(childID, d.freeType(), bdplib.CreateRecord(ts, free, measurementPeriod))
 	carparkData.AddRecord(childID, d.occupiedType(), bdplib.CreateRecord(ts, occupied, measurementPeriod))
 
-	// 3. Carpark overall (cat-3 if present, else sum of non-3).
-	//    Skip when the event itself is cat 3 — its per-category push
-	//    already lands on `free`/`occupied` (same datatype, same value).
+	// 3. Carpark overall = cat-3 (Totale) only. The per-category records
+	//    above give granularity but are never summed into the overall
+	//    (categories can share slots, which would overcount). Skip when the
+	//    event itself is cat 3 — its per-category push already landed on
+	//    `free`/`occupied`. Nothing is published until a cat-3 value exists.
 	if d.suffix != "" {
 		if v, ok := cache.CarparkOverall(childProviderID, "free"); ok {
 			carparkData.AddRecord(childID, "free", bdplib.CreateRecord(ts, v, measurementPeriod))

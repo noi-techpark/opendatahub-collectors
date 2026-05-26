@@ -56,13 +56,18 @@ func (c *Cache) Get(childID, datatype string) (LatestRecord, bool) {
 	return LatestRecord{}, false
 }
 
-// CarparkOverall returns the carpark's "overall" free/occupied value
-// using Skidata's category 3 (Totale) when available, otherwise summing
-// every cached non-cat-3 category for that prefix.
+// CarparkOverall returns the carpark's "overall" free/occupied value taken
+// solely from Skidata's category 3 (Totale / Gesamt) — the provider's
+// authoritative total. Per-category values are deliberately NOT summed:
+// categories frequently share the same physical slots (or use the 9999
+// "unlimited" sentinel), so summing them overcounts the real total. The
+// per-category measurements are still published for granularity, they just
+// don't feed the overall.
 //
-// prefix is "free" or "occupied". The bare prefix (no suffix) corresponds
-// to category 3; suffixed datatypes ("free_short_stay", etc.) are the
-// other categories.
+// Returns ok=false until a cat-3 measurement has been seen for the carpark,
+// so we never publish a derived/guessed total.
+//
+// prefix is "free" or "occupied". The bare prefix (no suffix) is category 3.
 func (c *Cache) CarparkOverall(childID, prefix string) (int, bool) {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
@@ -70,18 +75,11 @@ func (c *Cache) CarparkOverall(childID, prefix string) (int, bool) {
 	if !ok {
 		return 0, false
 	}
-	if rec, ok := row[prefix]; ok {
-		return rec.Value, true
+	rec, ok := row[prefix]
+	if !ok {
+		return 0, false
 	}
-	sum := 0
-	found := false
-	for k, rec := range row {
-		if strings.HasPrefix(k, prefix+"_") {
-			sum += rec.Value
-			found = true
-		}
-	}
-	return sum, found
+	return rec.Value, true
 }
 
 // FacilityOverall returns the sum of CarparkOverall across every
