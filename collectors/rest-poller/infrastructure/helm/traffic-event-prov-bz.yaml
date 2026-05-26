@@ -8,7 +8,7 @@ env:
   PROVIDER: traffic-event/prov-bz
 
   CRON: "0 */10 * * * *"
-  HTTP_URL: "https://www.provinz.bz.it/vmz/traffic.json"
+  HTTP_URL: "https://static-verkehr.provinz.bz.it/publications/traffic/traffic.json"
 
   SERVICE_NAME: dc-rest-poller-traffic-event-prov-bz
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
