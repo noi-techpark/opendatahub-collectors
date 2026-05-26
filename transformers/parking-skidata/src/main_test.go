@@ -350,15 +350,22 @@ func TestCarparkOverall_Cat3Wins(t *testing.T) {
 	require.Equal(t, 120, v)
 }
 
-func TestCarparkOverall_FallbackSum(t *testing.T) {
+func TestCarparkOverall_NoTotalUntilCat3(t *testing.T) {
 	c := NewCache()
 	c.Set("0600015_0", "free_short_stay", 80, 1)
 	c.Set("0600015_0", "free_subscribers", 40, 1)
-	// no cat 3 cached -> overall = sum of the others
+	// No cat 3 yet: categories are NOT summed (they can share physical
+	// slots), so there is no authoritative overall to publish.
+	_, ok := c.CarparkOverall("0600015_0", "free")
+	require.False(t, ok)
 
+	// Once cat 3 (Totale) arrives it becomes the overall — and it is LESS
+	// than the 120 a naive category sum would have produced, because the
+	// categories overlap.
+	c.Set("0600015_0", "free", 90, 2)
 	v, ok := c.CarparkOverall("0600015_0", "free")
 	require.True(t, ok)
-	require.Equal(t, 120, v)
+	require.Equal(t, 90, v)
 }
 
 func TestFacilityAggregations(t *testing.T) {
