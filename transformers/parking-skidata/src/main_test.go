@@ -374,8 +374,8 @@ func TestAddKnownRecord_PrunesUnregistered(t *testing.T) {
 //   - 608935/0 cat-3        : normal -> ParkingStation free=466 occupied=54
 //   - 602581/0 cat-1 cap9999: the "9999 unlimited" sentinel leaks as a real
 //     number -> free_short_stay=9836 (garbage)
-//   - 609420/0 cat-1 lvl<0  : negative provider level -> occupied_short_stay
-//     = -4559, free_short_stay = 14558 (garbage)
+//   - 609420/0 cat-1 lvl<0  : negative provider level -> clamped into
+//     [0, capacity] -> occupied_short_stay=0, free_short_stay=9999
 //   - 601393/1 cat-2 then cat-3: per-category then the cat-3 overall
 //   - 602581/0 cat-7 "1. UG": a per-floor category absent from
 //     counting_categories.csv -> datatype pruned -> empty ParkingStation push
@@ -414,26 +414,26 @@ func TestTransform_RealData_Snapshot(t *testing.T) {
 	bdpmock.CompareBdpMockCalls(t, out, req)
 }
 
-// TestTransform_RealData_DataQuality asserts, on real captured values, the
-// concrete data-quality problems the transformer currently passes through
-// unguarded. These are the cases a validation guard should reject/clamp.
-func TestTransform_RealData_DataQuality(t *testing.T) {
+// TestTransform_RealData_Clamping verifies out-of-range provider data is
+// clamped into [0, capacity] before publishing. With a negative level the
+// raw values would be occupied=-4559, free=14558; after clamping they must
+// be occupied=0, free=capacity.
+func TestTransform_RealData_Clamping(t *testing.T) {
 	loadTestFixtures(t)
 	b := bdpmock.MockFromEnv(bdplib.BdpEnv{})
 	ts, err := time.Parse("2006-01-02", "2025-01-01")
 	require.Nil(t, err)
 
-	// Negative provider level -> negative occupied, free above capacity.
 	neg := &rdb.Raw[ParkingEvent]{
 		Rawdata:   ParkingEvent{Name: "Sosta Breve", Level: -4559, Capacity: 9999, CountingCategoryId: 1, Carpark: Carpark{FacilityNr: 609420, Id: 0}},
 		Timestamp: ts,
 	}
 	require.Nil(t, Transform(context.TODO(), b, neg))
 
-	rec := recordFor(t, b.(*bdpmock.BdpMock), stationType, "occupied_short_stay")
-	require.Less(t, rec, 0, "negative provider level currently produces negative occupied (no guard)")
+	occ := recordFor(t, b.(*bdpmock.BdpMock), stationType, "occupied_short_stay")
+	require.Equal(t, 0, occ, "negative occupied must be clamped to 0")
 	free := recordFor(t, b.(*bdpmock.BdpMock), stationType, "free_short_stay")
-	require.Greater(t, free, 9999, "free exceeds the 9999 sentinel capacity (no guard)")
+	require.Equal(t, 9999, free, "free above capacity must be clamped to capacity")
 }
 
 // recordFor returns the latest value pushed for (stationType, datatype),

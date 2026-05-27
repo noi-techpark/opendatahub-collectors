@@ -172,6 +172,21 @@ func loadResources(resourcesDir string) {
 // counts) are skipped here so we never push records BDP would reject with
 // "Type not found". Fails open if the set is uninitialised, to avoid
 // silently dropping everything when resources weren't loaded.
+// clampInt constrains v to [0, hi]. If hi is negative (e.g. a garbage
+// capacity), the upper bound collapses to 0.
+func clampInt(v, hi int) int {
+	if hi < 0 {
+		hi = 0
+	}
+	if v < 0 {
+		return 0
+	}
+	if v > hi {
+		return hi
+	}
+	return v
+}
+
 func addKnownRecord(ctx context.Context, dm *bdplib.DataMap, scode, datatype string, ts int64, value int) {
 	if len(knownDataTypes) > 0 && !knownDataTypes[datatype] {
 		logger.Get(ctx).Debug("skipping unregistered datatype", "datatype", datatype, "scode", scode)
@@ -233,6 +248,19 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[ParkingEven
 
 	free := event.Capacity - event.Level
 	occupied := event.Level
+	// The provider occasionally sends out-of-range data (e.g. a negative
+	// level, which yields a negative occupied and a free above capacity).
+	// Clamp both into the safe [0, capacity] range so we never publish a
+	// negative or impossible count.
+	if free < 0 || occupied < 0 || free > event.Capacity || occupied > event.Capacity {
+		logger.Get(ctx).Warn("Clamping out-of-range parking values into [0, capacity]",
+			"facilityNr", event.Carpark.FacilityNr, "carparkId", event.Carpark.Id,
+			"category", event.CountingCategoryId,
+			"level", event.Level, "capacity", event.Capacity,
+			"raw_free", free, "raw_occupied", occupied)
+		free = clampInt(free, event.Capacity)
+		occupied = clampInt(occupied, event.Capacity)
+	}
 
 	parentID := clib.GenerateID(ID_TEMPLATE, parentProviderID)
 	childID := clib.GenerateID(ID_TEMPLATE, childProviderID)
