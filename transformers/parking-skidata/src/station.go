@@ -11,6 +11,7 @@ import (
 
 	"github.com/gocarina/gocsv"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
+	"github.com/noi-techpark/opendatahub-go-sdk/tel/logger"
 )
 
 // Station represents one row from the stations CSV.
@@ -38,6 +39,33 @@ type Station struct {
 
 type Stations []Station
 
+// isComplete reports whether the station carries the minimum the BDP writer
+// requires to accept it: a non-empty name and non-zero coordinates. The
+// sync-stations script can emit placeholder rows (empty name, 0/0 coords)
+// for facilities it discovered but couldn't enrich; the writer silently
+// rejects those ("Invalid JSON for StationDto") on syncStations, so we drop
+// them at load time — they are never synced and, because they never enter
+// the in-memory station set, no measurements are pushed for them either.
+func (s Station) isComplete() bool {
+	return s.Name != "" && (s.Lat != 0 || s.Lon != 0)
+}
+
+// dropIncomplete filters out rows that aren't fully populated, warning once
+// per dropped station.
+func dropIncomplete(in Stations) Stations {
+	out := make(Stations, 0, len(in))
+	for _, s := range in {
+		if !s.isComplete() {
+			logger.Get(context.Background()).Warn(
+				"Dropping not-fully-populated station (empty name or 0/0 coordinates); it will not be synced and no measurements will be pushed for it",
+				"id", s.ID, "station_type", s.StationType, "name", s.Name, "lat", s.Lat, "lon", s.Lon)
+			continue
+		}
+		out = append(out, s)
+	}
+	return out
+}
+
 func ReadStations(filename string) Stations {
 	f, err := os.Open(filename)
 	ms.FailOnError(context.Background(), err, "failed opening csv file")
@@ -47,7 +75,7 @@ func ReadStations(filename string) Stations {
 	err = gocsv.UnmarshalFile(f, &facilities)
 	ms.FailOnError(context.Background(), err, "failed unmarshalling csv")
 
-	return facilities
+	return dropIncomplete(facilities)
 }
 
 // ReadStationsOptional reads a stations CSV file like ReadStations, but
@@ -67,7 +95,7 @@ func ReadStationsOptional(filename string) Stations {
 	var facilities Stations
 	err = gocsv.UnmarshalFile(f, &facilities)
 	ms.FailOnError(context.Background(), err, "failed unmarshalling optional csv")
-	return facilities
+	return dropIncomplete(facilities)
 }
 
 // ToMetadata converts the Station into a map suitable for BDP station metadata.

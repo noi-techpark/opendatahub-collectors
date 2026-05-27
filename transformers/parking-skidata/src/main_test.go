@@ -353,16 +353,121 @@ func TestAddKnownRecord_PrunesUnregistered(t *testing.T) {
 	require.True(t, knownDataTypes["free_short_stay"])
 
 	dm := bdplib.DataMap{Name: "(default)", Branch: map[string]bdplib.DataMap{}}
-	addKnownRecord(&dm, "child", "free", 1, 10)           // registered
-	addKnownRecord(&dm, "child", "free_short_stay", 1, 5) // registered
-	addKnownRecord(&dm, "child", "free_1_ug", 1, 7)       // floor → pruned
-	addKnownRecord(&dm, "child", "free_eg", 1, 3)         // floor → pruned
+	addKnownRecord(context.TODO(), &dm, "child", "free", 1, 10)           // registered
+	addKnownRecord(context.TODO(), &dm, "child", "free_short_stay", 1, 5) // registered
+	addKnownRecord(context.TODO(), &dm, "child", "free_1_ug", 1, 7)       // floor → pruned
+	addKnownRecord(context.TODO(), &dm, "child", "free_eg", 1, 3)         // floor → pruned
 
 	branch := dm.Branch["child"].Branch
 	require.Contains(t, branch, "free")
 	require.Contains(t, branch, "free_short_stay")
 	require.NotContains(t, branch, "free_1_ug")
 	require.NotContains(t, branch, "free_eg")
+}
+
+// TestTransform_RealData_Snapshot drives Transform with a sequence of REAL
+// events captured from the live feed (via the raw-data bridge), starting
+// from an empty cache, and snapshots the resulting BDP calls into
+// testdata/out_realdata.json for visual inspection. It documents current
+// behaviour AND makes the data-quality issues visible in the snapshot:
+//
+//   - 608935/0 cat-3        : normal -> ParkingStation free=466 occupied=54
+//   - 602581/0 cat-1 cap9999: the "9999 unlimited" sentinel leaks as a real
+//     number -> free_short_stay=9836 (garbage)
+//   - 609420/0 cat-1 lvl<0  : negative provider level -> occupied_short_stay
+//     = -4559, free_short_stay = 14558 (garbage)
+//   - 601393/1 cat-2 then cat-3: per-category then the cat-3 overall
+//   - 602581/0 cat-7 "1. UG": a per-floor category absent from
+//     counting_categories.csv -> datatype pruned -> empty ParkingStation push
+//
+// Regenerate by deleting testdata/out_realdata.json and re-running.
+func TestTransform_RealData_Snapshot(t *testing.T) {
+	loadTestFixtures(t)
+
+	var events []ParkingEvent
+	require.Nil(t, testsuite.LoadInputData(&events, "testdata/in_realdata.json"))
+
+	timestamp, err := time.Parse("2006-01-02", "2025-01-01")
+	require.Nil(t, err)
+
+	b := bdpmock.MockFromEnv(bdplib.BdpEnv{})
+	require.Nil(t, syncDataTypes(b))
+
+	for i, e := range events {
+		raw := &rdb.Raw[ParkingEvent]{Rawdata: e, Timestamp: timestamp}
+		require.Nil(t, Transform(context.TODO(), b, raw), "event %d failed", i)
+	}
+
+	mock := b.(*bdpmock.BdpMock)
+	req := mock.Requests()
+
+	var out bdpmock.BdpMockCalls
+	err = testsuite.LoadOutput(&out, "testdata/out_realdata.json")
+	if err != nil {
+		t.Logf("No snapshot found, generating testdata/out_realdata.json")
+		if werr := testsuite.WriteOutput(req, "testdata/out_realdata.json"); werr != nil {
+			t.Fatalf("failed to write snapshot: %v", werr)
+		}
+		t.Log("Snapshot generated. Re-run the test to validate.")
+		return
+	}
+	bdpmock.CompareBdpMockCalls(t, out, req)
+}
+
+// TestTransform_RealData_DataQuality asserts, on real captured values, the
+// concrete data-quality problems the transformer currently passes through
+// unguarded. These are the cases a validation guard should reject/clamp.
+func TestTransform_RealData_DataQuality(t *testing.T) {
+	loadTestFixtures(t)
+	b := bdpmock.MockFromEnv(bdplib.BdpEnv{})
+	ts, err := time.Parse("2006-01-02", "2025-01-01")
+	require.Nil(t, err)
+
+	// Negative provider level -> negative occupied, free above capacity.
+	neg := &rdb.Raw[ParkingEvent]{
+		Rawdata:   ParkingEvent{Name: "Sosta Breve", Level: -4559, Capacity: 9999, CountingCategoryId: 1, Carpark: Carpark{FacilityNr: 609420, Id: 0}},
+		Timestamp: ts,
+	}
+	require.Nil(t, Transform(context.TODO(), b, neg))
+
+	rec := recordFor(t, b.(*bdpmock.BdpMock), stationType, "occupied_short_stay")
+	require.Less(t, rec, 0, "negative provider level currently produces negative occupied (no guard)")
+	free := recordFor(t, b.(*bdpmock.BdpMock), stationType, "free_short_stay")
+	require.Greater(t, free, 9999, "free exceeds the 9999 sentinel capacity (no guard)")
+}
+
+// recordFor returns the latest value pushed for (stationType, datatype),
+// searching every carpark in the captured dataMaps. Fails if not found.
+func recordFor(t *testing.T, mock *bdpmock.BdpMock, stype, datatype string) int {
+	t.Helper()
+	found := false
+	val := 0
+	for _, dm := range mock.Requests().SyncedData[stype] {
+		for _, branch := range dm.Branch {
+			if rec, ok := branch.Branch[datatype]; ok {
+				for _, r := range rec.Data {
+					if v, ok := toInt(r.Value); ok {
+						val = v
+						found = true
+					}
+				}
+			}
+		}
+	}
+	require.Truef(t, found, "no record pushed for %s/%s", stype, datatype)
+	return val
+}
+
+func toInt(v any) (int, bool) {
+	switch n := v.(type) {
+	case int:
+		return n, true
+	case int64:
+		return int(n), true
+	case float64:
+		return int(n), true
+	}
+	return 0, false
 }
 
 func TestCarparkOverall_Cat3Wins(t *testing.T) {

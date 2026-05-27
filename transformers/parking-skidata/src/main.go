@@ -7,7 +7,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log/slog"
 	"os"
 	"sort"
 	"strings"
@@ -19,6 +18,7 @@ import (
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	tr "github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
 	tel "github.com/noi-techpark/opendatahub-go-sdk/tel"
+	"github.com/noi-techpark/opendatahub-go-sdk/tel/logger"
 )
 
 const (
@@ -46,6 +46,12 @@ var categories CountingCategories
 var cache *Cache
 var urnToProviderID map[string]string
 
+// stationByID indexes the loaded (and fully-populated) stations by their
+// provider id (e.g. "0608935" for a facility, "0608935_0" for a carpark).
+// Transform consults it to skip events for stations we don't know about or
+// that were dropped at load time — so no measurements are pushed for them.
+var stationByID map[string]Station
+
 // knownDataTypes is the set of BDP datatype names this transformer has
 // registered via syncDataTypes (derived from the loaded counting
 // categories). Records for any other datatype are dropped before pushing:
@@ -56,8 +62,10 @@ var urnToProviderID map[string]string
 var knownDataTypes map[string]bool
 
 func main() {
-	ms.InitWithEnv(context.Background(), "", &env)
-	slog.Info("Starting parking-skidata transformer...")
+	ctx := context.Background()
+	ms.InitWithEnv(ctx, "", &env)
+	log := logger.Get(ctx)
+	log.Info("Starting parking-skidata transformer...")
 
 	b := bdplib.FromEnv(bdplib.BdpEnv{
 		BDP_BASE_URL:           os.Getenv("BDP_BASE_URL"),
@@ -72,13 +80,13 @@ func main() {
 
 	loadResources("../resources")
 
-	slog.Info("Syncing data types on startup")
+	log.Info("Syncing data types on startup")
 	err := syncDataTypes(b)
-	ms.FailOnError(context.Background(), err, "failed to sync types")
+	ms.FailOnError(ctx, err, "failed to sync types")
 
-	slog.Info("Syncing all stations on startup")
+	log.Info("Syncing all stations on startup")
 	err = syncAllStations(b)
-	ms.FailOnError(context.Background(), err, "failed to sync stations")
+	ms.FailOnError(ctx, err, "failed to sync stations")
 
 	cache = NewCache()
 	urnToProviderID = buildURNIndex(stations)
@@ -89,16 +97,16 @@ func main() {
 		datatypes := allDataTypeNames(categories)
 		if hErr := hydrateCache(cache, ts, os.Getenv("BDP_ORIGIN"), datatypes, urnToProviderID); hErr != nil {
 			// Hydration is best-effort: continue with an empty cache.
-			slog.Warn("Cache hydration failed; starting empty", "err", hErr)
+			log.Warn("Cache hydration failed; starting empty", "err", hErr)
 		}
 	} else {
-		slog.Info("TS_API_BASE_URL unset; skipping cache hydration")
+		log.Info("TS_API_BASE_URL unset; skipping cache hydration")
 	}
 
-	slog.Info("Starting transformer listener...")
-	listener := tr.NewTr[ParkingEvent](context.Background(), env.Env)
-	err = listener.Start(context.Background(), TransformWithBdp(b))
-	ms.FailOnError(context.Background(), err, "error while listening to queue")
+	log.Info("Starting transformer listener...")
+	listener := tr.NewTr[ParkingEvent](ctx, env.Env)
+	err = listener.Start(ctx, TransformWithBdp(b))
+	ms.FailOnError(ctx, err, "error while listening to queue")
 }
 
 // buildURNIndex maps each known station's URN back to its provider id.
@@ -121,12 +129,13 @@ func buildURNIndex(s Stations) map[string]string {
 // counting_categories.test.csv on top of the base files. Unset/empty
 // loads only the base CSVs (production behaviour).
 func loadResources(resourcesDir string) {
+	log := logger.Get(context.Background())
 	stations = ReadStations(resourcesDir + "/stations.csv")
 	categories = ReadCountingCategories(resourcesDir + "/counting_categories.csv")
 
 	overlay := os.Getenv("RESOURCES_OVERLAY")
 	if overlay == "" {
-		slog.Info("No RESOURCES_OVERLAY set; loading base CSVs only",
+		log.Info("No RESOURCES_OVERLAY set; loading base CSVs only",
 			"stations", len(stations), "categories", len(categories))
 	} else {
 		suffix := "." + overlay + ".csv"
@@ -134,7 +143,7 @@ func loadResources(resourcesDir string) {
 		overlayCategories := ReadCountingCategoriesOptional(resourcesDir + "/counting_categories" + suffix)
 		stations = append(stations, overlayStations...)
 		categories = append(categories, overlayCategories...)
-		slog.Info("Loaded CSVs with overlay",
+		log.Info("Loaded CSVs with overlay",
 			"overlay", overlay,
 			"stations", len(stations), "extra_stations", len(overlayStations),
 			"categories", len(categories), "extra_categories", len(overlayCategories))
@@ -147,7 +156,14 @@ func loadResources(resourcesDir string) {
 	for _, name := range allDataTypeNames(categories) {
 		knownDataTypes[name] = true
 	}
-	slog.Info("Registered datatype set built", "count", len(knownDataTypes))
+
+	// Index the (fully-populated) stations by provider id so Transform can
+	// skip events for stations we never loaded/synced.
+	stationByID = make(map[string]Station, len(stations))
+	for _, s := range stations {
+		stationByID[s.ID] = s
+	}
+	log.Info("Resources indexed", "datatypes", len(knownDataTypes), "stations", len(stationByID))
 }
 
 // addKnownRecord adds a measurement to dm only if its datatype was
@@ -156,9 +172,9 @@ func loadResources(resourcesDir string) {
 // counts) are skipped here so we never push records BDP would reject with
 // "Type not found". Fails open if the set is uninitialised, to avoid
 // silently dropping everything when resources weren't loaded.
-func addKnownRecord(dm *bdplib.DataMap, scode, datatype string, ts int64, value int) {
+func addKnownRecord(ctx context.Context, dm *bdplib.DataMap, scode, datatype string, ts int64, value int) {
 	if len(knownDataTypes) > 0 && !knownDataTypes[datatype] {
-		slog.Debug("skipping unregistered datatype", "datatype", datatype, "scode", scode)
+		logger.Get(ctx).Debug("skipping unregistered datatype", "datatype", datatype, "scode", scode)
 		return
 	}
 	dm.AddRecord(scode, datatype, bdplib.CreateRecord(ts, value, measurementPeriod))
@@ -185,7 +201,7 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[ParkingEven
 	event := payload.Rawdata
 	ts := payload.Timestamp.UnixMilli()
 
-	slog.Info("Processing parking event",
+	logger.Get(ctx).Info("Processing parking event",
 		"facilityNr", event.Carpark.FacilityNr,
 		"carparkId", event.Carpark.Id,
 		"category", event.CountingCategoryId,
@@ -193,6 +209,17 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[ParkingEven
 
 	parentProviderID := fmt.Sprintf("%07d", event.Carpark.FacilityNr)
 	childProviderID := fmt.Sprintf("%s_%d", parentProviderID, event.Carpark.Id)
+
+	// Drop events for carparks we don't have a loaded station for: either
+	// not in the CSV at all, or dropped at load time for being not-fully-
+	// populated (empty name / 0,0 coords, logged once at startup). Such
+	// stations were never synced, so there is nothing to push. Fails open
+	// if the index is uninitialised.
+	if len(stationByID) > 0 {
+		if _, known := stationByID[childProviderID]; !known {
+			return nil
+		}
+	}
 
 	// Resolve the descriptor for this category. Prefer the CSV row's
 	// human-readable name (which carries the slug for unknown ids), but
@@ -217,8 +244,8 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[ParkingEven
 	// 2. Per-category carpark measurement. Dropped if the category's
 	//    datatype isn't registered (see addKnownRecord).
 	carparkData := bdp.CreateDataMap()
-	addKnownRecord(&carparkData, childID, d.freeType(), ts, free)
-	addKnownRecord(&carparkData, childID, d.occupiedType(), ts, occupied)
+	addKnownRecord(ctx, &carparkData, childID, d.freeType(), ts, free)
+	addKnownRecord(ctx, &carparkData, childID, d.occupiedType(), ts, occupied)
 
 	// 3. Carpark overall = cat-3 (Totale) only. The per-category records
 	//    above give granularity but are never summed into the overall
@@ -227,10 +254,10 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[ParkingEven
 	//    `free`/`occupied`. Nothing is published until a cat-3 value exists.
 	if d.suffix != "" {
 		if v, ok := cache.CarparkOverall(childProviderID, "free"); ok {
-			addKnownRecord(&carparkData, childID, "free", ts, v)
+			addKnownRecord(ctx, &carparkData, childID, "free", ts, v)
 		}
 		if v, ok := cache.CarparkOverall(childProviderID, "occupied"); ok {
-			addKnownRecord(&carparkData, childID, "occupied", ts, v)
+			addKnownRecord(ctx, &carparkData, childID, "occupied", ts, v)
 		}
 	}
 
@@ -240,13 +267,13 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[ParkingEven
 
 	// 4. Facility-level aggregates (overall + per-category).
 	facilityData := bdp.CreateDataMap()
-	addKnownRecord(&facilityData, parentID, "free", ts, cache.FacilityOverall(parentProviderID, "free"))
-	addKnownRecord(&facilityData, parentID, "occupied", ts, cache.FacilityOverall(parentProviderID, "occupied"))
+	addKnownRecord(ctx, &facilityData, parentID, "free", ts, cache.FacilityOverall(parentProviderID, "free"))
+	addKnownRecord(ctx, &facilityData, parentID, "occupied", ts, cache.FacilityOverall(parentProviderID, "occupied"))
 	// Per-category facility totals — skip cat 3 because that's already
 	// the overall (would push the same record twice on the parent URN).
 	if d.suffix != "" {
-		addKnownRecord(&facilityData, parentID, d.freeType(), ts, cache.FacilityPerCategory(parentProviderID, d.freeType()))
-		addKnownRecord(&facilityData, parentID, d.occupiedType(), ts, cache.FacilityPerCategory(parentProviderID, d.occupiedType()))
+		addKnownRecord(ctx, &facilityData, parentID, d.freeType(), ts, cache.FacilityPerCategory(parentProviderID, d.freeType()))
+		addKnownRecord(ctx, &facilityData, parentID, d.occupiedType(), ts, cache.FacilityPerCategory(parentProviderID, d.occupiedType()))
 	}
 
 	if err := bdp.PushData(stationTypeParent, facilityData); err != nil {
@@ -260,6 +287,7 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[ParkingEven
 // metadata. Parent stations carry aggregated facility-level capacities
 // summed across all their carparks.
 func syncAllStations(bdp bdplib.Bdp) error {
+	log := logger.Get(context.Background())
 	parents := []bdplib.Station{}
 	children := []bdplib.Station{}
 
@@ -277,12 +305,12 @@ func syncAllStations(bdp bdplib.Bdp) error {
 			}
 			children = append(children, child)
 		default:
-			slog.Warn("Skipping CSV row with unknown station_type",
+			log.Warn("Skipping CSV row with unknown station_type",
 				"id", row.ID, "station_type", row.StationType)
 		}
 	}
 
-	slog.Info("Syncing stations to BDP",
+	log.Info("Syncing stations to BDP",
 		"parking_facilities", len(parents),
 		"parking_stations", len(children))
 
@@ -326,7 +354,7 @@ func buildParentStation(bdp bdplib.Bdp, row Station) bdplib.Station {
 
 func buildChildStation(bdp bdplib.Bdp, row Station) (bdplib.Station, bool) {
 	if row.ParentID == "" {
-		slog.Warn("Skipping ParkingStation row with empty parent_id", "id", row.ID)
+		logger.Get(context.Background()).Warn("Skipping ParkingStation row with empty parent_id", "id", row.ID)
 		return bdplib.Station{}, false
 	}
 
