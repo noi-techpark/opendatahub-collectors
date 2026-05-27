@@ -1,0 +1,56 @@
+[
+  {
+    "name": "Totale",
+    "level": 54,
+    "capacity": 520,
+    "freeLimit": 449,
+    "occupancyLimit": 520,
+    "carpark": { "name": "Falzeben", "facilityNr": 608935, "id": 0, "shortName": "1" },
+    "countingCategoryId": 3
+  },
+  {
+    "name": "Sosta Breve",
+    "level": 163,
+    "capacity": 9999,
+    "freeLimit": 9999,
+    "occupancyLimit": 9999,
+    "carpark": { "name": "Meranarena", "facilityNr": 602581, "id": 0, "shortName": "1" },
+    "countingCategoryId": 1
+  },
+  {
+    "name": "Sosta Breve",
+    "level": -4559,
+    "capacity": 9999,
+    "freeLimit": 9999,
+    "occupancyLimit": 9999,
+    "carpark": { "name": "Aeroporto", "facilityNr": 609420, "id": 0, "shortName": "1" },
+    "countingCategoryId": 1
+  },
+  {
+    "name": "Abbonati",
+    "level": 12,
+    "capacity": 40,
+    "freeLimit": 39,
+    "occupancyLimit": 40,
+    "carpark": { "name": "Trutsch", "facilityNr": 601393, "id": 1, "shortName": "1" },
+    "countingCategoryId": 2
+  },
+  {
+    "name": "Totale",
+    "level": 35,
+    "capacity": 140,
+    "freeLimit": 139,
+    "occupancyLimit": 140,
+    "carpark": { "name": "Trutsch", "facilityNr": 601393, "id": 1, "shortName": "1" },
+    "countingCategoryId": 3
+  },
+  {
+    "name": "1. UG",
+    "level": 20,
+    "capacity": 100,
+    "freeLimit": 99,
+    "occupancyLimit": 100,
+    "carpark": { "name": "Meranarena", "facilityNr": 602581, "id": 0, "shortName": "1" },
+    "countingCategoryId": 7
+  }
+]

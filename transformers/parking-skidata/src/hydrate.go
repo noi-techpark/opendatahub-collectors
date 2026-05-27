@@ -5,11 +5,12 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"log/slog"
 	"sort"
 
 	"github.com/noi-techpark/go-timeseries-client/odhts"
+	"github.com/noi-techpark/opendatahub-go-sdk/tel/logger"
 )
 
 // hydrateCache primes the in-memory cache with the latest measurement
@@ -25,7 +26,7 @@ func hydrateCache(c *Cache, ts odhts.C, origin string, datatypes []string, urnTo
 		return fmt.Errorf("BDP_ORIGIN is empty; refusing to hydrate without an origin filter")
 	}
 	if len(datatypes) == 0 {
-		slog.Info("No datatypes to hydrate; skipping")
+		logger.Get(context.Background()).Info("No datatypes to hydrate; skipping")
 		return nil
 	}
 
@@ -56,7 +57,7 @@ func hydrateCache(c *Cache, ts odhts.C, origin string, datatypes []string, urnTo
 		seeded++
 	}
 
-	slog.Info("Hydrated cache from BDP",
+	logger.Get(context.Background()).Info("Hydrated cache from BDP",
 		"origin", origin,
 		"seeded", seeded,
 		"skipped_unknown_scode", skipped,
