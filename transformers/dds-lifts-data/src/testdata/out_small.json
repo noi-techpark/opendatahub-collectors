@@ -1,0 +1,169 @@
+{
+  "Id": "dss_617",
+  "Shortname": "Absam-Maierl",
+  "Active": true,
+  "Source": "dss",
+  "FirstImport": "2026-01-15T10:00:00Z",
+  "LastChange": "2026-04-12T13:54:56Z",
+  "HasLanguage": ["de", "it", "en"],
+  "Mapping": {
+    "dss": {
+      "pid": "617",
+      "regionId": "8",
+      "rid": "3713",
+      "skiresort_pid": "41",
+      "skiresort_rid": "160"
+    }
+  },
+  "TagIds": [
+    "activity",
+    "chairlift 6 persons",
+    "lifts",
+    "other",
+    "other lifts"
+  ],
+  "SmgTags": [
+    "anderes",
+    "aufstiegsanlagen",
+    "weitere aufstiegsanlagen",
+    "6er sessellift kuppelbar",
+    "activity"
+  ],
+  "GpsInfo": [
+    {
+      "Gpstype": "position",
+      "Altitude": 1732,
+      "Latitude": 46.36687440661351,
+      "Longitude": 11.53061075087507,
+      "AltitudeUnitofMeasure": "m"
+    },
+    {
+      "Gpstype": "valleystationpoint",
+      "Altitude": 1732,
+      "Latitude": 46.36687440661351,
+      "Longitude": 11.53061075087507,
+      "AltitudeUnitofMeasure": "m"
+    },
+    {
+      "Gpstype": "mountainstationpoint",
+      "Altitude": 2165,
+      "Latitude": 46.57416242246033,
+      "Longitude": 11.673888187402358,
+      "AltitudeUnitofMeasure": "m"
+    }
+  ],
+  "LicenseInfo": {
+    "Author": "",
+    "License": "CC0",
+    "ClosedData": false,
+    "LicenseHolder": "https://www.dolomitisuperski.com"
+  },
+  "Detail": {
+    "de": { "Title": "Absam-Maierl", "Language": "de" },
+    "en": { "Title": "Absam-Maierl", "Language": "en" },
+    "it": { "Title": "Absam - Maierl", "Language": "it" }
+  },
+  "ContactInfos": {},
+  "AdditionalPoiInfos": {
+    "de": {
+      "Novelty": "",
+      "PoiType": null,
+      "SubType": null,
+      "Language": "de",
+      "MainType": null,
+      "Categories": ["Aufstiegsanlagen"]
+    },
+    "en": {
+      "Novelty": "",
+      "PoiType": null,
+      "SubType": null,
+      "Language": "en",
+      "MainType": null,
+      "Categories": ["Lifts"]
+    },
+    "it": {
+      "Novelty": "",
+      "PoiType": null,
+      "SubType": null,
+      "Language": "it",
+      "MainType": null,
+      "Categories": ["Impianti di risalita"]
+    }
+  },
+  "AdditionalProperties": {},
+  "PoiProperty": {},
+  "SmgActive": true,
+  "OdhActive": true,
+  "PublishedOn": [],
+  "SyncUpdateMode": "Full",
+  "SyncSourceInterface": "dssliftbase",
+  "CustomId": "3713",
+  "DistanceLength": 271,
+  "DistanceDuration": 0.1,
+  "AltitudeLowestPoint": 1732,
+  "AltitudeHighestPoint": 2165,
+  "AltitudeDifference": 433,
+  "BikeTransport": false,
+  "Number": "21",
+  "IsOpen": false,
+  "GpsTrack": [
+    {
+      "Id": null,
+      "Type": "detailed",
+      "Format": "kml",
+      "GpxTrackUrl": "https://www.dolomitisuperski.com/file/?uuidLift=6baa1145-39c7-48c1-8344-f53fd7e0353d",
+      "GpxTrackDesc": {}
+    }
+  ],
+  "GpsPoints": {
+    "mountainstationpoint": {
+      "Gpstype": "mountainstationpoint",
+      "Altitude": 2165,
+      "Latitude": 46.57416242246033,
+      "Longitude": 11.673888187402358,
+      "AltitudeUnitofMeasure": "m"
+    },
+    "position": {
+      "Gpstype": "position",
+      "Altitude": 1732,
+      "Latitude": 46.36687440661351,
+      "Longitude": 11.53061075087507,
+      "AltitudeUnitofMeasure": "m"
+    },
+    "valleystationpoint": {
+      "Gpstype": "valleystationpoint",
+      "Altitude": 1732,
+      "Latitude": 46.36687440661351,
+      "Longitude": 11.53061075087507,
+      "AltitudeUnitofMeasure": "m"
+    }
+  },
+  "OperationSchedule": [
+    {
+      "Stop": "2026-04-12T00:00:00",
+      "Type": "1",
+      "Start": "2025-11-28T00:00:00",
+      "OperationScheduleTime": [
+        {
+          "End": "16:30:00",
+          "Start": "08:30:00",
+          "State": 0,
+          "Friday": true,
+          "Monday": true,
+          "Sunday": true,
+          "Tuesday": true,
+          "Saturday": true,
+          "Thursday": true,
+          "Timecode": 1,
+          "Thuresday": true,
+          "Wednesday": true
+        }
+      ],
+      "OperationscheduleName": {
+        "de": "Wintersaison",
+        "en": "winterseason",
+        "it": "stagioneinvernale"
+      }
+    }
+  ]
+}
