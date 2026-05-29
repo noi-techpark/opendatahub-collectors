@@ -95,6 +95,10 @@ type SiagChoiceField struct {
 	Value []ChoiceEntry `json:"value"`
 }
 
+// ChoiceEntry represents a yes/no choice field.
+// Codename is "yes" or "no"; Name is a human-readable label used as the
+// tag display name when the choice resolves to "yes" (e.g. paramuseum,
+// provincial_museum, museum_association).
 type ChoiceEntry struct {
 	Name     string `json:"name"`
 	Codename string `json:"codename"` // "yes" | "no"
