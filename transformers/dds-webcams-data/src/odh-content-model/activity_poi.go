@@ -106,13 +106,13 @@ type WebcamInfo struct {
 // ── Supporting types ──────────────────────────────────────────────────────────
 
 type GpsInfo struct {
-	Default               *bool   `json:"Default,omitempty"`
-	Gpstype               string  `json:"Gpstype"`
-	Altitude              *int    `json:"Altitude,omitempty"`
-	Geometry              *string `json:"Geometry,omitempty"`
-	Latitude              float64 `json:"Latitude"`
-	Longitude             float64 `json:"Longitude"`
-	AltitudeUnitofMeasure string  `json:"AltitudeUnitofMeasure,omitempty"`
+	Default               *bool    `json:"Default,omitempty"`
+	Gpstype               string   `json:"Gpstype"`
+	Altitude              *float64 `json:"Altitude,omitempty"`
+	Geometry              *string  `json:"Geometry,omitempty"`
+	Latitude              float64  `json:"Latitude"`
+	Longitude             float64  `json:"Longitude"`
+	AltitudeUnitofMeasure string   `json:"AltitudeUnitofMeasure,omitempty"`
 }
 
 // WebCamProperties matches the ODH WebCamProperties shape from live API.

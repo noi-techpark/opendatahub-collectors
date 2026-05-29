@@ -135,13 +135,13 @@ type LicenseInfo struct {
 
 // GpsInfo matches the full ODH shape.
 type GpsInfo struct {
-	Default               *bool   `json:"Default,omitempty"`
-	Gpstype               string  `json:"Gpstype"`
-	Altitude              *int    `json:"Altitude,omitempty"`
-	Geometry              *string `json:"Geometry,omitempty"`
-	Latitude              float64 `json:"Latitude"`
-	Longitude             float64 `json:"Longitude"`
-	AltitudeUnitofMeasure string  `json:"AltitudeUnitofMeasure,omitempty"`
+	Default               *bool    `json:"Default,omitempty"`
+	Gpstype               string   `json:"Gpstype"`
+	Altitude              *float64 `json:"Altitude,omitempty"`
+	Geometry              *string  `json:"Geometry,omitempty"`
+	Latitude              float64  `json:"Latitude"`
+	Longitude             float64  `json:"Longitude"`
+	AltitudeUnitofMeasure string   `json:"AltitudeUnitofMeasure,omitempty"`
 }
 
 // GpsTrack matches old API — a slice of track objects.

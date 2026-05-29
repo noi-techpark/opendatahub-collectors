@@ -5,6 +5,9 @@
 package odhmodel
 
 import (
+	"encoding/json"
+	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -48,12 +51,15 @@ type ODHActivityPoi struct {
 
 	// Multilingual content
 	Detail               map[string]*clib.DetailGeneric `json:"Detail,omitempty"`
-	ContactInfos         map[string]interface{}         `json:"ContactInfos"` // always emit {} even if empty
+	ContactInfos         map[string]interface{}         `json:"ContactInfos"` // always emit {}
 	AdditionalPoiInfos   map[string]*AdditionalPoiInfo  `json:"AdditionalPoiInfos,omitempty"`
 	AdditionalProperties map[string]interface{}         `json:"AdditionalProperties"` // always emit {}
 	PoiProperty          map[string]interface{}         `json:"PoiProperty"`          // always emit {}
 	ImageGallery         []ImageGalleryEntry            `json:"ImageGallery,omitempty"`
-	LocationInfo         *LocationInfo                  `json:"LocationInfo,omitempty"`
+
+	// LocationInfo: no omitempty on the field itself so &LocationInfo{} emits
+	// {"TvInfo":null,...} not {} — matches old API shape.
+	LocationInfo *LocationInfo `json:"LocationInfo,omitempty"`
 
 	// Sync metadata
 	SmgActive           bool     `json:"SmgActive"`
@@ -67,31 +73,34 @@ type ODHActivityPoi struct {
 	SubType  *string `json:"SubType,omitempty"`
 	CustomId string  `json:"CustomId,omitempty"`
 
-	// Lift-specific numeric fields
+	// Numeric fields
 	DistanceLength       *float64 `json:"DistanceLength,omitempty"`
 	DistanceDuration     *float64 `json:"DistanceDuration,omitempty"`
-	AltitudeLowestPoint  *int     `json:"AltitudeLowestPoint,omitempty"`
-	AltitudeHighestPoint *int     `json:"AltitudeHighestPoint,omitempty"`
-	AltitudeDifference   *int     `json:"AltitudeDifference,omitempty"`
-	AltitudeSumUp        *int     `json:"AltitudeSumUp,omitempty"`
-	AltitudeSumDown      *int     `json:"AltitudeSumDown,omitempty"`
-	BikeTransport        bool     `json:"BikeTransport"`
-	Number               string   `json:"Number,omitempty"`
+	AltitudeLowestPoint  *float64 `json:"AltitudeLowestPoint,omitempty"`
+	AltitudeHighestPoint *float64 `json:"AltitudeHighestPoint,omitempty"`
+	AltitudeDifference   *float64 `json:"AltitudeDifference,omitempty"`
+	AltitudeSumUp        *float64 `json:"AltitudeSumUp,omitempty"`
+	AltitudeSumDown      *float64 `json:"AltitudeSumDown,omitempty"`
 
-	// Nullable flags — left nil, not set by DSS importer
-	WayNumber        *string `json:"WayNumber,omitempty"`
-	Difficulty       *string `json:"Difficulty,omitempty"`
-	Exposition       *string `json:"Exposition,omitempty"`
-	IsOpen           bool    `json:"IsOpen"`
-	IsPrepared       *bool   `json:"IsPrepared,omitempty"`
-	IsWithLigth      *bool   `json:"IsWithLigth,omitempty"` // ODH typo — preserved
-	HasRentals       *bool   `json:"HasRentals,omitempty"`
-	RunToValley      *bool   `json:"RunToValley,omitempty"`
-	FeetClimb        *bool   `json:"FeetClimb,omitempty"`
-	LiftAvailable    *bool   `json:"LiftAvailable,omitempty"`
-	Highlight        *bool   `json:"Highlight,omitempty"`
-	CopyrightChecked *bool   `json:"CopyrightChecked,omitempty"`
-	HasFreeEntrance  *bool   `json:"HasFreeEntrance,omitempty"`
+	// FIX: *bool — nil serializes as null (old API has null for slopes, not false)
+	BikeTransport *bool  `json:"BikeTransport"`
+	Number        string `json:"Number,omitempty"`
+
+	// Nullable flags — old API has these as null, not set by DSS importer
+	WayNumber        *string  `json:"WayNumber,omitempty"`
+	Difficulty       *string  `json:"Difficulty,omitempty"`
+	Ratings          *Ratings `json:"Ratings,omitempty"`
+	Exposition       *string  `json:"Exposition,omitempty"`
+	IsOpen           bool     `json:"IsOpen"`
+	IsPrepared       *bool    `json:"IsPrepared,omitempty"`
+	IsWithLigth      *bool    `json:"IsWithLigth,omitempty"` // ODH typo — preserved
+	HasRentals       *bool    `json:"HasRentals,omitempty"`
+	RunToValley      *bool    `json:"RunToValley,omitempty"`
+	FeetClimb        *bool    `json:"FeetClimb,omitempty"`
+	LiftAvailable    *bool    `json:"LiftAvailable,omitempty"`
+	Highlight        *bool    `json:"Highlight,omitempty"`
+	CopyrightChecked *bool    `json:"CopyrightChecked,omitempty"`
+	HasFreeEntrance  *bool    `json:"HasFreeEntrance,omitempty"`
 
 	// GPS
 	GpsTrack  []GpsTrack          `json:"GpsTrack,omitempty"`
@@ -127,18 +136,76 @@ type LicenseInfo struct {
 	LicenseHolder string `json:"LicenseHolder"`
 }
 
-// GpsInfo matches the full ODH shape including extra fields.
+// GpsInfo matches the full ODH shape.
+// The API returns Latitude and Longitude as strings; custom unmarshaling converts them to floats.
 type GpsInfo struct {
-	Default               *bool   `json:"Default,omitempty"`
-	Gpstype               string  `json:"Gpstype"`
-	Altitude              *int    `json:"Altitude,omitempty"`
-	Geometry              *string `json:"Geometry,omitempty"`
-	Latitude              float64 `json:"Latitude"`
-	Longitude             float64 `json:"Longitude"`
-	AltitudeUnitofMeasure string  `json:"AltitudeUnitofMeasure,omitempty"`
+	Default               *bool    `json:"Default,omitempty"`
+	Gpstype               string   `json:"Gpstype"`
+	Altitude              *float64 `json:"Altitude,omitempty"`
+	Geometry              *string  `json:"Geometry,omitempty"`
+	Latitude              float64  `json:"Latitude"`
+	Longitude             float64  `json:"Longitude"`
+	AltitudeUnitofMeasure string   `json:"AltitudeUnitofMeasure,omitempty"`
 }
 
-// GpsTrack matches the old API: a slice of track objects.
+// UnmarshalJSON handles the case where Latitude and Longitude come from the API as strings.
+func (g *GpsInfo) UnmarshalJSON(b []byte) error {
+	var raw struct {
+		Default               *bool       `json:"Default"`
+		Gpstype               string      `json:"Gpstype"`
+		Altitude              *float64    `json:"Altitude"`
+		Geometry              *string     `json:"Geometry"`
+		Latitude              interface{} `json:"Latitude"`  // Can be string or float
+		Longitude             interface{} `json:"Longitude"` // Can be string or float
+		AltitudeUnitofMeasure string      `json:"AltitudeUnitofMeasure"`
+	}
+
+	if err := json.Unmarshal(b, &raw); err != nil {
+		return err
+	}
+
+	g.Default = raw.Default
+	g.Gpstype = raw.Gpstype
+	g.Altitude = raw.Altitude
+	g.Geometry = raw.Geometry
+	g.AltitudeUnitofMeasure = raw.AltitudeUnitofMeasure
+
+	// Convert latitude from interface{} (can be string or float64)
+	switch v := raw.Latitude.(type) {
+	case string:
+		lat, err := strconv.ParseFloat(v, 64)
+		if err != nil {
+			return fmt.Errorf("invalid latitude: %v", err)
+		}
+		g.Latitude = lat
+	case float64:
+		g.Latitude = v
+	case nil:
+		g.Latitude = 0
+	default:
+		return fmt.Errorf("latitude has unexpected type: %T", v)
+	}
+
+	// Convert longitude from interface{} (can be string or float64)
+	switch v := raw.Longitude.(type) {
+	case string:
+		lon, err := strconv.ParseFloat(v, 64)
+		if err != nil {
+			return fmt.Errorf("invalid longitude: %v", err)
+		}
+		g.Longitude = lon
+	case float64:
+		g.Longitude = v
+	case nil:
+		g.Longitude = 0
+	default:
+		return fmt.Errorf("longitude has unexpected type: %T", v)
+	}
+
+	return nil
+}
+
+// GpsTrack matches old API — a slice of track objects.
 type GpsTrack struct {
 	Id           *string                `json:"Id"`
 	Type         string                 `json:"Type"`
@@ -147,16 +214,16 @@ type GpsTrack struct {
 	GpxTrackDesc map[string]interface{} `json:"GpxTrackDesc"`
 }
 
-// OperationSchedule — field name matches old API exactly (lowercase 's' in OperationscheduleName).
+// OperationSchedule — OperationscheduleName has lowercase 's' matching old API exactly.
 type OperationSchedule struct {
 	Stop                  string                  `json:"Stop,omitempty"`
 	Type                  string                  `json:"Type,omitempty"`
 	Start                 string                  `json:"Start,omitempty"`
 	OperationScheduleTime []OperationScheduleTime `json:"OperationScheduleTime,omitempty"`
-	OperationscheduleName map[string]string       `json:"OperationscheduleName"` // lowercase 's' — matches old API
+	OperationscheduleName map[string]string       `json:"OperationscheduleName"` // lowercase 's' — ODH API shape
 }
 
-// OperationScheduleTime includes all fields from the old API including ODH typos.
+// OperationScheduleTime includes all fields from old API including ODH typos.
 type OperationScheduleTime struct {
 	End       string `json:"End"`
 	Start     string `json:"Start"`
@@ -188,13 +255,25 @@ type ImageGalleryEntry struct {
 	IsInGallery bool   `json:"IsInGallery"`
 }
 
-// LocationInfo is populated by the ODH pipeline from GpsInfo — not set by transformer.
+// Ratings holds difficulty and other numeric ratings.
+// C# parser sets Ratings.Difficulty = parseddifficulty alongside the Difficulty field.
+type Ratings struct {
+	Stamina    *string `json:"Stamina,omitempty"`
+	Landscape  *string `json:"Landscape,omitempty"`
+	Technique  *string `json:"Technique,omitempty"`
+	Difficulty *string `json:"Difficulty,omitempty"`
+	Experience *string `json:"Experience,omitempty"`
+}
+
+// LocationInfo is set by the ODH pipeline from GpsInfo — transformer emits it empty.
+// Sub-fields have NO omitempty so &LocationInfo{} produces:
+// {"TvInfo":null,"AreaInfo":null,...} not {} — matches old API.
 type LocationInfo struct {
-	TvInfo           *LocationRef `json:"TvInfo,omitempty"`
-	AreaInfo         *LocationRef `json:"AreaInfo,omitempty"`
-	RegionInfo       *LocationRef `json:"RegionInfo,omitempty"`
-	DistrictInfo     *LocationRef `json:"DistrictInfo,omitempty"`
-	MunicipalityInfo *LocationRef `json:"MunicipalityInfo,omitempty"`
+	TvInfo           *LocationRef `json:"TvInfo"`
+	AreaInfo         *LocationRef `json:"AreaInfo"`
+	RegionInfo       *LocationRef `json:"RegionInfo"`
+	DistrictInfo     *LocationRef `json:"DistrictInfo"`
+	MunicipalityInfo *LocationRef `json:"MunicipalityInfo"`
 }
 
 type LocationRef struct {

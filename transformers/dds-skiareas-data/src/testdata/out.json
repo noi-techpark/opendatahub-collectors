@@ -105,7 +105,7 @@
             "Phonenumber": "0474 551500"
           }
         },
-        "OperationSchedule": [
+        "OperationSchedule": [ 
           {
             "Stop": "2026-04-18T00:00:00",
             "Type": "1",

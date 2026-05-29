@@ -5,6 +5,7 @@
 package odhmodel
 
 import (
+	"encoding/json"
 	"strings"
 	"time"
 
@@ -41,7 +42,7 @@ func (ft *FlexibleTime) UnmarshalJSON(b []byte) error {
 	return err
 }
 
-// ── SkiAreaPage — paginated list response from ODH ──────────────────────────
+// ── SkiAreaPage — paginated list response from ODH ────────────────────────────
 // ODH SkiArea requires &pagenumber=1 to return this envelope shape.
 
 type SkiAreaPage struct {
@@ -51,7 +52,17 @@ type SkiAreaPage struct {
 	Items        []SkiArea `json:"Items"`
 }
 
-// ── SkiArea — full ODH SkiArea entity ────────────────────────────────────────
+// ── SkiArea — ODH SkiArea entity ─────────────────────────────────────────────
+//
+// Design note for UPDATE path:
+//   We fetch the existing record, replace ONLY OperationSchedule, then PUT back.
+//   All other fields are preserved exactly as returned by the API.
+//
+//   Critically:
+//   - ContactInfos uses json.RawMessage so the full rich shape (Url, City, Address,
+//     CompanyName, Tax, Vat etc.) is round-tripped without any data loss.
+//   - PublishedOn and LicenseInfo are preserved from the existing record — we never
+//     overwrite them on UPDATE (only set them on CREATE).
 
 type SkiArea struct {
 	Id          *string                      `json:"Id,omitempty"`
@@ -63,16 +74,21 @@ type SkiArea struct {
 	HasLanguage []string                     `json:"HasLanguage,omitempty"`
 	Mapping     map[string]map[string]string `json:"Mapping,omitempty"`
 
-	// Multilingual content — on UPDATE we preserve existing Detail entirely.
-	// On CREATE we populate de/it/en Title only from DSS name.
-	Detail       map[string]*clib.DetailGeneric `json:"Detail,omitempty"`
-	ContactInfos map[string]*ContactInfo        `json:"ContactInfos,omitempty"`
+	// Detail: clib.DetailGeneric has all ODH fields (Header, BaseText, Keywords etc.)
+	// so round-trip on UPDATE is safe without data loss.
+	Detail map[string]*clib.DetailGeneric `json:"Detail,omitempty"`
 
-	// OperationSchedule — on UPDATE we replace this entirely with summer+winter seasons.
-	// On CREATE we populate it from DSS season data.
+	// ContactInfos uses json.RawMessage to preserve the full ODH shape on UPDATE.
+	// The existing idm records have rich ContactInfo (Url, City, Address, CompanyName
+	// etc.) that our minimal struct would silently drop. RawMessage round-trips it
+	// unchanged. On CREATE we marshal our minimal ContactInfo into RawMessage.
+	ContactInfos map[string]json.RawMessage `json:"ContactInfos,omitempty"`
+
+	// OperationSchedule — intentionally replaced on both CREATE and UPDATE.
 	OperationSchedule []OperationSchedule `json:"OperationSchedule,omitempty"`
 
-	// Publishing
+	// Publishing — only set on CREATE; on UPDATE the existing value is preserved
+	// because the field is populated from the fetched record.
 	SmgActive   bool     `json:"SmgActive"`
 	OdhActive   bool     `json:"OdhActive"`
 	PublishedOn []string `json:"PublishedOn"`
@@ -81,19 +97,17 @@ type SkiArea struct {
 	SyncUpdateMode      string `json:"SyncUpdateMode,omitempty"`
 	SyncSourceInterface string `json:"SyncSourceInterface,omitempty"`
 
-	// License
+	// LicenseInfo — only set on CREATE; on UPDATE preserved from existing record.
 	LicenseInfo *LicenseInfo `json:"LicenseInfo,omitempty"`
 
-	// Additional fields present in ODH SkiArea but managed by other systems —
-	// preserved as-is on update by fetching the existing record first.
+	// Tags — omitempty so nil slices are not sent, preserving existing values on UPDATE.
 	TagIds  []string `json:"TagIds,omitempty"`
 	SmgTags []string `json:"SmgTags,omitempty"`
 }
 
 // ── Supporting types ──────────────────────────────────────────────────────────
 
-// OperationSchedule — same shape as lifts/slopes.
-// OperationscheduleName has lowercase 's' — matches ODH API exactly.
+// OperationSchedule — OperationscheduleName has lowercase 's' — matches ODH API exactly.
 type OperationSchedule struct {
 	Stop  string `json:"Stop,omitempty"`
 	Type  string `json:"Type,omitempty"`
@@ -104,7 +118,6 @@ type OperationSchedule struct {
 }
 
 // OperationScheduleTime — for SkiArea we always emit an empty slice.
-// The struct mirrors the full ODH shape used in lifts/slopes.
 type OperationScheduleTime struct {
 	Start     string `json:"Start,omitempty"`
 	End       string `json:"End,omitempty"`
@@ -120,7 +133,8 @@ type OperationScheduleTime struct {
 	Sunday    bool   `json:"Sunday,omitempty"`
 }
 
-// ContactInfo holds per-language contact details.
+// ContactInfo is used ONLY for CREATE path — marshaled into json.RawMessage.
+// On UPDATE the existing RawMessage from ODH is preserved unchanged.
 type ContactInfo struct {
 	Language    string `json:"Language"`
 	Email       string `json:"Email,omitempty"`

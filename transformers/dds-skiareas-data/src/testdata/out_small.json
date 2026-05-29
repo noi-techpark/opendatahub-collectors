@@ -1,62 +1,63 @@
 {
-  "Id": "dss_2848",
-  "WebcamId": "dss_2848",
-  "Shortname": "Alba - Ciampac panorama 360°",
-  "Source": "dss",
+  "Id": "dss_skiarea_1",
   "Active": true,
+  "Source": "dss",
+  "Shortname": "Cortina d'Ampezzo",
+  "FirstImport": "2026-01-15T10:00:00Z",
+  "LastChange": "2026-01-15T10:00:00Z",
+  "HasLanguage": ["de", "it", "en"],
+  "Mapping": { "dss": { "rid": "1" } },
+  "Detail": {
+    "de": { "Title": "Cortina d'Ampezzo", "Language": "de" },
+    "en": { "Title": "Cortina d'Ampezzo", "Language": "en" },
+    "it": { "Title": "Cortina d'Ampezzo", "Language": "it" }
+  },
+  "ContactInfos": {
+    "de": {
+      "Language": "de",
+      "Email": "info@cortinamarketing.it",
+      "Phonenumber": "0436 866252"
+    },
+    "en": {
+      "Language": "en",
+      "Email": "info@cortinamarketing.it",
+      "Phonenumber": "0436 866252"
+    },
+    "it": {
+      "Language": "it",
+      "Email": "info@cortinamarketing.it",
+      "Phonenumber": "0436 866252"
+    }
+  },
+  "OperationSchedule": [
+    {
+      "Stop": "2026-05-02T00:00:00",
+      "Type": "1",
+      "Start": "2025-12-04T00:00:00",
+      "OperationScheduleTime": [],
+      "OperationscheduleName": {
+        "de": "Wintersaison",
+        "en": "winterseason",
+        "it": "stagioneinvernale"
+      }
+    },
+    {
+      "Stop": "2026-10-17T00:00:00",
+      "Type": "1",
+      "Start": "2026-06-05T00:00:00",
+      "OperationScheduleTime": [],
+      "OperationscheduleName": {
+        "de": "Sommersaison",
+        "en": "summerseason",
+        "it": "stagioneestiva"
+      }
+    }
+  ],
   "SmgActive": true,
   "OdhActive": true,
-  "FirstImport": "2026-01-15T10:00:00Z",
-  "HasLanguage": ["de", "it", "en"],
-  "Mapping": { "dss": { "pid": "2848", "skiresort": "Val di Fassa" } },
-  "Detail": {
-    "de": { "Title": "Alba - Ciampac panorama 360°", "Language": "de" },
-    "en": { "Title": "Alba - Ciampac panorama 360°", "Language": "en" },
-    "it": { "Title": "Alba - Ciampac panorama 360°", "Language": "it" }
-  },
-  "Webcamname": {
-    "de": "Alba - Ciampac panorama 360°",
-    "en": "Alba - Ciampac panorama 360°",
-    "it": "Alba - Ciampac panorama 360°"
-  },
-  "ContactInfos": {},
-  "Webcamurl": "https://panodata.panomax.com/cams/1674/skiareaciampac.jpg",
-  "Streamurl": "https://ciampac.panomax.com/?cu=en-GB",
-  "GpsInfo": [
-    {
-      "Gpstype": "position",
-      "Altitude": 2306,
-      "Latitude": 46.436910495781,
-      "Longitude": 11.764104366302,
-      "AltitudeUnitofMeasure": "m"
-    }
-  ],
-  "GpsPoints": {
-    "position": {
-      "Gpstype": "position",
-      "Altitude": 2306,
-      "Latitude": 46.436910495781,
-      "Longitude": 11.764104366302,
-      "AltitudeUnitofMeasure": "m"
-    }
-  },
-  "ImageGallery": [
-    {
-      "ImageUrl": "https://panodata.panomax.com/cams/1674/skiareaciampac.jpg",
-      "ImageDesc": {},
-      "ImageName": "Alba - Ciampac panorama 360°",
-      "ImageTitle": {},
-      "ImageSource": "dss",
-      "IsInGallery": true,
-      "ImageAltText": {},
-      "ListPosition": 0
-    }
-  ],
-  "WebCamProperties": {
-    "StreamUrl": "https://ciampac.panomax.com/?cu=en-GB",
-    "WebcamUrl": "https://panodata.panomax.com/cams/1674/skiareaciampac.jpg"
-  },
   "PublishedOn": [],
+  "SyncUpdateMode": "Full",
+  "SyncSourceInterface": "dssskiarea",
   "LicenseInfo": {
     "Author": "",
     "License": "CC0",

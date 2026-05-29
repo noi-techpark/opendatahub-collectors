@@ -5,6 +5,9 @@
 package odhmodel
 
 import (
+	"encoding/json"
+	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -70,12 +73,12 @@ type ODHActivityPoi struct {
 	// Lift-specific numeric fields
 	DistanceLength       *float64 `json:"DistanceLength,omitempty"`
 	DistanceDuration     *float64 `json:"DistanceDuration,omitempty"`
-	AltitudeLowestPoint  *int     `json:"AltitudeLowestPoint,omitempty"`
-	AltitudeHighestPoint *int     `json:"AltitudeHighestPoint,omitempty"`
-	AltitudeDifference   *int     `json:"AltitudeDifference,omitempty"`
-	AltitudeSumUp        *int     `json:"AltitudeSumUp,omitempty"`
-	AltitudeSumDown      *int     `json:"AltitudeSumDown,omitempty"`
-	BikeTransport        bool     `json:"BikeTransport"`
+	AltitudeLowestPoint  *float64 `json:"AltitudeLowestPoint,omitempty"`
+	AltitudeHighestPoint *float64 `json:"AltitudeHighestPoint,omitempty"`
+	AltitudeDifference   *float64 `json:"AltitudeDifference,omitempty"`
+	AltitudeSumUp        *float64 `json:"AltitudeSumUp,omitempty"`
+	AltitudeSumDown      *float64 `json:"AltitudeSumDown,omitempty"`
+	BikeTransport        *bool    `json:"BikeTransport"`
 	Number               string   `json:"Number,omitempty"`
 
 	// Nullable flags — left nil, not set by DSS importer
@@ -128,14 +131,72 @@ type LicenseInfo struct {
 }
 
 // GpsInfo matches the full ODH shape including extra fields.
+// The API returns Latitude and Longitude as strings; custom unmarshaling converts them to floats.
 type GpsInfo struct {
-	Default               *bool   `json:"Default,omitempty"`
-	Gpstype               string  `json:"Gpstype"`
-	Altitude              *int    `json:"Altitude,omitempty"`
-	Geometry              *string `json:"Geometry,omitempty"`
-	Latitude              float64 `json:"Latitude"`
-	Longitude             float64 `json:"Longitude"`
-	AltitudeUnitofMeasure string  `json:"AltitudeUnitofMeasure,omitempty"`
+	Default               *bool    `json:"Default,omitempty"`
+	Gpstype               string   `json:"Gpstype"`
+	Altitude              *float64 `json:"Altitude,omitempty"`
+	Geometry              *string  `json:"Geometry,omitempty"`
+	Latitude              float64  `json:"Latitude"`
+	Longitude             float64  `json:"Longitude"`
+	AltitudeUnitofMeasure string   `json:"AltitudeUnitofMeasure,omitempty"`
+}
+
+// UnmarshalJSON handles the case where Latitude and Longitude come from the API as strings.
+func (g *GpsInfo) UnmarshalJSON(b []byte) error {
+	var raw struct {
+		Default               *bool       `json:"Default"`
+		Gpstype               string      `json:"Gpstype"`
+		Altitude              *float64    `json:"Altitude"`
+		Geometry              *string     `json:"Geometry"`
+		Latitude              interface{} `json:"Latitude"`  // Can be string or float
+		Longitude             interface{} `json:"Longitude"` // Can be string or float
+		AltitudeUnitofMeasure string      `json:"AltitudeUnitofMeasure"`
+	}
+
+	if err := json.Unmarshal(b, &raw); err != nil {
+		return err
+	}
+
+	g.Default = raw.Default
+	g.Gpstype = raw.Gpstype
+	g.Altitude = raw.Altitude
+	g.Geometry = raw.Geometry
+	g.AltitudeUnitofMeasure = raw.AltitudeUnitofMeasure
+
+	// Convert latitude from interface{} (can be string or float64)
+	switch v := raw.Latitude.(type) {
+	case string:
+		lat, err := strconv.ParseFloat(v, 64)
+		if err != nil {
+			return fmt.Errorf("invalid latitude: %v", err)
+		}
+		g.Latitude = lat
+	case float64:
+		g.Latitude = v
+	case nil:
+		g.Latitude = 0
+	default:
+		return fmt.Errorf("latitude has unexpected type: %T", v)
+	}
+
+	// Convert longitude from interface{} (can be string or float64)
+	switch v := raw.Longitude.(type) {
+	case string:
+		lon, err := strconv.ParseFloat(v, 64)
+		if err != nil {
+			return fmt.Errorf("invalid longitude: %v", err)
+		}
+		g.Longitude = lon
+	case float64:
+		g.Longitude = v
+	case nil:
+		g.Longitude = 0
+	default:
+		return fmt.Errorf("longitude has unexpected type: %T", v)
+	}
+
+	return nil
 }
 
 // GpsTrack matches the old API: a slice of track objects.
@@ -190,11 +251,11 @@ type ImageGalleryEntry struct {
 
 // LocationInfo is populated by the ODH pipeline from GpsInfo — not set by transformer.
 type LocationInfo struct {
-	TvInfo           *LocationRef `json:"TvInfo,omitempty"`
-	AreaInfo         *LocationRef `json:"AreaInfo,omitempty"`
-	RegionInfo       *LocationRef `json:"RegionInfo,omitempty"`
-	DistrictInfo     *LocationRef `json:"DistrictInfo,omitempty"`
-	MunicipalityInfo *LocationRef `json:"MunicipalityInfo,omitempty"`
+	TvInfo           *LocationRef `json:"TvInfo"`
+	AreaInfo         *LocationRef `json:"AreaInfo"`
+	RegionInfo       *LocationRef `json:"RegionInfo"`
+	DistrictInfo     *LocationRef `json:"DistrictInfo"`
+	MunicipalityInfo *LocationRef `json:"MunicipalityInfo"`
 }
 
 type LocationRef struct {

@@ -301,11 +301,18 @@ func buildGps(snowpark dto.DssSnowpark) ([]odhmodel.GpsInfo, map[string]*odhmode
 		return gpsInfo, gpsPoints
 	}
 
+	// GpsInfo.Altitude is *float64 — ODH API returns floats e.g. 1520.0.
+	var altFloat *float64
+	if snowpark.Data.Altitude != nil {
+		f := float64(*snowpark.Data.Altitude)
+		altFloat = &f
+	}
+
 	entry := odhmodel.GpsInfo{
 		Gpstype:               "position",
 		Latitude:              lat,
 		Longitude:             lon,
-		Altitude:              snowpark.Data.Altitude,
+		Altitude:              altFloat,
 		AltitudeUnitofMeasure: "m",
 	}
 

@@ -42,10 +42,6 @@ var env struct {
 }
 
 var contentClient clib.ContentAPI
-
-// poiCache holds the current remote state of lift POIs.
-// In production it is nil at startup and loaded lazily on the first Transform call.
-// In tests it is injected directly before calling Transform, bypassing the remote load.
 var poiCache *clib.Cache[odhmodel.ODHActivityPoi]
 var nowFunc = func() time.Time { return time.Now().UTC() }
 
@@ -67,35 +63,24 @@ func main() {
 	})
 	ms.FailOnError(context.Background(), err, "failed to create ODH content client")
 
+	poiCache, err = clib.LoadExisting(context.Background(), contentClient, clib.LoadConfig[odhmodel.ODHActivityPoi]{
+		EntityType:  ENTITY_TYPE,
+		QueryParams: map[string]string{"source": SOURCE, "tagfilter": "lifts"},
+		IDFunc:      func(p odhmodel.ODHActivityPoi) string { return *p.Generic.ID },
+	})
+	ms.FailOnError(context.Background(), err, "failed to load existing lift POIs")
+
+	slog.Info("Loaded existing lift POIs", "count", len(poiCache.Entries()))
+
 	listener := tr.NewTr[string](context.Background(), env.Env)
 	err = listener.Start(context.Background(), tr.RawString2JsonMiddleware(Transform))
 	ms.FailOnError(context.Background(), err, "error while listening to queue")
 }
 
 // Transform is called once per raw message from the collector.
-// If poiCache is nil (production first run), it is loaded from the remote API.
-// Tests inject a pre-built cache directly, so the remote load is skipped entirely.
 func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 	logger.Get(ctx).Info("Processing DSS lift feed",
 		"item_count", len(r.Rawdata.DssLifts.Items))
-
-	// Lazy-load cache from remote only when not already set (i.e. not injected by tests).
-	// Reset to nil after each run so the next call always reflects fresh remote state,
-	// while still allowing tests to pre-inject their own cache.
-	if poiCache == nil {
-		var err error
-		poiCache, err = clib.LoadExisting(ctx, contentClient, clib.LoadConfig[odhmodel.ODHActivityPoi]{
-			EntityType:  ENTITY_TYPE,
-			QueryParams: map[string]string{"source": SOURCE, "tagfilter": "lifts"},
-			IDFunc:      func(p odhmodel.ODHActivityPoi) string { return *p.Generic.ID },
-		})
-		if err != nil {
-			return fmt.Errorf("failed to load lift POI cache: %w", err)
-		}
-		logger.Get(ctx).Info("Loaded existing lift POIs", "count", len(poiCache.Entries()))
-	}
-	// Reset after this run so the next production invocation reloads from remote.
-	defer func() { poiCache = nil }()
 
 	seen := map[string]struct{}{}
 	pois := map[string]odhmodel.ODHActivityPoi{}
@@ -201,7 +186,6 @@ func mapLiftToPoi(lift dto.DssLift, base *odhmodel.ODHActivityPoi) odhmodel.ODHA
 		firstImport = base.FirstImport
 	} else {
 		firstImport = odhmodel.PtrFlexibleTime(nowFunc())
-
 	}
 
 	// NOTE: skiresort_rid gets Skiresort.Pid and skiresort_pid gets Skiresort.Rid.
@@ -222,6 +206,8 @@ func mapLiftToPoi(lift dto.DssLift, base *odhmodel.ODHActivityPoi) odhmodel.ODHA
 	isOpen := lift.StateWinter == 1 || lift.StateSummer == 1
 
 	// ── DistanceDuration ─────────────────────────────────────────────────────
+	// Guard against NaN/Inf: in Go, strconv.ParseFloat("NaN", 64) succeeds and
+	// returns math.NaN(), which json.Marshal cannot serialize and will panic.
 	var distDuration *float64
 	if lift.Duration != "" {
 		if secs, err := strconv.ParseFloat(lift.Duration, 64); err == nil && isFinite(secs) {
@@ -294,12 +280,12 @@ func mapLiftToPoi(lift dto.DssLift, base *odhmodel.ODHActivityPoi) odhmodel.ODHA
 		CustomId:             strconv.FormatInt(lift.Rid, 10),
 		IsOpen:               isOpen,
 		Number:               lift.Number,
-		BikeTransport:        lift.Data.BikeTransport,
+		BikeTransport:        &lift.Data.BikeTransport,
 		DistanceLength:       lift.Data.Length,
 		DistanceDuration:     distDuration,
-		AltitudeLowestPoint:  lift.Data.AltitudeStart,
-		AltitudeHighestPoint: lift.Data.AltitudeEnd,
-		AltitudeDifference:   lift.Data.HeightDifference,
+		AltitudeLowestPoint:  intToFloat64(lift.Data.AltitudeStart),
+		AltitudeHighestPoint: intToFloat64(lift.Data.AltitudeEnd),
+		AltitudeDifference:   intToFloat64(lift.Data.HeightDifference),
 		GpsTrack:             gpsTrack,
 		GpsPoints:            gpsPoints,
 		OperationSchedule:    opSchedules,
@@ -308,10 +294,15 @@ func mapLiftToPoi(lift dto.DssLift, base *odhmodel.ODHActivityPoi) odhmodel.ODHA
 
 // ── Float safety ──────────────────────────────────────────────────────────────
 
+// isFinite returns true only when f is a normal, serializable float64.
+// json.Marshal panics on NaN and Inf — both are valid Go float64 values
+// returned by strconv.ParseFloat("NaN"/"Inf"/...) without an error.
 func isFinite(f float64) bool {
 	return !math.IsNaN(f) && !math.IsInf(f, 0)
 }
 
+// safeParseFloat parses s and returns (value, true) only when the result is
+// finite. Returns (0, false) for empty strings, parse errors, NaN, and Inf.
 func safeParseFloat(s string) (float64, bool) {
 	s = strings.TrimSpace(s)
 	if s == "" {
@@ -324,14 +315,22 @@ func safeParseFloat(s string) (float64, bool) {
 	return v, true
 }
 
+// intToFloat64 converts a nullable *int to a nullable *float64.
+func intToFloat64(i *int) *float64 {
+	if i == nil {
+		return nil
+	}
+	f := float64(*i)
+	return &f
+}
+
 // ── Tag builders ──────────────────────────────────────────────────────────────
 
 func buildTagIds(rid int64) []string {
-	tags := []string{"activity"}
+	tags := []string{"activity", "lifts", "other", "other lifts"}
 	if t := lifttypeToTagId(rid); t != "" {
 		tags = append(tags, t)
 	}
-	tags = append(tags, "lifts", "other", "other lifts")
 	return tags
 }
 
@@ -432,24 +431,33 @@ func buildGps(lift dto.DssLift) ([]odhmodel.GpsInfo, map[string]*odhmodel.GpsInf
 		return gpsInfo, gpsPoints
 	}
 
+	// safeParseFloat guards against NaN/Inf from malformed DSS coord strings
 	lat, latOk := safeParseFloat(lift.Location.Lat)
 	lon, lonOk := safeParseFloat(lift.Location.Lon)
 	if !latOk || !lonOk {
 		return gpsInfo, gpsPoints
 	}
 
+	// "position" and "valleystationpoint" both use valley station coords
+	// GpsInfo.Altitude is *float64 — ODH API returns floats e.g. 1732.0.
+	var altStart *float64
+	if lift.Data.AltitudeStart != nil {
+		f := float64(*lift.Data.AltitudeStart)
+		altStart = &f
+	}
+
 	valleyEntry := odhmodel.GpsInfo{
 		Gpstype:               "position",
 		Latitude:              lat,
 		Longitude:             lon,
-		Altitude:              lift.Data.AltitudeStart,
+		Altitude:              altStart,
 		AltitudeUnitofMeasure: "m",
 	}
 	valleyStation := odhmodel.GpsInfo{
 		Gpstype:               "valleystationpoint",
 		Latitude:              lat,
 		Longitude:             lon,
-		Altitude:              lift.Data.AltitudeStart,
+		Altitude:              altStart,
 		AltitudeUnitofMeasure: "m",
 	}
 
@@ -463,11 +471,16 @@ func buildGps(lift dto.DssLift) ([]odhmodel.GpsInfo, map[string]*odhmodel.GpsInf
 		mlat, mlatOk := safeParseFloat(lift.LocationMountain.Lat)
 		mlon, mlonOk := safeParseFloat(lift.LocationMountain.Lon)
 		if mlatOk && mlonOk {
+			var altEnd *float64
+			if lift.Data.AltitudeEnd != nil {
+				f := float64(*lift.Data.AltitudeEnd)
+				altEnd = &f
+			}
 			mountainEntry := odhmodel.GpsInfo{
 				Gpstype:               "mountainstationpoint",
 				Latitude:              mlat,
 				Longitude:             mlon,
-				Altitude:              lift.Data.AltitudeEnd,
+				Altitude:              altEnd,
 				AltitudeUnitofMeasure: "m",
 			}
 			gpsInfo = append(gpsInfo, mountainEntry)
@@ -505,18 +518,9 @@ func buildOperationSchedule(season string, lift dto.DssLift) *odhmodel.Operation
 		return nil
 	}
 
-	// DSS epoch values represent midnight in Europe/Rome (UTC+1 winter, UTC+2 summer).
-	// Converting to UTC shifts the date back by 1 hour and rolls the day back by 1.
-	// We must format in the local Rome timezone to preserve the correct calendar date.
-	rome, err := time.LoadLocation("Europe/Rome")
-	if err != nil {
-		// Fallback: assume UTC+1 fixed offset if tz database unavailable
-		rome = time.FixedZone("CET", 3600)
-	}
-
 	const dtFormat = "2006-01-02T00:00:00"
-	start := time.Unix(*seasonStart, 0).In(rome).Format(dtFormat)
-	stop := time.Unix(*seasonEnd, 0).In(rome).Format(dtFormat)
+	start := time.Unix(*seasonStart, 0).UTC().Format(dtFormat)
+	stop := time.Unix(*seasonEnd, 0).UTC().Format(dtFormat)
 
 	nameDE, nameIT, nameEN := "Wintersaison", "stagioneinvernale", "winterseason"
 	if season == "summer" {
@@ -548,7 +552,7 @@ func buildOperationSchedule(season string, lift dto.DssLift) *odhmodel.Operation
 			Tuesday:   true,
 			Wednesday: true,
 			Thursday:  true,
-			Thuresday: true,
+			Thuresday: true, // ODH typo — must be set alongside Thursday
 			Friday:    true,
 			Saturday:  true,
 			Sunday:    true,

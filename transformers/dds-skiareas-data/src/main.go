@@ -28,10 +28,6 @@ const (
 	ENTITY_TYPE    = "SkiArea"
 	SYNC_INTERFACE = "dssskiarea"
 	LICENSE_HOLDER = "https://www.dolomitisuperski.com"
-
-	// ODH SkiArea requires pagenumber=1 to return the paginated envelope shape.
-	// Without it the endpoint returns a different (non-paginated) response format.
-	ODH_SKIAREA_BASE_URL = "/v1/SkiArea"
 )
 
 var env struct {
@@ -44,8 +40,8 @@ var env struct {
 }
 
 var contentClient clib.ContentAPI
-var nowFunc = func() time.Time { return time.Now().UTC() }
 var skiAreaCache *clib.Cache[odhmodel.SkiArea]
+var nowFunc = func() time.Time { return time.Now().UTC() }
 
 func main() {
 	ms.InitWithEnv(context.Background(), "", &env)
@@ -73,8 +69,8 @@ func main() {
 // Transform processes the full talschaften feed.
 // For each DSS skiarea:
 //   - Query ODH by Mapping.dss.rid
-//   - If found (0..N): update OperationSchedule on each existing record
-//   - If not found:    create a new SkiArea with DSS name, contact, season
+//   - If found (0..N): update OperationSchedule only, preserve everything else
+//   - If not found:    create new SkiArea with DSS name, contact, seasons
 func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 	logger.Get(ctx).Info("Processing DSS skiarea feed",
 		"item_count", len(r.Rawdata.DssSkiAreas.Items))
@@ -94,7 +90,6 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 func processSkiArea(ctx context.Context, dssArea dto.DssSkiArea) error {
 	log := logger.Get(ctx).With("rid", dssArea.Rid)
 
-	// Query ODH for all SkiAreas that have Mapping.dss.rid == dssArea.Rid
 	existing, err := findByDssRid(ctx, dssArea.Rid)
 	if err != nil {
 		return fmt.Errorf("ODH lookup failed: %w", err)
@@ -114,16 +109,20 @@ func processSkiArea(ctx context.Context, dssArea dto.DssSkiArea) error {
 		return nil
 	}
 
-	// ── UPDATE — apply to all matched SkiAreas ─────────────────────────────
+	// ── UPDATE — apply to all matched SkiAreas ────────────────────────────
 	// Per senior: "if 2 skiareas found, do this on both"
+	// We replace ONLY OperationSchedule and LastChange.
+	// ContactInfos is json.RawMessage — round-tripped unchanged ✓
+	// PublishedOn, LicenseInfo — preserved from existing record ✓
+	// Detail, TagIds, SmgTags, GpsInfo etc. — preserved via struct fields ✓
 	for _, area := range existing {
 		id := *area.Id
 		log.Info("Updating OperationSchedule on existing SkiArea", "id", id)
 
-		// Replace OperationSchedule entirely, preserve everything else
 		area.OperationSchedule = opSchedules
 		area.LastChange = odhmodel.PtrFlexibleTime(nowFunc())
-		// Ensure DSS mapping block is present (may be missing on idm records)
+
+		// Ensure DSS mapping block is present (may be absent on idm-only records)
 		if area.Mapping == nil {
 			area.Mapping = map[string]map[string]string{}
 		}
@@ -141,10 +140,7 @@ func processSkiArea(ctx context.Context, dssArea dto.DssSkiArea) error {
 
 // findByDssRid queries ODH SkiArea filtered by Mapping.dss.rid.
 // Uses rawfilter + pagenumber=1 as required by the SkiArea endpoint.
-// Returns all matched items (may be 0, 1, or more).
 func findByDssRid(ctx context.Context, rid string) ([]odhmodel.SkiArea, error) {
-	// Build query: rawfilter=eq(Mapping.dss.rid,'<rid>')&pagenumber=1
-	// clib.Get is used for raw GET requests against the ODH API.
 	rawFilter := fmt.Sprintf("eq(Mapping.dss.rid,'%s')", rid)
 
 	var page odhmodel.SkiAreaPage
@@ -159,9 +155,8 @@ func findByDssRid(ctx context.Context, rid string) ([]odhmodel.SkiArea, error) {
 	return page.Items, nil
 }
 
-// buildOperationSchedules produces two OperationSchedule entries (winter + summer)
-// from the DSS talschaft season data.
-// Returns only the entries for which start+end are both non-nil.
+// buildOperationSchedules produces winter + summer OperationSchedule entries.
+// Skips any season where start or end is nil.
 func buildOperationSchedules(dssArea dto.DssSkiArea) []odhmodel.OperationSchedule {
 	const dtFormat = "2006-01-02T00:00:00"
 	var schedules []odhmodel.OperationSchedule
@@ -170,10 +165,9 @@ func buildOperationSchedules(dssArea dto.DssSkiArea) []odhmodel.OperationSchedul
 		start := time.Unix(*dssArea.SeasonWinter.Start, 0).UTC().Format(dtFormat)
 		stop := time.Unix(*dssArea.SeasonWinter.End, 0).UTC().Format(dtFormat)
 		schedules = append(schedules, odhmodel.OperationSchedule{
-			Type:  "1",
-			Start: start,
-			Stop:  stop,
-			// Always emit empty array — matches old API shape (not null, not omitted)
+			Type:                  "1",
+			Start:                 start,
+			Stop:                  stop,
 			OperationScheduleTime: []odhmodel.OperationScheduleTime{},
 			OperationscheduleName: map[string]string{
 				"de": "Wintersaison",
@@ -203,14 +197,14 @@ func buildOperationSchedules(dssArea dto.DssSkiArea) []odhmodel.OperationSchedul
 }
 
 // buildNewSkiArea constructs a full new SkiArea for the CREATE path.
-// Only sets what DSS provides: name (de/it/en), contact, seasons.
-// Does NOT set Detail text fields beyond Title — per senior instructions.
+// Sets name (de/it/en), contact info, seasons, source="dss".
+// Does NOT set rich Detail beyond Title — per senior instructions.
 func buildNewSkiArea(dssArea dto.DssSkiArea, opSchedules []odhmodel.OperationSchedule) odhmodel.SkiArea {
 	id := buildID(dssArea)
 	source := SOURCE
 	shortname := stringVal(dssArea.Name.De)
 
-	// HasLanguage: only include langs where name is non-empty
+	// HasLanguage + Detail: only for languages where DSS name is non-empty
 	hasLanguage := []string{}
 	detail := map[string]*clib.DetailGeneric{}
 	for _, lang := range []string{"de", "it", "en"} {
@@ -226,14 +220,20 @@ func buildNewSkiArea(dssArea dto.DssSkiArea, opSchedules []odhmodel.OperationSch
 		}
 	}
 
-	// ContactInfos: populate de/it/en with phone + email
-	contactInfos := map[string]*odhmodel.ContactInfo{}
+	// ContactInfos: marshal our minimal ContactInfo into json.RawMessage
+	// so the field type is consistent with the UPDATE path (which uses RawMessage).
+	contactInfos := map[string]json.RawMessage{}
 	for _, lang := range hasLanguage {
-		contactInfos[lang] = &odhmodel.ContactInfo{
+		ci := odhmodel.ContactInfo{
 			Language:    lang,
 			Email:       strings.TrimSpace(dssArea.Email.TouristBoard),
 			Phonenumber: strings.TrimSpace(dssArea.Phone),
 		}
+		raw, err := json.Marshal(ci)
+		if err != nil {
+			continue
+		}
+		contactInfos[lang] = raw
 	}
 
 	now := nowFunc()
@@ -249,14 +249,16 @@ func buildNewSkiArea(dssArea dto.DssSkiArea, opSchedules []odhmodel.OperationSch
 		Mapping: map[string]map[string]string{
 			SOURCE: {"rid": dssArea.Rid},
 		},
-		Detail:              detail,
-		ContactInfos:        contactInfos,
-		OperationSchedule:   opSchedules,
-		SmgActive:           true,
-		OdhActive:           true,
+		Detail:            detail,
+		ContactInfos:      contactInfos,
+		OperationSchedule: opSchedules,
+		SmgActive:         true,
+		OdhActive:         true,
+		// PublishedOn: [] on new DSS record (not published on idm-marketplace)
 		PublishedOn:         []string{},
 		SyncUpdateMode:      "Full",
 		SyncSourceInterface: SYNC_INTERFACE,
+		// LicenseInfo: set on CREATE only; preserved from existing record on UPDATE
 		LicenseInfo: &odhmodel.LicenseInfo{
 			Author:        "",
 			License:       "CC0",
@@ -266,8 +268,8 @@ func buildNewSkiArea(dssArea dto.DssSkiArea, opSchedules []odhmodel.OperationSch
 	}
 }
 
-// buildID generates a deterministic ODH ID for a new DSS SkiArea.
-// Format: "dss_skiarea_<rid>" — rid is kept as-is (string, e.g. "4a").
+// buildID generates a deterministic ODH ID for new DSS SkiArea records.
+// Format: "dss_skiarea_<rid>" — rid kept as-is (string, e.g. "4a").
 func buildID(dssArea dto.DssSkiArea) string {
 	return fmt.Sprintf("dss_skiarea_%s", dssArea.Rid)
 }
@@ -293,13 +295,3 @@ func stringVal(s *string) string {
 	}
 	return *s
 }
-
-// ── JSON debug helper (unused in prod, useful during dev) ─────────────────────
-
-func debugJSON(v interface{}) string {
-	b, _ := json.MarshalIndent(v, "", "  ")
-	return string(b)
-}
-
-// Silence unused import warning during development
-var _ = debugJSON

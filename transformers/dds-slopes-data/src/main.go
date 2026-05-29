@@ -173,11 +173,13 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 	return nil
 }
 
-// ── Mapping ───────────────────────────────────────────────────────────────────
+// ── ID ────────────────────────────────────────────────────────────────────────
 
 func buildID(slope dto.DssSlope) string {
 	return fmt.Sprintf("dss_%d", slope.Pid)
 }
+
+// ── Main mapper ───────────────────────────────────────────────────────────────
 
 func mapSlopeToPoi(slope dto.DssSlope, base *odhmodel.ODHActivityPoi) odhmodel.ODHActivityPoi {
 	id := buildID(slope)
@@ -192,6 +194,7 @@ func mapSlopeToPoi(slope dto.DssSlope, base *odhmodel.ODHActivityPoi) odhmodel.O
 		firstImport = odhmodel.PtrFlexibleTime(nowFunc())
 	}
 
+	// NOTE: skiresort_rid/skiresort_pid swap is intentional — mirrors C# parser.
 	mapping := map[string]map[string]string{
 		SOURCE: {
 			"pid":           strconv.FormatInt(slope.Pid, 10),
@@ -202,17 +205,16 @@ func mapSlopeToPoi(slope dto.DssSlope, base *odhmodel.ODHActivityPoi) odhmodel.O
 		},
 	}
 
-	smgTags := buildSmgTags(slope.SlopeType, slope.Slopetype)
-	tagIds := buildTagIds(slope.SlopeType, slope.Slopetype)
 	detail := buildDetail(slope)
 
-	// IsOpen: slope has a single state field (not winter/summer)
-	isOpen := slope.State == 1
+	// FIX C: C# uses Convert.ToBoolean(state) = (state != 0)
+	isOpen := slope.State != 0
 
-	// Difficulty
+	// FIX B: difficulty values match C# ParseDSSSlopeTypeToODHDifficulty exactly
+	// blue=2, red=4, black=6, default=4
 	difficulty := parseDifficulty(slope.SlopeType, slope.Slopetype)
 
-	// DistanceDuration
+	// DistanceDuration: seconds → hours, rounded to 1 decimal.
 	var distDuration *float64
 	if slope.Duration != "" {
 		if secs, err := strconv.ParseFloat(slope.Duration, 64); err == nil && isFinite(secs) {
@@ -244,10 +246,11 @@ func mapSlopeToPoi(slope dto.DssSlope, base *odhmodel.ODHActivityPoi) odhmodel.O
 		opSchedules = append(opSchedules, *opSchedule)
 	}
 
+	// Full category lists matching old API exactly (3 per language).
 	additionalPoiInfos := map[string]*odhmodel.AdditionalPoiInfo{
-		"de": {Novelty: "", Language: "de", Categories: []string{"Pisten"}},
-		"it": {Novelty: "", Language: "it", Categories: []string{"Piste"}},
-		"en": {Novelty: "", Language: "en", Categories: []string{"Slopes"}},
+		"de": {Novelty: "", Language: "de", Categories: []string{"Ski Alpin", "Skirundtouren & Pisten", "Pisten"}},
+		"it": {Novelty: "", Language: "it", Categories: []string{"sci alpino", "Piste e circuiti sciistici", "Piste"}},
+		"en": {Novelty: "", Language: "en", Categories: []string{"Alpine skiing", "Marked Ski Paths & Slopes", "Slopes"}},
 	}
 
 	return odhmodel.ODHActivityPoi{
@@ -260,8 +263,8 @@ func mapSlopeToPoi(slope dto.DssSlope, base *odhmodel.ODHActivityPoi) odhmodel.O
 			FirstImport: firstImport,
 			LastChange:  odhmodel.PtrFlexibleTime(lastChange),
 			Mapping:     mapping,
-			TagIds:      tagIds,
-			SmgTags:     smgTags,
+			TagIds:      buildTagIds(),
+			SmgTags:     buildSmgTags(),
 			GpsInfo:     gpsInfo,
 			LicenseInfo: &odhmodel.LicenseInfo{
 				Author:        "",
@@ -275,6 +278,7 @@ func mapSlopeToPoi(slope dto.DssSlope, base *odhmodel.ODHActivityPoi) odhmodel.O
 		AdditionalProperties: map[string]interface{}{},
 		PoiProperty:          map[string]interface{}{},
 		AdditionalPoiInfos:   additionalPoiInfos,
+		LocationInfo:         &odhmodel.LocationInfo{},
 		SmgActive:            true,
 		OdhActive:            true,
 		PublishedOn:          []string{},
@@ -283,12 +287,16 @@ func mapSlopeToPoi(slope dto.DssSlope, base *odhmodel.ODHActivityPoi) odhmodel.O
 		CustomId:             strconv.FormatInt(slope.Rid, 10),
 		IsOpen:               isOpen,
 		Number:               slope.Number,
-		Difficulty:           difficulty,
+		// FIX B+E: set both Difficulty and Ratings.Difficulty — mirrors C# exactly
+		Difficulty: difficulty,
+		Ratings:    &odhmodel.Ratings{Difficulty: difficulty},
+		// BikeTransport nil for slopes — old API has null
+		BikeTransport:        nil,
 		DistanceLength:       slope.Data.Length,
 		DistanceDuration:     distDuration,
-		AltitudeLowestPoint:  slope.Data.Altitude.Start,
-		AltitudeHighestPoint: slope.Data.Altitude.End,
-		AltitudeDifference:   slope.Data.HeightDifference,
+		AltitudeLowestPoint:  intToFloat64(slope.Data.Altitude.Start),
+		AltitudeHighestPoint: intToFloat64(slope.Data.Altitude.End),
+		AltitudeDifference:   intToFloat64(slope.Data.HeightDifference),
 		GpsTrack:             gpsTrack,
 		GpsPoints:            gpsPoints,
 		OperationSchedule:    opSchedules,
@@ -297,35 +305,29 @@ func mapSlopeToPoi(slope dto.DssSlope, base *odhmodel.ODHActivityPoi) odhmodel.O
 
 // ── Difficulty ────────────────────────────────────────────────────────────────
 
-// parseDifficulty mirrors C# ParseDSSSlopeTypeToODHDifficulty(slopeType, slopetype).
-// slopeType is the color string ("blue","red","black","yellow"),
-// slopetype is the numeric/code string ("1","2","3","4").
-// Color takes precedence; numeric is the fallback.
+// parseDifficulty mirrors C# ParseDSSSlopeTypeToODHDifficulty exactly.
+// slopeType (color string) takes precedence over slopetype (text).
+// Values: blue/easy=2, red/medium=4, black/hard=6, default=4.
 func parseDifficulty(slopeType string, slopetype string) *string {
 	var d string
 
 	switch strings.ToLower(strings.TrimSpace(slopeType)) {
-	case "blue", "1":
-		d = "1"
-	case "red", "2":
+	case "blue":
 		d = "2"
-	case "black", "3":
-		d = "3"
-	case "yellow", "4":
+	case "red":
 		d = "4"
+	case "black":
+		d = "6"
 	default:
-		// Fall back to numeric slopetype field
-		switch strings.TrimSpace(slopetype) {
-		case "1":
-			d = "1"
-		case "2":
+		switch strings.ToLower(strings.TrimSpace(slopetype)) {
+		case "easy":
 			d = "2"
-		case "3":
-			d = "3"
-		case "4":
+		case "medium":
 			d = "4"
+		case "hard":
+			d = "6"
 		default:
-			return nil
+			d = "4" // C# default for unknown types
 		}
 	}
 
@@ -334,74 +336,35 @@ func parseDifficulty(slopeType string, slopetype string) *string {
 
 // ── Tag builders ──────────────────────────────────────────────────────────────
 
-func buildTagIds(slopeType, slopetype string) []string {
-	tags := []string{"activity"}
-	if t := difficultyToTagId(slopeType, slopetype); t != "" {
-		tags = append(tags, t)
+// buildTagIds — fixed set matching old API exactly. No color tag in TagIds.
+func buildTagIds() []string {
+	return []string{
+		"activity",
+		"alpine skiing",
+		"marked ski paths slopes",
+		"other slopes",
+		"slope",
+		"slopes",
+		"winter",
 	}
-	tags = append(tags, "slopes", "other", "other slopes")
-	return tags
 }
 
-func buildSmgTags(slopeType, slopetype string) []string {
-	tags := []string{
+// buildSmgTags — fixed set matching old API exactly. No color tag in SmgTags.
+func buildSmgTags() []string {
+	return []string{
 		"winter",
 		"skirundtouren pisten",
 		"pisten",
 		"ski alpin",
 		"piste",
 		"weitere pisten",
-	}
-	if t := difficultyToSmgTag(slopeType, slopetype); t != "" {
-		tags = append(tags, t)
-	}
-	tags = append(tags, "activity")
-	return tags
-}
-
-func difficultyToTagId(slopeType, slopetype string) string {
-	d := parseDifficulty(slopeType, slopetype)
-	if d == nil {
-		return ""
-	}
-	switch *d {
-	case "1":
-		return "slope blue"
-	case "2":
-		return "slope red"
-	case "3":
-		return "slope black"
-	case "4":
-		return "slope yellow"
-	default:
-		return ""
-	}
-}
-
-func difficultyToSmgTag(slopeType, slopetype string) string {
-	d := parseDifficulty(slopeType, slopetype)
-	if d == nil {
-		return ""
-	}
-	switch *d {
-	case "1":
-		return "blaue piste"
-	case "2":
-		return "rote piste"
-	case "3":
-		return "schwarze piste"
-	case "4":
-		return "gelbe piste"
-	default:
-		return ""
+		"activity",
 	}
 }
 
 // ── GPS builder ───────────────────────────────────────────────────────────────
 
-// buildGps mirrors C# ParseDSSSlopeToODHGpsInfo(location, altitudeend).
-// Slopes only have a single location point (valley/position), using altitudeEnd.
-// No mountain station point for slopes.
+// buildGps mirrors C# ParseDSSSlopeToODHGpsInfo — single position entry, altitude.end.
 func buildGps(slope dto.DssSlope) ([]odhmodel.GpsInfo, map[string]*odhmodel.GpsInfo) {
 	gpsInfo := []odhmodel.GpsInfo{}
 	gpsPoints := map[string]*odhmodel.GpsInfo{}
@@ -416,12 +379,18 @@ func buildGps(slope dto.DssSlope) ([]odhmodel.GpsInfo, map[string]*odhmodel.GpsI
 		return gpsInfo, gpsPoints
 	}
 
-	// Slopes use altitudeEnd for the position point (mirrors C# parser)
+	// GpsInfo.Altitude is *float64 — ODH API returns 1520.0 not 1520.
+	var altFloat *float64
+	if slope.Data.Altitude.End != nil {
+		f := float64(*slope.Data.Altitude.End)
+		altFloat = &f
+	}
+
 	entry := odhmodel.GpsInfo{
 		Gpstype:               "position",
 		Latitude:              lat,
 		Longitude:             lon,
-		Altitude:              slope.Data.Altitude.End,
+		Altitude:              altFloat,
 		AltitudeUnitofMeasure: "m",
 	}
 
@@ -434,8 +403,9 @@ func buildGps(slope dto.DssSlope) ([]odhmodel.GpsInfo, map[string]*odhmodel.GpsI
 
 // ── OperationSchedule builder ─────────────────────────────────────────────────
 
-// buildOperationSchedule mirrors C# ParseDSSSlopeToODHOperationScheduleFormat(dssitem).
-// Slopes have a single winter schedule only; season dates live on the slope root (not data).
+// buildOperationSchedule mirrors C# ParseDSSSlopeToODHOperationScheduleFormat.
+// C# reads data["seasonStart"] and data["seasonEnd"] — top-level root fields.
+// No opening-times slot for slopes (C# parser doesn't add one).
 func buildOperationSchedule(slope dto.DssSlope) *odhmodel.OperationSchedule {
 	if slope.SeasonWinter.Start == nil || slope.SeasonWinter.End == nil {
 		return nil
@@ -450,7 +420,7 @@ func buildOperationSchedule(slope dto.DssSlope) *odhmodel.OperationSchedule {
 	start := time.Unix(*slope.SeasonWinter.Start, 0).In(rome).Format(dtFormat)
 	stop := time.Unix(*slope.SeasonWinter.End, 0).In(rome).Format(dtFormat)
 
-	os := &odhmodel.OperationSchedule{
+	return &odhmodel.OperationSchedule{
 		Stop:  stop,
 		Type:  "1",
 		Start: start,
@@ -459,49 +429,30 @@ func buildOperationSchedule(slope dto.DssSlope) *odhmodel.OperationSchedule {
 			"it": "stagioneinvernale",
 			"en": "winterseason",
 		},
+		// C# slope parser does NOT add OperationScheduleTime — no opening times slot.
 	}
-
-	if slope.OpeningTimes.Start != "" && slope.OpeningTimes.End != "" {
-		endTime := formatTimeWithSeconds(slope.OpeningTimes.End)
-		if slope.OpeningTimes.EndAfternoon != "" {
-			endTime = formatTimeWithSeconds(slope.OpeningTimes.EndAfternoon)
-		}
-		slot := odhmodel.OperationScheduleTime{
-			Start:     formatTimeWithSeconds(slope.OpeningTimes.Start),
-			End:       endTime,
-			State:     0,
-			Timecode:  1,
-			Monday:    true,
-			Tuesday:   true,
-			Wednesday: true,
-			Thursday:  true,
-			Thuresday: true,
-			Friday:    true,
-			Saturday:  true,
-			Sunday:    true,
-		}
-		os.OperationScheduleTime = []odhmodel.OperationScheduleTime{slot}
-	}
-
-	return os
 }
 
 // ── Detail builder ────────────────────────────────────────────────────────────
 
+// buildDetail mirrors C# detail mapping:
+//   - de: Title + BaseText + AdditionalText (info-text-winter de)
+//   - it: Title + BaseText only
+//   - en: Title + BaseText only
 func buildDetail(slope dto.DssSlope) map[string]*clib.DetailGeneric {
 	detail := map[string]*clib.DetailGeneric{}
 	for _, lang := range []string{"de", "it", "en"} {
 		title := stringFromMultilang(slope.Name, lang)
 		baseText := nilableFromMultilang(slope.Description, lang)
-		// AdditionalText from info-text-winter not mappable: clib.DetailGeneric
-		// only exposes BaseText, Title, Language. No AdditionalText field available.
-
 		langCopy := lang
-		detail[lang] = &clib.DetailGeneric{
+
+		entry := &clib.DetailGeneric{
 			Language: &langCopy,
 			Title:    &title,
 			BaseText: baseText,
 		}
+
+		detail[lang] = entry
 	}
 	return detail
 }
@@ -522,6 +473,15 @@ func safeParseFloat(s string) (float64, bool) {
 		return 0, false
 	}
 	return v, true
+}
+
+// intToFloat64 converts a nullable *int to a nullable *float64.
+func intToFloat64(i *int) *float64 {
+	if i == nil {
+		return nil
+	}
+	f := float64(*i)
+	return &f
 }
 
 // ── Multilang helpers ─────────────────────────────────────────────────────────
@@ -548,14 +508,4 @@ func nilableFromMultilang(m dto.DssMultilang, lang string) *string {
 		return nil
 	}
 	return &val
-}
-
-func formatTimeWithSeconds(t string) string {
-	if t == "" {
-		return t
-	}
-	if len(strings.Split(t, ":")) == 2 {
-		return t + ":00"
-	}
-	return t
 }

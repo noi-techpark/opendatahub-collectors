@@ -339,12 +339,13 @@ func buildGps(cam dto.DssWebcam) ([]odhmodel.GpsInfo, map[string]*odhmodel.GpsIn
 		return gpsInfo, gpsPoints
 	}
 
-	alt := cam.Altitude
+	// GpsInfo.Altitude is *float64 — ODH API returns floats e.g. 1520.0.
+	altFloat := float64(cam.Altitude)
 	entry := odhmodel.GpsInfo{
 		Gpstype:               "position",
 		Latitude:              cam.Location.Lat,
 		Longitude:             cam.Location.Lon,
-		Altitude:              &alt,
+		Altitude:              &altFloat,
 		AltitudeUnitofMeasure: "m",
 	}
 
@@ -391,4 +392,18 @@ func firstNonEmpty(values ...string) string {
 		}
 	}
 	return ""
+}
+
+// safeParseFloat is kept for consistency but not used for webcam coords
+// (which are already float64 in the JSON).
+func safeParseFloat(s string) (float64, bool) {
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return 0, false
+	}
+	v, err := strconv.ParseFloat(s, 64)
+	if err != nil || !isFinite(v) {
+		return 0, false
+	}
+	return v, true
 }
