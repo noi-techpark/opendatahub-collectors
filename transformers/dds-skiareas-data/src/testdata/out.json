@@ -4,19 +4,7 @@
       "apiPath": "SkiArea",
       "queryParams": { "generateid": "false" },
       "payload": {
-        "Id": "dss_skiarea_1",
         "Active": true,
-        "Source": "dss",
-        "Shortname": "Cortina d'Ampezzo",
-        "FirstImport": "2026-01-15T10:00:00Z",
-        "LastChange": "2026-01-15T10:00:00Z",
-        "HasLanguage": ["de", "it", "en"],
-        "Mapping": { "dss": { "rid": "1" } },
-        "Detail": {
-          "de": { "Title": "Cortina d'Ampezzo", "Language": "de" },
-          "en": { "Title": "Cortina d'Ampezzo", "Language": "en" },
-          "it": { "Title": "Cortina d'Ampezzo", "Language": "it" }
-        },
         "ContactInfos": {
           "de": {
             "Language": "de",
@@ -34,6 +22,23 @@
             "Phonenumber": "0436 866252"
           }
         },
+        "Detail": {
+          "de": { "Title": "Cortina d'Ampezzo", "Language": "de" },
+          "en": { "Title": "Cortina d'Ampezzo", "Language": "en" },
+          "it": { "Title": "Cortina d'Ampezzo", "Language": "it" }
+        },
+        "FirstImport": "2026-01-15T10:00:00Z",
+        "HasLanguage": ["de", "it", "en"],
+        "Id": "dss_skiarea_1",
+        "LastChange": "2026-01-15T10:00:00Z",
+        "LicenseInfo": {
+          "Author": "",
+          "License": "CC0",
+          "ClosedData": false,
+          "LicenseHolder": "https://www.dolomitisuperski.com"
+        },
+        "Mapping": { "dss": { "rid": "1" } },
+        "OdhActive": true,
         "OperationSchedule": [
           {
             "Stop": "2026-05-02T00:00:00",
@@ -58,36 +63,19 @@
             }
           }
         ],
-        "SmgActive": true,
-        "OdhActive": true,
         "PublishedOn": [],
-        "SyncUpdateMode": "Full",
+        "Shortname": "Cortina d'Ampezzo",
+        "SmgActive": true,
+        "Source": "dss",
         "SyncSourceInterface": "dssskiarea",
-        "LicenseInfo": {
-          "Author": "",
-          "License": "CC0",
-          "ClosedData": false,
-          "LicenseHolder": "https://www.dolomitisuperski.com"
-        }
+        "SyncUpdateMode": "Full"
       }
     },
     {
       "apiPath": "SkiArea",
       "queryParams": { "generateid": "false" },
       "payload": {
-        "Id": "dss_skiarea_2",
         "Active": true,
-        "Source": "dss",
-        "Shortname": "Kronplatz",
-        "FirstImport": "2026-01-15T10:00:00Z",
-        "LastChange": "2026-01-15T10:00:00Z",
-        "HasLanguage": ["de", "it", "en"],
-        "Mapping": { "dss": { "rid": "2" } },
-        "Detail": {
-          "de": { "Title": "Kronplatz", "Language": "de" },
-          "en": { "Title": "Plan de Corones", "Language": "en" },
-          "it": { "Title": "Plan de Corones", "Language": "it" }
-        },
         "ContactInfos": {
           "de": {
             "Language": "de",
@@ -105,7 +93,24 @@
             "Phonenumber": "0474 551500"
           }
         },
-        "OperationSchedule": [ 
+        "Detail": {
+          "de": { "Title": "Kronplatz", "Language": "de" },
+          "en": { "Title": "Plan de Corones", "Language": "en" },
+          "it": { "Title": "Plan de Corones", "Language": "it" }
+        },
+        "FirstImport": "2026-01-15T10:00:00Z",
+        "HasLanguage": ["de", "it", "en"],
+        "Id": "dss_skiarea_2",
+        "LastChange": "2026-01-15T10:00:00Z",
+        "LicenseInfo": {
+          "Author": "",
+          "License": "CC0",
+          "ClosedData": false,
+          "LicenseHolder": "https://www.dolomitisuperski.com"
+        },
+        "Mapping": { "dss": { "rid": "2" } },
+        "OdhActive": true,
+        "OperationSchedule": [
           {
             "Stop": "2026-04-18T00:00:00",
             "Type": "1",
@@ -129,36 +134,19 @@
             }
           }
         ],
-        "SmgActive": true,
-        "OdhActive": true,
         "PublishedOn": [],
-        "SyncUpdateMode": "Full",
+        "Shortname": "Kronplatz",
+        "SmgActive": true,
+        "Source": "dss",
         "SyncSourceInterface": "dssskiarea",
-        "LicenseInfo": {
-          "Author": "",
-          "License": "CC0",
-          "ClosedData": false,
-          "LicenseHolder": "https://www.dolomitisuperski.com"
-        }
+        "SyncUpdateMode": "Full"
       }
     },
     {
       "apiPath": "SkiArea",
       "queryParams": { "generateid": "false" },
       "payload": {
-        "Id": "dss_skiarea_3",
         "Active": true,
-        "Source": "dss",
-        "Shortname": "Alta Badia",
-        "FirstImport": "2026-01-15T10:00:00Z",
-        "LastChange": "2026-01-15T10:00:00Z",
-        "HasLanguage": ["de", "it", "en"],
-        "Mapping": { "dss": { "rid": "3" } },
-        "Detail": {
-          "de": { "Title": "Alta Badia", "Language": "de" },
-          "en": { "Title": "Alta Badia", "Language": "en" },
-          "it": { "Title": "Alta Badia", "Language": "it" }
-        },
         "ContactInfos": {
           "de": {
             "Language": "de",
@@ -176,6 +164,23 @@
             "Phonenumber": "0471 095895"
           }
         },
+        "Detail": {
+          "de": { "Title": "Alta Badia", "Language": "de" },
+          "en": { "Title": "Alta Badia", "Language": "en" },
+          "it": { "Title": "Alta Badia", "Language": "it" }
+        },
+        "FirstImport": "2026-01-15T10:00:00Z",
+        "HasLanguage": ["de", "it", "en"],
+        "Id": "dss_skiarea_3",
+        "LastChange": "2026-01-15T10:00:00Z",
+        "LicenseInfo": {
+          "Author": "",
+          "License": "CC0",
+          "ClosedData": false,
+          "LicenseHolder": "https://www.dolomitisuperski.com"
+        },
+        "Mapping": { "dss": { "rid": "3" } },
+        "OdhActive": true,
         "OperationSchedule": [
           {
             "Stop": "2027-04-03T00:00:00",
@@ -200,36 +205,19 @@
             }
           }
         ],
-        "SmgActive": true,
-        "OdhActive": true,
         "PublishedOn": [],
-        "SyncUpdateMode": "Full",
+        "Shortname": "Alta Badia",
+        "SmgActive": true,
+        "Source": "dss",
         "SyncSourceInterface": "dssskiarea",
-        "LicenseInfo": {
-          "Author": "",
-          "License": "CC0",
-          "ClosedData": false,
-          "LicenseHolder": "https://www.dolomitisuperski.com"
-        }
+        "SyncUpdateMode": "Full"
       }
     },
     {
       "apiPath": "SkiArea",
       "queryParams": { "generateid": "false" },
       "payload": {
-        "Id": "dss_skiarea_4a",
         "Active": true,
-        "Source": "dss",
-        "Shortname": "Gröden",
-        "FirstImport": "2026-01-15T10:00:00Z",
-        "LastChange": "2026-01-15T10:00:00Z",
-        "HasLanguage": ["de", "it", "en"],
-        "Mapping": { "dss": { "rid": "4a" } },
-        "Detail": {
-          "de": { "Title": "Gröden", "Language": "de" },
-          "en": { "Title": "Val Gardena", "Language": "en" },
-          "it": { "Title": "Val Gardena", "Language": "it" }
-        },
         "ContactInfos": {
           "de": {
             "Language": "de",
@@ -247,6 +235,23 @@
             "Phonenumber": "0471 777777"
           }
         },
+        "Detail": {
+          "de": { "Title": "Gröden", "Language": "de" },
+          "en": { "Title": "Val Gardena", "Language": "en" },
+          "it": { "Title": "Val Gardena", "Language": "it" }
+        },
+        "FirstImport": "2026-01-15T10:00:00Z",
+        "HasLanguage": ["de", "it", "en"],
+        "Id": "dss_skiarea_4a",
+        "LastChange": "2026-01-15T10:00:00Z",
+        "LicenseInfo": {
+          "Author": "",
+          "License": "CC0",
+          "ClosedData": false,
+          "LicenseHolder": "https://www.dolomitisuperski.com"
+        },
+        "Mapping": { "dss": { "rid": "4a" } },
+        "OdhActive": true,
         "OperationSchedule": [
           {
             "Stop": "2026-04-06T00:00:00",
@@ -271,36 +276,19 @@
             }
           }
         ],
-        "SmgActive": true,
-        "OdhActive": true,
         "PublishedOn": [],
-        "SyncUpdateMode": "Full",
+        "Shortname": "Gröden",
+        "SmgActive": true,
+        "Source": "dss",
         "SyncSourceInterface": "dssskiarea",
-        "LicenseInfo": {
-          "Author": "",
-          "License": "CC0",
-          "ClosedData": false,
-          "LicenseHolder": "https://www.dolomitisuperski.com"
-        }
+        "SyncUpdateMode": "Full"
       }
     },
     {
       "apiPath": "SkiArea",
       "queryParams": { "generateid": "false" },
       "payload": {
-        "Id": "dss_skiarea_4b",
         "Active": true,
-        "Source": "dss",
-        "Shortname": "Seiser Alm",
-        "FirstImport": "2026-01-15T10:00:00Z",
-        "LastChange": "2026-01-15T10:00:00Z",
-        "HasLanguage": ["de", "it", "en"],
-        "Mapping": { "dss": { "rid": "4b" } },
-        "Detail": {
-          "de": { "Title": "Seiser Alm", "Language": "de" },
-          "en": { "Title": "Alpe di Siusi", "Language": "en" },
-          "it": { "Title": "Alpe di Siusi", "Language": "it" }
-        },
         "ContactInfos": {
           "de": {
             "Language": "de",
@@ -318,6 +306,23 @@
             "Phonenumber": "0471 709600"
           }
         },
+        "Detail": {
+          "de": { "Title": "Seiser Alm", "Language": "de" },
+          "en": { "Title": "Alpe di Siusi", "Language": "en" },
+          "it": { "Title": "Alpe di Siusi", "Language": "it" }
+        },
+        "FirstImport": "2026-01-15T10:00:00Z",
+        "HasLanguage": ["de", "it", "en"],
+        "Id": "dss_skiarea_4b",
+        "LastChange": "2026-01-15T10:00:00Z",
+        "LicenseInfo": {
+          "Author": "",
+          "License": "CC0",
+          "ClosedData": false,
+          "LicenseHolder": "https://www.dolomitisuperski.com"
+        },
+        "Mapping": { "dss": { "rid": "4b" } },
+        "OdhActive": true,
         "OperationSchedule": [
           {
             "Stop": "2026-11-01T00:00:00",
@@ -331,36 +336,19 @@
             }
           }
         ],
-        "SmgActive": true,
-        "OdhActive": true,
         "PublishedOn": [],
-        "SyncUpdateMode": "Full",
+        "Shortname": "Seiser Alm",
+        "SmgActive": true,
+        "Source": "dss",
         "SyncSourceInterface": "dssskiarea",
-        "LicenseInfo": {
-          "Author": "",
-          "License": "CC0",
-          "ClosedData": false,
-          "LicenseHolder": "https://www.dolomitisuperski.com"
-        }
+        "SyncUpdateMode": "Full"
       }
     },
     {
       "apiPath": "SkiArea",
       "queryParams": { "generateid": "false" },
       "payload": {
-        "Id": "dss_skiarea_5a",
         "Active": true,
-        "Source": "dss",
-        "Shortname": "Val di Fassa",
-        "FirstImport": "2026-01-15T10:00:00Z",
-        "LastChange": "2026-01-15T10:00:00Z",
-        "HasLanguage": ["de", "it", "en"],
-        "Mapping": { "dss": { "rid": "5a" } },
-        "Detail": {
-          "de": { "Title": "Val di Fassa", "Language": "de" },
-          "en": { "Title": "Val di Fassa", "Language": "en" },
-          "it": { "Title": "Val di Fassa", "Language": "it" }
-        },
         "ContactInfos": {
           "de": {
             "Language": "de",
@@ -378,6 +366,23 @@
             "Phonenumber": "0462609500"
           }
         },
+        "Detail": {
+          "de": { "Title": "Val di Fassa", "Language": "de" },
+          "en": { "Title": "Val di Fassa", "Language": "en" },
+          "it": { "Title": "Val di Fassa", "Language": "it" }
+        },
+        "FirstImport": "2026-01-15T10:00:00Z",
+        "HasLanguage": ["de", "it", "en"],
+        "Id": "dss_skiarea_5a",
+        "LastChange": "2026-01-15T10:00:00Z",
+        "LicenseInfo": {
+          "Author": "",
+          "License": "CC0",
+          "ClosedData": false,
+          "LicenseHolder": "https://www.dolomitisuperski.com"
+        },
+        "Mapping": { "dss": { "rid": "5a" } },
+        "OdhActive": true,
         "OperationSchedule": [
           {
             "Stop": "2026-04-06T00:00:00",
@@ -402,36 +407,19 @@
             }
           }
         ],
-        "SmgActive": true,
-        "OdhActive": true,
         "PublishedOn": [],
-        "SyncUpdateMode": "Full",
+        "Shortname": "Val di Fassa",
+        "SmgActive": true,
+        "Source": "dss",
         "SyncSourceInterface": "dssskiarea",
-        "LicenseInfo": {
-          "Author": "",
-          "License": "CC0",
-          "ClosedData": false,
-          "LicenseHolder": "https://www.dolomitisuperski.com"
-        }
+        "SyncUpdateMode": "Full"
       }
     },
     {
       "apiPath": "SkiArea",
       "queryParams": { "generateid": "false" },
       "payload": {
-        "Id": "dss_skiarea_5b",
         "Active": true,
-        "Source": "dss",
-        "Shortname": "Carezza",
-        "FirstImport": "2026-01-15T10:00:00Z",
-        "LastChange": "2026-01-15T10:00:00Z",
-        "HasLanguage": ["de", "it", "en"],
-        "Mapping": { "dss": { "rid": "5b" } },
-        "Detail": {
-          "de": { "Title": "Carezza", "Language": "de" },
-          "en": { "Title": "Carezza", "Language": "en" },
-          "it": { "Title": "Carezza", "Language": "it" }
-        },
         "ContactInfos": {
           "de": {
             "Language": "de",
@@ -449,6 +437,23 @@
             "Phonenumber": "0471 619500"
           }
         },
+        "Detail": {
+          "de": { "Title": "Carezza", "Language": "de" },
+          "en": { "Title": "Carezza", "Language": "en" },
+          "it": { "Title": "Carezza", "Language": "it" }
+        },
+        "FirstImport": "2026-01-15T10:00:00Z",
+        "HasLanguage": ["de", "it", "en"],
+        "Id": "dss_skiarea_5b",
+        "LastChange": "2026-01-15T10:00:00Z",
+        "LicenseInfo": {
+          "Author": "",
+          "License": "CC0",
+          "ClosedData": false,
+          "LicenseHolder": "https://www.dolomitisuperski.com"
+        },
+        "Mapping": { "dss": { "rid": "5b" } },
+        "OdhActive": true,
         "OperationSchedule": [
           {
             "Stop": "2026-04-05T00:00:00",
@@ -473,36 +478,19 @@
             }
           }
         ],
-        "SmgActive": true,
-        "OdhActive": true,
         "PublishedOn": [],
-        "SyncUpdateMode": "Full",
+        "Shortname": "Carezza",
+        "SmgActive": true,
+        "Source": "dss",
         "SyncSourceInterface": "dssskiarea",
-        "LicenseInfo": {
-          "Author": "",
-          "License": "CC0",
-          "ClosedData": false,
-          "LicenseHolder": "https://www.dolomitisuperski.com"
-        }
+        "SyncUpdateMode": "Full"
       }
     },
     {
       "apiPath": "SkiArea",
       "queryParams": { "generateid": "false" },
       "payload": {
-        "Id": "dss_skiarea_6a",
         "Active": true,
-        "Source": "dss",
-        "Shortname": "Arabba / Marmolada",
-        "FirstImport": "2026-01-15T10:00:00Z",
-        "LastChange": "2026-01-15T10:00:00Z",
-        "HasLanguage": ["de", "it", "en"],
-        "Mapping": { "dss": { "rid": "6a" } },
-        "Detail": {
-          "de": { "Title": "Arabba / Marmolada", "Language": "de" },
-          "en": { "Title": "Arabba / Marmolada", "Language": "en" },
-          "it": { "Title": "Arabba / Marmolada", "Language": "it" }
-        },
         "ContactInfos": {
           "de": {
             "Language": "de",
@@ -520,6 +508,23 @@
             "Phonenumber": "043679130"
           }
         },
+        "Detail": {
+          "de": { "Title": "Arabba / Marmolada", "Language": "de" },
+          "en": { "Title": "Arabba / Marmolada", "Language": "en" },
+          "it": { "Title": "Arabba / Marmolada", "Language": "it" }
+        },
+        "FirstImport": "2026-01-15T10:00:00Z",
+        "HasLanguage": ["de", "it", "en"],
+        "Id": "dss_skiarea_6a",
+        "LastChange": "2026-01-15T10:00:00Z",
+        "LicenseInfo": {
+          "Author": "",
+          "License": "CC0",
+          "ClosedData": false,
+          "LicenseHolder": "https://www.dolomitisuperski.com"
+        },
+        "Mapping": { "dss": { "rid": "6a" } },
+        "OdhActive": true,
         "OperationSchedule": [
           {
             "Stop": "2026-04-18T00:00:00",
@@ -544,41 +549,41 @@
             }
           }
         ],
-        "SmgActive": true,
-        "OdhActive": true,
         "PublishedOn": [],
-        "SyncUpdateMode": "Full",
+        "Shortname": "Arabba / Marmolada",
+        "SmgActive": true,
+        "Source": "dss",
         "SyncSourceInterface": "dssskiarea",
-        "LicenseInfo": {
-          "Author": "",
-          "License": "CC0",
-          "ClosedData": false,
-          "LicenseHolder": "https://www.dolomitisuperski.com"
-        }
+        "SyncUpdateMode": "Full"
       }
     },
     {
       "apiPath": "SkiArea",
       "queryParams": { "generateid": "false" },
       "payload": {
-        "Id": "dss_skiarea_7",
         "Active": true,
-        "Source": "dss",
-        "Shortname": "3 Zinnen",
-        "FirstImport": "2026-01-15T10:00:00Z",
-        "LastChange": "2026-01-15T10:00:00Z",
-        "HasLanguage": ["de", "it", "en"],
-        "Mapping": { "dss": { "rid": "7" } },
-        "Detail": {
-          "de": { "Title": "3 Zinnen", "Language": "de" },
-          "en": { "Title": "3 Zinnen", "Language": "en" },
-          "it": { "Title": "3 Cime/3 Zinnen", "Language": "it" }
-        },
         "ContactInfos": {
           "de": { "Language": "de", "Email": "info@dreizinnen.com" },
           "en": { "Language": "en", "Email": "info@dreizinnen.com" },
           "it": { "Language": "it", "Email": "info@dreizinnen.com" }
         },
+        "Detail": {
+          "de": { "Title": "3 Zinnen", "Language": "de" },
+          "en": { "Title": "3 Zinnen", "Language": "en" },
+          "it": { "Title": "3 Cime/3 Zinnen", "Language": "it" }
+        },
+        "FirstImport": "2026-01-15T10:00:00Z",
+        "HasLanguage": ["de", "it", "en"],
+        "Id": "dss_skiarea_7",
+        "LastChange": "2026-01-15T10:00:00Z",
+        "LicenseInfo": {
+          "Author": "",
+          "License": "CC0",
+          "ClosedData": false,
+          "LicenseHolder": "https://www.dolomitisuperski.com"
+        },
+        "Mapping": { "dss": { "rid": "7" } },
+        "OdhActive": true,
         "OperationSchedule": [
           {
             "Stop": "2026-04-11T00:00:00",
@@ -603,36 +608,19 @@
             }
           }
         ],
-        "SmgActive": true,
-        "OdhActive": true,
         "PublishedOn": [],
-        "SyncUpdateMode": "Full",
+        "Shortname": "3 Zinnen",
+        "SmgActive": true,
+        "Source": "dss",
         "SyncSourceInterface": "dssskiarea",
-        "LicenseInfo": {
-          "Author": "",
-          "License": "CC0",
-          "ClosedData": false,
-          "LicenseHolder": "https://www.dolomitisuperski.com"
-        }
+        "SyncUpdateMode": "Full"
       }
     },
     {
       "apiPath": "SkiArea",
       "queryParams": { "generateid": "false" },
       "payload": {
-        "Id": "dss_skiarea_8a",
         "Active": true,
-        "Source": "dss",
-        "Shortname": "Val di Fiemme",
-        "FirstImport": "2026-01-15T10:00:00Z",
-        "LastChange": "2026-01-15T10:00:00Z",
-        "HasLanguage": ["de", "it", "en"],
-        "Mapping": { "dss": { "rid": "8a" } },
-        "Detail": {
-          "de": { "Title": "Val di Fiemme", "Language": "de" },
-          "en": { "Title": "Val di Fiemme", "Language": "en" },
-          "it": { "Title": "Val di Fiemme", "Language": "it" }
-        },
         "ContactInfos": {
           "de": {
             "Language": "de",
@@ -650,6 +638,23 @@
             "Phonenumber": "0462341419"
           }
         },
+        "Detail": {
+          "de": { "Title": "Val di Fiemme", "Language": "de" },
+          "en": { "Title": "Val di Fiemme", "Language": "en" },
+          "it": { "Title": "Val di Fiemme", "Language": "it" }
+        },
+        "FirstImport": "2026-01-15T10:00:00Z",
+        "HasLanguage": ["de", "it", "en"],
+        "Id": "dss_skiarea_8a",
+        "LastChange": "2026-01-15T10:00:00Z",
+        "LicenseInfo": {
+          "Author": "",
+          "License": "CC0",
+          "ClosedData": false,
+          "LicenseHolder": "https://www.dolomitisuperski.com"
+        },
+        "Mapping": { "dss": { "rid": "8a" } },
+        "OdhActive": true,
         "OperationSchedule": [
           {
             "Stop": "2026-04-11T00:00:00",
@@ -674,36 +679,19 @@
             }
           }
         ],
-        "SmgActive": true,
-        "OdhActive": true,
         "PublishedOn": [],
-        "SyncUpdateMode": "Full",
+        "Shortname": "Val di Fiemme",
+        "SmgActive": true,
+        "Source": "dss",
         "SyncSourceInterface": "dssskiarea",
-        "LicenseInfo": {
-          "Author": "",
-          "License": "CC0",
-          "ClosedData": false,
-          "LicenseHolder": "https://www.dolomitisuperski.com"
-        }
+        "SyncUpdateMode": "Full"
       }
     },
     {
       "apiPath": "SkiArea",
       "queryParams": { "generateid": "false" },
       "payload": {
-        "Id": "dss_skiarea_8b",
         "Active": true,
-        "Source": "dss",
-        "Shortname": "Obereggen",
-        "FirstImport": "2026-01-15T10:00:00Z",
-        "LastChange": "2026-01-15T10:00:00Z",
-        "HasLanguage": ["de", "it", "en"],
-        "Mapping": { "dss": { "rid": "8b" } },
-        "Detail": {
-          "de": { "Title": "Obereggen", "Language": "de" },
-          "en": { "Title": "Obereggen", "Language": "en" },
-          "it": { "Title": "Obereggen", "Language": "it" }
-        },
         "ContactInfos": {
           "de": {
             "Language": "de",
@@ -721,6 +709,23 @@
             "Phonenumber": "0462341419"
           }
         },
+        "Detail": {
+          "de": { "Title": "Obereggen", "Language": "de" },
+          "en": { "Title": "Obereggen", "Language": "en" },
+          "it": { "Title": "Obereggen", "Language": "it" }
+        },
+        "FirstImport": "2026-01-15T10:00:00Z",
+        "HasLanguage": ["de", "it", "en"],
+        "Id": "dss_skiarea_8b",
+        "LastChange": "2026-01-15T10:00:00Z",
+        "LicenseInfo": {
+          "Author": "",
+          "License": "CC0",
+          "ClosedData": false,
+          "LicenseHolder": "https://www.dolomitisuperski.com"
+        },
+        "Mapping": { "dss": { "rid": "8b" } },
+        "OdhActive": true,
         "OperationSchedule": [
           {
             "Stop": "2026-04-11T00:00:00",
@@ -745,45 +750,19 @@
             }
           }
         ],
-        "SmgActive": true,
-        "OdhActive": true,
         "PublishedOn": [],
-        "SyncUpdateMode": "Full",
+        "Shortname": "Obereggen",
+        "SmgActive": true,
+        "Source": "dss",
         "SyncSourceInterface": "dssskiarea",
-        "LicenseInfo": {
-          "Author": "",
-          "License": "CC0",
-          "ClosedData": false,
-          "LicenseHolder": "https://www.dolomitisuperski.com"
-        }
+        "SyncUpdateMode": "Full"
       }
     },
     {
       "apiPath": "SkiArea",
       "queryParams": { "generateid": "false" },
       "payload": {
-        "Id": "dss_skiarea_9",
         "Active": true,
-        "Source": "dss",
-        "Shortname": "San Martino di Castrozza / Rollepass",
-        "FirstImport": "2026-01-15T10:00:00Z",
-        "LastChange": "2026-01-15T10:00:00Z",
-        "HasLanguage": ["de", "it", "en"],
-        "Mapping": { "dss": { "rid": "9" } },
-        "Detail": {
-          "de": {
-            "Title": "San Martino di Castrozza / Rollepass",
-            "Language": "de"
-          },
-          "en": {
-            "Title": "San Martino di Castrozza / Rolle Pass",
-            "Language": "en"
-          },
-          "it": {
-            "Title": "San Martino di Castrozza / Passo Rolle",
-            "Language": "it"
-          }
-        },
         "ContactInfos": {
           "de": {
             "Language": "de",
@@ -801,6 +780,32 @@
             "Phonenumber": "0439 768867"
           }
         },
+        "Detail": {
+          "de": {
+            "Title": "San Martino di Castrozza / Rollepass",
+            "Language": "de"
+          },
+          "en": {
+            "Title": "San Martino di Castrozza / Rolle Pass",
+            "Language": "en"
+          },
+          "it": {
+            "Title": "San Martino di Castrozza / Passo Rolle",
+            "Language": "it"
+          }
+        },
+        "FirstImport": "2026-01-15T10:00:00Z",
+        "HasLanguage": ["de", "it", "en"],
+        "Id": "dss_skiarea_9",
+        "LastChange": "2026-01-15T10:00:00Z",
+        "LicenseInfo": {
+          "Author": "",
+          "License": "CC0",
+          "ClosedData": false,
+          "LicenseHolder": "https://www.dolomitisuperski.com"
+        },
+        "Mapping": { "dss": { "rid": "9" } },
+        "OdhActive": true,
         "OperationSchedule": [
           {
             "Stop": "2027-04-03T00:00:00",
@@ -825,41 +830,41 @@
             }
           }
         ],
-        "SmgActive": true,
-        "OdhActive": true,
         "PublishedOn": [],
-        "SyncUpdateMode": "Full",
+        "Shortname": "San Martino di Castrozza / Rollepass",
+        "SmgActive": true,
+        "Source": "dss",
         "SyncSourceInterface": "dssskiarea",
-        "LicenseInfo": {
-          "Author": "",
-          "License": "CC0",
-          "ClosedData": false,
-          "LicenseHolder": "https://www.dolomitisuperski.com"
-        }
+        "SyncUpdateMode": "Full"
       }
     },
     {
       "apiPath": "SkiArea",
       "queryParams": { "generateid": "false" },
       "payload": {
-        "Id": "dss_skiarea_10",
         "Active": true,
-        "Source": "dss",
-        "Shortname": "Gitschberg Jochtal - Brixen",
-        "FirstImport": "2026-01-15T10:00:00Z",
-        "LastChange": "2026-01-15T10:00:00Z",
-        "HasLanguage": ["de", "it", "en"],
-        "Mapping": { "dss": { "rid": "10" } },
-        "Detail": {
-          "de": { "Title": "Gitschberg Jochtal - Brixen", "Language": "de" },
-          "en": { "Title": "Rio Pusteria - Bressanone", "Language": "en" },
-          "it": { "Title": "Rio Pusteria - Bressanone", "Language": "it" }
-        },
         "ContactInfos": {
           "de": { "Language": "de", "Email": "info@gitschberg-jochtal.com" },
           "en": { "Language": "en", "Email": "info@gitschberg-jochtal.com" },
           "it": { "Language": "it", "Email": "info@gitschberg-jochtal.com" }
         },
+        "Detail": {
+          "de": { "Title": "Gitschberg Jochtal - Brixen", "Language": "de" },
+          "en": { "Title": "Rio Pusteria - Bressanone", "Language": "en" },
+          "it": { "Title": "Rio Pusteria - Bressanone", "Language": "it" }
+        },
+        "FirstImport": "2026-01-15T10:00:00Z",
+        "HasLanguage": ["de", "it", "en"],
+        "Id": "dss_skiarea_10",
+        "LastChange": "2026-01-15T10:00:00Z",
+        "LicenseInfo": {
+          "Author": "",
+          "License": "CC0",
+          "ClosedData": false,
+          "LicenseHolder": "https://www.dolomitisuperski.com"
+        },
+        "Mapping": { "dss": { "rid": "10" } },
+        "OdhActive": true,
         "OperationSchedule": [
           {
             "Stop": "2027-04-03T00:00:00",
@@ -884,36 +889,19 @@
             }
           }
         ],
-        "SmgActive": true,
-        "OdhActive": true,
         "PublishedOn": [],
-        "SyncUpdateMode": "Full",
+        "Shortname": "Gitschberg Jochtal - Brixen",
+        "SmgActive": true,
+        "Source": "dss",
         "SyncSourceInterface": "dssskiarea",
-        "LicenseInfo": {
-          "Author": "",
-          "License": "CC0",
-          "ClosedData": false,
-          "LicenseHolder": "https://www.dolomitisuperski.com"
-        }
+        "SyncUpdateMode": "Full"
       }
     },
     {
       "apiPath": "SkiArea",
       "queryParams": { "generateid": "false" },
       "payload": {
-        "Id": "dss_skiarea_11",
         "Active": true,
-        "Source": "dss",
-        "Shortname": "Alpe Lusia - San Pellegrino",
-        "FirstImport": "2026-01-15T10:00:00Z",
-        "LastChange": "2026-01-15T10:00:00Z",
-        "HasLanguage": ["de", "it", "en"],
-        "Mapping": { "dss": { "rid": "11" } },
-        "Detail": {
-          "de": { "Title": "Alpe Lusia - San Pellegrino", "Language": "de" },
-          "en": { "Title": "Alpe Lusia - San Pellegrino", "Language": "en" },
-          "it": { "Title": "Alpe Lusia - San Pellegrino", "Language": "it" }
-        },
         "ContactInfos": {
           "de": {
             "Language": "de",
@@ -931,6 +919,23 @@
             "Phonenumber": "0462 576234"
           }
         },
+        "Detail": {
+          "de": { "Title": "Alpe Lusia - San Pellegrino", "Language": "de" },
+          "en": { "Title": "Alpe Lusia - San Pellegrino", "Language": "en" },
+          "it": { "Title": "Alpe Lusia - San Pellegrino", "Language": "it" }
+        },
+        "FirstImport": "2026-01-15T10:00:00Z",
+        "HasLanguage": ["de", "it", "en"],
+        "Id": "dss_skiarea_11",
+        "LastChange": "2026-01-15T10:00:00Z",
+        "LicenseInfo": {
+          "Author": "",
+          "License": "CC0",
+          "ClosedData": false,
+          "LicenseHolder": "https://www.dolomitisuperski.com"
+        },
+        "Mapping": { "dss": { "rid": "11" } },
+        "OdhActive": true,
         "OperationSchedule": [
           {
             "Stop": "2026-04-11T00:00:00",
@@ -955,41 +960,41 @@
             }
           }
         ],
-        "SmgActive": true,
-        "OdhActive": true,
         "PublishedOn": [],
-        "SyncUpdateMode": "Full",
+        "Shortname": "Alpe Lusia - San Pellegrino",
+        "SmgActive": true,
+        "Source": "dss",
         "SyncSourceInterface": "dssskiarea",
-        "LicenseInfo": {
-          "Author": "",
-          "License": "CC0",
-          "ClosedData": false,
-          "LicenseHolder": "https://www.dolomitisuperski.com"
-        }
+        "SyncUpdateMode": "Full"
       }
     },
     {
       "apiPath": "SkiArea",
       "queryParams": { "generateid": "false" },
       "payload": {
-        "Id": "dss_skiarea_12",
         "Active": true,
-        "Source": "dss",
-        "Shortname": "Civetta",
-        "FirstImport": "2026-01-15T10:00:00Z",
-        "LastChange": "2026-01-15T10:00:00Z",
-        "HasLanguage": ["de", "it", "en"],
-        "Mapping": { "dss": { "rid": "12" } },
-        "Detail": {
-          "de": { "Title": "Civetta", "Language": "de" },
-          "en": { "Title": "Civetta", "Language": "en" },
-          "it": { "Title": "Civetta", "Language": "it" }
-        },
         "ContactInfos": {
           "de": { "Language": "de", "Email": "info@skicivetta.com" },
           "en": { "Language": "en", "Email": "info@skicivetta.com" },
           "it": { "Language": "it", "Email": "info@skicivetta.com" }
         },
+        "Detail": {
+          "de": { "Title": "Civetta", "Language": "de" },
+          "en": { "Title": "Civetta", "Language": "en" },
+          "it": { "Title": "Civetta", "Language": "it" }
+        },
+        "FirstImport": "2026-01-15T10:00:00Z",
+        "HasLanguage": ["de", "it", "en"],
+        "Id": "dss_skiarea_12",
+        "LastChange": "2026-01-15T10:00:00Z",
+        "LicenseInfo": {
+          "Author": "",
+          "License": "CC0",
+          "ClosedData": false,
+          "LicenseHolder": "https://www.dolomitisuperski.com"
+        },
+        "Mapping": { "dss": { "rid": "12" } },
+        "OdhActive": true,
         "OperationSchedule": [
           {
             "Stop": "2026-04-05T00:00:00",
@@ -1014,17 +1019,12 @@
             }
           }
         ],
-        "SmgActive": true,
-        "OdhActive": true,
         "PublishedOn": [],
-        "SyncUpdateMode": "Full",
+        "Shortname": "Civetta",
+        "SmgActive": true,
+        "Source": "dss",
         "SyncSourceInterface": "dssskiarea",
-        "LicenseInfo": {
-          "Author": "",
-          "License": "CC0",
-          "ClosedData": false,
-          "LicenseHolder": "https://www.dolomitisuperski.com"
-        }
+        "SyncUpdateMode": "Full"
       }
     }
   ],
