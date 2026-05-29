@@ -1,0 +1,13 @@
+rootContext: {}
+stream: false
+
+steps:
+
+  # ── LIFTS ──────────────────────────────────────────────────────────────────
+  - type: request
+    name: "Fetch DSS Lifts"
+    request:
+      url: "https://www.dolomitisuperski.com/jsonexport/export/liftbasis?username=idmidm&password=idmidm"
+      method: GET
+    resultTransformer: "."
+    mergeOn: .dssLifts = $res

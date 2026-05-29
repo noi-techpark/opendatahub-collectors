@@ -1,0 +1,83 @@
+{
+  "Id": "dss_111544",
+  "Shortname": "Family Fun Slope (Monte Elmo)",
+  "Active": true,
+  "Source": "dss",
+  "FirstImport": "2026-01-15T10:00:00Z",
+  "LastChange": "2026-01-15T10:00:00Z",
+  "HasLanguage": ["de", "it", "en"],
+  "Mapping": { "dss": { "pid": "111544", "regionId": "7", "rid": "0" } },
+  "TagIds": ["activity", "snow parks", "snowpark", "snowparks", "winter"],
+  "SmgTags": ["winter", "snowpark", "activity"],
+  "GpsInfo": [
+    {
+      "Gpstype": "position",
+      "Latitude": 46.7311485,
+      "Longitude": 12.3274415,
+      "AltitudeUnitofMeasure": "m"
+    }
+  ],
+  "LicenseInfo": {
+    "Author": "",
+    "License": "CC0",
+    "ClosedData": false,
+    "LicenseHolder": "https://www.dolomitisuperski.com"
+  },
+  "Detail": {
+    "de": { "Title": "Family Fun Slope (Monte Elmo)", "Language": "de" },
+    "en": { "Title": "Family Fun Slope (Monte Elmo)", "Language": "en" },
+    "it": { "Title": "Family Fun Slope (Monte Elmo)", "Language": "it" }
+  },
+  "ContactInfos": {},
+  "AdditionalPoiInfos": {
+    "de": {
+      "Novelty": "",
+      "PoiType": null,
+      "SubType": null,
+      "Language": "de",
+      "MainType": null,
+      "Categories": ["Snowpark"]
+    },
+    "en": {
+      "Novelty": "",
+      "PoiType": null,
+      "SubType": null,
+      "Language": "en",
+      "MainType": null,
+      "Categories": ["Snowpark"]
+    },
+    "it": {
+      "Novelty": "",
+      "PoiType": null,
+      "SubType": null,
+      "Language": "it",
+      "MainType": null,
+      "Categories": ["Snowpark"]
+    }
+  },
+  "AdditionalProperties": {},
+  "PoiProperty": {},
+  "LocationInfo": {
+    "TvInfo": null,
+    "AreaInfo": null,
+    "RegionInfo": null,
+    "DistrictInfo": null,
+    "MunicipalityInfo": null
+  },
+  "SmgActive": true,
+  "OdhActive": true,
+  "PublishedOn": [],
+  "SyncUpdateMode": "Full",
+  "SyncSourceInterface": "dsssnowparkbase",
+  "CustomId": "0",
+  "BikeTransport": null,
+  "IsOpen": false,
+  "GpsPoints": {
+    "position": {
+      "Gpstype": "position",
+      "Latitude": 46.7311485,
+      "Longitude": 12.3274415,
+      "AltitudeUnitofMeasure": "m"
+    }
+  }
+}
