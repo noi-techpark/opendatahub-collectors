@@ -1,0 +1,5 @@
+.env
+.vscode
+__debug
+tmp/
+src/tr-sharedmobility-ch
