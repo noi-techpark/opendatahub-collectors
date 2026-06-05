@@ -193,6 +193,9 @@ func raw2Siri(c *Cache, refTime time.Time, r Dto, n netex.PublicationDelivery) (
 			return s, fmt.Errorf("could not find Line %s in static data", nJourney.LineRef.Ref)
 		}
 		vj.PublishedLineName = nLine.Name
+		// Ideally we use the line, but as of writing, all trains are always just called REG, so we use the train number we have
+		// Leaving the code in case they fix it and we have an actual name to use
+		vj.PublishedLineName = train
 
 		// original spec was to take the description of the last stop, but at time of writing, only the first stop has a destinationDisplay.
 		// we iterate backwards through the stops and take the first one that has it set
