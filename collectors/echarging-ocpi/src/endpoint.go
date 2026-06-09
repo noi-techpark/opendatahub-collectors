@@ -70,6 +70,14 @@ func versionDetails(ver string) gin.HandlerFunc {
 	}
 }
 
+func ocpiOk(c *gin.Context) {
+	slog.Info("unhandled call acknowledged", "method", c.Request.Method, "path", c.Request.URL.Path)
+	c.JSONP(http.StatusOK, OCPIResp[any]{
+		StatusCode: 1000,
+		Timestamp:  OCPIDateTime{time.Now()},
+	})
+}
+
 func notImplemented(c *gin.Context) {
 	msg := "not implemented"
 	slog.Warn("not implemented endpoint called", "method", c.Request.Method, "path", c.FullPath())
