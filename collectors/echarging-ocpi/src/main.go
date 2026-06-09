@@ -74,20 +74,30 @@ func startEndpoint(rabbit mq.R) {
 
 	r.Use(sloggin.NewWithFilters(
 		slog.Default(),
-		// prevent log spam, as we don't have any implemented GET endpoints at time of writing
-		sloggin.IgnoreMethod("GET")))
+		// ignore paths that are not /ocpi, such as health or favicon etc.
+		sloggin.AcceptPathPrefix("/ocpi")))
 
 	r.GET("/health", health)
+	r.GET("/ocpi/emsp/versions", versions(ver))
+	r.GET("/ocpi/emsp/"+ver, versionDetails(ver))
 
 	rEmsp := r.Group("/ocpi/emsp")
 	rEmsp.Use(tokenAuth(validTokens(cfg.OCPI_TOKENS)))
 	{
 		rVer := rEmsp.Group("/" + ver)
 		{
+			rVer.GET("/credentials", notImplemented)
+			rVer.GET("/locations", notImplemented)
+
 			rLoc := rVer.Group("/locations")
 
-			// Recieve status updates of plugs wia push
+			// Receive status updates of plugs via push
 			rLoc.PATCH("/:country_code/:party_id/:location_id/:evse_uid", handlePush(rabbit, cfg.PROVIDER+"-push-evse"))
+
+			// Acknowledge all other PUT/PATCH pushes with OCPI OK.
+			rLoc.PUT("/*action", ocpiOk)
+			rLoc.PATCH("/:country_code/:party_id/:location_id", ocpiOk)
+			rLoc.PATCH("/:country_code/:party_id/:location_id/:evse_uid/:connector_id", ocpiOk)
 		}
 	}
 

@@ -14,7 +14,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     concurrency: dc-echarging-ocpi-neogy-build
     steps:
     - name: Checkout source code
@@ -31,11 +31,11 @@ jobs:
     if: github.ref == 'refs/heads/main'
     needs: 
       - build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     concurrency: dc-echarging-ocpi-neogy-deploy-test
     environment: test
     env:
-      VALUES_YAML: collectors/echarging-ocpi/infrastructure/helm/neogy.yaml
+      VALUES_YAML: collectors/echarging-ocpi/infrastructure/helm/neogy-ampeco.yaml
       K8S_NAME: dc-echarging-ocpi-neogy
     steps:
       - name: Checkout source code
@@ -51,11 +51,9 @@ jobs:
           env:
             LOG_LEVEL: "INFO"
           envSecret:
-            OCPI_TOKENS: ${{ secrets.ECHARGING_OCPI_NEOGY_TOKENS }}
-            PULL_LOCATIONS_ENDPOINT: ${{ secrets.ECHARGING_NEOGY_OCPI_URL}}?limit=200
-            PULL_TOKEN: "${{ secrets.ECHARGING_NEOGY_OCPI_TOKEN_C }}"
+            OCPI_TOKENS: ${{ secrets.ECHARGING_OCPI_NEOGY_TOKEN_B }}
+            PULL_TOKEN: "${{ secrets.ECHARGING_OCPI_NEOGY_TOKEN_C }}"
           EOF
-
 
           # Merge yaml files https://mikefarah.gitbook.io/yq/operators/multiply-merge
           yq -i '. *= load("override.yml")' ${{env.VALUES_YAML}}
@@ -76,11 +74,11 @@ jobs:
     if: github.ref == 'refs/heads/prod'
     needs: 
       - build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     concurrency: dc-echarging-ocpi-neogy-deploy-prod
     environment: prod
     env:
-      VALUES_YAML: collectors/echarging-ocpi/infrastructure/helm/neogy.yaml
+      VALUES_YAML: collectors/echarging-ocpi/infrastructure/helm/neogy-ampeco.yaml
       K8S_NAME: dc-echarging-ocpi-neogy
     steps:
       - name: Checkout source code
@@ -97,7 +95,6 @@ jobs:
             LOG_LEVEL: "INFO"
           envSecret:
             OCPI_TOKENS: ${{ secrets.ECHARGING_OCPI_NEOGY_TOKENS }}
-            PULL_LOCATIONS_ENDPOINT: ${{ secrets.ECHARGING_NEOGY_OCPI_URL}}?limit=200
             PULL_TOKEN: "${{ secrets.ECHARGING_NEOGY_OCPI_TOKEN_C }}"
           EOF
 
