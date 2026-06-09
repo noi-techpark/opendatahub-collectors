@@ -95,7 +95,6 @@ func startEndpoint(rabbit mq.R) {
 			rLoc.PATCH("/:country_code/:party_id/:location_id/:evse_uid", handlePush(rabbit, cfg.PROVIDER+"-push-evse"))
 
 			// Acknowledge all other PUT/PATCH pushes with OCPI OK.
-			// Wildcard PATCH would conflict with the specific route above, so PATCH covers the other two OCPI sub-resources explicitly.
 			rLoc.PUT("/*action", ocpiOk)
 			rLoc.PATCH("/:country_code/:party_id/:location_id", ocpiOk)
 			rLoc.PATCH("/:country_code/:party_id/:location_id/:evse_uid/:connector_id", ocpiOk)
