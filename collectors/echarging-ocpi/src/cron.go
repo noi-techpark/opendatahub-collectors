@@ -19,10 +19,10 @@ import (
 )
 
 func getAllLocations(rabbit mq.R, provider string) error {
-	slog.Debug("Pulling all locations")
+	slog.Info("Pulling all locations")
 	url := cfg.PULL_LOCATIONS_ENDPOINT
 	for url != "" {
-		slog.Debug("Requesting locations page at url", "url", url)
+		slog.Info("Requesting locations page at url", "url", url)
 		// Our mongodb cannot handle huge files, hence we push piecewise
 		locations, next, err := getPage(url, cfg.PULL_TOKEN)
 		if err != nil {
