@@ -74,16 +74,21 @@ func startEndpoint(rabbit mq.R) {
 
 	r.Use(sloggin.NewWithFilters(
 		slog.Default(),
-		// prevent log spam, as we don't have any implemented GET endpoints at time of writing
-		sloggin.IgnoreMethod("GET")))
+		// ignore paths that are not /ocpi, such as health or favicon etc.
+		sloggin.AcceptPathPrefix("/ocpi")))
 
 	r.GET("/health", health)
+	r.GET("/ocpi/emsp/versions", versions(ver))
+	r.GET("/ocpi/emsp/"+ver, versionDetails(ver))
 
 	rEmsp := r.Group("/ocpi/emsp")
 	rEmsp.Use(tokenAuth(validTokens(cfg.OCPI_TOKENS)))
 	{
 		rVer := rEmsp.Group("/" + ver)
 		{
+			rVer.GET("/credentials", notImplemented)
+			rVer.GET("/locations", notImplemented)
+
 			rLoc := rVer.Group("/locations")
 
 			// Recieve status updates of plugs wia push

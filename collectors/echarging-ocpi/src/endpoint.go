@@ -20,6 +20,66 @@ func health(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
+func baseURL(c *gin.Context) string {
+	scheme := "https"
+	// if c.Request.TLS == nil {
+	// 	scheme = "http"
+	// }
+	return scheme + "://" + c.Request.Host
+}
+
+func versions(ver string) gin.HandlerFunc {
+	type versionEntry struct {
+		Version string `json:"version"`
+		URL     string `json:"url"`
+	}
+	return func(c *gin.Context) {
+		c.JSONP(http.StatusOK, OCPIResp[[]versionEntry]{
+			StatusCode: 1000,
+			Timestamp:  OCPIDateTime{time.Now()},
+			Data: []versionEntry{
+				{Version: ver, URL: baseURL(c) + "/ocpi/emsp/" + ver},
+			},
+		})
+	}
+}
+
+func versionDetails(ver string) gin.HandlerFunc {
+	type endpoint struct {
+		Identifier string `json:"identifier"`
+		Role       string `json:"role"`
+		URL        string `json:"url"`
+	}
+	type details struct {
+		Version   string     `json:"version"`
+		Endpoints []endpoint `json:"endpoints"`
+	}
+	return func(c *gin.Context) {
+		base := baseURL(c) + "/ocpi/emsp/" + ver
+		c.JSONP(http.StatusOK, OCPIResp[details]{
+			StatusCode: 1000,
+			Timestamp:  OCPIDateTime{time.Now()},
+			Data: details{
+				Version: ver,
+				Endpoints: []endpoint{
+					{Identifier: "credentials", Role: "SENDER", URL: base + "/credentials"},
+					{Identifier: "locations", Role: "RECEIVER", URL: base + "/locations"},
+				},
+			},
+		})
+	}
+}
+
+func notImplemented(c *gin.Context) {
+	msg := "not implemented"
+	slog.Warn("not implemented endpoint called", "method", c.Request.Method, "path", c.FullPath())
+	c.JSONP(http.StatusOK, OCPIResp[any]{
+		StatusCode:    3000,
+		Timestamp:     OCPIDateTime{time.Now()},
+		StatusMessage: &msg,
+	})
+}
+
 func handlePush(rabbit mq.R, provider string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var body map[string]any
@@ -71,6 +131,7 @@ func validTokens(tokens []string) map[string]struct{} {
 func tokenAuth(ts map[string]struct{}) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		header := c.Request.Header.Get("Authorization")
+		slog.Info("Auth header passed", "header", header)
 
 		var token string
 		if _, err := fmt.Sscanf(header, "Token %s", &token); err != nil {
