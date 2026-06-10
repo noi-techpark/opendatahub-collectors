@@ -6,137 +6,140 @@ package dto
 
 import "encoding/json"
 
-// RawData represents the wine company data as received from the api-crawler.
+// RawData is the top-level message written by the crawler.
 type RawData struct {
 	De *LangData `json:"de,omitempty"`
 	It *LangData `json:"it,omitempty"`
 	En *LangData `json:"en,omitempty"`
 	Ru *LangData `json:"ru,omitempty"`
-	Jp *LangData `json:"jp,omitempty"`
-	Us *LangData `json:"us,omitempty"`
 }
 
-// LangData wraps the companies object for a single language.
+// LangData holds the flat list of entries for one language.
 type LangData struct {
-	Companies CompaniesWrapper `json:"companies"`
+	Data []WineCompany `json:"data"`
 }
 
-// CompaniesWrapper holds the item list. Item is json.RawMessage so we can
-// handle both a single object and an array (XML-to-JSON quirk).
-type CompaniesWrapper struct {
-	RawItem json.RawMessage `json:"item"`
-}
-
-// Items decodes the raw item field into a slice, handling both object and array.
-func (c *CompaniesWrapper) Items() []WineCompany {
-	if c.RawItem == nil || string(c.RawItem) == "null" {
+func (l *LangData) Items() []WineCompany {
+	if l == nil {
 		return nil
 	}
-	var arr []WineCompany
-	if err := json.Unmarshal(c.RawItem, &arr); err == nil {
-		return arr
-	}
-	var single WineCompany
-	if err := json.Unmarshal(c.RawItem, &single); err == nil {
-		return []WineCompany{single}
-	}
-	return nil
+	return l.Data
 }
 
-// WineCompany maps to the XML fields from the SüdtirolWein API.
+// WineCompany maps one entry from the Statamic API.
 type WineCompany struct {
-	ID        string `json:"id"`
-	Latitude  string `json:"latidude"` // upstream typo preserved
-	Longitude string `json:"longitude"`
+	ID       string `json:"id"`
+	Slug     string `json:"slug"`
+	Locale   string `json:"locale"`
+	Status   string `json:"status"`
+	OriginID string `json:"origin_id"`
+
+	LegacyNumber string `json:"legacyNumber"`
 
 	Title    string `json:"title"`
-	FarmName string `json:"farmname"`
-	Address  string `json:"address"`
-	Place    string `json:"place"`
-	ZipCode  string `json:"zipcode"`
-	Region   string `json:"region"`
-	Phone    string `json:"phone"`
-	Email    string `json:"email"`
-	Homepage string `json:"homepage"`
-	Logo     string `json:"logo"`
+	Business string `json:"business"`
+	Hofname  string `json:"hofname"`
 
-	CompanyDescription string `json:"companydescription"`
-	Slogan             string `json:"slogan"`
-	Subtitle           string `json:"subtitle"`
-	Quote              string `json:"quote"`
-	QuoteAuthor        string `json:"quoteauthor"`
-	H1                 string `json:"h1"`
-	H2                 string `json:"h2"`
+	Address  string      `json:"address"`
+	ZipCode  string      `json:"zip_code"`
+	Location string      `json:"location"`
+	Phone    string      `json:"phone"`
+	Email    string      `json:"email"`
+	Website  string      `json:"website"`
+	Logo     interface{} `json:"logo"`
 
-	Media                string `json:"media"`
-	MediaDetail          string `json:"mediadetail"`
-	ImageMetaTitle       string `json:"imagemetatitle"`
-	ImageMetaDescription string `json:"imagemetadescription"`
-	ImageMetaAlt         string `json:"imagemetaalt"`
+	Latitude  *string `json:"latitude"`
+	Longitude *string `json:"longitude"`
 
-	Active                     string `json:"active"`
-	HasVisits                  string `json:"hasvisits"`
-	HasOvernights              string `json:"hasovernights"`
-	HasBioWine                 string `json:"hasbiowine"`
-	HasAccomodation            string `json:"hasaccomodation"`
-	HasOnlineShop              string `json:"hasonlineshop"`
-	HasDeliveryService         string `json:"hasdeliveryservice"`
-	HasDirectSales             string `json:"hasdirectsales"`
-	HasSale                    string `json:"hassale"`
-	IsVinumHotel               string `json:"isvinumhotel"`
-	IsAnteprima                string `json:"isanteprima"`
-	IsWineStories              string `json:"iswinestories"`
-	IsWineSummit               string `json:"iswinesummit"`
-	IsSparklingWineAssociation string `json:"issparklingwineassociation"`
-	IsWinery                   string `json:"iswinery"`
-	IsWineryAssociation        string `json:"iswineryassociation"`
-	IsSkyAlpsPartner           string `json:"isskyalpspartner"`
+	Headline    string `json:"headline"`
+	Subtitle    string `json:"subtitle"`
+	Intro       string `json:"intro"`
+	Slogan      string `json:"slogan"`
+	QuoteText   string `json:"quote_text"`
+	QuoteAuthor string `json:"quote_author"`
 
-	OnlineShopURL      string `json:"onlineshopurl"`
-	DeliveryServiceURL string `json:"deliveryserviceurl"`
+	OpeningHoursWineSales   *string `json:"opening_hours_wine_sales"`
+	OpeningHoursCellarTours *string `json:"opening_hours_cellar_tours"`
+	OpeningHoursRestaurant  *string `json:"opening_hours_restaurant"`
+	Holiday                 *string `json:"holiday"`
 
-	OpeningTimesWineShop   string `json:"openingtimeswineshop"`
-	OpeningTimesGuides     string `json:"openingtimesguides"`
-	OpeningTimesGastronomy string `json:"openingtimesgastronomie"`
-	CompanyHoliday         string `json:"companyholiday"`
+	ImageHeader  interface{} `json:"image_header"`
+	ImagePreview interface{} `json:"image_preview"`
 
-	DescriptionSparklingWineProducer string `json:"descriptionsparklingwineproducer"`
-	H1SparklingWineProducer          string `json:"h1sparklingwineproducer"`
-	H2SparklingWineProducer          string `json:"h2sparklingwineproducer"`
-	ImageSparklingWineProducer       string `json:"imagesparklingwineproducer"`
+	Published                bool `json:"published"`
+	Catering                 bool `json:"catering"`
+	DeliveryService          bool `json:"delivery_service"`
+	DirectSales              bool `json:"direct_sales"`
+	OnlineShop               bool `json:"online_shop"`
+	OrganicWine              bool `json:"organic_wine"`
+	OvernightStay            bool `json:"overnight_stay"`
+	Sale                     bool `json:"sale"`
+	Skyalps                  bool `json:"skyalps"`
+	SparklingWineAssociation bool `json:"sparkling_wine_association"`
+	VinumHotel               bool `json:"vinum_hotel"`
+	WineStories              bool `json:"wine_stories"`
+	WineSummit               bool `json:"wine_summit"`
+	Winery                   bool `json:"winery"`
+	WineryAssociation        bool `json:"winery_association"`
+	WineryVisits             bool `json:"winery_visits"`
+	Dws                      bool `json:"dws"`
 
-	Wines   string `json:"wines"`
-	WineIDs string `json:"wineids"`
-	Sort    string `json:"sort"`
+	URLOnlineShop      *string `json:"url_online_shop"`
+	URLDeliveryService *string `json:"url_delivery_service"`
 
-	SocialsInstagram string `json:"socialsinstagram"`
-	SocialsFacebook  string `json:"socialsfacebook"`
-	SocialsLinkedIn  string `json:"socialslinkedIn"`
-	SocialsPinterest string `json:"socialspinterest"`
-	SocialsTikTok    string `json:"socialstiktok"`
-	SocialsYouTube   string `json:"socialsyoutube"`
-	SocialsTwitter   string `json:"socialstwitter"`
+	SparklingWineProducerHeadline    *string `json:"sparkling_wine_producer_headline"`
+	SparklingWineProducerSubheadline *string `json:"sparkling_wine_producer_subheadline"`
+	SparklingWineProducerText        *string `json:"sparkling_wine_producer_text"`
 
+	Facebook  *string `json:"facebook"`
+	Instagram *string `json:"instagram"`
+	LinkedIn  *string `json:"linkedin"`
+	Pinterest *string `json:"pinterest"`
+	TikTok    *string `json:"tiktok"`
+	Twitter   *string `json:"twitter"`
+	YouTube   *string `json:"youtube"`
+
+	// Importers uses a custom unmarshaler — the new API returns null, a plain
+	// string, a single object, or an array depending on the entry.
 	Importers *ImportersWrapper `json:"importers,omitempty"`
 }
 
+// ImportersWrapper handles every shape the API returns for the importers field:
+//   - null            → zero items
+//   - ""  (string)    → zero items (legacy text blob, ignored)
+//   - {...} (object)  → one importer
+//   - [{...}] (array) → N importers
 type ImportersWrapper struct {
-	RawImporter json.RawMessage `json:"importer"`
+	items []Importer
+}
+
+func (iw *ImportersWrapper) UnmarshalJSON(b []byte) error {
+	if len(b) == 0 || string(b) == "null" {
+		return nil
+	}
+	if b[0] == '"' {
+		// plain string — not structured data, ignore
+		return nil
+	}
+	if b[0] == '[' {
+		return json.Unmarshal(b, &iw.items)
+	}
+	if b[0] == '{' {
+		var single Importer
+		if err := json.Unmarshal(b, &single); err != nil {
+			return err
+		}
+		iw.items = []Importer{single}
+		return nil
+	}
+	return nil
 }
 
 func (iw *ImportersWrapper) Importers() []Importer {
-	if iw == nil || iw.RawImporter == nil || string(iw.RawImporter) == "null" {
+	if iw == nil {
 		return nil
 	}
-	var arr []Importer
-	if err := json.Unmarshal(iw.RawImporter, &arr); err == nil {
-		return arr
-	}
-	var single Importer
-	if err := json.Unmarshal(iw.RawImporter, &single); err == nil {
-		return []Importer{single}
-	}
-	return nil
+	return iw.items
 }
 
 type Importer struct {
@@ -149,4 +152,21 @@ type Importer struct {
 	ImporterHomepage      string `json:"importerhomepage"`
 	ImporterContactPerson string `json:"importercontactperson"`
 	ImporterDescription   string `json:"importerdescription"`
+}
+
+// AssetURL extracts a plain URL string from a Statamic asset field, which may
+// be returned as null, a plain string, or an object with a "url" key.
+func AssetURL(v interface{}) string {
+	if v == nil {
+		return ""
+	}
+	switch val := v.(type) {
+	case string:
+		return val
+	case map[string]interface{}:
+		if u, ok := val["url"].(string); ok {
+			return u
+		}
+	}
+	return ""
 }
