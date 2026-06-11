@@ -17,8 +17,8 @@
         "HasLanguage": ["de", "it", "en"],
         "Mapping": {
           "suedtirolwein": {
-            "legacyid": "258",
-            "slug": "nicolussi-leck-kreithof"
+            "id": "nicolussi-leck-kreithof",
+            "legacyid": "258"
           }
         },
         "Source": "suedtirolwein",
@@ -36,7 +36,7 @@
             "BaseText": "\u003cp\u003eDer Kreithof unter der\u003cstrong\u003e Ruine Leuchtenburg\u003c/strong\u003e ist das Herzstück des Weinguts Nicolussi-Leck in Kaltern. Der Hof selbst stammt aus dem 13. Jahrhundert, der Weinkeller aber – mehrstöckig und perfekt in den Hang hineingebaut – ist hochmodern. Am Kreithof gelingt sie also, die Symbiose aus Altem und Neuem.\u003cbr\u003eEtwa 800 Jahre alt ist der Kreithof, seit etwas mehr als einem Jahrhundert ist er im Besitz von Familie Nicolussi-Leck, die ursprünglich aus Lusern im Trentino stammt. Sie zieht es während des Ersten Weltkrieges an den \u003cstrong\u003eKalterer See\u003c/strong\u003e, wo sie die perfekten Bedingungen für den Weinbau nutzen, um das familieneigene Weingut aufzubauen. Heute bewirtschaften \u003cstrong\u003eJakob Nicolussi-Leck\u003c/strong\u003e und seine Familie sechs Hektar Weinberge auf 350 Metern Höhe. „Unsere Lagen sind überaus vielfältig, wir können aus Ost-, Süd- und Westhängen die optimale Ausrichtung für jede Rebsorte wählen“, sagt Nicolussi-Leck.\u003cbr\u003e\u003cbr\u003eZur optimalen Exposition kommen mildes Klima, eine konstante Südbrise, warme, lehmige Sandböden und nicht zuletzt das Know-how der Familie. Dieses mündet in den 2010er-Jahren in die Entscheidung, die hofeigenen Trauben selbst auszubauen. Dafür wird ein hochmoderner Weinkeller in den Hang integriert – mit allen Vorteilen, die Lage und Technik zu bieten haben. \u003cbr\u003e\u003cbr\u003eDer Jahrgang 2017 ist der erste, der am Kreithof eingekellert wird. „Die Verarbeitung der Trauben erfolgt allein mit Hilfe der Schwerkraft“, erklärt der Winzer am Weingut Nicolussi-Leck in Kaltern. Gelagert wird der Wein allerdings nicht im modernen, sondern im historischen Keller des Kreithofs. \u003cstrong\u003eTradition und Moderne\u003c/strong\u003e: Am Weingut Nicolussi-Leck verschmelzen sie in Perfektion.\u003cbr\u003e\u003cbr\u003e\u003c/p\u003e",
             "Title": "Nicolussi Leck - Kreithof",
             "Language": "de",
-            "Header": "Ein Hof mit Geschichte, ein Keller aus der Zukunft",
+            "Header": "",
             "SubHeader": "Weine werden im modernen Keller gekeltert und im historischen gelagert",
             "IntroText": "„Unsere Lagen sind überaus vielfältig, wir können aus Ost-, Süd- und Westhängen die optimale Ausrichtung für jede Rebsorte wählen.“"
           },
@@ -44,7 +44,7 @@
             "BaseText": "\u003cp\u003eThe Kreithof below the \u003cstrong\u003eruins of Leuchtenburg Castle\u003c/strong\u003e is the heart of the Nicolussi-Leck Estate Winery in Caldaro. The estate itself originated in the thirteenth century, but the winery, with several floors and perfectly built right into the hillside, is highly modern. At the Kreithof, the symbiosis between old and new has thus been successful.\u003cbr\u003e\u003cbr\u003eThe Kreithof is around 800 years old, and for somewhat more than a century, it has been in the possession of the Nicolussi-Leck family which originally came from the village of Luserna in Trentino. During the First World War, they moved to \u003cstrong\u003eLake Caldaro\u003c/strong\u003e, where they made use of the perfect conditions for winegrowing to build the family’s own estate winery. Today, \u003cstrong\u003eJakob Nicolussi-Leck\u003c/strong\u003e and his family tend six hectares of vineyards at an elevation of 350 meters. “Our locations are extremely varied,” says Nicolussi-Leck.  “We can choose from slopes facing east, south, or west for the ideal orientation for each grape variety.”\u003cbr\u003e\u003cbr\u003eAdded to the ideal exposure are a mild climate, a constant breeze from the south, warm, loamy sandy soils, and last but not least the family’s know-how. That led in the 2010s to the decision to make wine themselves from the estate’s own grapes. To do so, a highly modern winery was integrated into the hillside – with all of the advantages that location and technology can offer. The 2017 vintage was the first one to be made into wine at the Kreithof. “The processing of the grapes takes place only with the help of gravity,” explains the winegrower at the Nicolussi-Leck Estate Winery in Caldaro. But the wine is aged not in the modern winery, but in the historical cellar of the Kreithof. The\u003cstrong\u003e traditional and the moder\u003c/strong\u003en: at the Nicolussi-Leck Estate Winery, they meld together into perfection.\u003c/p\u003e",
             "Title": "Nicolussi Leck - Kreithof",
             "Language": "en",
-            "Header": "An Estate with History, a Winery from the Future",
+            "Header": "",
             "SubHeader": "Wines are made in a modern cellar and aged in an historical one",
             "IntroText": "“Our locations are extremely varied, we can choose from slopes facing east, south, or west for the ideal orientation for each grape variety.”"
           },
@@ -52,7 +52,7 @@
             "BaseText": "\u003cp\u003eLa tenuta Kreithof, situata nei pressi del \u003cstrong\u003erudere di Castelchiaro\u003c/strong\u003e, è il cuore dell\u0026#039;azienda Nicolussi-Leck di Caldaro. Il maso risale al XIII secolo, ma la cantina - a più piani e perfettamente inserita nel panorama - è di ultima generazione. Per la tenuta Kreithof, quindi, si può parlare di una perfetta integrazione tra antico e moderno. \u003cbr\u003e\u003cbr\u003eIl Kreithof ha circa 800 anni e da poco più di un secolo è di proprietà della famiglia Nicolussi-Leck, originaria di Luserna, in Trentino. Durante la Grande Guerra si trasferì al \u003cstrong\u003eLago di Caldaro\u003c/strong\u003e, dove sfruttò le condizioni ottimali per la viticoltura e dove diede vita alla propria tenuta. Oggi, \u003cstrong\u003eJakob Nicolussi-Leck\u003c/strong\u003e e la sua famiglia coltivano 6 ettari di vigneto situato a 350 m s.l.m. \u0026quot;Le nostre vigne godono di condizioni estremamente varie. Possiamo scegliere - tra esposizione a est, a sud o a ovest - la migliore per ogni singolo vitigno\u0026quot; - dice Nicolussi-Leck. \u003cbr\u003e\u003cbr\u003eAll\u0026#039;esposizione ottimale si sommano anche il clima mite, una costante brezza da sud, terreni caldi e sabbiosi e non da ultimo tutto il know-how della famiglia. A partire dal 2010, quest\u0026#039;ultima decise di lavorare in proprio l\u0026#039;uva prodotta. Ecco allora che fu costruita la cantina super-moderna, nel massimo rispetto dell\u0026#039;impatto ambientale, con tutti i vantaggi che la zona e la tecnica potevano offrire. \u003cbr\u003e\u003cbr\u003eL\u0026#039;annata 2017 è la prima durante la quale si procede alla vinificazione. \u0026quot;La lavorazione dei grappoli avviene sulla base della sola forza di gravità\u0026quot; - racconta il vignaiolo della tenuta Nicolussi-Leck di Caldaro. Il vino viene però conservato non nella cantina moderna, in quella storica del Kreithof. \u003cstrong\u003eTradizione e modernità\u003c/strong\u003e: alla tenuta Nicolussi-Leck un abbinamento perfetto.\u003c/p\u003e",
             "Title": "Nicolussi Leck - Kreithof",
             "Language": "it",
-            "Header": "Un maso con una lunga storia, una cantina dal futuro",
+            "Header": "",
             "SubHeader": "L'uva viene torchiata nella cantina nuova e i vini sono conservati in quella vecchia",
             "IntroText": "\"La zona in cui coltiviamo la vite è estremamente varia e ci permette di scegliere tra tutti i punti cardinali quelli ottimali per ciascun vitigno\"."
           }
@@ -123,15 +123,15 @@
             { "Name": "hasovernights", "Value": "false" },
             { "Name": "hasbiowine", "Value": "false" },
             { "Name": "hasaccomodation", "Value": "false" },
-            { "Name": "hasonlineshop", "Value": "true" },
-            { "Name": "hasdeliveryservice", "Value": "true" },
-            { "Name": "hasdirectsales", "Value": "false" },
             { "Name": "isvinumhotel", "Value": "false" },
             { "Name": "iswinestories", "Value": "false" },
             { "Name": "iswinesummit", "Value": "false" },
             { "Name": "issparklingwineassociation", "Value": "false" },
             { "Name": "iswinery", "Value": "false" },
             { "Name": "iswineryassociation", "Value": "false" },
+            { "Name": "hasonlineshop", "Value": "true" },
+            { "Name": "hasdeliveryservice", "Value": "true" },
+            { "Name": "hasdirectsales", "Value": "false" },
             { "Name": "isskyalpspartner", "Value": "false" }
           ],
           "en": [
@@ -160,15 +160,15 @@
             { "Name": "hasovernights", "Value": "false" },
             { "Name": "hasbiowine", "Value": "false" },
             { "Name": "hasaccomodation", "Value": "false" },
-            { "Name": "hasonlineshop", "Value": "true" },
-            { "Name": "hasdeliveryservice", "Value": "true" },
-            { "Name": "hasdirectsales", "Value": "false" },
             { "Name": "isvinumhotel", "Value": "false" },
             { "Name": "iswinestories", "Value": "false" },
             { "Name": "iswinesummit", "Value": "false" },
             { "Name": "issparklingwineassociation", "Value": "false" },
             { "Name": "iswinery", "Value": "false" },
             { "Name": "iswineryassociation", "Value": "false" },
+            { "Name": "hasonlineshop", "Value": "true" },
+            { "Name": "hasdeliveryservice", "Value": "true" },
+            { "Name": "hasdirectsales", "Value": "false" },
             { "Name": "isskyalpspartner", "Value": "false" }
           ],
           "it": [
@@ -197,19 +197,19 @@
             { "Name": "hasovernights", "Value": "false" },
             { "Name": "hasbiowine", "Value": "false" },
             { "Name": "hasaccomodation", "Value": "false" },
-            { "Name": "hasonlineshop", "Value": "true" },
-            { "Name": "hasdeliveryservice", "Value": "true" },
-            { "Name": "hasdirectsales", "Value": "false" },
             { "Name": "isvinumhotel", "Value": "false" },
             { "Name": "iswinestories", "Value": "false" },
             { "Name": "iswinesummit", "Value": "false" },
             { "Name": "issparklingwineassociation", "Value": "false" },
             { "Name": "iswinery", "Value": "false" },
             { "Name": "iswineryassociation", "Value": "false" },
+            { "Name": "hasonlineshop", "Value": "true" },
+            { "Name": "hasdeliveryservice", "Value": "true" },
+            { "Name": "hasdirectsales", "Value": "false" },
             { "Name": "isskyalpspartner", "Value": "false" }
           ]
         },
-        "PoiServices": ["delivery_service", "online_shop"],
+        "PoiServices": [],
         "AdditionalProperties": {
           "SuedtirolWeinCompanyDataProperties": {
             "H1": {

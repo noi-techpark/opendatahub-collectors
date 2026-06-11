@@ -61,6 +61,9 @@ func main() {
 	})
 	ms.FailOnError(context.Background(), err, "failed to create client")
 
+	type poiStub struct {
+		ID *string `json:"Id"`
+	}
 	poiCache, err = clib.LoadExisting(context.Background(), contentClient, clib.LoadConfig[odhContentModel.ODHActivityPoi]{
 		EntityType:  ENTITY_TYPE,
 		QueryParams: map[string]string{"source": SOURCE},
@@ -79,7 +82,6 @@ func main() {
 	ms.FailOnError(context.Background(), err, "error while listening to queue")
 }
 
-// langBatch pairs a language code with its slice of companies.
 type langBatch struct {
 	lang      string
 	companies []dto.WineCompany
@@ -92,67 +94,74 @@ func noEscapeJSON(v interface{}) (json.RawMessage, error) {
 	if err := enc.Encode(v); err != nil {
 		return nil, err
 	}
+	// Encode adds a trailing newline, trim it
 	return json.RawMessage(bytes.TrimRight(buf.Bytes(), "\n")), nil
 }
 
 func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
-	batches := []langBatch{
-		{"de", r.Rawdata.De.Items()},
-		{"it", r.Rawdata.It.Items()},
-		{"en", r.Rawdata.En.Items()},
-		{"ru", r.Rawdata.Ru.Items()},
+	existingIDs := map[string]struct{}{}
+	for id := range poiCache.Entries() {
+		existingIDs[id] = struct{}{}
 	}
 
 	logger.Get(ctx).Info("Processing wine company data")
 
-	// Index DE entries by slug for use as the authoritative source for
-	// GPS, images, and boolean flags (language-neutral fields).
-	deBySlug := make(map[string]dto.WineCompany)
-	for _, c := range r.Rawdata.De.Items() {
-		deBySlug[c.Slug] = c
-	}
-
-	// Build a full index of all languages keyed by slug for AdditionalProperties.
-	allLangsBySlug := map[string]map[string]dto.WineCompany{}
-	for _, batch := range batches {
-		for _, c := range batch.companies {
-			if c.Slug == "" {
-				continue
-			}
-			if allLangsBySlug[c.Slug] == nil {
-				allLangsBySlug[c.Slug] = map[string]dto.WineCompany{}
-			}
-			allLangsBySlug[c.Slug][batch.lang] = c
-		}
+	batches := []langBatch{
+		{"de", companiesFromLang(r.Rawdata.De)},
+		{"it", companiesFromLang(r.Rawdata.It)},
+		{"en", companiesFromLang(r.Rawdata.En)},
+		{"ru", companiesFromLang(r.Rawdata.Ru)},
 	}
 
 	pois := map[string]odhContentModel.ODHActivityPoi{}
 	seen := map[string]struct{}{}
 
+	deCompanies := companiesFromLang(r.Rawdata.De)
+	deBySlug := make(map[string]dto.WineCompany, len(deCompanies))
+	for _, c := range deCompanies {
+		deBySlug[c.Slug] = c
+	}
+
+	allLangsBySlug := map[string]map[string]dto.WineCompany{}
 	for _, batch := range batches {
 		for _, company := range batch.companies {
 			if company.Slug == "" {
-				logger.Get(ctx).Warn("Skipping company with empty slug", "title", company.Title)
+				continue
+			}
+			if allLangsBySlug[company.Slug] == nil {
+				allLangsBySlug[company.Slug] = map[string]dto.WineCompany{}
+			}
+			allLangsBySlug[company.Slug][batch.lang] = company
+		}
+	}
+
+	for _, batch := range batches {
+		if len(batch.companies) == 0 {
+			continue
+		}
+		for _, company := range batch.companies {
+			id := buildID(company)
+			if id == "" {
+				logger.Get(ctx).Warn("Skipping company with empty ID", "name", company.Title)
 				continue
 			}
 
 			// Only process published entries.
-			if !company.Published {
+			if !company.Active {
 				continue
 			}
 
-			id := company.Slug
 			seen[id] = struct{}{}
 
 			if existing, ok := pois[id]; ok {
 				mergeLang(&existing, company, batch.lang)
 				pois[id] = existing
 			} else {
-				de, hasDe := deBySlug[company.Slug]
+				deCopy, hasDe := deBySlug[company.Slug]
 				if !hasDe {
-					de = company
+					deCopy = company
 				}
-				poi := mapToPoi(company, batch.lang, de, r.Timestamp)
+				poi := mapToPoi(company, batch.lang, deCopy, r.Timestamp)
 				poi.AdditionalProperties = &odhContentModel.AdditionalProperties{
 					SuedtirolWeinCompanyDataProperties: buildAdditionalProperties(allLangsBySlug[company.Slug]),
 				}
@@ -161,7 +170,6 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 		}
 	}
 
-	// Sort for deterministic processing order.
 	sortedIDs := make([]string, 0, len(pois))
 	for id := range pois {
 		sortedIDs = append(sortedIDs, id)
@@ -179,6 +187,7 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 		_, exists := poiCache.Get(id)
 
 		if !exists {
+			// POST new record
 			payload, serErr := noEscapeJSON(poi)
 			if serErr != nil {
 				logger.Get(ctx).Error("Failed to serialize POI", "id", id, "error", serErr)
@@ -208,6 +217,8 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 			logger.Get(ctx).Info("Recovered stale-cache wine company via PUT", "id", id)
 
 		} else if changed {
+			// Only PUT if data actually changed — for full-cache this works correctly
+			// because HasChanged compares against the real loaded entity
 			payload, serErr := noEscapeJSON(poi)
 			if serErr != nil {
 				logger.Get(ctx).Error("Failed to serialize POI", "id", id, "error", serErr)
@@ -220,10 +231,15 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 			poiCache.Set(id, poi, hash)
 			logger.Get(ctx).Info("Updated wine company", "id", id)
 		}
+		// exists && !changed — skip silently
 	}
 
-	// Deactivate records no longer present in source.
+	// Deactivate records no longer in source
+	cacheIDs := make([]string, 0, len(poiCache.Entries()))
 	for id := range poiCache.Entries() {
+		cacheIDs = append(cacheIDs, id)
+	}
+	for _, id := range cacheIDs {
 		if _, ok := seen[id]; ok {
 			continue
 		}
@@ -250,40 +266,34 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 	return nil
 }
 
+func companiesFromLang(ld *dto.LangData) []dto.WineCompany {
+	if ld == nil {
+		return nil
+	}
+	return ld.Items()
+}
+
+// buildID returns the stable ODH identifier for a company.
+// The new API's "id" is a per-locale Statamic UUID (different for each
+// language entry of the same winery), so the cross-language stable key is
+// now the URL "slug" instead.
+func buildID(c dto.WineCompany) string {
+	return c.Slug
+}
+
 func mapToPoi(c dto.WineCompany, lang string, de dto.WineCompany, ts time.Time) odhContentModel.ODHActivityPoi {
-	id := c.Slug
+	id := buildID(c)
 	source := SOURCE
 	shortname := c.Title
 
-	// Build wine services list from the DE entry (language-neutral).
+	// The new API no longer provides a "wines" comma-separated list field,
+	// so PoiServices is left empty unless populated by future mapping needs.
 	poiServices := []string{}
-	if de.WineryVisits {
-		poiServices = append(poiServices, "winery_visits")
-	}
-	if de.DeliveryService {
-		poiServices = append(poiServices, "delivery_service")
-	}
-	if de.OnlineShop {
-		poiServices = append(poiServices, "online_shop")
-	}
-	if de.DirectSales {
-		poiServices = append(poiServices, "direct_sales")
-	}
-	if de.Catering {
-		poiServices = append(poiServices, "catering")
-	}
-	if de.OvernightStay {
-		poiServices = append(poiServices, "overnight_stay")
-	}
-	if de.Skyalps {
-		poiServices = append(poiServices, "skyalps")
-	}
 
-	// Build mapping — include legacyNumber for matching existing ODH records.
+	// Mapping table stores both the new slug and the legacy numeric ID
+	// (from the old consisto.net API) so existing ODH records can be matched.
 	mapping := map[string]map[string]string{
-		SOURCE: {
-			"slug": c.Slug,
-		},
+		SOURCE: {"id": c.Slug},
 	}
 	if de.LegacyNumber != "" {
 		mapping[SOURCE]["legacyid"] = de.LegacyNumber
@@ -292,7 +302,7 @@ func mapToPoi(c dto.WineCompany, lang string, de dto.WineCompany, ts time.Time) 
 	return odhContentModel.ODHActivityPoi{
 		Generic: odhContentModel.Generic{
 			ID:          &id,
-			Active:      c.Published,
+			Active:      c.Active,
 			Source:      &source,
 			Shortname:   &shortname,
 			HasLanguage: []string{lang},
@@ -358,6 +368,11 @@ func mergeLang(poi *odhContentModel.ODHActivityPoi, c dto.WineCompany, lang stri
 	if contacts := buildAdditionalContacts(c, lang); contacts != nil {
 		poi.AdditionalContact[lang] = contacts[lang]
 	}
+
+	// The new API no longer provides per-image meta title/description/alt
+	// fields (imagemetatitle/description/alt), so the previous logic that
+	// populated ImageGallery[0].ImageTitle/Desc/AltText per language has
+	// been removed — there is no equivalent source field anymore.
 }
 
 func buildDetail(c dto.WineCompany, lang string) *odhContentModel.DetailGeneric {
@@ -365,16 +380,16 @@ func buildDetail(c dto.WineCompany, lang string) *odhContentModel.DetailGeneric 
 		DetailGeneric: clib.DetailGeneric{
 			Language: &lang,
 			Title:    ptrOf(c.Title),
-			BaseText: ptrOf(c.Intro),
+			BaseText: ptrOf(c.CompanyDescription),
 		},
-		Header:    ptrOf(c.Headline),
+		Header:    ptrOf(""),
 		SubHeader: ptrOf(c.Subtitle),
-		IntroText: ptrOf(c.QuoteText),
+		IntroText: ptrOf(c.Quote),
 	}
 }
 
 func buildContactInfo(c dto.WineCompany, lang string) *odhContentModel.ContactInfo {
-	website := c.Website
+	website := c.Homepage
 	if website != "" && !strings.Contains(website, "http") {
 		website = "http://" + website
 	}
@@ -392,7 +407,7 @@ func buildContactInfo(c dto.WineCompany, lang string) *odhContentModel.ContactIn
 		CompanyName: c.Title,
 		Address:     c.Address,
 		ZipCode:     c.ZipCode,
-		City:        c.Location,
+		City:        c.Place,
 		CountryCode: "IT",
 		CountryName: countryName,
 		Phonenumber: c.Phone,
@@ -403,12 +418,16 @@ func buildContactInfo(c dto.WineCompany, lang string) *odhContentModel.ContactIn
 }
 
 func buildAdditionalContacts(c dto.WineCompany, lang string) map[string][]odhContentModel.AdditionalContact {
-	if len(c.Importers.Importers()) == 0 {
+	if c.Importers == nil {
+		return nil
+	}
+	importers := c.Importers.Importers()
+	if len(importers) == 0 {
 		return nil
 	}
 
 	var contacts []odhContentModel.AdditionalContact
-	for _, imp := range c.Importers.Importers() {
+	for _, imp := range importers {
 		website := imp.ImporterHomepage
 		if website != "" && !strings.Contains(website, "http") {
 			website = "http://" + website
@@ -437,7 +456,11 @@ func buildGpsInfo(de dto.WineCompany) []odhContentModel.GpsData {
 	}
 	lat := strings.TrimSpace(*de.Latitude)
 	lon := strings.TrimSpace(*de.Longitude)
+
 	if lat == "" || lon == "" || lat == "0" || lon == "0" {
+		return []odhContentModel.GpsData{}
+	}
+	if strings.Contains(lat, "°") || strings.Contains(lon, "°") {
 		return []odhContentModel.GpsData{}
 	}
 
@@ -454,27 +477,39 @@ func buildGpsInfo(de dto.WineCompany) []odhContentModel.GpsData {
 
 func buildImageGallery(de dto.WineCompany) []odhContentModel.ImageGalleryEntry {
 	var gallery []odhContentModel.ImageGalleryEntry
+	seen := map[string]bool{}
 
-	addImage := func(raw interface{}, pos int) {
-		url := dto.AssetURL(raw)
-		if url == "" {
-			return
-		}
+	headerURL := dto.AssetURL(de.Media)
+	if headerURL != "" && !seen[headerURL] {
+		seen[headerURL] = true
 		gallery = append(gallery, odhContentModel.ImageGalleryEntry{
-			ImageUrl:      url,
+			ImageUrl:      headerURL,
 			ImageSource:   "SuedtirolWein",
 			CopyRight:     COPYRIGHT,
 			LicenseHolder: LICENSE_HOLDER,
 			IsInGallery:   true,
-			ListPosition:  pos,
+			ListPosition:  0,
 			ImageTitle:    map[string]string{},
 			ImageDesc:     map[string]string{},
 			ImageAltText:  map[string]string{},
 		})
 	}
 
-	addImage(de.ImageHeader, 0)
-	addImage(de.ImagePreview, 1)
+	previewURL := dto.AssetURL(de.MediaDetail)
+	if previewURL != "" && !seen[previewURL] {
+		seen[previewURL] = true
+		gallery = append(gallery, odhContentModel.ImageGalleryEntry{
+			ImageUrl:      previewURL,
+			ImageSource:   "SuedtirolWein",
+			CopyRight:     COPYRIGHT,
+			LicenseHolder: LICENSE_HOLDER,
+			IsInGallery:   true,
+			ListPosition:  1,
+			ImageTitle:    map[string]string{},
+			ImageDesc:     map[string]string{},
+			ImageAltText:  map[string]string{},
+		})
+	}
 
 	return gallery
 }
@@ -489,49 +524,44 @@ func buildPoiProperty(c dto.WineCompany) []odhContentModel.PoiPropertyEntry {
 	addBool := func(name string, value bool) {
 		props = append(props, odhContentModel.PoiPropertyEntry{Name: name, Value: strconv.FormatBool(value)})
 	}
-	addPtr := func(name string, value *string) {
-		if value != nil && *value != "" {
-			props = append(props, odhContentModel.PoiPropertyEntry{Name: name, Value: *value})
-		}
-	}
 
 	add("slogan", c.Slogan)
 	add("subtitle", c.Subtitle)
-	add("quote", c.QuoteText)
+	add("quote", c.Quote)
 	add("quoteauthor", c.QuoteAuthor)
-	add("h1", c.Headline)
+	add("h1", c.H1)
 	add("h2", c.Subtitle)
-	add("farmname", c.Hofname)
-	addPtr("openingtimeswineshop", c.OpeningHoursWineSales)
-	addPtr("openingtimesguides", c.OpeningHoursCellarTours)
-	addPtr("openingtimesgastronomie", c.OpeningHoursRestaurant)
-	addPtr("companyholiday", c.Holiday)
-	addBool("hasvisits", c.WineryVisits)
-	addBool("hasovernights", c.OvernightStay)
-	addBool("hasbiowine", c.OrganicWine)
-	addBool("hasaccomodation", c.Catering)
-	addBool("hasonlineshop", c.OnlineShop)
-	addBool("hasdeliveryservice", c.DeliveryService)
-	addBool("hasdirectsales", c.DirectSales)
-	addBool("isvinumhotel", c.VinumHotel)
-	addBool("iswinestories", c.WineStories)
-	addBool("iswinesummit", c.WineSummit)
-	addBool("issparklingwineassociation", c.SparklingWineAssociation)
-	addBool("iswinery", c.Winery)
-	addBool("iswineryassociation", c.WineryAssociation)
-	addBool("isskyalpspartner", c.Skyalps)
-	addPtr("onlineshopurl", c.URLOnlineShop)
-	addPtr("deliveryserviceurl", c.URLDeliveryService)
-	add("socialsinstagram", ptrStr(c.Instagram))
-	add("socialsfacebook", ptrStr(c.Facebook))
-	add("socialslinkedIn", ptrStr(c.LinkedIn))
-	add("socialspinterest", ptrStr(c.Pinterest))
-	add("socialstiktok", ptrStr(c.TikTok))
-	add("socialsyoutube", ptrStr(c.YouTube))
-	add("socialstwitter", ptrStr(c.Twitter))
-	addPtr("h1sparklingwineproducer", c.SparklingWineProducerHeadline)
-	addPtr("h2sparklingwineproducer", c.SparklingWineProducerSubheadline)
-	addPtr("descriptionsparklingwineproducer", c.SparklingWineProducerText)
+	add("farmname", c.FarmName)
+	add("openingtimeswineshop", dto.PtrString(c.OpeningTimesWineShop))
+	add("openingtimesguides", dto.PtrString(c.OpeningTimesGuides))
+	add("openingtimesgastronomie", dto.PtrString(c.OpeningTimesGastronomy))
+	add("companyholiday", dto.PtrString(c.CompanyHoliday))
+	addBool("hasvisits", c.HasVisits)
+	addBool("hasovernights", c.HasOvernights)
+	addBool("hasbiowine", c.HasBioWine)
+	addBool("hasaccomodation", c.HasAccomodation)
+	addBool("isvinumhotel", c.IsVinumHotel)
+	addBool("iswinestories", c.IsWineStories)
+	addBool("iswinesummit", c.IsWineSummit)
+	addBool("issparklingwineassociation", c.IsSparklingWineAssociation)
+	addBool("iswinery", c.IsWinery)
+	addBool("iswineryassociation", c.IsWineryAssociation)
+	addBool("hasonlineshop", c.HasOnlineShop)
+	addBool("hasdeliveryservice", c.HasDeliveryService)
+	add("onlineshopurl", dto.PtrString(c.OnlineShopURL))
+	add("deliveryserviceurl", dto.PtrString(c.DeliveryServiceURL))
+	addBool("hasdirectsales", c.HasDirectSales)
+	addBool("isskyalpspartner", c.IsSkyAlpsPartner)
+	add("descriptionsparklingwineproducer", dto.PtrString(c.DescriptionSparklingWineProducer))
+	add("h1sparklingwineproducer", dto.PtrString(c.H1SparklingWineProducer))
+	add("h2sparklingwineproducer", dto.PtrString(c.H2SparklingWineProducer))
+	add("socialsinstagram", dto.PtrString(c.SocialsInstagram))
+	add("socialsfacebook", dto.PtrString(c.SocialsFacebook))
+	add("socialslinkedIn", dto.PtrString(c.SocialsLinkedIn))
+	add("socialspinterest", dto.PtrString(c.SocialsPinterest))
+	add("socialstiktok", dto.PtrString(c.SocialsTikTok))
+	add("socialsyoutube", dto.PtrString(c.SocialsYouTube))
+	add("socialstwitter", dto.PtrString(c.SocialsTwitter))
 
 	return props
 }
@@ -553,68 +583,58 @@ func buildAdditionalProperties(byLang map[string]dto.WineCompany) *odhContentMod
 	}
 
 	if de, ok := byLang["de"]; ok {
-		p.HasVisits = de.WineryVisits
-		p.HasOvernights = de.OvernightStay
-		p.HasBiowine = de.OrganicWine
-		p.HasAccommodation = &de.Catering
-		p.HasOnlineshop = de.OnlineShop
-		p.HasDeliveryservice = de.DeliveryService
-		p.HasDirectSales = de.DirectSales
-		p.IsVinumHotel = de.VinumHotel
-		p.IsWineStories = de.WineStories
-		p.IsWineSummit = de.WineSummit
-		p.IsSparklingWineassociation = de.SparklingWineAssociation
-		p.IsWinery = de.Winery
-		p.IsWineryAssociation = de.WineryAssociation
-		p.IsSkyalpsPartner = de.Skyalps
-		if de.URLOnlineShop != nil {
-			p.OnlineShopurl = de.URLOnlineShop
-		}
-		if de.URLDeliveryService != nil {
-			p.DeliveryServiceUrl = de.URLDeliveryService
-		}
-		p.SocialsInstagram = de.Instagram
-		p.SocialsFacebook = de.Facebook
-		p.SocialsLinkedIn = de.LinkedIn
-		p.SocialsPinterest = de.Pinterest
-		p.SocialsTiktok = de.TikTok
-		p.SocialsYoutube = de.YouTube
-		p.SocialsTwitter = de.Twitter
-		if de.SparklingWineProducerHeadline != nil {
-			p.H1SparklingWineproducer = de.SparklingWineProducerHeadline
-		}
-		if de.SparklingWineProducerSubheadline != nil {
-			p.H2SparklingWineproducer = de.SparklingWineProducerSubheadline
-		}
-		if de.SparklingWineProducerText != nil {
-			p.DescriptionSparklingWineproducer = de.SparklingWineProducerText
-		}
+		p.HasVisits = de.HasVisits
+		p.HasOvernights = de.HasOvernights
+		p.HasBiowine = de.HasBioWine
+		p.HasAccommodation = ptrOf(de.HasAccomodation)
+		p.HasOnlineshop = de.HasOnlineShop
+		p.HasDeliveryservice = de.HasDeliveryService
+		p.HasDirectSales = de.HasDirectSales
+		p.IsVinumHotel = de.IsVinumHotel
+		p.IsWineStories = de.IsWineStories
+		p.IsWineSummit = de.IsWineSummit
+		p.IsSparklingWineassociation = de.IsSparklingWineAssociation
+		p.IsWinery = de.IsWinery
+		p.IsWineryAssociation = de.IsWineryAssociation
+		p.IsSkyalpsPartner = de.IsSkyAlpsPartner
+		p.OnlineShopurl = de.OnlineShopURL
+		p.DeliveryServiceUrl = de.DeliveryServiceURL
+		p.SocialsInstagram = de.SocialsInstagram
+		p.SocialsFacebook = de.SocialsFacebook
+		p.SocialsLinkedIn = de.SocialsLinkedIn
+		p.SocialsPinterest = de.SocialsPinterest
+		p.SocialsTiktok = de.SocialsTikTok
+		p.SocialsYoutube = de.SocialsYouTube
+		p.SocialsTwitter = de.SocialsTwitter
+		p.H1SparklingWineproducer = de.H1SparklingWineProducer
+		p.H2SparklingWineproducer = de.H2SparklingWineProducer
+		p.DescriptionSparklingWineproducer = de.DescriptionSparklingWineProducer
 	}
 
 	for lang, c := range byLang {
-		if c.Headline != "" {
-			p.H1[lang] = c.Headline
+		if c.H1 != "" {
+			p.H1[lang] = c.H1
 		}
 		if c.Subtitle != "" {
 			p.H2[lang] = c.Subtitle
 		}
-		if c.QuoteText != "" {
-			p.Quote[lang] = c.QuoteText
+		if c.Quote != "" {
+			p.Quote[lang] = c.Quote
 		}
 		if c.QuoteAuthor != "" {
 			p.QuoteAuthor[lang] = c.QuoteAuthor
 		}
-		if c.OpeningHoursWineSales != nil && *c.OpeningHoursWineSales != "" {
-			p.OpeningTimesWineShop[lang] = *c.OpeningHoursWineSales
+		if c.OpeningTimesWineShop != nil && *c.OpeningTimesWineShop != "" {
+			p.OpeningTimesWineShop[lang] = *c.OpeningTimesWineShop
 		}
-		if c.OpeningHoursCellarTours != nil && *c.OpeningHoursCellarTours != "" {
-			p.OpeningTimesGuides[lang] = *c.OpeningHoursCellarTours
+		if c.OpeningTimesGuides != nil && *c.OpeningTimesGuides != "" {
+			p.OpeningTimesGuides[lang] = *c.OpeningTimesGuides
 		}
-		if c.OpeningHoursRestaurant != nil && *c.OpeningHoursRestaurant != "" {
-			p.OpeningTimesGastronomie[lang] = *c.OpeningHoursRestaurant
+		if c.OpeningTimesGastronomy != nil && *c.OpeningTimesGastronomy != "" {
+			p.OpeningTimesGastronomie[lang] = *c.OpeningTimesGastronomy
 		}
-		if c.Holiday != nil && *c.Holiday != "" {
-			p.CompanyHoliday[lang] = *c.Holiday
+		if c.CompanyHoliday != nil && *c.CompanyHoliday != "" {
+			p.CompanyHoliday[lang] = *c.CompanyHoliday
 		}
 	}
 
@@ -624,6 +644,7 @@ func buildAdditionalProperties(byLang map[string]dto.WineCompany) *odhContentMod
 		}
 		return m
 	}
+
 	p.H1 = nilIfEmpty(p.H1)
 	p.H2 = nilIfEmpty(p.H2)
 	p.Quote = nilIfEmpty(p.Quote)
@@ -646,10 +667,3 @@ func parseCoord(s string) float64 {
 }
 
 func ptrOf[T any](v T) *T { return &v }
-
-func ptrStr(s *string) string {
-	if s == nil {
-		return ""
-	}
-	return *s
-}
