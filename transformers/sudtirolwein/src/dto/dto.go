@@ -76,10 +76,11 @@ func (l *LangData) Items() []WineCompany {
 // Removed (no equivalent in new API): region, isanteprima, hassale, wines,
 // wineids, sort, imagemetatitle/description/alt, sparklingwineproducer image.
 type WineCompany struct {
-	ID     string `json:"id"`
-	Slug   string `json:"slug"`
-	Locale string `json:"locale"`
-	Status string `json:"status"`
+	ID       string `json:"id"`
+	Slug     string `json:"slug"`
+	Locale   string `json:"locale"`
+	Status   string `json:"status"`
+	OriginID string `json:"origin_id"`
 
 	// LegacyNumber is the old numeric ID from the consisto.net API,
 	// used to match against pre-existing ODH records during migration.
@@ -198,8 +199,10 @@ type Importer struct {
 	ImporterDescription   string `json:"importerdescription"`
 }
 
-// AssetURL extracts a plain URL string from a Statamic asset field, which may
-// be null, a plain string, or an object containing a "url" key.
+// AssetURL extracts a usable absolute URL from a Statamic asset field, which
+// may be null, a plain string, or an object containing "permalink"/"url" keys.
+// "permalink" is preferred since it is an absolute, directly-usable URL;
+// "url" is only a path relative to the CMS root and is used as a fallback.
 func AssetURL(v interface{}) string {
 	if v == nil {
 		return ""
@@ -208,6 +211,9 @@ func AssetURL(v interface{}) string {
 	case string:
 		return val
 	case map[string]interface{}:
+		if p, ok := val["permalink"].(string); ok && p != "" {
+			return p
+		}
 		if u, ok := val["url"].(string); ok {
 			return u
 		}

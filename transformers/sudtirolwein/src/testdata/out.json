@@ -4,7 +4,7 @@
       "apiPath": "ODHActivityPoi",
       "queryParams": { "generateid": "false" },
       "payload": {
-        "Id": "nicolussi-leck-kreithof",
+        "Id": "54ed9af3-a6f2-42b9-89cf-fbb71eaf21e1",
         "LicenseInfo": {
           "Author": "",
           "License": "CC0",
@@ -17,8 +17,9 @@
         "HasLanguage": ["de", "it", "en"],
         "Mapping": {
           "suedtirolwein": {
-            "id": "nicolussi-leck-kreithof",
-            "legacyid": "258"
+            "id": "54ed9af3-a6f2-42b9-89cf-fbb71eaf21e1",
+            "legacyid": "258",
+            "slug": "nicolussi-leck-kreithof"
           }
         },
         "Source": "suedtirolwein",
@@ -29,7 +30,7 @@
           "gastronomy",
           "wineries"
         ],
-        "GpsInfo": [],
+        "GpsInfo": [{ "Gpstype": "position", "Latitude": 0, "Longitude": 0 }],
         "SmgTags": ["gastronomy", "essen trinken", "weinkellereien"],
         "Detail": {
           "de": {
@@ -95,7 +96,19 @@
             "CompanyName": "Nicolussi Leck - Kreithof"
           }
         },
-        "ImageGallery": null,
+        "ImageGallery": [
+          {
+            "ImageUrl": "",
+            "ImageDesc": {},
+            "ImageTitle": {},
+            "ImageAltText": {},
+            "CopyRight": "Suedtirol Wein",
+            "ImageSource": "SuedtirolWein",
+            "LicenseHolder": "https://www.suedtirolwein.com/",
+            "IsInGallery": true,
+            "ListPosition": 0
+          }
+        ],
         "PoiProperty": {
           "de": [
             {

@@ -140,7 +140,17 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 			continue
 		}
 		for _, company := range batch.companies {
-			id := buildID(company)
+			// Find the matching German entry via Slug to get its ID
+			deCopy, hasDe := deBySlug[company.Slug]
+
+			// Establish the stable ID based on the German entry ID, falling back to local ID if DE doesn't exist
+			var id string
+			if hasDe {
+				id = buildID(deCopy)
+			} else {
+				id = buildID(company)
+			}
+
 			if id == "" {
 				logger.Get(ctx).Warn("Skipping company with empty ID", "name", company.Title)
 				continue
@@ -157,11 +167,10 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 				mergeLang(&existing, company, batch.lang)
 				pois[id] = existing
 			} else {
-				deCopy, hasDe := deBySlug[company.Slug]
 				if !hasDe {
 					deCopy = company
 				}
-				poi := mapToPoi(company, batch.lang, deCopy, r.Timestamp)
+				poi := mapToPoi(id, company, batch.lang, deCopy, allLangsBySlug[company.Slug], r.Timestamp)
 				poi.AdditionalProperties = &odhContentModel.AdditionalProperties{
 					SuedtirolWeinCompanyDataProperties: buildAdditionalProperties(allLangsBySlug[company.Slug]),
 				}
@@ -217,8 +226,7 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 			logger.Get(ctx).Info("Recovered stale-cache wine company via PUT", "id", id)
 
 		} else if changed {
-			// Only PUT if data actually changed — for full-cache this works correctly
-			// because HasChanged compares against the real loaded entity
+			// Only PUT if data actually changed
 			payload, serErr := noEscapeJSON(poi)
 			if serErr != nil {
 				logger.Get(ctx).Error("Failed to serialize POI", "id", id, "error", serErr)
@@ -231,7 +239,6 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 			poiCache.Set(id, poi, hash)
 			logger.Get(ctx).Info("Updated wine company", "id", id)
 		}
-		// exists && !changed — skip silently
 	}
 
 	// Deactivate records no longer in source
@@ -274,30 +281,67 @@ func companiesFromLang(ld *dto.LangData) []dto.WineCompany {
 }
 
 // buildID returns the stable ODH identifier for a company.
-// The new API's "id" is a per-locale Statamic UUID (different for each
-// language entry of the same winery), so the cross-language stable key is
-// now the URL "slug" instead.
+// Changed from c.Slug to c.ID to prioritize the raw field UUID string.
 func buildID(c dto.WineCompany) string {
-	return c.Slug
+	return c.ID
 }
 
-func mapToPoi(c dto.WineCompany, lang string, de dto.WineCompany, ts time.Time) odhContentModel.ODHActivityPoi {
-	id := buildID(c)
+func pickGeoSource(de dto.WineCompany, c dto.WineCompany) dto.WineCompany {
+	if de.Slug == "" {
+		return c
+	}
+	return de
+}
+
+func gpsFromAnyLang(preferred dto.WineCompany, byLang map[string]dto.WineCompany) []odhContentModel.GpsData {
+	if gps := gpsFrom(preferred); gps != nil {
+		return gps
+	}
+	for _, c := range byLang {
+		if gps := gpsFrom(c); gps != nil {
+			return gps
+		}
+	}
+	return []odhContentModel.GpsData{
+		{Gpstype: ptrOf("position"), Latitude: 0, Longitude: 0},
+	}
+}
+
+func imageGalleryFromAnyLang(preferred dto.WineCompany, byLang map[string]dto.WineCompany) []odhContentModel.ImageGalleryEntry {
+	if gallery := buildImageGallery(preferred, preferred); gallery != nil {
+		return gallery
+	}
+	for _, c := range byLang {
+		if gallery := buildImageGallery(c, c); gallery != nil {
+			return gallery
+		}
+	}
+	return []odhContentModel.ImageGalleryEntry{
+		emptyImageEntry(0),
+	}
+}
+
+func mapToPoi(id string, c dto.WineCompany, lang string, de dto.WineCompany, byLang map[string]dto.WineCompany, ts time.Time) odhContentModel.ODHActivityPoi {
 	source := SOURCE
 	shortname := c.Title
-
-	// The new API no longer provides a "wines" comma-separated list field,
-	// so PoiServices is left empty unless populated by future mapping needs.
 	poiServices := []string{}
 
-	// Mapping table stores both the new slug and the legacy numeric ID
-	// (from the old consisto.net API) so existing ODH records can be matched.
 	mapping := map[string]map[string]string{
-		SOURCE: {"id": c.Slug},
+		SOURCE: {
+			"id":   c.ID,
+			"slug": c.Slug,
+		},
+	}
+	if c.OriginID != "" {
+		mapping[SOURCE]["origin_id"] = c.OriginID
 	}
 	if de.LegacyNumber != "" {
 		mapping[SOURCE]["legacyid"] = de.LegacyNumber
+	} else if c.LegacyNumber != "" {
+		mapping[SOURCE]["legacyid"] = c.LegacyNumber
 	}
+
+	geoSource := pickGeoSource(de, c)
 
 	return odhContentModel.ODHActivityPoi{
 		Generic: odhContentModel.Generic{
@@ -320,7 +364,7 @@ func mapToPoi(c dto.WineCompany, lang string, de dto.WineCompany, ts time.Time) 
 				License:       "CC0",
 				LicenseHolder: LICENSE_HOLDER,
 			},
-			GpsInfo: buildGpsInfo(de),
+			GpsInfo: gpsFromAnyLang(geoSource, byLang),
 		},
 		SmgActive:           true,
 		PublishedOn:         []string{},
@@ -330,7 +374,7 @@ func mapToPoi(c dto.WineCompany, lang string, de dto.WineCompany, ts time.Time) 
 		Detail:              map[string]*odhContentModel.DetailGeneric{lang: buildDetail(c, lang)},
 		ContactInfos:        map[string]*odhContentModel.ContactInfo{lang: buildContactInfo(c, lang)},
 		AdditionalContact:   buildAdditionalContacts(c, lang),
-		ImageGallery:        buildImageGallery(de),
+		ImageGallery:        imageGalleryFromAnyLang(geoSource, byLang),
 		PoiProperty:         map[string][]odhContentModel.PoiPropertyEntry{lang: buildPoiProperty(c)},
 	}
 }
@@ -369,10 +413,16 @@ func mergeLang(poi *odhContentModel.ODHActivityPoi, c dto.WineCompany, lang stri
 		poi.AdditionalContact[lang] = contacts[lang]
 	}
 
-	// The new API no longer provides per-image meta title/description/alt
-	// fields (imagemetatitle/description/alt), so the previous logic that
-	// populated ImageGallery[0].ImageTitle/Desc/AltText per language has
-	// been removed — there is no equivalent source field anymore.
+	if len(poi.Generic.GpsInfo) == 1 && poi.Generic.GpsInfo[0].Latitude == 0 && poi.Generic.GpsInfo[0].Longitude == 0 {
+		if gps := gpsFrom(c); gps != nil {
+			poi.Generic.GpsInfo = gps
+		}
+	}
+	if len(poi.ImageGallery) == 1 && poi.ImageGallery[0].ImageUrl == "" {
+		if gallery := buildImageGallery(c, c); gallery != nil {
+			poi.ImageGallery = gallery
+		}
+	}
 }
 
 func buildDetail(c dto.WineCompany, lang string) *odhContentModel.DetailGeneric {
@@ -450,24 +500,24 @@ func buildAdditionalContacts(c dto.WineCompany, lang string) map[string][]odhCon
 	return map[string][]odhContentModel.AdditionalContact{lang: contacts}
 }
 
-func buildGpsInfo(de dto.WineCompany) []odhContentModel.GpsData {
-	if de.Latitude == nil || de.Longitude == nil {
-		return []odhContentModel.GpsData{}
+func gpsFrom(c dto.WineCompany) []odhContentModel.GpsData {
+	if c.Latitude == nil || c.Longitude == nil {
+		return nil
 	}
-	lat := strings.TrimSpace(*de.Latitude)
-	lon := strings.TrimSpace(*de.Longitude)
+	lat := strings.TrimSpace(*c.Latitude)
+	lon := strings.TrimSpace(*c.Longitude)
 
 	if lat == "" || lon == "" || lat == "0" || lon == "0" {
-		return []odhContentModel.GpsData{}
+		return nil
 	}
 	if strings.Contains(lat, "°") || strings.Contains(lon, "°") {
-		return []odhContentModel.GpsData{}
+		return nil
 	}
 
 	latF := parseCoord(lat)
 	lonF := parseCoord(lon)
 	if latF == 0 && lonF == 0 {
-		return []odhContentModel.GpsData{}
+		return nil
 	}
 
 	return []odhContentModel.GpsData{
@@ -475,43 +525,64 @@ func buildGpsInfo(de dto.WineCompany) []odhContentModel.GpsData {
 	}
 }
 
-func buildImageGallery(de dto.WineCompany) []odhContentModel.ImageGalleryEntry {
+func buildImageGallery(geoSource dto.WineCompany, c dto.WineCompany) []odhContentModel.ImageGalleryEntry {
 	var gallery []odhContentModel.ImageGalleryEntry
 	seen := map[string]bool{}
+	pos := 0
 
-	headerURL := dto.AssetURL(de.Media)
-	if headerURL != "" && !seen[headerURL] {
-		seen[headerURL] = true
+	addImage := func(raw interface{}) {
+		url := dto.AssetURL(raw)
+		if url == "" || seen[url] {
+			return
+		}
+		seen[url] = true
 		gallery = append(gallery, odhContentModel.ImageGalleryEntry{
-			ImageUrl:      headerURL,
+			ImageUrl:      url,
 			ImageSource:   "SuedtirolWein",
 			CopyRight:     COPYRIGHT,
 			LicenseHolder: LICENSE_HOLDER,
 			IsInGallery:   true,
-			ListPosition:  0,
+			ListPosition:  pos,
 			ImageTitle:    map[string]string{},
 			ImageDesc:     map[string]string{},
 			ImageAltText:  map[string]string{},
 		})
+		pos++
 	}
 
-	previewURL := dto.AssetURL(de.MediaDetail)
-	if previewURL != "" && !seen[previewURL] {
-		seen[previewURL] = true
-		gallery = append(gallery, odhContentModel.ImageGalleryEntry{
-			ImageUrl:      previewURL,
-			ImageSource:   "SuedtirolWein",
-			CopyRight:     COPYRIGHT,
-			LicenseHolder: LICENSE_HOLDER,
-			IsInGallery:   true,
-			ListPosition:  1,
-			ImageTitle:    map[string]string{},
-			ImageDesc:     map[string]string{},
-			ImageAltText:  map[string]string{},
-		})
+	if dto.AssetURL(geoSource.Media) != "" {
+		addImage(geoSource.Media)
+	} else {
+		addImage(c.Media)
+	}
+
+	if dto.AssetURL(geoSource.MediaDetail) != "" {
+		addImage(geoSource.MediaDetail)
+	} else {
+		addImage(c.MediaDetail)
+	}
+
+	if dto.AssetURL(geoSource.Logo) != "" {
+		addImage(geoSource.Logo)
+	} else {
+		addImage(c.Logo)
 	}
 
 	return gallery
+}
+
+func emptyImageEntry(pos int) odhContentModel.ImageGalleryEntry {
+	return odhContentModel.ImageGalleryEntry{
+		ImageUrl:      "",
+		ImageSource:   "SuedtirolWein",
+		CopyRight:     COPYRIGHT,
+		LicenseHolder: LICENSE_HOLDER,
+		IsInGallery:   true,
+		ListPosition:  pos,
+		ImageTitle:    map[string]string{},
+		ImageDesc:     map[string]string{},
+		ImageAltText:  map[string]string{},
+	}
 }
 
 func buildPoiProperty(c dto.WineCompany) []odhContentModel.PoiPropertyEntry {
