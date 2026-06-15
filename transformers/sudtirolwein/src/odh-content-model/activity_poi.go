@@ -104,12 +104,13 @@ type ODHActivityPoi struct {
 	Detail               map[string]*DetailGeneric      `json:"Detail"`
 	ContactInfos         map[string]*ContactInfo        `json:"ContactInfos"`
 	AdditionalContact    map[string][]AdditionalContact `json:"AdditionalContact,omitempty"`
-	ImageGallery         []ImageGalleryEntry            `json:"ImageGallery"`
+	ImageGallery         []ImageGalleryEntry            `json:"ImageGallery,omitempty"`
 	PoiProperty          map[string][]PoiPropertyEntry  `json:"PoiProperty"`
 	PoiServices          []string                       `json:"PoiServices"`
 	AdditionalProperties *AdditionalProperties          `json:"AdditionalProperties,omitempty"`
 
 	SmgActive           bool     `json:"SmgActive"`
+	OdhActive           bool     `json:"OdhActive"`
 	PublishedOn         []string `json:"PublishedOn"`
 	SyncUpdateMode      string   `json:"SyncUpdateMode,omitempty"`
 	SyncSourceInterface string   `json:"SyncSourceInterface,omitempty"`
@@ -196,6 +197,12 @@ type ImageGalleryEntry struct {
 }
 
 // PoiPropertyEntry is a single key-value entry in PoiProperty.
+//
+// NOTE: PoiProperty itself is being phased out for the suedtirolwein
+// transformer in favour of AdditionalProperties.SuedtirolWeinCompanyDataProperties
+// (see main.go). This type is kept because the ODHActivityPoi.PoiProperty
+// field is still part of the shared content model used by other
+// transformers in the monorepo.
 type PoiPropertyEntry struct {
 	Name  string `json:"Name"`
 	Value string `json:"Value"`
@@ -212,13 +219,50 @@ type SiagMuseumDataProperties struct {
 	Supporter    map[string]string `json:"Supporter,omitempty"`
 }
 
+type FlexibleString struct {
+	Value string
+}
+
+func (fs FlexibleString) MarshalJSON() ([]byte, error) {
+	return json.Marshal(fs.Value)
+}
+
+func (fs *FlexibleString) UnmarshalJSON(b []byte) error {
+	if len(b) == 0 || string(b) == "null" {
+		return nil
+	}
+	// Plain string
+	if b[0] == '"' {
+		return json.Unmarshal(b, &fs.Value)
+	}
+	// Object — try to extract a usable string from known keys
+	var m map[string]interface{}
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	for _, key := range []string{"url", "permalink", "value", "href"} {
+		if v, ok := m[key].(string); ok && v != "" {
+			fs.Value = v
+			return nil
+		}
+	}
+	return nil
+}
+
 // SuedtirolWeinCompanyDataProperties holds structured wine company data
 // with multilingual maps for text fields and booleans for flags.
+//
+// Slogan and FarmName were added during the migration to the new
+// suedtirolwein.com (Statamic) API so that AdditionalProperties is a
+// complete superset of the data previously carried in PoiProperty,
+// allowing PoiProperty population to be disabled (see main.go).
 type SuedtirolWeinCompanyDataProperties struct {
 	H1          FlexibleMap `json:"H1,omitempty"`
 	H2          FlexibleMap `json:"H2,omitempty"`
 	Quote       FlexibleMap `json:"Quote,omitempty"`
 	QuoteAuthor FlexibleMap `json:"QuoteAuthor,omitempty"`
+	Slogan      FlexibleMap `json:"Slogan,omitempty"`
+	FarmName    FlexibleMap `json:"FarmName,omitempty"`
 
 	OpeningTimesWineShop    FlexibleMap `json:"OpeningtimesWineshop,omitempty"`
 	OpeningTimesGuides      FlexibleMap `json:"OpeningtimesGuides,omitempty"`
@@ -243,19 +287,21 @@ type SuedtirolWeinCompanyDataProperties struct {
 	IsWineryAssociation        bool  `json:"IsWineryAssociation"`
 	IsSkyalpsPartner           bool  `json:"IsSkyalpsPartner"`
 
-	OnlineShopurl      *string `json:"OnlineShopurl,omitempty"`
-	DeliveryServiceUrl *string `json:"DeliveryServiceUrl,omitempty"`
+	// All *string fields changed to *FlexibleString to handle old ODH records
+	// that stored these as objects instead of plain strings.
+	OnlineShopurl      *FlexibleString `json:"OnlineShopurl,omitempty"`
+	DeliveryServiceUrl *FlexibleString `json:"DeliveryServiceUrl,omitempty"`
 
-	SocialsInstagram *string `json:"SocialsInstagram,omitempty"`
-	SocialsFacebook  *string `json:"SocialsFacebook,omitempty"`
-	SocialsLinkedIn  *string `json:"SocialsLinkedIn,omitempty"`
-	SocialsPinterest *string `json:"SocialsPinterest,omitempty"`
-	SocialsTiktok    *string `json:"SocialsTiktok,omitempty"`
-	SocialsYoutube   *string `json:"SocialsYoutube,omitempty"`
-	SocialsTwitter   *string `json:"SocialsTwitter,omitempty"`
+	SocialsInstagram *FlexibleString `json:"SocialsInstagram,omitempty"`
+	SocialsFacebook  *FlexibleString `json:"SocialsFacebook,omitempty"`
+	SocialsLinkedIn  *FlexibleString `json:"SocialsLinkedIn,omitempty"`
+	SocialsPinterest *FlexibleString `json:"SocialsPinterest,omitempty"`
+	SocialsTiktok    *FlexibleString `json:"SocialsTiktok,omitempty"`
+	SocialsYoutube   *FlexibleString `json:"SocialsYoutube,omitempty"`
+	SocialsTwitter   *FlexibleString `json:"SocialsTwitter,omitempty"`
 
-	H1SparklingWineproducer          *string `json:"H1SparklingWineproducer,omitempty"`
-	H2SparklingWineproducer          *string `json:"H2SparklingWineproducer,omitempty"`
-	ImageSparklingWineproducer       *string `json:"ImageSparklingWineproducer,omitempty"`
-	DescriptionSparklingWineproducer *string `json:"DescriptionSparklingWineproducer,omitempty"`
+	H1SparklingWineproducer          *FlexibleString `json:"H1SparklingWineproducer,omitempty"`
+	H2SparklingWineproducer          *FlexibleString `json:"H2SparklingWineproducer,omitempty"`
+	ImageSparklingWineproducer       *FlexibleString `json:"ImageSparklingWineproducer,omitempty"`
+	DescriptionSparklingWineproducer *FlexibleString `json:"DescriptionSparklingWineproducer,omitempty"`
 }

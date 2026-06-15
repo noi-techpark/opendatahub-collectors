@@ -103,125 +103,13 @@
             "ImageTitle": {},
             "ImageAltText": {},
             "CopyRight": "Suedtirol Wein",
-            "ImageSource": "SuedtirolWein",
+            "ImageSource": "suedtirolwein",
             "LicenseHolder": "https://www.suedtirolwein.com/",
             "IsInGallery": true,
             "ListPosition": 0
           }
         ],
-        "PoiProperty": {
-          "de": [
-            {
-              "Name": "subtitle",
-              "Value": "Weine werden im modernen Keller gekeltert und im historischen gelagert"
-            },
-            {
-              "Name": "quote",
-              "Value": "„Unsere Lagen sind überaus vielfältig, wir können aus Ost-, Süd- und Westhängen die optimale Ausrichtung für jede Rebsorte wählen.“"
-            },
-            {
-              "Name": "quoteauthor",
-              "Value": "Jakob Nicolussi-Leck, Herr über das Weingut Nicolussi-Leck"
-            },
-            {
-              "Name": "h1",
-              "Value": "Ein Hof mit Geschichte, ein Keller aus der Zukunft"
-            },
-            {
-              "Name": "h2",
-              "Value": "Weine werden im modernen Keller gekeltert und im historischen gelagert"
-            },
-            { "Name": "farmname", "Value": "Kreithof" },
-            { "Name": "hasvisits", "Value": "false" },
-            { "Name": "hasovernights", "Value": "false" },
-            { "Name": "hasbiowine", "Value": "false" },
-            { "Name": "hasaccomodation", "Value": "false" },
-            { "Name": "isvinumhotel", "Value": "false" },
-            { "Name": "iswinestories", "Value": "false" },
-            { "Name": "iswinesummit", "Value": "false" },
-            { "Name": "issparklingwineassociation", "Value": "false" },
-            { "Name": "iswinery", "Value": "false" },
-            { "Name": "iswineryassociation", "Value": "false" },
-            { "Name": "hasonlineshop", "Value": "true" },
-            { "Name": "hasdeliveryservice", "Value": "true" },
-            { "Name": "hasdirectsales", "Value": "false" },
-            { "Name": "isskyalpspartner", "Value": "false" }
-          ],
-          "en": [
-            {
-              "Name": "subtitle",
-              "Value": "Wines are made in a modern cellar and aged in an historical one"
-            },
-            {
-              "Name": "quote",
-              "Value": "“Our locations are extremely varied, we can choose from slopes facing east, south, or west for the ideal orientation for each grape variety.”"
-            },
-            {
-              "Name": "quoteauthor",
-              "Value": "Jakob Nicolussi-Leck, head of the Nicolussi-Leck Estate Winery"
-            },
-            {
-              "Name": "h1",
-              "Value": "An Estate with History, a Winery from the Future"
-            },
-            {
-              "Name": "h2",
-              "Value": "Wines are made in a modern cellar and aged in an historical one"
-            },
-            { "Name": "farmname", "Value": "Kreithof" },
-            { "Name": "hasvisits", "Value": "false" },
-            { "Name": "hasovernights", "Value": "false" },
-            { "Name": "hasbiowine", "Value": "false" },
-            { "Name": "hasaccomodation", "Value": "false" },
-            { "Name": "isvinumhotel", "Value": "false" },
-            { "Name": "iswinestories", "Value": "false" },
-            { "Name": "iswinesummit", "Value": "false" },
-            { "Name": "issparklingwineassociation", "Value": "false" },
-            { "Name": "iswinery", "Value": "false" },
-            { "Name": "iswineryassociation", "Value": "false" },
-            { "Name": "hasonlineshop", "Value": "true" },
-            { "Name": "hasdeliveryservice", "Value": "true" },
-            { "Name": "hasdirectsales", "Value": "false" },
-            { "Name": "isskyalpspartner", "Value": "false" }
-          ],
-          "it": [
-            {
-              "Name": "subtitle",
-              "Value": "L'uva viene torchiata nella cantina nuova e i vini sono conservati in quella vecchia"
-            },
-            {
-              "Name": "quote",
-              "Value": "\"La zona in cui coltiviamo la vite è estremamente varia e ci permette di scegliere tra tutti i punti cardinali quelli ottimali per ciascun vitigno\"."
-            },
-            {
-              "Name": "quoteauthor",
-              "Value": "Jakob Nicolussi-Leck, proprietario della tenuta omonima"
-            },
-            {
-              "Name": "h1",
-              "Value": "Un maso con una lunga storia, una cantina dal futuro"
-            },
-            {
-              "Name": "h2",
-              "Value": "L'uva viene torchiata nella cantina nuova e i vini sono conservati in quella vecchia"
-            },
-            { "Name": "farmname", "Value": "Kreithof" },
-            { "Name": "hasvisits", "Value": "false" },
-            { "Name": "hasovernights", "Value": "false" },
-            { "Name": "hasbiowine", "Value": "false" },
-            { "Name": "hasaccomodation", "Value": "false" },
-            { "Name": "isvinumhotel", "Value": "false" },
-            { "Name": "iswinestories", "Value": "false" },
-            { "Name": "iswinesummit", "Value": "false" },
-            { "Name": "issparklingwineassociation", "Value": "false" },
-            { "Name": "iswinery", "Value": "false" },
-            { "Name": "iswineryassociation", "Value": "false" },
-            { "Name": "hasonlineshop", "Value": "true" },
-            { "Name": "hasdeliveryservice", "Value": "true" },
-            { "Name": "hasdirectsales", "Value": "false" },
-            { "Name": "isskyalpspartner", "Value": "false" }
-          ]
-        },
+        "PoiProperty": null,
         "PoiServices": [],
         "AdditionalProperties": {
           "SuedtirolWeinCompanyDataProperties": {
@@ -244,6 +132,11 @@
               "de": "Jakob Nicolussi-Leck, Herr über das Weingut Nicolussi-Leck",
               "en": "Jakob Nicolussi-Leck, head of the Nicolussi-Leck Estate Winery",
               "it": "Jakob Nicolussi-Leck, proprietario della tenuta omonima"
+            },
+            "FarmName": {
+              "de": "Kreithof",
+              "en": "Kreithof",
+              "it": "Kreithof"
             },
             "HasVisits": false,
             "HasOvernights": false,
