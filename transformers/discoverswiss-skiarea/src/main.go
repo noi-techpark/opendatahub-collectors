@@ -21,6 +21,8 @@ import (
 	"github.com/noi-techpark/opendatahub-go-sdk/tel/logger"
 	"opendatahub.com/tr-discoverswiss-skiarea/dto"
 	odhContentModel "opendatahub.com/tr-discoverswiss-skiarea/odh-content-model"
+
+	_ "time/tzdata"
 )
 
 // start
