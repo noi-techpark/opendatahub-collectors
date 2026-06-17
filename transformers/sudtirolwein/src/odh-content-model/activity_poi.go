@@ -22,6 +22,15 @@ func PtrFlexibleTime(t time.Time) *FlexibleTime {
 	return &ft
 }
 
+// MarshalJSON ensures time is formatted safely for .NET/Elasticsearch APIs.
+// Truncating to milliseconds prevents 400 Bad Request crashes on nanosecond precision.
+func (ft FlexibleTime) MarshalJSON() ([]byte, error) {
+	if ft.Time.IsZero() {
+		return []byte(`null`), nil
+	}
+	return []byte(`"` + ft.Time.Truncate(time.Millisecond).Format(time.RFC3339) + `"`), nil
+}
+
 func (ft *FlexibleTime) UnmarshalJSON(b []byte) error {
 	s := strings.Trim(string(b), "\"")
 	if s == "null" || s == "" || s == "0001-01-01T00:00:00" {
@@ -44,7 +53,6 @@ func (ft *FlexibleTime) UnmarshalJSON(b []byte) error {
 	}
 
 	// 3. Fallback for formats without 'Z' (Common in some ODH responses)
-	// We use a custom layout that handles up to 9 fractional digits
 	layouts := []string{
 		"2006-01-02T15:04:05.999999999",
 		"2006-01-02T15:04:05",
@@ -69,14 +77,12 @@ func (fm *FlexibleMap) UnmarshalJSON(b []byte) error {
 		return nil
 	}
 
-	// 1. Try to unmarshal as a map
 	var m map[string]string
 	if err := json.Unmarshal(b, &m); err == nil {
 		*fm = m
 		return nil
 	}
 
-	// 2. Try to unmarshal as a plain string
 	var s string
 	if err := json.Unmarshal(b, &s); err == nil {
 		if s == "" {
@@ -89,13 +95,12 @@ func (fm *FlexibleMap) UnmarshalJSON(b []byte) error {
 	return fmt.Errorf("could not unmarshal flexible map from %s", string(b))
 }
 
-// DetailGeneric extends clib.DetailGeneric with additional fields the ODH API supports
-// but which are not yet in the SDK struct.
 type DetailGeneric struct {
 	clib.DetailGeneric
-	Header    *string `json:"Header"`
-	SubHeader *string `json:"SubHeader"`
-	IntroText *string `json:"IntroText"`
+	// Added omitempty to prevent "Header": null which fails validation
+	Header    *string `json:"Header,omitempty"`
+	SubHeader *string `json:"SubHeader,omitempty"`
+	IntroText *string `json:"IntroText,omitempty"`
 }
 
 type ODHActivityPoi struct {
@@ -104,7 +109,7 @@ type ODHActivityPoi struct {
 	Detail               map[string]*DetailGeneric      `json:"Detail"`
 	ContactInfos         map[string]*ContactInfo        `json:"ContactInfos"`
 	AdditionalContact    map[string][]AdditionalContact `json:"AdditionalContact,omitempty"`
-	ImageGallery         []ImageGalleryEntry            `json:"ImageGallery,omitempty"`
+	ImageGallery         []ImageGalleryEntry            `json:"ImageGallery"`
 	PoiProperty          map[string][]PoiPropertyEntry  `json:"PoiProperty"`
 	PoiServices          []string                       `json:"PoiServices"`
 	AdditionalProperties *AdditionalProperties          `json:"AdditionalProperties,omitempty"`
@@ -117,7 +122,6 @@ type ODHActivityPoi struct {
 	HasFreeEntrance     bool     `json:"HasFreeEntrance"`
 }
 
-// Metadata matches the _Meta field in ODH entities but uses FlexibleTime for robustness.
 type Metadata struct {
 	ID         string        `json:"Id"`
 	Type       string        `json:"Type"`
@@ -126,7 +130,6 @@ type Metadata struct {
 	Reduced    bool          `json:"Reduced"`
 }
 
-// Generic matches the pattern used across transformers in the monorepo.
 type Generic struct {
 	ID          *string                      `json:"Id,omitempty"`
 	Meta        *Metadata                    `json:"_Meta,omitempty"`
@@ -140,7 +143,7 @@ type Generic struct {
 	Source      *string                      `json:"Source,omitempty"`
 	TagIds      []string                     `json:"TagIds"`
 	GpsInfo     []GpsData                    `json:"GpsInfo"`
-	SmgTags     []string                     `json:"SmgTags"` // legacy field — must be filled for now
+	SmgTags     []string                     `json:"SmgTags"`
 }
 
 type GpsData struct {
@@ -171,20 +174,18 @@ type ContactInfo struct {
 	Area        string `json:"Area,omitempty"`
 }
 
-// AdditionalContact holds importer contact data per language.
 type AdditionalContact struct {
 	Type        string       `json:"Type"`
 	Description string       `json:"Description,omitempty"`
 	ContactInfo *ContactInfo `json:"ContactInfos,omitempty"`
 }
 
-// ImageGalleryEntry — multilingual image metadata.
 type ImageGalleryEntry struct {
 	ImageUrl      string            `json:"ImageUrl"`
 	ImageName     string            `json:"ImageName,omitempty"`
-	ImageDesc     map[string]string `json:"ImageDesc"`
-	ImageTitle    map[string]string `json:"ImageTitle"`
-	ImageAltText  map[string]string `json:"ImageAltText"`
+	ImageDesc     map[string]string `json:"ImageDesc,omitempty"`
+	ImageTitle    map[string]string `json:"ImageTitle,omitempty"`
+	ImageAltText  map[string]string `json:"ImageAltText,omitempty"`
 	CopyRight     string            `json:"CopyRight,omitempty"`
 	License       string            `json:"License,omitempty"`
 	ImageSource   string            `json:"ImageSource,omitempty"`
@@ -196,13 +197,6 @@ type ImageGalleryEntry struct {
 	Height        int               `json:"Height,omitempty"`
 }
 
-// PoiPropertyEntry is a single key-value entry in PoiProperty.
-//
-// NOTE: PoiProperty itself is being phased out for the suedtirolwein
-// transformer in favour of AdditionalProperties.SuedtirolWeinCompanyDataProperties
-// (see main.go). This type is kept because the ODHActivityPoi.PoiProperty
-// field is still part of the shared content model used by other
-// transformers in the monorepo.
 type PoiPropertyEntry struct {
 	Name  string `json:"Name"`
 	Value string `json:"Value"`
@@ -219,50 +213,14 @@ type SiagMuseumDataProperties struct {
 	Supporter    map[string]string `json:"Supporter,omitempty"`
 }
 
-type FlexibleString struct {
-	Value string
-}
-
-func (fs FlexibleString) MarshalJSON() ([]byte, error) {
-	return json.Marshal(fs.Value)
-}
-
-func (fs *FlexibleString) UnmarshalJSON(b []byte) error {
-	if len(b) == 0 || string(b) == "null" {
-		return nil
-	}
-	// Plain string
-	if b[0] == '"' {
-		return json.Unmarshal(b, &fs.Value)
-	}
-	// Object — try to extract a usable string from known keys
-	var m map[string]interface{}
-	if err := json.Unmarshal(b, &m); err != nil {
-		return err
-	}
-	for _, key := range []string{"url", "permalink", "value", "href"} {
-		if v, ok := m[key].(string); ok && v != "" {
-			fs.Value = v
-			return nil
-		}
-	}
-	return nil
-}
-
-// SuedtirolWeinCompanyDataProperties holds structured wine company data
-// with multilingual maps for text fields and booleans for flags.
-//
-// Slogan and FarmName were added during the migration to the new
-// suedtirolwein.com (Statamic) API so that AdditionalProperties is a
-// complete superset of the data previously carried in PoiProperty,
-// allowing PoiProperty population to be disabled (see main.go).
 type SuedtirolWeinCompanyDataProperties struct {
 	H1          FlexibleMap `json:"H1,omitempty"`
 	H2          FlexibleMap `json:"H2,omitempty"`
 	Quote       FlexibleMap `json:"Quote,omitempty"`
 	QuoteAuthor FlexibleMap `json:"QuoteAuthor,omitempty"`
-	Slogan      FlexibleMap `json:"Slogan,omitempty"`
-	FarmName    FlexibleMap `json:"FarmName,omitempty"`
+
+	Slogan   FlexibleMap `json:"Slogan,omitempty"`
+	FarmName FlexibleMap `json:"FarmName,omitempty"`
 
 	OpeningTimesWineShop    FlexibleMap `json:"OpeningtimesWineshop,omitempty"`
 	OpeningTimesGuides      FlexibleMap `json:"OpeningtimesGuides,omitempty"`
@@ -287,21 +245,19 @@ type SuedtirolWeinCompanyDataProperties struct {
 	IsWineryAssociation        bool  `json:"IsWineryAssociation"`
 	IsSkyalpsPartner           bool  `json:"IsSkyalpsPartner"`
 
-	// All *string fields changed to *FlexibleString to handle old ODH records
-	// that stored these as objects instead of plain strings.
-	OnlineShopurl      *FlexibleString `json:"OnlineShopurl,omitempty"`
-	DeliveryServiceUrl *FlexibleString `json:"DeliveryServiceUrl,omitempty"`
+	OnlineShopurl      FlexibleMap `json:"OnlineShopurl,omitempty"`
+	DeliveryServiceUrl FlexibleMap `json:"DeliveryServiceUrl,omitempty"`
 
-	SocialsInstagram *FlexibleString `json:"SocialsInstagram,omitempty"`
-	SocialsFacebook  *FlexibleString `json:"SocialsFacebook,omitempty"`
-	SocialsLinkedIn  *FlexibleString `json:"SocialsLinkedIn,omitempty"`
-	SocialsPinterest *FlexibleString `json:"SocialsPinterest,omitempty"`
-	SocialsTiktok    *FlexibleString `json:"SocialsTiktok,omitempty"`
-	SocialsYoutube   *FlexibleString `json:"SocialsYoutube,omitempty"`
-	SocialsTwitter   *FlexibleString `json:"SocialsTwitter,omitempty"`
+	SocialsInstagram string `json:"SocialsInstagram,omitempty"`
+	SocialsFacebook  string `json:"SocialsFacebook,omitempty"`
+	SocialsLinkedIn  string `json:"SocialsLinkedIn,omitempty"`
+	SocialsPinterest string `json:"SocialsPinterest,omitempty"`
+	SocialsTiktok    string `json:"SocialsTiktok,omitempty"`
+	SocialsYoutube   string `json:"SocialsYoutube,omitempty"`
+	SocialsTwitter   string `json:"SocialsTwitter,omitempty"`
 
-	H1SparklingWineproducer          *FlexibleString `json:"H1SparklingWineproducer,omitempty"`
-	H2SparklingWineproducer          *FlexibleString `json:"H2SparklingWineproducer,omitempty"`
-	ImageSparklingWineproducer       *FlexibleString `json:"ImageSparklingWineproducer,omitempty"`
-	DescriptionSparklingWineproducer *FlexibleString `json:"DescriptionSparklingWineproducer,omitempty"`
+	H1SparklingWineproducer          FlexibleMap `json:"H1SparklingWineproducer,omitempty"`
+	H2SparklingWineproducer          FlexibleMap `json:"H2SparklingWineproducer,omitempty"`
+	ImageSparklingWineproducer       FlexibleMap `json:"ImageSparklingWineproducer,omitempty"`
+	DescriptionSparklingWineproducer FlexibleMap `json:"DescriptionSparklingWineproducer,omitempty"`
 }
