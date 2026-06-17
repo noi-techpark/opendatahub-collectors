@@ -49,4 +49,3 @@ networks:
   ingestion:
     external: true
 
-

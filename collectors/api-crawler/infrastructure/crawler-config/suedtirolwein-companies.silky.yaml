@@ -1,0 +1,19 @@
+rootContext: {}
+stream: false
+
+steps:
+  - type: forValues
+    name: Iterate over languages
+    values: ["de","it","en","ru"]
+    as: language
+    steps:
+
+      - type: request
+        name: "Fetch wine companies (language={{ .language }})"
+        request:
+          url: "https://www.suedtirolwein.com/api/collections/winzers/entries?filter[site]={{ .language }}"
+          method: GET
+
+        resultTransformer: "."
+
+        mergeOn: .[$ctx.language] = $res
