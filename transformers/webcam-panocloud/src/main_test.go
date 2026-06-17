@@ -14,7 +14,7 @@ import (
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	"github.com/noi-techpark/opendatahub-go-sdk/testsuite"
 
-	odhmodel "github.com/noi-techpark/opendatahub-collectors/transformers/webcam-panocloud/src/odh-content-model"
+	odhmodel "github.com/noi-techpark/opendatahub-collectors/transformers/webcam-panocloud/odh-content-model"
 )
 
 func Test_Transform_Snapshot(t *testing.T) {
