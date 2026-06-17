@@ -6,7 +6,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	"sort"
 	"strconv"
@@ -20,7 +19,7 @@ import (
 	"github.com/noi-techpark/opendatahub-go-sdk/tel"
 	"github.com/noi-techpark/opendatahub-go-sdk/tel/logger"
 
-	odhmodel "github.com/noi-techpark/opendatahub-collectors/transformers/webcam-panocloud/src/odh-content-model"
+	odhmodel "github.com/noi-techpark/opendatahub-collectors/transformers/webcam-panocloud/odh-content-model"
 )
 
 const (
@@ -88,6 +87,9 @@ func Transform(ctx context.Context, r *rdb.Raw[PanocloudResponse]) error {
 		if inCache {
 			copy := existing.Entity
 			base = &copy
+		}
+		if alreadyParsed, ok := webcams[id]; ok {
+			base = &alreadyParsed
 		}
 
 		webcams[id] = mapToODH(cam, base, id)
@@ -163,19 +165,41 @@ func Transform(ctx context.Context, r *rdb.Raw[PanocloudResponse]) error {
 }
 
 func buildID(locationId string) string {
-	return fmt.Sprintf("panocloud_%s", locationId)
+	return locationId
 }
 
 func mapToODH(cam PanocloudCamera, base *odhmodel.WebcamInfo, odhid string) odhmodel.WebcamInfo {
 	attr := cam.Attributes
 
-	webcam := odhmodel.WebcamInfo{
-		Source:           "panocloud",
-		Id:               odhid,
-		WebCamProperties: odhmodel.WebCamProperties{},
-		Detail:           map[string]odhmodel.Detail{},
-		ContactInfos:     map[string]odhmodel.ContactInfo{},
-		Mapping:          map[string]map[string]string{},
+	var webcam odhmodel.WebcamInfo
+	if base != nil {
+		webcam = *base
+		if webcam.Detail == nil {
+			webcam.Detail = map[string]odhmodel.Detail{}
+		}
+		if webcam.ContactInfos == nil {
+			webcam.ContactInfos = map[string]odhmodel.ContactInfo{}
+		}
+		if webcam.Mapping == nil {
+			webcam.Mapping = map[string]map[string]string{}
+		}
+		if webcam.VideoItems == nil {
+			webcam.VideoItems = map[string][]odhmodel.VideoItem{}
+		}
+		if webcam.HasLanguage == nil {
+			webcam.HasLanguage = []string{}
+		}
+	} else {
+		webcam = odhmodel.WebcamInfo{
+			Source:           "panocloud",
+			Id:               odhid,
+			WebCamProperties: odhmodel.WebCamProperties{},
+			Detail:           map[string]odhmodel.Detail{},
+			ContactInfos:     map[string]odhmodel.ContactInfo{},
+			Mapping:          map[string]map[string]string{},
+			VideoItems:       map[string][]odhmodel.VideoItem{},
+			HasLanguage:      []string{},
+		}
 	}
 
 	if attr.CameraStatus == "active" {
@@ -213,6 +237,17 @@ func mapToODH(cam PanocloudCamera, base *odhmodel.WebcamInfo, odhid string) odhm
 	defaultlanguage := attr.DefaultLang
 	if defaultlanguage == "" {
 		defaultlanguage = "de"
+	}
+
+	hasLang := false
+	for _, l := range webcam.HasLanguage {
+		if l == defaultlanguage {
+			hasLang = true
+			break
+		}
+	}
+	if !hasLang {
+		webcam.HasLanguage = append(webcam.HasLanguage, defaultlanguage)
 	}
 
 	// Detail
@@ -298,34 +333,30 @@ func mapToODH(cam PanocloudCamera, base *odhmodel.WebcamInfo, odhid string) odhm
 	}
 
 	// Videos
-	webcam.VideoItems = map[string][]odhmodel.VideoItem{}
-	if cam.Videos.Video.Attributes.VideoClipUrl != "" {
-		vAttr := cam.Videos.Video.Attributes
-		res, _ := strconv.Atoi(vAttr.Resolution)
-		bitrate, _ := strconv.Atoi(vAttr.VideoBitRate)
-		duration, _ := strconv.ParseFloat(vAttr.Duration, 64)
+	if attrVideos := cam.Videos; attrVideos.Video.Attributes.VideoClipUrl != "" {
+		vAttr := attrVideos.Video.Attributes
+		dur, _ := strconv.ParseFloat(vAttr.Duration, 64)
+		bitrate, _ := strconv.ParseInt(vAttr.VideoBitRate, 10, 64)
+		res, _ := strconv.ParseInt(vAttr.Resolution, 10, 64)
 
-		videoitem := odhmodel.VideoItem{
+		video := odhmodel.VideoItem{
 			Url:             addHttpsPrefixIfNotPresent(vAttr.VideoClipUrl),
 			StreamingSource: "panocloud",
 			Active:          true,
-			Resolution:      res,
+			Resolution:      int(res),
 			Definition:      vAttr.Definition,
-			Bitrate:         bitrate,
-			Duration:        duration,
+			Bitrate:         int(bitrate),
+			Duration:        dur,
 			VideoType:       vAttr.MimeType,
 		}
-
-		webcam.VideoItems[defaultlanguage] = []odhmodel.VideoItem{videoitem}
+		webcam.VideoItems[defaultlanguage] = []odhmodel.VideoItem{video}
 	}
 
 	// Mapping
-	webcam.Mapping["panocloud"] = map[string]string{
-		"locationId": attr.LocationId,
+	if _, ok := webcam.Mapping["panocloud"]; !ok {
+		webcam.Mapping["panocloud"] = map[string]string{}
 	}
-
-	// HasLanguage
-	webcam.HasLanguage = []string{defaultlanguage}
+	webcam.Mapping["panocloud"]["locationId"] = attr.LocationId
 
 	return webcam
 }
