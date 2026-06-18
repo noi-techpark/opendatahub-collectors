@@ -1,0 +1,148 @@
+{
+    "posts": [
+        {
+            "apiPath": "WebcamInfo",
+            "queryParams": {
+                "generateid": "false"
+            },
+            "payload": {
+                "Id": "754",
+                "Source": "panocloud",
+                "Active": true,
+                "SmgActive": true,
+                "WebCamProperties": {
+                    "HasVR": false,
+                    "ViewerType": "krpano",
+                    "WebcamUrl": "https://algund.panocloud.webcam"
+                },
+                "LastChange": "2026-05-23T02:07:38Z",
+                "Shortname": "Blick auf Algund - Buchlechenhof",
+                "Detail": {
+                    "de": {
+                        "Title": "Blick auf Algund - Buchlechenhof",
+                        "IntroText": "Blick auf Algund, umgeben von von majestätischen Bergen. Tauchen Sie ein in die einzigartige Kombination aus mediterranem Flair und alpiner Pracht.",
+                        "Language": "de"
+                    },
+                    "en": {
+                        "Title": "Blick auf Algund - Buchlechenhof",
+                        "IntroText": "Blick auf Algund, umgeben von von majestätischen Bergen. Tauchen Sie ein in die einzigartige Kombination aus mediterranem Flair und alpiner Pracht.",
+                        "Language": "en"
+                    },
+                    "it": {
+                        "Title": "Blick auf Algund - Buchlechenhof",
+                        "IntroText": "Blick auf Algund, umgeben von von majestätischen Bergen. Tauchen Sie ein in die einzigartige Kombination aus mediterranem Flair und alpiner Pracht.",
+                        "Language": "it"
+                    }
+                },
+                "GpsInfo": [
+                    {
+                        "Gpstype": "position",
+                        "Latitude": 46.671092,
+                        "Longitude": 11.118926,
+                        "Altitude": 636,
+                        "AltitudeUnitofMeasure": "m"
+                    }
+                ],
+                "ContactInfos": {
+                    "de": {
+                        "Region": "IT-BZ",
+                        "Language": "de"
+                    },
+                    "en": {
+                        "Region": "IT-BZ",
+                        "Language": "en"
+                    },
+                    "it": {
+                        "Region": "IT-BZ",
+                        "Language": "it"
+                    }
+                },
+                "ImageGallery": [
+                    {
+                        "Width": 7125,
+                        "Height": 2428,
+                        "ImageName": "big_panorama1.jpg",
+                        "ImageUrl": "https://algund.panocloud.webcam/big_panorama1.jpg",
+                        "ImageSource": "panocloud",
+                        "IsInGallery": true,
+                        "ImageTags": [
+                            "big",
+                            "image/jpeg",
+                            "panorama"
+                        ],
+                        "ListPosition": 0
+                    },
+                    {
+                        "Width": 3521,
+                        "Height": 1200,
+                        "ImageName": "mid_panorama1.jpg",
+                        "ImageUrl": "https://algund.panocloud.webcam/mid_panorama1.jpg",
+                        "ImageSource": "panocloud",
+                        "IsInGallery": true,
+                        "ImageTags": [
+                            "middle",
+                            "image/jpeg",
+                            "panorama"
+                        ],
+                        "ListPosition": 0
+                    },
+                    {
+                        "Width": 1920,
+                        "Height": 654,
+                        "ImageName": "panorama1.jpg",
+                        "ImageUrl": "https://algund.panocloud.webcam/panorama1.jpg",
+                        "ImageSource": "panocloud",
+                        "IsInGallery": true,
+                        "ImageTags": [
+                            "standard",
+                            "image/jpeg",
+                            "panorama"
+                        ],
+                        "ListPosition": 0
+                    },
+                    {
+                        "Width": 2347,
+                        "Height": 800,
+                        "ImageName": "panorama1_raw.jpg",
+                        "ImageUrl": "https://algund.panocloud.webcam/panorama1_raw.jpg",
+                        "ImageSource": "panocloud",
+                        "IsInGallery": true,
+                        "ImageTags": [
+                            "raw",
+                            "image/jpeg",
+                            "panorama"
+                        ],
+                        "ListPosition": 0
+                    },
+                    {
+                        "Width": 293,
+                        "Height": 100,
+                        "ImageName": "tmb_panorama1.jpg",
+                        "ImageUrl": "https://algund.panocloud.webcam/tmb_panorama1.jpg",
+                        "ImageSource": "panocloud",
+                        "IsInGallery": true,
+                        "ImageTags": [
+                            "thumbnail",
+                            "image/jpeg",
+                            "panorama"
+                        ],
+                        "ListPosition": 0
+                    }
+                ],
+                "Mapping": {
+                    "panocloud": {
+                        "locationId": "754"
+                    }
+                },
+                "HasLanguage": [
+                    "de",
+                    "it",
+                    "en"
+                ]
+            }
+        }
+    ],
+    "puts": [],
+    "putMultiples": [],
+    "gets": []
+}
