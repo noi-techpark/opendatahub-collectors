@@ -1,455 +1,69 @@
-{
-  "@attributes": {
-    "xmlFileTime": "1781691262",
-    "xmlFileVersion": "1.0"
-  },
-  "LiveCam": [
-    {
-      "@attributes": {
-        "addressIso": "IT",
-        "cameraStatus": "active",
-        "defaultLang": "de",
-        "description": "Blick auf Algund, umgeben von von majestätischen Bergen. Tauchen Sie ein in die einzigartige Kombination aus mediterranem Flair und alpiner Pracht.",
-        "full360": "no",
-        "geoAlt": "636",
-        "geoLat": "46.671092",
-        "geoLong": "11.118926",
-        "geoPlacename": "Marling",
-        "geoRegion": "IT-BZ",
-        "geoRegionName": "Bozen-Südtirol",
-        "hasVR": "no",
-        "lastModified": "2026-05-23T04:07:38+02:00",
-        "lastModifiedUnix": "1779502058",
-        "locationId": "754",
-        "longdescription": "",
-        "name": "Blick auf Algund - Buchlechenhof",
-        "pageTitle": "Buchlechenhof, Blick auf Algund bei Meran - Südtirol",
-        "source": "panocloud",
-        "url": "algund.panocloud.webcam",
-        "viewerType": "krpano"
+[
+  {
+    "id": 7,
+    "name": "Großglockner - KFJ-Höhe",
+    "logo": "https://static.panomax.com/instances/resources/7/default/6e13ac80415154b7f293abcc10ec7659.png",
+    "camId": 7,
+    "viewAngleDegree": 235,
+    "latitude": "47.075826",
+    "longitude": "12.750602",
+    "zeroDirection": "211.5",
+    "elevation": "2325",
+    "country": "at",
+    "countryName": "Austria",
+    "state": "Carinthia",
+    "city": "Heiligenblut",
+    "area": null,
+    "webcamUrl": "https://grossglockner.panomax.com",
+    "customerId": 4,
+    "customerUrl": null,
+    "customerName": "Großglockner Hochalpenstraße",
+    "images": [
+      {
+        "url": "https://live-image.panomax.com/cams/7/recent_thumb.jpg",
+        "width": "257",
+        "height": "75"
       },
-      "Images": {
-        "image": [
-          {
-            "@attributes": {
-              "fileName": "big_panorama1.jpg",
-              "fileTime": "2026-06-17T12:01:31+02:00",
-              "fileTimeUnix": "1781690491",
-              "fileType": "big",
-              "fileUrl": "algund.panocloud.webcam/big_panorama1.jpg",
-              "imgHeight": "2428",
-              "imgWidth": "7125",
-              "mimeType": "image/jpeg",
-              "panorama": "yes"
-            }
-          },
-          {
-            "@attributes": {
-              "fileName": "mid_panorama1.jpg",
-              "fileTime": "2026-06-17T12:01:34+02:00",
-              "fileTimeUnix": "1781690494",
-              "fileType": "middle",
-              "fileUrl": "algund.panocloud.webcam/mid_panorama1.jpg",
-              "imgHeight": "1200",
-              "imgWidth": "3521",
-              "mimeType": "image/jpeg",
-              "panorama": "yes"
-            }
-          },
-          {
-            "@attributes": {
-              "fileName": "panorama1.jpg",
-              "fileTime": "2026-06-17T12:01:31+02:00",
-              "fileTimeUnix": "1781690491",
-              "fileType": "standard",
-              "fileUrl": "algund.panocloud.webcam/panorama1.jpg",
-              "imgHeight": "654",
-              "imgWidth": "1920",
-              "mimeType": "image/jpeg",
-              "panorama": "yes"
-            }
-          },
-          {
-            "@attributes": {
-              "fileName": "panorama1_raw.jpg",
-              "fileTime": "2026-06-17T12:01:31+02:00",
-              "fileTimeUnix": "1781690491",
-              "fileType": "raw",
-              "fileUrl": "algund.panocloud.webcam/panorama1_raw.jpg",
-              "imgHeight": "800",
-              "imgWidth": "2347",
-              "mimeType": "image/jpeg",
-              "panorama": "yes"
-            }
-          },
-          {
-            "@attributes": {
-              "fileName": "tmb_panorama1.jpg",
-              "fileTime": "2026-06-17T12:01:31+02:00",
-              "fileTimeUnix": "1781690491",
-              "fileType": "thumbnail",
-              "fileUrl": "algund.panocloud.webcam/tmb_panorama1.jpg",
-              "imgHeight": "100",
-              "imgWidth": "293",
-              "mimeType": "image/jpeg",
-              "panorama": "yes"
-            }
-          }
-        ]
+      {
+        "url": "https://live-image.panomax.com/cams/7/recent_small.jpg",
+        "width": "515",
+        "height": "150"
       },
-      "Logos": {
-        "Logo": {
-          "@attributes": {
-            "fileTime": "2023-07-28T12:00:26+02:00",
-            "fileTimeUnix": "1690538426",
-            "lastModified": "2023-07-28T12:06:32+02:00",
-            "lastModifiedUnix": "1690538792",
-            "logoDefault": "1",
-            "logoFilename": "39fd52a75f27cee1207cf31bee336651.png",
-            "logoHeight": "133",
-            "logoLink": "https://www.algund.info/de/",
-            "logoUrl": "algund.panocloud.webcam/img/logo/39fd52a75f27cee1207cf31bee336651.png",
-            "logoWidth": "180"
-          }
-        }
+      {
+        "url": "https://live-image.panomax.com/cams/7/recent_optimized.jpg",
+        "width": "1030",
+        "height": "300"
       },
-      "MetaData": {
-        "addressIso": "IT",
-        "altitude": "636",
-        "description": "Blick auf Algund, umgeben von von majestätischen Bergen. Tauchen Sie ein in die einzigartige Kombination aus mediterranem Flair und alpiner Pracht.",
-        "geoPlacename": "Marling",
-        "geoRegion": "IT-BZ",
-        "geoRegionName": "Bozen-Südtirol",
-        "latitude": "46.671092",
-        "longitude": "11.118926",
-        "timezone": "Europe/Rome"
+      {
+        "url": "https://live-image.panomax.com/cams/7/recent_reduced.jpg",
+        "width": "1545",
+        "height": "450"
       },
-      "WeatherData": {
-        "@attributes": {
-          "weatherForecast": "lwdsuedtirol"
-        }
+      {
+        "url": "https://live-image.panomax.com/cams/7/recent_h572.jpg",
+        "width": "1963",
+        "height": "572"
       },
-      "digitalSignage": {
-        "description": "Algund bei Meran / Buchlechenhof"
+      {
+        "url": "https://live-image.panomax.com/cams/7/recent_default.jpg",
+        "width": "2746",
+        "height": "800"
       },
-      "filter": {
-        "@attributes": {
-          "tags": "mountains,q500,town,panorama"
-        }
+      {
+        "url": "https://live-image.panomax.com/cams/7/recent_hd.jpg",
+        "width": "3704",
+        "height": "1080"
       },
-      "operator": {
-        "city": "Algund",
-        "country": "IT",
-        "homepage": "https://www.algund.info",
-        "name": "Tourismusverein Algund",
-        "street": "Hans-Gamper-Platz 3",
-        "zip": "3902239022"
-      },
-      "urlConfig": {
-        "@attributes": {
-          "description": "With the following key it is possible to control the visibility of the overlay content from the viewer and some other settings. Use the parameters from the example to control each setting separately."
-        },
-        "example": "https://algund.panocloud.webcam/?key=RlZFN3ZGbEVMbkVzZnl0SDNKekhSdzkyTTBxamtBRUNRczlJdW5Oa01XYz0=&lngKey=en&disableCookieConsent=1&showViewerBtn=1&showWeather=0&showNewsticker=0&showCustomerMenu=0&showHotspots=0&showMenu=0&showMap=0&showCompass=0&showCameraSlider=0&showBestShots=0",
-        "key": "RlZFN3ZGbEVMbkVzZnl0SDNKekhSdzkyTTBxamtBRUNRczlJdW5Oa01XYz0="
+      {
+        "url": "https://live-image.panomax.com/cams/7/recent_full.jpg",
+        "width": "7024",
+        "height": "2048"
       }
-    },
-    {
-      "@attributes": {
-        "addressIso": "IT",
-        "cameraStatus": "active",
-        "defaultLang": "it",
-        "description": "Blick auf Algund, umgeben von von majestätischen Bergen. Tauchen Sie ein in die einzigartige Kombination aus mediterranem Flair und alpiner Pracht.",
-        "full360": "no",
-        "geoAlt": "636",
-        "geoLat": "46.671092",
-        "geoLong": "11.118926",
-        "geoPlacename": "Marling",
-        "geoRegion": "IT-BZ",
-        "geoRegionName": "Bozen-Südtirol",
-        "hasVR": "no",
-        "lastModified": "2026-05-23T04:07:38+02:00",
-        "lastModifiedUnix": "1779502058",
-        "locationId": "754",
-        "longdescription": "",
-        "name": "Blick auf Algund - Buchlechenhof",
-        "pageTitle": "Buchlechenhof, Blick auf Algund bei Meran - Südtirol",
-        "source": "panocloud",
-        "url": "algund.panocloud.webcam",
-        "viewerType": "krpano"
-      },
-      "Images": {
-        "image": [
-          {
-            "@attributes": {
-              "fileName": "big_panorama1.jpg",
-              "fileTime": "2026-06-17T12:01:31+02:00",
-              "fileTimeUnix": "1781690491",
-              "fileType": "big",
-              "fileUrl": "algund.panocloud.webcam/big_panorama1.jpg",
-              "imgHeight": "2428",
-              "imgWidth": "7125",
-              "mimeType": "image/jpeg",
-              "panorama": "yes"
-            }
-          },
-          {
-            "@attributes": {
-              "fileName": "mid_panorama1.jpg",
-              "fileTime": "2026-06-17T12:01:34+02:00",
-              "fileTimeUnix": "1781690494",
-              "fileType": "middle",
-              "fileUrl": "algund.panocloud.webcam/mid_panorama1.jpg",
-              "imgHeight": "1200",
-              "imgWidth": "3521",
-              "mimeType": "image/jpeg",
-              "panorama": "yes"
-            }
-          },
-          {
-            "@attributes": {
-              "fileName": "panorama1.jpg",
-              "fileTime": "2026-06-17T12:01:31+02:00",
-              "fileTimeUnix": "1781690491",
-              "fileType": "standard",
-              "fileUrl": "algund.panocloud.webcam/panorama1.jpg",
-              "imgHeight": "654",
-              "imgWidth": "1920",
-              "mimeType": "image/jpeg",
-              "panorama": "yes"
-            }
-          },
-          {
-            "@attributes": {
-              "fileName": "panorama1_raw.jpg",
-              "fileTime": "2026-06-17T12:01:31+02:00",
-              "fileTimeUnix": "1781690491",
-              "fileType": "raw",
-              "fileUrl": "algund.panocloud.webcam/panorama1_raw.jpg",
-              "imgHeight": "800",
-              "imgWidth": "2347",
-              "mimeType": "image/jpeg",
-              "panorama": "yes"
-            }
-          },
-          {
-            "@attributes": {
-              "fileName": "tmb_panorama1.jpg",
-              "fileTime": "2026-06-17T12:01:31+02:00",
-              "fileTimeUnix": "1781690491",
-              "fileType": "thumbnail",
-              "fileUrl": "algund.panocloud.webcam/tmb_panorama1.jpg",
-              "imgHeight": "100",
-              "imgWidth": "293",
-              "mimeType": "image/jpeg",
-              "panorama": "yes"
-            }
-          }
-        ]
-      },
-      "Logos": {
-        "Logo": {
-          "@attributes": {
-            "fileTime": "2023-07-28T12:00:26+02:00",
-            "fileTimeUnix": "1690538426",
-            "lastModified": "2023-07-28T12:06:32+02:00",
-            "lastModifiedUnix": "1690538792",
-            "logoDefault": "1",
-            "logoFilename": "39fd52a75f27cee1207cf31bee336651.png",
-            "logoHeight": "133",
-            "logoLink": "https://www.algund.info/de/",
-            "logoUrl": "algund.panocloud.webcam/img/logo/39fd52a75f27cee1207cf31bee336651.png",
-            "logoWidth": "180"
-          }
-        }
-      },
-      "MetaData": {
-        "addressIso": "IT",
-        "altitude": "636",
-        "description": "Blick auf Algund, umgeben von von majestätischen Bergen. Tauchen Sie ein in die einzigartige Kombination aus mediterranem Flair und alpiner Pracht.",
-        "geoPlacename": "Marling",
-        "geoRegion": "IT-BZ",
-        "geoRegionName": "Bozen-Südtirol",
-        "latitude": "46.671092",
-        "longitude": "11.118926",
-        "timezone": "Europe/Rome"
-      },
-      "WeatherData": {
-        "@attributes": {
-          "weatherForecast": "lwdsuedtirol"
-        }
-      },
-      "digitalSignage": {
-        "description": "Algund bei Meran / Buchlechenhof"
-      },
-      "filter": {
-        "@attributes": {
-          "tags": "mountains,q500,town,panorama"
-        }
-      },
-      "operator": {
-        "city": "Algund",
-        "country": "IT",
-        "homepage": "https://www.algund.info",
-        "name": "Tourismusverein Algund",
-        "street": "Hans-Gamper-Platz 3",
-        "zip": "3902239022"
-      },
-      "urlConfig": {
-        "@attributes": {
-          "description": "With the following key it is possible to control the visibility of the overlay content from the viewer and some other settings. Use the parameters from the example to control each setting separately."
-        },
-        "example": "https://algund.panocloud.webcam/?key=RlZFN3ZGbEVMbkVzZnl0SDNKekhSdzkyTTBxamtBRUNRczlJdW5Oa01XYz0=&lngKey=en&disableCookieConsent=1&showViewerBtn=1&showWeather=0&showNewsticker=0&showCustomerMenu=0&showHotspots=0&showMenu=0&showMap=0&showCompass=0&showCameraSlider=0&showBestShots=0",
-        "key": "RlZFN3ZGbEVMbkVzZnl0SDNKekhSdzkyTTBxamtBRUNRczlJdW5Oa01XYz0="
-      }
-    },
-    {
-      "@attributes": {
-        "addressIso": "IT",
-        "cameraStatus": "active",
-        "defaultLang": "en",
-        "description": "Blick auf Algund, umgeben von von majestätischen Bergen. Tauchen Sie ein in die einzigartige Kombination aus mediterranem Flair und alpiner Pracht.",
-        "full360": "no",
-        "geoAlt": "636",
-        "geoLat": "46.671092",
-        "geoLong": "11.118926",
-        "geoPlacename": "Marling",
-        "geoRegion": "IT-BZ",
-        "geoRegionName": "Bozen-Südtirol",
-        "hasVR": "no",
-        "lastModified": "2026-05-23T04:07:38+02:00",
-        "lastModifiedUnix": "1779502058",
-        "locationId": "754",
-        "longdescription": "",
-        "name": "Blick auf Algund - Buchlechenhof",
-        "pageTitle": "Buchlechenhof, Blick auf Algund bei Meran - Südtirol",
-        "source": "panocloud",
-        "url": "algund.panocloud.webcam",
-        "viewerType": "krpano"
-      },
-      "Images": {
-        "image": [
-          {
-            "@attributes": {
-              "fileName": "big_panorama1.jpg",
-              "fileTime": "2026-06-17T12:01:31+02:00",
-              "fileTimeUnix": "1781690491",
-              "fileType": "big",
-              "fileUrl": "algund.panocloud.webcam/big_panorama1.jpg",
-              "imgHeight": "2428",
-              "imgWidth": "7125",
-              "mimeType": "image/jpeg",
-              "panorama": "yes"
-            }
-          },
-          {
-            "@attributes": {
-              "fileName": "mid_panorama1.jpg",
-              "fileTime": "2026-06-17T12:01:34+02:00",
-              "fileTimeUnix": "1781690494",
-              "fileType": "middle",
-              "fileUrl": "algund.panocloud.webcam/mid_panorama1.jpg",
-              "imgHeight": "1200",
-              "imgWidth": "3521",
-              "mimeType": "image/jpeg",
-              "panorama": "yes"
-            }
-          },
-          {
-            "@attributes": {
-              "fileName": "panorama1.jpg",
-              "fileTime": "2026-06-17T12:01:31+02:00",
-              "fileTimeUnix": "1781690491",
-              "fileType": "standard",
-              "fileUrl": "algund.panocloud.webcam/panorama1.jpg",
-              "imgHeight": "654",
-              "imgWidth": "1920",
-              "mimeType": "image/jpeg",
-              "panorama": "yes"
-            }
-          },
-          {
-            "@attributes": {
-              "fileName": "panorama1_raw.jpg",
-              "fileTime": "2026-06-17T12:01:31+02:00",
-              "fileTimeUnix": "1781690491",
-              "fileType": "raw",
-              "fileUrl": "algund.panocloud.webcam/panorama1_raw.jpg",
-              "imgHeight": "800",
-              "imgWidth": "2347",
-              "mimeType": "image/jpeg",
-              "panorama": "yes"
-            }
-          },
-          {
-            "@attributes": {
-              "fileName": "tmb_panorama1.jpg",
-              "fileTime": "2026-06-17T12:01:31+02:00",
-              "fileTimeUnix": "1781690491",
-              "fileType": "thumbnail",
-              "fileUrl": "algund.panocloud.webcam/tmb_panorama1.jpg",
-              "imgHeight": "100",
-              "imgWidth": "293",
-              "mimeType": "image/jpeg",
-              "panorama": "yes"
-            }
-          }
-        ]
-      },
-      "Logos": {
-        "Logo": {
-          "@attributes": {
-            "fileTime": "2023-07-28T12:00:26+02:00",
-            "fileTimeUnix": "1690538426",
-            "lastModified": "2023-07-28T12:06:32+02:00",
-            "lastModifiedUnix": "1690538792",
-            "logoDefault": "1",
-            "logoFilename": "39fd52a75f27cee1207cf31bee336651.png",
-            "logoHeight": "133",
-            "logoLink": "https://www.algund.info/de/",
-            "logoUrl": "algund.panocloud.webcam/img/logo/39fd52a75f27cee1207cf31bee336651.png",
-            "logoWidth": "180"
-          }
-        }
-      },
-      "MetaData": {
-        "addressIso": "IT",
-        "altitude": "636",
-        "description": "Blick auf Algund, umgeben von von majestätischen Bergen. Tauchen Sie ein in die einzigartige Kombination aus mediterranem Flair und alpiner Pracht.",
-        "geoPlacename": "Marling",
-        "geoRegion": "IT-BZ",
-        "geoRegionName": "Bozen-Südtirol",
-        "latitude": "46.671092",
-        "longitude": "11.118926",
-        "timezone": "Europe/Rome"
-      },
-      "WeatherData": {
-        "@attributes": {
-          "weatherForecast": "lwdsuedtirol"
-        }
-      },
-      "digitalSignage": {
-        "description": "Algund bei Meran / Buchlechenhof"
-      },
-      "filter": {
-        "@attributes": {
-          "tags": "mountains,q500,town,panorama"
-        }
-      },
-      "operator": {
-        "city": "Algund",
-        "country": "IT",
-        "homepage": "https://www.algund.info",
-        "name": "Tourismusverein Algund",
-        "street": "Hans-Gamper-Platz 3",
-        "zip": "3902239022"
-      },
-      "urlConfig": {
-        "@attributes": {
-          "description": "With the following key it is possible to control the visibility of the overlay content from the viewer and some other settings. Use the parameters from the example to control each setting separately."
-        },
-        "example": "https://algund.panocloud.webcam/?key=RlZFN3ZGbEVMbkVzZnl0SDNKekhSdzkyTTBxamtBRUNRczlJdW5Oa01XYz0=&lngKey=en&disableCookieConsent=1&showViewerBtn=1&showWeather=0&showNewsticker=0&showCustomerMenu=0&showHotspots=0&showMenu=0&showMap=0&showCompass=0&showCameraSlider=0&showBestShots=0",
-        "key": "RlZFN3ZGbEVMbkVzZnl0SDNKekhSdzkyTTBxamtBRUNRczlJdW5Oa01XYz0="
-      }
-    }
-  ]
-}
+    ],
+    "htmlEmbed": "<script type=\"text/javascript\" src=\"https://static.panomax.com/front/thumbnail/js/pmaxthumbnail.js\"></script><script type=\"text/javascript\">PmaxThumbnail.place({ instance: 7});</script>",
+    "tourCam": false,
+    "location": "Großglockner - KFJ-Höhe",
+    "customerInstanceName": "Großglockner - Kaiser-Franz-Josefs-Höhe",
+    "imageFirst": "2010-08-10 16:29:00"
+  }
+]
