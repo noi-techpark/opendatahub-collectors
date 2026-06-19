@@ -219,23 +219,31 @@ func mapToODH(cam PanomaxCamera, base *odhmodel.WebcamInfo, odhid string) odhmod
 
 	webcam.Shortname = cam.Name
 
-	defaultlanguage := "en"
+	languages := []string{"de", "it", "en"}
 
-	hasLang := false
-	for _, l := range webcam.HasLanguage {
-		if l == defaultlanguage {
-			hasLang = true
-			break
+	for _, lang := range languages {
+		hasLang := false
+		for _, l := range webcam.HasLanguage {
+			if l == lang {
+				hasLang = true
+				break
+			}
 		}
-	}
-	if !hasLang {
-		webcam.HasLanguage = append(webcam.HasLanguage, defaultlanguage)
-	}
+		if !hasLang {
+			webcam.HasLanguage = append(webcam.HasLanguage, lang)
+		}
 
-	// Detail
-	webcam.Detail[defaultlanguage] = odhmodel.Detail{
-		Title:    cam.Name,
-		Language: defaultlanguage,
+		// Detail
+		webcam.Detail[lang] = odhmodel.Detail{
+			Title:    cam.Name,
+			Language: lang,
+		}
+
+		// ContactInfos
+		webcam.ContactInfos[lang] = odhmodel.ContactInfo{
+			Region:   "IT-BZ",
+			Language: lang,
+		}
 	}
 
 	lat, _ := strconv.ParseFloat(cam.Latitude, 64)

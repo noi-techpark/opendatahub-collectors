@@ -6,40 +6,40 @@
                 "generateid": "false"
             },
             "payload": {
-                "Id": "754",
-                "Source": "panocloud",
+                "Id": "PANOMAX_7",
+                "Source": "panomax",
                 "Active": true,
                 "SmgActive": true,
                 "WebCamProperties": {
+                    "ViewAngleDegree": "235",
                     "HasVR": false,
-                    "ViewerType": "krpano",
-                    "WebcamUrl": "https://algund.panocloud.webcam"
+                    "WebcamUrl": "https://grossglockner.panomax.com",
+                    "HtmlEmbed": "\u003cscript type=\"text/javascript\" src=\"https://static.panomax.com/front/thumbnail/js/pmaxthumbnail.js\"\u003e\u003c/script\u003e\u003cscript type=\"text/javascript\"\u003ePmaxThumbnail.place({ instance: 7});\u003c/script\u003e",
+                    "ZeroDirection": "211.5",
+                    "TourCam": false
                 },
-                "LastChange": "2026-05-23T02:07:38Z",
-                "Shortname": "Blick auf Algund - Buchlechenhof",
+                "LastChange": "2026-01-15T10:00:00Z",
+                "Shortname": "Großglockner - KFJ-Höhe",
                 "Detail": {
                     "de": {
-                        "Title": "Blick auf Algund - Buchlechenhof",
-                        "IntroText": "Blick auf Algund, umgeben von von majestätischen Bergen. Tauchen Sie ein in die einzigartige Kombination aus mediterranem Flair und alpiner Pracht.",
+                        "Title": "Großglockner - KFJ-Höhe",
                         "Language": "de"
                     },
                     "en": {
-                        "Title": "Blick auf Algund - Buchlechenhof",
-                        "IntroText": "Blick auf Algund, umgeben von von majestätischen Bergen. Tauchen Sie ein in die einzigartige Kombination aus mediterranem Flair und alpiner Pracht.",
+                        "Title": "Großglockner - KFJ-Höhe",
                         "Language": "en"
                     },
                     "it": {
-                        "Title": "Blick auf Algund - Buchlechenhof",
-                        "IntroText": "Blick auf Algund, umgeben von von majestätischen Bergen. Tauchen Sie ein in die einzigartige Kombination aus mediterranem Flair und alpiner Pracht.",
+                        "Title": "Großglockner - KFJ-Höhe",
                         "Language": "it"
                     }
                 },
                 "GpsInfo": [
                     {
                         "Gpstype": "position",
-                        "Latitude": 46.671092,
-                        "Longitude": 11.118926,
-                        "Altitude": 636,
+                        "Latitude": 47.075826,
+                        "Longitude": 12.750602,
+                        "Altitude": 2325,
                         "AltitudeUnitofMeasure": "m"
                     }
                 ],
@@ -59,86 +59,94 @@
                 },
                 "ImageGallery": [
                     {
-                        "Width": 7125,
-                        "Height": 2428,
-                        "ImageName": "big_panorama1.jpg",
-                        "ImageUrl": "https://algund.panocloud.webcam/big_panorama1.jpg",
-                        "ImageSource": "panocloud",
-                        "IsInGallery": true,
-                        "ImageTags": [
-                            "big",
-                            "image/jpeg",
-                            "panorama"
-                        ],
+                        "Width": 257,
+                        "Height": 75,
+                        "ImageUrl": "https://live-image.panomax.com/cams/7/recent_thumb.jpg",
+                        "ImageSource": "panomax",
+                        "IsInGallery": false,
                         "ListPosition": 0
                     },
                     {
-                        "Width": 3521,
-                        "Height": 1200,
-                        "ImageName": "mid_panorama1.jpg",
-                        "ImageUrl": "https://algund.panocloud.webcam/mid_panorama1.jpg",
-                        "ImageSource": "panocloud",
-                        "IsInGallery": true,
-                        "ImageTags": [
-                            "middle",
-                            "image/jpeg",
-                            "panorama"
-                        ],
+                        "Width": 515,
+                        "Height": 150,
+                        "ImageUrl": "https://live-image.panomax.com/cams/7/recent_small.jpg",
+                        "ImageSource": "panomax",
+                        "IsInGallery": false,
                         "ListPosition": 0
                     },
                     {
-                        "Width": 1920,
-                        "Height": 654,
-                        "ImageName": "panorama1.jpg",
-                        "ImageUrl": "https://algund.panocloud.webcam/panorama1.jpg",
-                        "ImageSource": "panocloud",
-                        "IsInGallery": true,
-                        "ImageTags": [
-                            "standard",
-                            "image/jpeg",
-                            "panorama"
-                        ],
+                        "Width": 1030,
+                        "Height": 300,
+                        "ImageUrl": "https://live-image.panomax.com/cams/7/recent_optimized.jpg",
+                        "ImageSource": "panomax",
+                        "IsInGallery": false,
                         "ListPosition": 0
                     },
                     {
-                        "Width": 2347,
+                        "Width": 1545,
+                        "Height": 450,
+                        "ImageUrl": "https://live-image.panomax.com/cams/7/recent_reduced.jpg",
+                        "ImageSource": "panomax",
+                        "IsInGallery": false,
+                        "ListPosition": 0
+                    },
+                    {
+                        "Width": 1963,
+                        "Height": 572,
+                        "ImageUrl": "https://live-image.panomax.com/cams/7/recent_h572.jpg",
+                        "ImageSource": "panomax",
+                        "IsInGallery": false,
+                        "ListPosition": 0
+                    },
+                    {
+                        "Width": 2746,
                         "Height": 800,
-                        "ImageName": "panorama1_raw.jpg",
-                        "ImageUrl": "https://algund.panocloud.webcam/panorama1_raw.jpg",
-                        "ImageSource": "panocloud",
-                        "IsInGallery": true,
-                        "ImageTags": [
-                            "raw",
-                            "image/jpeg",
-                            "panorama"
-                        ],
+                        "ImageUrl": "https://live-image.panomax.com/cams/7/recent_default.jpg",
+                        "ImageSource": "panomax",
+                        "IsInGallery": false,
                         "ListPosition": 0
                     },
                     {
-                        "Width": 293,
-                        "Height": 100,
-                        "ImageName": "tmb_panorama1.jpg",
-                        "ImageUrl": "https://algund.panocloud.webcam/tmb_panorama1.jpg",
-                        "ImageSource": "panocloud",
-                        "IsInGallery": true,
-                        "ImageTags": [
-                            "thumbnail",
-                            "image/jpeg",
-                            "panorama"
-                        ],
+                        "Width": 3704,
+                        "Height": 1080,
+                        "ImageUrl": "https://live-image.panomax.com/cams/7/recent_hd.jpg",
+                        "ImageSource": "panomax",
+                        "IsInGallery": false,
+                        "ListPosition": 0
+                    },
+                    {
+                        "Width": 7024,
+                        "Height": 2048,
+                        "ImageUrl": "https://live-image.panomax.com/cams/7/recent_full.jpg",
+                        "ImageSource": "panomax",
+                        "IsInGallery": false,
                         "ListPosition": 0
                     }
                 ],
                 "Mapping": {
-                    "panocloud": {
-                        "locationId": "754"
+                    "panomax": {
+                        "camId": "7",
+                        "customerId": "4",
+                        "id": "7"
                     }
                 },
                 "HasLanguage": [
                     "de",
                     "it",
                     "en"
-                ]
+                ],
+                "GpsPoints": {
+                    "position": {
+                        "Gpstype": "position",
+                        "Latitude": 47.075826,
+                        "Longitude": 12.750602,
+                        "Altitude": 2325,
+                        "AltitudeUnitofMeasure": "m"
+                    }
+                },
+                "OdhActive": true,
+                "WebcamId": "7",
+                "Webcamurl": "https://grossglockner.panomax.com"
             }
         }
     ],

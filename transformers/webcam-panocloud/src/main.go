@@ -79,7 +79,7 @@ func Transform(ctx context.Context, r *rdb.Raw[PanocloudResponse]) error {
 	webcams := map[string]odhmodel.WebcamInfo{}
 
 	for _, cam := range r.Rawdata.LiveCam {
-		id := buildID(cam.Attributes.LocationId)
+		id := buildID(cam.Attributes.LocationId, cam.Attributes.GeoAlt)
 		seen[id] = struct{}{}
 
 		existing, inCache := webcamCache.Get(id)
@@ -164,8 +164,8 @@ func Transform(ctx context.Context, r *rdb.Raw[PanocloudResponse]) error {
 	return nil
 }
 
-func buildID(locationId string) string {
-	return locationId
+func buildID(locationId string, geoAlt string) string {
+	return "PANOCLOUD_" + locationId + "_" + geoAlt
 }
 
 func mapToODH(cam PanocloudCamera, base *odhmodel.WebcamInfo, odhid string) odhmodel.WebcamInfo {
