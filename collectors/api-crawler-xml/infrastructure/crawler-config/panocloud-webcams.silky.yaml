@@ -1,0 +1,15 @@
+rootContext: {}
+stream: false
+
+# Collector: Panocloud Webcams
+# Source:  https://backend.panocloud.com/partner-api/api.php?key=be39ad8114f6e9d99414151c62bc9a7fb83dbb69
+# Target:  ODH WebcamInfo endpoint
+
+steps:
+
+  - type: request
+    name: "Fetch Panocloud Webcams"
+    request:
+      url: "https://backend.panocloud.com/partner-api/api.php?key=be39ad8114f6e9d99414151c62bc9a7fb83dbb69"
+      method: GET
+    resultTransformer: "."

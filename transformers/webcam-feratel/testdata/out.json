@@ -1,0 +1,150 @@
+{
+    "posts": [
+        {
+            "apiPath": "WebcamInfo",
+            "queryParams": {
+                "generateid": "false"
+            },
+            "payload": {
+                "Id": "FERATEL_B2710894-C096-4ED2-AFED-1AB8A8B1652A_15065",
+                "WebcamId": "15065",
+                "Source": "feratel",
+                "Active": true,
+                "SmgActive": true,
+                "OdhActive": true,
+                "WebCamProperties": {
+                    "HasVR": false,
+                    "WebcamUrl": "http://webtv.feratel.com/webtv/?design=v5\u0026pg=CDB9645D-E67B-44D2-9FC9-E1539FF9A6B7\u0026cam=15065"
+                },
+                "LastChange": "2026-01-15T10:00:00Z",
+                "Shortname": "El Forn",
+                "Detail": {
+                    "de": {
+                        "Title": "El Forn",
+                        "Language": "de",
+                        "Keywords": [
+                            "Canillo (Grandvalira)",
+                            "Canillo",
+                            "Andorra",
+                            "arcalis",
+                            "andorra",
+                            "la vella",
+                            "la vieja",
+                            "arinsal"
+                        ]
+                    },
+                    "en": {
+                        "Title": "El Forn",
+                        "Language": "en",
+                        "Keywords": [
+                            "Canillo (Grandvalira)",
+                            "Canillo",
+                            "Andorra",
+                            "arcalis",
+                            "andorra",
+                            "la vella",
+                            "la vieja",
+                            "arinsal"
+                        ]
+                    },
+                    "it": {
+                        "Title": "El Forn",
+                        "Language": "it",
+                        "Keywords": [
+                            "Canillo (Grandvalira)",
+                            "Canillo",
+                            "Andorra",
+                            "arcalis",
+                            "andorra",
+                            "la vella",
+                            "la vieja",
+                            "arinsal"
+                        ]
+                    }
+                },
+                "GpsInfo": [
+                    {
+                        "Gpstype": "position",
+                        "Latitude": 42.555964,
+                        "Longitude": 1.615544,
+                        "Altitude": 2000,
+                        "AltitudeUnitofMeasure": "m"
+                    }
+                ],
+                "ContactInfos": {
+                    "de": {
+                        "Language": "de",
+                        "ZipCode": "AD100",
+                        "City": "Canillo",
+                        "Area": "Canillo",
+                        "CountryCode": "AND",
+                        "CountryName": "Andorra",
+                        "Url": "https://www.feratel.com/webcams/andorra/canillo/canillo-el-forn?lg=de\u0026cam=15065"
+                    },
+                    "en": {
+                        "Language": "en",
+                        "ZipCode": "AD100",
+                        "City": "Canillo",
+                        "Area": "Canillo",
+                        "CountryCode": "AND",
+                        "CountryName": "Andorra",
+                        "Url": "https://www.feratel.com/webcams/andorra/canillo/canillo-el-forn?lg=de\u0026cam=15065"
+                    },
+                    "it": {
+                        "Language": "it",
+                        "ZipCode": "AD100",
+                        "City": "Canillo",
+                        "Area": "Canillo",
+                        "CountryCode": "AND",
+                        "CountryName": "Andorra",
+                        "Url": "https://www.feratel.com/webcams/andorra/canillo/canillo-el-forn?lg=de\u0026cam=15065"
+                    }
+                },
+                "ImageGallery": [
+                    {
+                        "ImageName": "MediaPlayer Thumbnails",
+                        "ImageUrl": "http://wtvthmb.feratel.com/thumbnails/15065.jpeg?dcsdesign=WTP_opendatahubsuedtirol\u0026design=v5",
+                        "ImageSource": "feratel",
+                        "IsInGallery": true,
+                        "ListPosition": 1
+                    },
+                    {
+                        "ImageName": "MediaPlayer Thumbnails 36",
+                        "ImageUrl": "http://wtvthmb.feratel.com/thumbnails/15065.jpeg?t=36\u0026dcsdesign=WTP_opendatahubsuedtirol\u0026design=v5",
+                        "ImageSource": "feratel",
+                        "IsInGallery": true,
+                        "ListPosition": 1
+                    },
+                    {
+                        "ImageName": "MediaPlayer Thumbnail 360",
+                        "ImageUrl": "http://wtvpanothumb.feratel.com/panothumb/15065.jpeg?dcsdesign=WTP_opendatahubsuedtirol\u0026design=v5",
+                        "ImageSource": "feratel",
+                        "IsInGallery": true,
+                        "ListPosition": 1
+                    },
+                    {
+                        "ImageName": "MediaPlayer Thumbnails 38",
+                        "ImageUrl": "http://wtvthmb.feratel.com/thumbnails/15065.jpeg?t=38\u0026dcsdesign=WTP_opendatahubsuedtirol\u0026design=v5",
+                        "ImageSource": "feratel",
+                        "IsInGallery": true,
+                        "ListPosition": 0
+                    }
+                ],
+                "Mapping": {
+                    "feratel": {
+                        "link_id": "B2710894-C096-4ED2-AFED-1AB8A8B1652A",
+                        "panid": "15065"
+                    }
+                },
+                "HasLanguage": [
+                    "de",
+                    "it",
+                    "en"
+                ]
+            }
+        }
+    ],
+    "puts": [],
+    "putMultiples": [],
+    "gets": []
+}
