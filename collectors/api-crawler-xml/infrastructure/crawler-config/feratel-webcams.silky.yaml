@@ -1,0 +1,15 @@
+rootContext: {}
+stream: false
+
+# Collector: Feratel Webcams
+# Source:  Feratel XML feed
+# Target:  ODH WebcamInfo endpoint
+
+steps:
+  - type: request
+    name: "Fetch Feratel Webcams"
+    request:
+      url: "http://wtvxmlp.feratel.com/xmlpan/x3/infoxml.jsp?pg=CDB9645D-E67B-44D2-9FC9-E1539FF9A6B7&lg=de&showKeywords=1&geoXY=1&xmlv3=1&nolg=1"
+      method: GET
+    response_type: xml
+    resultTransformer: "."
