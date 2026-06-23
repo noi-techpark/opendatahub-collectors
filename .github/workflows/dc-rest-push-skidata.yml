@@ -103,4 +103,4 @@ jobs:
           aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
           aws-eks-cluster-name: aws-main-eu-01
           aws-region: eu-west-1
-          
+        
