@@ -58,7 +58,7 @@ func loadApispec(file string, authUrl string) []byte {
 		log.Fatal("Error loading apispec", "err", err)
 	}
 	var buf bytes.Buffer
-	t.Execute(&buf, map[string]string{
+	err = t.Execute(&buf, map[string]string{
 		"authurl": authUrl,
 	})
 	if err != nil {
