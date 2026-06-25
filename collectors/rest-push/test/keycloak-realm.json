@@ -402,6 +402,50 @@
     "notBefore" : 0,
     "groups" : [ ]
   }, {
+    "id" : "332a2c0e-16d1-4a35-910c-d33bab641bf9",
+    "createdTimestamp" : 1715170600001,
+    "username" : "otherpusher",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "ff9a6340-065c-4fac-bfc9-4b098c89ed45",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1715170600001,
+      "secretData" : "{\"value\":\"7fHbSKLphYU/s6b1OqO3tI09W9s67ZlPFVEZHAjRUuJvOF2GqvCqT1L6WtdPyds5VL/9htQGByJbert6BjaRaw==\",\"salt\":\"VpmD5zaai4Qg4IqDQ6KUeA==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-test" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "c9e1f2a3-b4d5-4e6f-9012-3456789abcde",
+    "createdTimestamp" : 1715170600000,
+    "username" : "unpusher",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "d7e8f9a0-b1c2-4d3e-a5f6-789012345678",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1715170600000,
+      "secretData" : "{\"value\":\"Bv1A4v8udhAUSiEdRVGiXBNyMvMU+glhSvz9P9dKkJYjlk6tMP2eCRXoedk8ZVkPzOgK74DrQWY+INhi9Immog==\",\"salt\":\"LsJm44d+gWh/AWAWJ9IWQQ==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-test" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
     "id" : "7a0bad4e-325c-45e0-84cb-b47c37afbb82",
     "createdTimestamp" : 1715170522643,
     "username" : "service-account-opendatahub-push",
@@ -639,6 +683,20 @@
         "_id" : "b776267f-5860-4510-81a0-6fbfb356a461",
         "uris" : [ "/testprovider/testdataset" ],
         "icon_uri" : ""
+      }, {
+        "name" : "/testprovider/otherdataset",
+        "ownerManagedAccess" : false,
+        "attributes" : { },
+        "_id" : "d146a085-9e1a-4370-a7de-e142b5d8c072",
+        "uris" : [ "/testprovider/otherdataset" ],
+        "icon_uri" : ""
+      }, {
+        "name" : "/testprovider/forbidden",
+        "ownerManagedAccess" : false,
+        "attributes" : { },
+        "_id" : "c1a3e2f0-7d4b-4f8e-9c1d-2a5b8e3f6d09",
+        "uris" : [ "/testprovider/forbidden" ],
+        "icon_uri" : ""
       } ],
       "policies" : [ {
         "id" : "d265db04-731f-4e1c-85ea-85a287d63346",
@@ -651,6 +709,16 @@
           "users" : "[\"pusher\"]"
         }
       }, {
+        "id" : "1691e158-741b-482a-a856-37defb58247b",
+        "name" : "User otherpusher",
+        "description" : "",
+        "type" : "user",
+        "logic" : "POSITIVE",
+        "decisionStrategy" : "UNANIMOUS",
+        "config" : {
+          "users" : "[\"otherpusher\"]"
+        }
+      }, {
         "id" : "4dd3f37c-eaea-4c88-84fb-b3a5a9db6f6a",
         "name" : "user pusher /testprovider/testdataset",
         "description" : "",
@@ -660,6 +728,17 @@
         "config" : {
           "resources" : "[\"/testprovider/testdataset\"]",
           "applyPolicies" : "[\"User pusher\"]"
+        }
+      }, {
+        "id" : "728c99e2-8565-4a70-b6ce-dc79fd03c9b4",
+        "name" : "user otherpusher /testprovider/otherdataset",
+        "description" : "",
+        "type" : "resource",
+        "logic" : "POSITIVE",
+        "decisionStrategy" : "UNANIMOUS",
+        "config" : {
+          "resources" : "[\"/testprovider/otherdataset\"]",
+          "applyPolicies" : "[\"User otherpusher\"]"
         }
       } ],
       "scopes" : [ ],

@@ -41,18 +41,15 @@ services:
       retries: 20
         
   keycloak:
-    image: quay.io/keycloak/keycloak:20.0
-    command: -Dauto-build -Dfeatures=preview
+    image: quay.io/keycloak/keycloak:26.0
     environment:
-      KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: secret
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: secret
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: secret
       KC_HEALTH_ENABLED: "true"
     ports:
       - "8082:8080"
     healthcheck:
-      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'"]
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/9000 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'"]
       interval: 5s
       timeout: 10s
       retries: 20
@@ -64,6 +61,6 @@ services:
       # /opt/keycloak/bin/kc.sh export --file test-realm.json --users realm_file --realm test
       # Then copy the exported file to the host:
       # docker cp :/opt/keycloak/test-realm.json test/keycloak-realm.json
-      -  ./keycloak-realm.json:/opt/keycloak/data/import/keycloak-realm.json
-    entrypoint: ["/opt/keycloak/bin/kc.sh", "start-dev --import-realm"]
+      - ./keycloak-realm.json:/opt/keycloak/data/import/keycloak-realm.json
+    entrypoint: ["/bin/sh", "-c", "/opt/keycloak/bin/kc.sh import --file /opt/keycloak/data/import/keycloak-realm.json && exec /opt/keycloak/bin/kc.sh start-dev"]
  

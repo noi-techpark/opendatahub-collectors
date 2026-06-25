@@ -4,10 +4,12 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-docker compose down
-docker compose up --build app
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+docker compose -f "$SCRIPT_DIR/docker-compose.yml" down
+docker compose -f "$SCRIPT_DIR/docker-compose.yml" up --build app
 result=$?
 
-docker compose down
+docker compose -f "$SCRIPT_DIR/docker-compose.yml" down
 
 exit $result
