@@ -1,5 +1,5 @@
 image:
-  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-webcam-panocloud
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-webcam-panomax
   pullPolicy: IfNotPresent
 
 env:
@@ -9,14 +9,14 @@ env:
   ODH_CORE_URL: https://tourism.api.opendatahub.com/v1
   ODH_CORE_TOKEN_URL: https://auth.opendatahub.com/auth/realms/noi/protocol/openid-connect/token
 
-  MQ_QUEUE: traffic-event.a22
+  MQ_QUEUE: webcam.panomax
   MQ_EXCHANGE: routed
-  MQ_KEY: traffic-event.a22
-  MQ_CLIENT: tr-webcam-panocloud
+  MQ_KEY: webcam.panomax
+  MQ_CLIENT: tr-webcam-panomax
 
   RAW_DATA_BRIDGE_ENDPOINT: "http://raw-data-bridge.core.svc.cluster.local:2000"
 
-  SERVICE_NAME: tr-webcam-panocloud
+  SERVICE_NAME: tr-webcam-panomax
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 
 envSecret:
