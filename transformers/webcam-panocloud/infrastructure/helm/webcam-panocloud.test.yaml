@@ -1,5 +1,5 @@
 image:
-  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-traffic-event-prov-bz
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-webcam-panocloud
   pullPolicy: IfNotPresent
 
 env:  
@@ -9,9 +9,9 @@ env:
   ODH_CORE_URL: https://api.tourism.testingmachine.eu/v1
   ODH_CORE_TOKEN_URL: https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token
 
-  MQ_QUEUE: traffic-event.a22
+  MQ_QUEUE: webcam.panocloud
   MQ_EXCHANGE: routed
-  MQ_KEY: traffic-event.a22
+  MQ_KEY: webcam.panocloud
   MQ_CLIENT: tr-webcam-panocloud
 
   RAW_DATA_BRIDGE_ENDPOINT: "http://raw-data-bridge.core.svc.cluster.local:2000"
