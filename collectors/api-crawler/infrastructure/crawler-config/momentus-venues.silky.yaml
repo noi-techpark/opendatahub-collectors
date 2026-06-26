@@ -1,0 +1,28 @@
+options:
+  streamRootArray: true
+
+rootContext: []
+
+auth:
+  type: custom
+  loginRequest:
+    url: "https://auth-api.eu-venueops.com/token"
+    method: POST
+    headers:
+      Content-Type: "application/json"
+    body:
+      clientId: "${MOMENTUS_CLIENT_ID}"
+      clientSecret: "${MOMENTUS_CLIENT_SECRET}"
+  extractFrom: body
+  extractSelector: .accessToken
+  injectInto: header
+  injectKey: Authorization
+  injectFormat: "Bearer %s"
+  maxAgeSeconds: 3000
+
+steps:
+  - type: request
+    name: "Fetch Venues"
+    request:
+      method: GET
+      url: "https://api.eu-venueops.com/v1/venues"

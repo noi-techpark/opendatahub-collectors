@@ -1,0 +1,50 @@
+# SPDX-FileCopyrightText: 2025 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+x-app-common:
+  &app-common
+  build:
+    dockerfile: infrastructure/docker/Dockerfile
+    context: .
+    target: dev
+  env_file:
+    - .env
+  volumes:
+    - ./src:/code
+    - ./infrastructure:/code/infrastructure
+    - pkg:/go/pkg/mod
+  working_dir: /code
+
+services:
+
+  # Full pipeline: connects to infrastructure-v2 (no local RabbitMQ)
+  # docker compose --profile bdp up --build
+  app-bdp:
+    <<: *app-common
+    profiles:
+      - bdp
+    networks:
+      - ingestion
+    environment:
+      - MQ_URI=${MQ_URI}
+      - MQ_CLIENT=${MQ_CLIENT}
+      - MQ_EXCHANGE=${MQ_EXCHANGE}
+      - MQ_QUEUE=${MQ_QUEUE}
+      - MQ_KEY=${MQ_KEY}
+      - ODH_VENUE_API=${ODH_VENUE_API}
+      - ODH_VENUE_NOI_ID=${ODH_VENUE_NOI_ID}
+      - ODH_VENUE_EURAC_ID=${ODH_VENUE_EURAC_ID}
+      - MOMENTUS_CLIENT_ID=${MOMENTUS_CLIENT_ID}
+      - MOMENTUS_CLIENT_SECRET=${MOMENTUS_CLIENT_SECRET}
+      - SKIP_SSL_VERIFY=${SKIP_SSL_VERIFY}
+      - INSECURE_SKIP_VERIFY=${INSECURE_SKIP_VERIFY}
+      - SERVICE_NAME=${SERVICE_NAME}
+      - LOG_LEVEL=${LOG_LEVEL}
+
+volumes:
+  pkg:
+
+networks:
+  ingestion:
+    external: true

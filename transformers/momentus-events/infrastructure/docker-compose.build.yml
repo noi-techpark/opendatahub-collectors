@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: 2025 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+version: "3.5"
+
+services:
+  build:
+    image: ghcr.io/noi-techpark/odh-collectors/tr-momentus-events
+    build:
+      context: .
+      dockerfile: infrastructure/docker/Dockerfile
+      target: build
