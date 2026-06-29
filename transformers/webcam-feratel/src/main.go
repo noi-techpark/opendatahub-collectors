@@ -20,7 +20,7 @@ import (
 	"github.com/noi-techpark/opendatahub-go-sdk/tel"
 	"github.com/noi-techpark/opendatahub-go-sdk/tel/logger"
 
-	odhmodel "github.com/noi-techpark/opendatahub-collectors/transformers/webcam-feratel/odh-content-model"
+	contentmodel "github.com/noi-techpark/opendatahub-collectors/transformers/webcam-feratel/content-model"
 )
 
 const (
@@ -38,7 +38,7 @@ var env struct {
 }
 
 var contentClient clib.ContentAPI
-var webcamCache *clib.Cache[odhmodel.WebcamInfo]
+var webcamCache *clib.Cache[contentmodel.WebcamInfo]
 var timeNow = time.Now
 
 // Feratel XML Models
@@ -128,10 +128,10 @@ func main() {
 	})
 	ms.FailOnError(context.Background(), err, "failed to create ODH content client")
 
-	webcamCache, err = clib.LoadExisting(context.Background(), contentClient, clib.LoadConfig[odhmodel.WebcamInfo]{
+	webcamCache, err = clib.LoadExisting(context.Background(), contentClient, clib.LoadConfig[contentmodel.WebcamInfo]{
 		EntityType:  ENTITY_TYPE,
 		QueryParams: map[string]string{"source": SOURCE},
-		IDFunc:      func(w odhmodel.WebcamInfo) string { return w.Id },
+		IDFunc:      func(w contentmodel.WebcamInfo) string { return w.Id },
 	})
 	ms.FailOnError(context.Background(), err, "failed to load existing webcams")
 
@@ -153,7 +153,7 @@ func Transform(ctx context.Context, r *rdb.Raw[string]) error {
 	}
 
 	seen := map[string]struct{}{}
-	webcams := map[string]odhmodel.WebcamInfo{}
+	webcams := map[string]contentmodel.WebcamInfo{}
 
 	for _, link := range raw.Content.Portal.Links.Links {
 		for _, cam := range link.Cams.Cams {
@@ -161,7 +161,7 @@ func Transform(ctx context.Context, r *rdb.Raw[string]) error {
 			seen[id] = struct{}{}
 
 			existing, inCache := webcamCache.Get(id)
-			var base *odhmodel.WebcamInfo
+			var base *contentmodel.WebcamInfo
 			if inCache {
 				copy := existing.Entity
 				base = &copy
@@ -170,7 +170,7 @@ func Transform(ctx context.Context, r *rdb.Raw[string]) error {
 				base = &alreadyParsed
 			}
 
-			webcams[id] = mapToODH(link, cam, base, id)
+			webcams[id] = mapToCore(link, cam, base, id)
 		}
 	}
 
@@ -243,34 +243,34 @@ func Transform(ctx context.Context, r *rdb.Raw[string]) error {
 	return nil
 }
 
-func mapToODH(link FeratelLink, cam FeratelCam, base *odhmodel.WebcamInfo, odhid string) odhmodel.WebcamInfo {
-	var res odhmodel.WebcamInfo
+func mapToCore(link FeratelLink, cam FeratelCam, base *contentmodel.WebcamInfo, odhid string) contentmodel.WebcamInfo {
+	var res contentmodel.WebcamInfo
 	if base != nil {
 		res = *base
 		if res.Detail == nil {
-			res.Detail = map[string]odhmodel.Detail{}
+			res.Detail = map[string]contentmodel.Detail{}
 		}
 		if res.ContactInfos == nil {
-			res.ContactInfos = map[string]odhmodel.ContactInfo{}
+			res.ContactInfos = map[string]contentmodel.ContactInfo{}
 		}
 		if res.Mapping == nil {
 			res.Mapping = map[string]map[string]string{}
 		}
 		if res.VideoItems == nil {
-			res.VideoItems = map[string][]odhmodel.VideoItem{}
+			res.VideoItems = map[string][]contentmodel.VideoItem{}
 		}
 		if res.HasLanguage == nil {
 			res.HasLanguage = []string{}
 		}
 	} else {
-		res = odhmodel.WebcamInfo{
+		res = contentmodel.WebcamInfo{
 			Source:           "feratel",
 			Id:               odhid,
-			WebCamProperties: odhmodel.WebCamProperties{},
-			Detail:           map[string]odhmodel.Detail{},
-			ContactInfos:     map[string]odhmodel.ContactInfo{},
+			WebCamProperties: contentmodel.WebCamProperties{},
+			Detail:           map[string]contentmodel.Detail{},
+			ContactInfos:     map[string]contentmodel.ContactInfo{},
 			Mapping:          map[string]map[string]string{},
-			VideoItems:       map[string][]odhmodel.VideoItem{},
+			VideoItems:       map[string][]contentmodel.VideoItem{},
 			HasLanguage:      []string{},
 		}
 	}
@@ -282,7 +282,7 @@ func mapToODH(link FeratelLink, cam FeratelCam, base *odhmodel.WebcamInfo, odhid
 	res.LastChange = timeNow().UTC()
 
 	// GPS Info
-	gps := odhmodel.GpsInfo{
+	gps := contentmodel.GpsInfo{
 		Gpstype:               "position",
 		AltitudeUnitofMeasure: "m",
 	}
@@ -295,7 +295,7 @@ func mapToODH(link FeratelLink, cam FeratelCam, base *odhmodel.WebcamInfo, odhid
 	if y, err := strconv.ParseFloat(cam.Y, 64); err == nil {
 		gps.Longitude = y
 	}
-	res.GpsInfo = []odhmodel.GpsInfo{gps}
+	res.GpsInfo = []contentmodel.GpsInfo{gps}
 
 	languages := []string{"de", "it", "en"}
 
@@ -312,7 +312,7 @@ func mapToODH(link FeratelLink, cam FeratelCam, base *odhmodel.WebcamInfo, odhid
 		}
 
 		// ContactInfo
-		contact := odhmodel.ContactInfo{
+		contact := contentmodel.ContactInfo{
 			Language:    lang,
 			ZipCode:     link.Location.Zip,
 			City:        link.Location.Value,
@@ -331,7 +331,7 @@ func mapToODH(link FeratelLink, cam FeratelCam, base *odhmodel.WebcamInfo, odhid
 		res.ContactInfos[lang] = contact
 
 		// Detail
-		detail := odhmodel.Detail{
+		detail := contentmodel.Detail{
 			Title:    cam.L,
 			Language: lang,
 		}
@@ -351,14 +351,14 @@ func mapToODH(link FeratelLink, cam FeratelCam, base *odhmodel.WebcamInfo, odhid
 	}
 
 	// ImageGallery
-	res.ImageGallery = []odhmodel.ImageGallery{}
+	res.ImageGallery = []contentmodel.ImageGallery{}
 	for _, url := range cam.URLs.DURLs {
 		if url.T == "MediaPlayer Thumbnails" ||
 			url.T == "MediaPlayer Thumbnails 38" ||
 			url.T == "MediaPlayer Thumbnails 36" ||
 			url.T == "MediaPlayer Thumbnail 360" {
 
-			image := odhmodel.ImageGallery{
+			image := contentmodel.ImageGallery{
 				ImageName:   url.T,
 				ImageUrl:    url.V,
 				ImageSource: "feratel",
@@ -377,7 +377,7 @@ func mapToODH(link FeratelLink, cam FeratelCam, base *odhmodel.WebcamInfo, odhid
 	})
 
 	// WebcamProperties
-	props := odhmodel.WebCamProperties{}
+	props := contentmodel.WebCamProperties{}
 	for _, url := range cam.URLs.DURLs {
 		if url.T == "MediaPlayer v5" {
 			props.WebcamUrl = url.V

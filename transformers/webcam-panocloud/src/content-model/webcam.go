@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: CC0-1.0
 
-package odhmodel
+package contentmodel
 
 import "time"
 
@@ -10,11 +10,9 @@ import "time"
 
 type WebcamInfo struct {
 	Id               string                       `json:"Id"`
-	WebcamId         string                       `json:"WebcamId,omitempty"`
 	Source           string                       `json:"Source"`
 	Active           bool                         `json:"Active"`
 	SmgActive        bool                         `json:"SmgActive"`
-	OdhActive        bool                         `json:"OdhActive"`
 	WebCamProperties WebCamProperties             `json:"WebCamProperties"`
 	LastChange       time.Time                    `json:"LastChange,omitempty"`
 	Shortname        string                       `json:"Shortname,omitempty"`
@@ -35,23 +33,16 @@ type WebCamProperties struct {
 }
 
 type Detail struct {
-	Title     string   `json:"Title,omitempty"`
-	IntroText string   `json:"IntroText,omitempty"`
-	BaseText  string   `json:"BaseText,omitempty"`
-	Language  string   `json:"Language,omitempty"`
-	Keywords  []string `json:"Keywords,omitempty"`
+	Title     string `json:"Title,omitempty"`
+	IntroText string `json:"IntroText,omitempty"`
+	BaseText  string `json:"BaseText,omitempty"`
+	Language  string `json:"Language,omitempty"`
 }
 
 type ContactInfo struct {
-	Region      string `json:"Region,omitempty"`
-	Language    string `json:"Language,omitempty"`
-	LogoUrl     string `json:"LogoUrl,omitempty"`
-	ZipCode     string `json:"ZipCode,omitempty"`
-	City        string `json:"City,omitempty"`
-	Area        string `json:"Area,omitempty"`
-	CountryCode string `json:"CountryCode,omitempty"`
-	CountryName string `json:"CountryName,omitempty"`
-	Url         string `json:"Url,omitempty"`
+	Region   string `json:"Region,omitempty"`
+	Language string `json:"Language,omitempty"`
+	LogoUrl  string `json:"LogoUrl,omitempty"`
 }
 
 type GpsInfo struct {
