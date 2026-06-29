@@ -1,0 +1,51 @@
+name: CI tr-webcam-panomax
+
+on: 
+  push:
+    paths:
+      - "transformers/webcam-panomax/**"
+      - ".github/workflows/tr-webcam-panomax.yml"     
+
+env:
+  PROJECT_NAME: tr-webcam-panomax
+  WORKING_DIRECTORY: transformers/webcam-panomax
+  DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/tr-webcam-panomax
+  DOCKER_TAG: ${{ github.sha }}
+
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    concurrency: tr-webcam-panomax-tests
+    
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.24.0
+          
+      - name: Install Dependencies
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: cd src && go mod tidy
+        
+      - name: Run Tests
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: cd src && go test -v ./...
+
+  build:
+    runs-on: ubuntu-24.04
+    concurrency: tr-webcam-panomax-build
+    needs: 
+      - tests
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    - name: Build and push images
+      uses: noi-techpark/github-actions/docker-build-and-push@v2
+      with:
+        working-directory: ${{ env.WORKING_DIRECTORY }}/infrastructure
+        docker-username: ${{ github.actor }}
+        docker-password: ${{ secrets.GITHUB_TOKEN }}
