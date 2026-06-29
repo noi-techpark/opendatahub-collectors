@@ -54,3 +54,6 @@ go.work.sum
 main
 
 **/__debug_bin*
+
+.env.panomax
+docker-compose.panomax.yaml
