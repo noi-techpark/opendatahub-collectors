@@ -19,7 +19,7 @@ import (
 	"github.com/noi-techpark/opendatahub-go-sdk/tel"
 	"github.com/noi-techpark/opendatahub-go-sdk/tel/logger"
 
-	odhmodel "github.com/noi-techpark/opendatahub-collectors/transformers/webcam-panocloud/odh-content-model"
+	contentmodel "github.com/noi-techpark/opendatahub-collectors/transformers/webcam-panocloud/content-model"
 )
 
 const (
@@ -37,7 +37,7 @@ var env struct {
 }
 
 var contentClient clib.ContentAPI
-var webcamCache *clib.Cache[odhmodel.WebcamInfo]
+var webcamCache *clib.Cache[contentmodel.WebcamInfo]
 var timeNow = time.Now
 
 func main() {
@@ -58,10 +58,10 @@ func main() {
 	})
 	ms.FailOnError(context.Background(), err, "failed to create ODH content client")
 
-	webcamCache, err = clib.LoadExisting(context.Background(), contentClient, clib.LoadConfig[odhmodel.WebcamInfo]{
+	webcamCache, err = clib.LoadExisting(context.Background(), contentClient, clib.LoadConfig[contentmodel.WebcamInfo]{
 		EntityType:  ENTITY_TYPE,
 		QueryParams: map[string]string{"source": SOURCE},
-		IDFunc:      func(w odhmodel.WebcamInfo) string { return w.Id },
+		IDFunc:      func(w contentmodel.WebcamInfo) string { return w.Id },
 	})
 	ms.FailOnError(context.Background(), err, "failed to load existing webcams")
 
@@ -76,14 +76,14 @@ func Transform(ctx context.Context, r *rdb.Raw[PanocloudResponse]) error {
 	logger.Get(ctx).Info("Processing Panocloud webcam feed", "item_count", len(r.Rawdata.LiveCam))
 
 	seen := map[string]struct{}{}
-	webcams := map[string]odhmodel.WebcamInfo{}
+	webcams := map[string]contentmodel.WebcamInfo{}
 
 	for _, cam := range r.Rawdata.LiveCam {
 		id := buildID(cam.Attributes.LocationId, cam.Attributes.GeoAlt)
 		seen[id] = struct{}{}
 
 		existing, inCache := webcamCache.Get(id)
-		var base *odhmodel.WebcamInfo
+		var base *contentmodel.WebcamInfo
 		if inCache {
 			copy := existing.Entity
 			base = &copy
@@ -92,7 +92,7 @@ func Transform(ctx context.Context, r *rdb.Raw[PanocloudResponse]) error {
 			base = &alreadyParsed
 		}
 
-		webcams[id] = mapToODH(cam, base, id)
+		webcams[id] = mapToCore(cam, base, id)
 	}
 
 	sortedIDs := make([]string, 0, len(webcams))
@@ -168,36 +168,36 @@ func buildID(locationId string, geoAlt string) string {
 	return "PANOCLOUD_" + locationId + "_" + geoAlt
 }
 
-func mapToODH(cam PanocloudCamera, base *odhmodel.WebcamInfo, odhid string) odhmodel.WebcamInfo {
+func mapToCore(cam PanocloudCamera, base *contentmodel.WebcamInfo, odhid string) contentmodel.WebcamInfo {
 	attr := cam.Attributes
 
-	var webcam odhmodel.WebcamInfo
+	var webcam contentmodel.WebcamInfo
 	if base != nil {
 		webcam = *base
 		if webcam.Detail == nil {
-			webcam.Detail = map[string]odhmodel.Detail{}
+			webcam.Detail = map[string]contentmodel.Detail{}
 		}
 		if webcam.ContactInfos == nil {
-			webcam.ContactInfos = map[string]odhmodel.ContactInfo{}
+			webcam.ContactInfos = map[string]contentmodel.ContactInfo{}
 		}
 		if webcam.Mapping == nil {
 			webcam.Mapping = map[string]map[string]string{}
 		}
 		if webcam.VideoItems == nil {
-			webcam.VideoItems = map[string][]odhmodel.VideoItem{}
+			webcam.VideoItems = map[string][]contentmodel.VideoItem{}
 		}
 		if webcam.HasLanguage == nil {
 			webcam.HasLanguage = []string{}
 		}
 	} else {
-		webcam = odhmodel.WebcamInfo{
+		webcam = contentmodel.WebcamInfo{
 			Source:           "panocloud",
 			Id:               odhid,
-			WebCamProperties: odhmodel.WebCamProperties{},
-			Detail:           map[string]odhmodel.Detail{},
-			ContactInfos:     map[string]odhmodel.ContactInfo{},
+			WebCamProperties: contentmodel.WebCamProperties{},
+			Detail:           map[string]contentmodel.Detail{},
+			ContactInfos:     map[string]contentmodel.ContactInfo{},
 			Mapping:          map[string]map[string]string{},
-			VideoItems:       map[string][]odhmodel.VideoItem{},
+			VideoItems:       map[string][]contentmodel.VideoItem{},
 			HasLanguage:      []string{},
 		}
 	}
@@ -252,7 +252,7 @@ func mapToODH(cam PanocloudCamera, base *odhmodel.WebcamInfo, odhid string) odhm
 
 	// Detail
 	baseText := attr.LongDescription
-	webcam.Detail[defaultlanguage] = odhmodel.Detail{
+	webcam.Detail[defaultlanguage] = contentmodel.Detail{
 		Title:     attr.Name,
 		IntroText: attr.Description,
 		BaseText:  baseText,
@@ -260,7 +260,7 @@ func mapToODH(cam PanocloudCamera, base *odhmodel.WebcamInfo, odhid string) odhm
 	}
 
 	// ContactInfo
-	contactinfo := odhmodel.ContactInfo{
+	contactinfo := contentmodel.ContactInfo{
 		Region:   attr.GeoRegion,
 		Language: defaultlanguage,
 	}
@@ -272,17 +272,17 @@ func mapToODH(cam PanocloudCamera, base *odhmodel.WebcamInfo, odhid string) odhm
 	lon, _ := strconv.ParseFloat(attr.GeoLong, 64)
 	alt, _ := strconv.ParseFloat(attr.GeoAlt, 64)
 
-	gpsinfo := odhmodel.GpsInfo{
+	gpsinfo := contentmodel.GpsInfo{
 		Gpstype:               "position",
 		Latitude:              lat,
 		Longitude:             lon,
 		Altitude:              alt,
 		AltitudeUnitofMeasure: "m",
 	}
-	webcam.GpsInfo = []odhmodel.GpsInfo{gpsinfo}
+	webcam.GpsInfo = []contentmodel.GpsInfo{gpsinfo}
 
 	// Images
-	webcam.ImageGallery = []odhmodel.ImageGallery{}
+	webcam.ImageGallery = []contentmodel.ImageGallery{}
 	if len(cam.Images.Image) > 0 {
 		for _, imagetoparse := range cam.Images.Image {
 			iAttr := imagetoparse.Attributes
@@ -290,7 +290,7 @@ func mapToODH(cam PanocloudCamera, base *odhmodel.WebcamInfo, odhid string) odhm
 			w, _ := strconv.Atoi(iAttr.ImgWidth)
 			h, _ := strconv.Atoi(iAttr.ImgHeight)
 
-			image := odhmodel.ImageGallery{
+			image := contentmodel.ImageGallery{
 				Width:       w,
 				Height:      h,
 				ImageName:   iAttr.FileName,
@@ -339,7 +339,7 @@ func mapToODH(cam PanocloudCamera, base *odhmodel.WebcamInfo, odhid string) odhm
 		bitrate, _ := strconv.ParseInt(vAttr.VideoBitRate, 10, 64)
 		res, _ := strconv.ParseInt(vAttr.Resolution, 10, 64)
 
-		video := odhmodel.VideoItem{
+		video := contentmodel.VideoItem{
 			Url:             addHttpsPrefixIfNotPresent(vAttr.VideoClipUrl),
 			StreamingSource: "panocloud",
 			Active:          true,
@@ -349,7 +349,7 @@ func mapToODH(cam PanocloudCamera, base *odhmodel.WebcamInfo, odhid string) odhm
 			Duration:        dur,
 			VideoType:       vAttr.MimeType,
 		}
-		webcam.VideoItems[defaultlanguage] = []odhmodel.VideoItem{video}
+		webcam.VideoItems[defaultlanguage] = []contentmodel.VideoItem{video}
 	}
 
 	// Mapping

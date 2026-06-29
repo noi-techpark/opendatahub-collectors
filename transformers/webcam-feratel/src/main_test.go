@@ -16,7 +16,7 @@ import (
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	"github.com/noi-techpark/opendatahub-go-sdk/testsuite"
 
-	odhmodel "github.com/noi-techpark/opendatahub-collectors/transformers/webcam-feratel/odh-content-model"
+	contentmodel "github.com/noi-techpark/opendatahub-collectors/transformers/webcam-feratel/content-model"
 )
 
 func Test_Transform_Snapshot(t *testing.T) {
@@ -28,7 +28,7 @@ func Test_Transform_Snapshot(t *testing.T) {
 		t.Run("Snapshot"+suffix, func(t *testing.T) {
 			mock := clibmock.NewContentMock()
 			contentClient = mock
-			webcamCache = clib.NewCache[odhmodel.WebcamInfo]()
+			webcamCache = clib.NewCache[contentmodel.WebcamInfo]()
 
 			// Read wrapped string from in.json or in_full.json
 			inFile := "../testdata/in" + suffix + ".json"

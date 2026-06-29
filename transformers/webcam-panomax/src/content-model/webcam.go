@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: CC0-1.0
 
-package odhmodel
+package contentmodel
 
 import "time"
 
@@ -61,11 +61,11 @@ type GpsInfo struct {
 }
 
 type ImageGallery struct {
-	Width        int      `json:"Width,omitempty"`
-	Height       int      `json:"Height,omitempty"`
-	ImageName    string   `json:"ImageName,omitempty"`
-	ImageUrl     string   `json:"ImageUrl,omitempty"`
-	ImageSource  string   `json:"ImageSource,omitempty"`
+	Width        int               `json:"Width,omitempty"`
+	Height       int               `json:"Height,omitempty"`
+	ImageName    string            `json:"ImageName,omitempty"`
+	ImageUrl     string            `json:"ImageUrl,omitempty"`
+	ImageSource  string            `json:"ImageSource,omitempty"`
 	IsInGallery  bool              `json:"IsInGallery"`
 	ImageTags    []string          `json:"ImageTags,omitempty"`
 	ListPosition int               `json:"ListPosition"`
