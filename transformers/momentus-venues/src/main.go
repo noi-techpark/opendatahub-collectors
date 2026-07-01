@@ -11,6 +11,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/noi-techpark/opendatahub-go-sdk/clib"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
@@ -23,10 +24,15 @@ var env struct {
 	ODHVenueAPI     string `envconfig:"ODH_VENUE_API" default:"https://tourism.api.opendatahub.testingmachine.eu/v1"`
 	ODHVenueNoiID   string `envconfig:"ODH_VENUE_NOI_ID" default:"urn:venue:noi:6b3f0a14-3c5b-5d09-81f3-3ebe5b7885ea"`
 	ODHVenueEuracID string `envconfig:"ODH_VENUE_EURAC_ID" default:"urn:venue:eurac:df155f71-5cea-5a29-9ebc-213fad6ac1eb"`
+	OdhCoreUrl                 string `envconfig:"ODH_CORE_URL"`
+	OdhCoreTokenUrl            string `envconfig:"ODH_CORE_TOKEN_URL"`
+	OdhCoreTokenClientId       string `envconfig:"ODH_CORE_TOKEN_CLIENT_ID"`
+	OdhCoreTokenClientSecret   string `envconfig:"ODH_CORE_TOKEN_CLIENT_SECRET"`
 }
 
 type Transformer struct {
-	odhClient *ODHClient
+	odhClient     *ODHClient
+	contentClient clib.ContentAPI
 }
 
 func main() {
@@ -35,13 +41,31 @@ func main() {
 
 	defer tel.FlushOnPanic()
 
+	contentClient, err := clib.NewContentClient(clib.Config{
+		BaseURL:      env.OdhCoreUrl,
+		TokenURL:     env.OdhCoreTokenUrl,
+		ClientID:     env.OdhCoreTokenClientId,
+		ClientSecret: env.OdhCoreTokenClientSecret,
+		DisableOAuth: env.OdhCoreTokenUrl == "",
+	})
+	ms.FailOnError(context.Background(), err, "failed to create content client")
+
 	t := &Transformer{
-		odhClient: NewODHClient(env.ODHVenueAPI, ""),
+		odhClient:     NewODHClient(env.ODHVenueAPI, ""),
+		contentClient: contentClient,
 	}
 
-	listener := tr.NewTr[odhmodel.MomentusRoom](context.Background(), env.Env)
-	err := listener.Start(context.Background(), func(ctx context.Context, r *rdb.Raw[odhmodel.MomentusRoom]) error {
-		room := r.Rawdata
+	listener := tr.NewTr[string](context.Background(), env.Env)
+	err = listener.Start(context.Background(), func(ctx context.Context, r *rdb.Raw[string]) error {
+		if r.Rawdata == "[]" {
+			slog.Debug("Received empty array payload (end of stream), skipping")
+			return nil
+		}
+		var room odhmodel.MomentusRoom
+		if err := json.Unmarshal([]byte(r.Rawdata), &room); err != nil {
+			slog.Error("Failed to unmarshal raw venue string", "err", err, "rawdata", r.Rawdata)
+			return err
+		}
 		if room.Id == "" {
 			slog.Warn("Received room without ID, skipping")
 			return nil
@@ -71,13 +95,17 @@ func main() {
 
 		venueLinked := ParseMomentusVenue(room, venue)
 
-		payload, err := json.Marshal(venueLinked)
+		err = t.contentClient.Put(ctx, "Venue", venueLinked.Id, venueLinked)
 		if err != nil {
-			return err
+			slog.Debug("Put failed, attempting Post as fallback", "err", err, "venueID", venueLinked.Id)
+			err = t.contentClient.Post(ctx, "Venue", nil, venueLinked)
+			if err != nil {
+				slog.Error("Failed to push Venue to ODH Core API (both Put and Post failed)", "err", err, "venueID", venueLinked.Id)
+				return err
+			}
 		}
 
-		fmt.Printf("Parsed Venue %s: %s\n", venueLinked.Id, string(payload))
-		slog.Info("Successfully processed room", "roomID", room.Id, "venueID", venueLinked.Id)
+		slog.Info("Successfully processed room and pushed to Core", "roomID", room.Id, "venueID", venueLinked.Id)
 		return nil
 	})
 

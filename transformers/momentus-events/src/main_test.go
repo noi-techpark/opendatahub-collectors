@@ -21,8 +21,11 @@ func TestParseMomentusEvent(t *testing.T) {
 	}
 
 	result := ParseMomentusEvent(msg.Event, msg.Functions, msg.BookedSpaces, &msg.Venue, nil, true)
-	if result != nil {
-		t.Fatalf("Expected event to be skipped (nil) due to no languages, got %+v", result)
+	if result == nil {
+		t.Fatalf("Expected event to be parsed with fallback title, got nil")
+	}
+	if result.Detail["en"].Title != msg.Event.Name {
+		t.Fatalf("Expected fallback title %s, got %s", msg.Event.Name, result.Detail["en"].Title)
 	}
 }
 

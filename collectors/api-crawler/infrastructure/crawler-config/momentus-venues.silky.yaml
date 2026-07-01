@@ -25,4 +25,4 @@ steps:
     name: "Fetch Venues"
     request:
       method: GET
-      url: "https://api.eu-venueops.com/v1/venues"
+      url: "https://api.eu-venueops.com/v1/general-setup/rooms"

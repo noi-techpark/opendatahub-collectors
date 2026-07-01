@@ -12,6 +12,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/noi-techpark/opendatahub-go-sdk/clib"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
@@ -26,11 +27,16 @@ var env struct {
 	ODHVenueAPI          string `envconfig:"ODH_VENUE_API" default:"https://tourism.api.opendatahub.testingmachine.eu/v1"`
 	ODHVenueNoiID        string `envconfig:"ODH_VENUE_NOI_ID" default:"urn:venue:noi:6b3f0a14-3c5b-5d09-81f3-3ebe5b7885ea"`
 	ODHVenueEuracID      string `envconfig:"ODH_VENUE_EURAC_ID" default:"urn:venue:eurac:df155f71-5cea-5a29-9ebc-213fad6ac1eb"`
+	OdhCoreUrl                 string `envconfig:"ODH_CORE_URL"`
+	OdhCoreTokenUrl            string `envconfig:"ODH_CORE_TOKEN_URL"`
+	OdhCoreTokenClientId       string `envconfig:"ODH_CORE_TOKEN_CLIENT_ID"`
+	OdhCoreTokenClientSecret   string `envconfig:"ODH_CORE_TOKEN_CLIENT_SECRET"`
 }
 
 type Transformer struct {
 	momentusClient *MomentusClient
 	odhClient      *ODHClient
+	contentClient  clib.ContentAPI
 }
 
 func main() {
@@ -39,60 +45,49 @@ func main() {
 
 	defer tel.FlushOnPanic()
 
+	contentClient, err := clib.NewContentClient(clib.Config{
+		BaseURL:      env.OdhCoreUrl,
+		TokenURL:     env.OdhCoreTokenUrl,
+		ClientID:     env.OdhCoreTokenClientId,
+		ClientSecret: env.OdhCoreTokenClientSecret,
+		DisableOAuth: env.OdhCoreTokenUrl == "",
+	})
+	ms.FailOnError(context.Background(), err, "failed to create content client")
+
 	t := &Transformer{
 		momentusClient: NewMomentusClient(env.MomentusClientID, env.MomentusClientSecret),
 		odhClient:      NewODHClient(env.ODHVenueAPI, ""),
+		contentClient:  contentClient,
 	}
 
-	listener := tr.NewTr[MomentusEvent](context.Background(), env.Env)
-	err := listener.Start(context.Background(), func(ctx context.Context, r *rdb.Raw[MomentusEvent]) error {
-		event := r.Rawdata
-		slog.Info("RECEIVED RAW EVENT IN TRANSFORMER", "id", event.Id)
-		if event.Id == "" {
-			slog.Warn("Received event without ID, skipping")
+	listener := tr.NewTr[string](context.Background(), env.Env)
+	err = listener.Start(context.Background(), func(ctx context.Context, r *rdb.Raw[string]) error {
+		if r.Rawdata == "[]" {
+			slog.Debug("Received empty array payload (end of stream), skipping")
 			return nil
 		}
-
-		// We fetch additional data
-		functions, err := t.momentusClient.GetFunctions(event.Id)
-		if err != nil {
-			slog.Error("Failed to fetch functions", "eventID", event.Id, "err", err)
-			return err
-		}
-
-		bookedSpaces, err := t.momentusClient.GetBookedSpaces(event.Id)
-		if err != nil {
-			slog.Error("Failed to fetch booked spaces", "eventID", event.Id, "err", err)
-			return err
-		}
-
-		venueEurac, _ := t.odhClient.GetVenue(env.ODHVenueEuracID)
-		venueNoi, _ := t.odhClient.GetVenue(env.ODHVenueNoiID)
-
-		venue := venueNoi
-		if venue == nil {
-			venue = venueEurac
-		}
-
-		// We pass nil for the base event here, but a real transformer with database access
-		// would load the existing event from ODH and pass it here to preserve manually edited fields.
-		eventLinked := ParseMomentusEvent(event, functions, bookedSpaces, venue, nil, true)
-		if eventLinked == nil {
-			slog.Info("Event skipped by parser (no languages)", "eventID", event.Id)
-			return nil
-		}
-
-		payload, err := json.Marshal(eventLinked)
-		if err != nil {
-			return err
-		}
-
-		fmt.Printf("Parsed Event %s: %s\n", event.Id, string(payload))
 		
-		// Typically here listener returns the payload, but tr.NewTr callback signature currently expects `error`.
-		// Usually you use `listener.Publish` but here we just return nil since the goal is logic structure.
-		slog.Info("Successfully processed event", "eventID", event.Id)
-		return nil
+		// Attempt to unmarshal as an array first (which is what the crawler currently sends)
+		var events []MomentusEvent
+		if err := json.Unmarshal([]byte(r.Rawdata), &events); err == nil {
+			var firstErr error
+			for _, event := range events {
+				err := processEvent(ctx, t, event)
+				if err != nil && firstErr == nil {
+					firstErr = err
+				}
+			}
+			return firstErr
+		}
+
+		// Fallback to unmarshal as a single event
+		var event MomentusEvent
+		if err := json.Unmarshal([]byte(r.Rawdata), &event); err != nil {
+			slog.Error("Failed to unmarshal raw event string", "err", err, "rawdata", r.Rawdata)
+			return err
+		}
+		
+		return processEvent(ctx, t, event)
 	})
 
 	if err != nil {
@@ -100,6 +95,57 @@ func main() {
 		os.Exit(1)
 	}
 }
+
+func processEvent(ctx context.Context, t *Transformer, event MomentusEvent) error {
+	slog.Info("RECEIVED RAW EVENT IN TRANSFORMER", "id", event.Id)
+	if event.Id == "" {
+		slog.Warn("Received event without ID, skipping")
+		return nil
+	}
+
+	// We fetch additional data
+	functions, err := t.momentusClient.GetFunctions(event.Id)
+	if err != nil {
+		slog.Error("Failed to fetch functions", "eventID", event.Id, "err", err)
+		return err
+	}
+
+	bookedSpaces, err := t.momentusClient.GetBookedSpaces(event.Id)
+	if err != nil {
+		slog.Error("Failed to fetch booked spaces", "eventID", event.Id, "err", err)
+		return err
+	}
+
+	venueEurac, _ := t.odhClient.GetVenue(env.ODHVenueEuracID)
+	venueNoi, _ := t.odhClient.GetVenue(env.ODHVenueNoiID)
+
+	venue := venueNoi
+	if venue == nil {
+		venue = venueEurac
+	}
+
+	// We pass nil for the base event here, but a real transformer with database access
+	// would load the existing event from ODH and pass it here to preserve manually edited fields.
+	eventLinked := ParseMomentusEvent(event, functions, bookedSpaces, venue, nil, true)
+	if eventLinked == nil {
+		slog.Info("Event skipped by parser (no languages)", "eventID", event.Id)
+		return nil
+	}
+
+	err = t.contentClient.Put(ctx, "Event", eventLinked.Id, eventLinked)
+	if err != nil {
+		slog.Debug("Put failed, attempting Post as fallback", "err", err, "eventID", event.Id)
+		err = t.contentClient.Post(ctx, "Event", nil, eventLinked)
+		if err != nil {
+			slog.Error("Failed to push Event to ODH Core API (both Put and Post failed)", "err", err, "eventID", event.Id)
+			return err
+		}
+	}
+
+	slog.Info("Successfully processed event and pushed to Core", "eventID", event.Id)
+	return nil
+}
+
 
 // ----------------------------------------------------------------------------
 // PARSER LOGIC
@@ -141,7 +187,7 @@ func ParseMomentusEvent(mevent MomentusEvent, functions []MomentusFunction, book
 		eventLinked.DateEnd = mevent.End
 	}
 
-	details := buildDetailFromFunctions(functions, mevent.Description)
+	details := buildDetailFromFunctions(functions, mevent.Description, mevent.Name)
 	if len(details) > 0 {
 		eventLinked.Detail = details
 	} else {
@@ -227,7 +273,7 @@ func ParseMomentusEvent(mevent MomentusEvent, functions []MomentusFunction, book
 	return eventLinked
 }
 
-func buildDetailFromFunctions(functions []MomentusFunction, description string) map[string]odhmodel.Detail {
+func buildDetailFromFunctions(functions []MomentusFunction, description string, eventName string) map[string]odhmodel.Detail {
 	details := make(map[string]odhmodel.Detail)
 
 	for _, fn := range functions {
@@ -262,6 +308,15 @@ func buildDetailFromFunctions(functions []MomentusFunction, description string) 
 				d.Title = name
 			}
 			details[lang] = d
+		}
+	}
+
+	if len(details) == 0 && eventName != "" {
+		for _, lang := range []string{"en", "de", "it"} {
+			details[lang] = odhmodel.Detail{
+				Language: lang,
+				Title:    eventName,
+			}
 		}
 	}
 
@@ -517,6 +572,69 @@ func assignTechnologyFields(companyName string, techFields []string) []string {
 
 // ----------------------------------------------------------------------------
 // CLIENT LOGIC
+
+
+type ODHClient struct {
+	BaseURL    string
+	Token      string
+	httpClient *http.Client
+	venuesCache map[string]*ODHVenue
+	mu         sync.Mutex
+}
+
+func NewODHClient(baseURL, token string) *ODHClient {
+	return &ODHClient{
+		BaseURL:     baseURL,
+		Token:       token,
+		httpClient:  &http.Client{Timeout: 30 * time.Second},
+		venuesCache: make(map[string]*ODHVenue),
+	}
+}
+
+func (c *ODHClient) GetVenue(venueID string) (*ODHVenue, error) {
+	if venueID == "" {
+		return nil, nil
+	}
+
+	c.mu.Lock()
+	if v, ok := c.venuesCache[venueID]; ok {
+		c.mu.Unlock()
+		return v, nil
+	}
+	c.mu.Unlock()
+
+	req, err := http.NewRequest("GET", c.BaseURL+"/Venue/"+venueID, nil)
+	if err != nil {
+		return nil, err
+	}
+	if c.Token != "" {
+		req.Header.Set("Authorization", "Bearer "+c.Token)
+	}
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to fetch venue %s: %d", venueID, resp.StatusCode)
+	}
+
+	var venue ODHVenue
+	if err := json.NewDecoder(resp.Body).Decode(&venue); err != nil {
+		return nil, err
+	}
+
+	c.mu.Lock()
+	c.venuesCache[venueID] = &venue
+	c.mu.Unlock()
+
+	return &venue, nil
+}
+
+// ----------------------------------------------------------------------------
+// CLIENT LOGIC
 // ----------------------------------------------------------------------------
 
 type MomentusClient struct {
@@ -649,63 +767,4 @@ func (c *MomentusClient) GetBookedSpaces(eventID string) ([]MomentusBookedSpace,
 		return nil, err
 	}
 	return spaces, nil
-}
-
-type ODHClient struct {
-	BaseURL    string
-	Token      string
-	httpClient *http.Client
-	venuesCache map[string]*ODHVenue
-	mu         sync.Mutex
-}
-
-func NewODHClient(baseURL, token string) *ODHClient {
-	return &ODHClient{
-		BaseURL:     baseURL,
-		Token:       token,
-		httpClient:  &http.Client{Timeout: 30 * time.Second},
-		venuesCache: make(map[string]*ODHVenue),
-	}
-}
-
-func (c *ODHClient) GetVenue(venueID string) (*ODHVenue, error) {
-	if venueID == "" {
-		return nil, nil
-	}
-
-	c.mu.Lock()
-	if v, ok := c.venuesCache[venueID]; ok {
-		c.mu.Unlock()
-		return v, nil
-	}
-	c.mu.Unlock()
-
-	req, err := http.NewRequest("GET", c.BaseURL+"/Venue/"+venueID, nil)
-	if err != nil {
-		return nil, err
-	}
-	if c.Token != "" {
-		req.Header.Set("Authorization", "Bearer "+c.Token)
-	}
-
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to fetch venue %s: %d", venueID, resp.StatusCode)
-	}
-
-	var venue ODHVenue
-	if err := json.NewDecoder(resp.Body).Decode(&venue); err != nil {
-		return nil, err
-	}
-
-	c.mu.Lock()
-	c.venuesCache[venueID] = &venue
-	c.mu.Unlock()
-
-	return &venue, nil
 }
