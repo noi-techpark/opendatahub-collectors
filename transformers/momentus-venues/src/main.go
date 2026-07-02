@@ -61,51 +61,54 @@ func main() {
 			slog.Debug("Received empty array payload (end of stream), skipping")
 			return nil
 		}
-		var room odhmodel.MomentusRoom
-		if err := json.Unmarshal([]byte(r.Rawdata), &room); err != nil {
+		var rooms []odhmodel.MomentusRoom
+		if err := json.Unmarshal([]byte(r.Rawdata), &rooms); err != nil {
 			slog.Error("Failed to unmarshal raw venue string", "err", err, "rawdata", r.Rawdata)
 			return err
 		}
-		if room.Id == "" {
-			slog.Warn("Received room without ID, skipping")
-			return nil
-		}
-
-		// Determine Venue ID based on group
-		var venueID string
-		groupUpper := strings.ToUpper(room.Group)
-		if strings.Contains(groupUpper, "NOI TECHPARK") {
-			venueID = env.ODHVenueNoiID
-		} else if strings.Contains(groupUpper, "EURAC") {
-			venueID = env.ODHVenueEuracID
-		} else {
-			slog.Warn("Unknown room group, cannot match to venue", "roomID", room.Id, "group", room.Group)
-			return nil
-		}
-
-		venue, err := t.odhClient.GetVenue(venueID)
-		if err != nil {
-			slog.Error("Failed to fetch venue from ODH", "venueID", venueID, "err", err)
-			return err
-		}
-		if venue == nil {
-			slog.Error("Venue not found in ODH", "venueID", venueID)
-			return nil
-		}
-
-		venueLinked := ParseMomentusVenue(room, venue)
-
-		err = t.contentClient.Put(ctx, "Venue", venueLinked.Id, venueLinked)
-		if err != nil {
-			slog.Debug("Put failed, attempting Post as fallback", "err", err, "venueID", venueLinked.Id)
-			err = t.contentClient.Post(ctx, "Venue", nil, venueLinked)
-			if err != nil {
-				slog.Error("Failed to push Venue to ODH Core API (both Put and Post failed)", "err", err, "venueID", venueLinked.Id)
-				return err
+		
+		for _, room := range rooms {
+			if room.Id == "" {
+				slog.Warn("Received room without ID, skipping")
+				continue
 			}
-		}
 
-		slog.Info("Successfully processed room and pushed to Core", "roomID", room.Id, "venueID", venueLinked.Id)
+			// Determine Venue ID based on group
+			var venueID string
+			groupUpper := strings.ToUpper(room.Group)
+			if strings.Contains(groupUpper, "NOI TECHPARK") {
+				venueID = env.ODHVenueNoiID
+			} else if strings.Contains(groupUpper, "EURAC") {
+				venueID = env.ODHVenueEuracID
+			} else {
+				slog.Warn("Unknown room group, cannot match to venue", "roomID", room.Id, "group", room.Group)
+				continue
+			}
+
+			venue, err := t.odhClient.GetVenue(venueID)
+			if err != nil {
+				slog.Error("Failed to fetch venue from ODH", "venueID", venueID, "err", err)
+				continue
+			}
+			if venue == nil {
+				slog.Error("Venue not found in ODH", "venueID", venueID)
+				continue
+			}
+
+			venueLinked := ParseMomentusVenue(room, venue)
+
+			err = t.contentClient.Put(ctx, "Venue", venueLinked.Id, venueLinked)
+			if err != nil {
+				slog.Debug("Put failed, attempting Post as fallback", "err", err, "venueID", venueLinked.Id)
+				err = t.contentClient.Post(ctx, "Venue", nil, venueLinked)
+				if err != nil {
+					slog.Error("Failed to push Venue to ODH Core API (both Put and Post failed)", "err", err, "venueID", venueLinked.Id)
+					continue
+				}
+			}
+
+			slog.Info("Successfully processed room and pushed to Core", "roomID", room.Id, "venueID", venueLinked.Id)
+		}
 		return nil
 	})
 
