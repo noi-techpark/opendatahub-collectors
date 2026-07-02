@@ -9,9 +9,9 @@ env:
   ODH_CORE_URL: https://tourism.api.opendatahub.com/v1
   ODH_CORE_TOKEN_URL: https://auth.opendatahub.com/auth/realms/noi/protocol/openid-connect/token
 
-  MQ_QUEUE: webcam.feratel
+  MQ_QUEUE: api-crawler.feratel-webcams
   MQ_EXCHANGE: routed
-  MQ_KEY: webcam.feratel
+  MQ_KEY: api-crawler.feratel-webcams
   MQ_CLIENT: tr-webcam-feratel
 
   RAW_DATA_BRIDGE_ENDPOINT: "http://raw-data-bridge.core.svc.cluster.local:2000"

@@ -9,9 +9,9 @@ env:
   ODH_CORE_URL: https://tourism.api.opendatahub.com/v1
   ODH_CORE_TOKEN_URL: https://auth.opendatahub.com/auth/realms/noi/protocol/openid-connect/token
 
-  MQ_QUEUE: webcam.panocloud
+  MQ_QUEUE: api-crawler.panocloud-webcams
   MQ_EXCHANGE: routed
-  MQ_KEY: webcam.panocloud
+  MQ_KEY: api-crawler.panocloud-webcams
   MQ_CLIENT: tr-webcam-panocloud
 
   RAW_DATA_BRIDGE_ENDPOINT: "http://raw-data-bridge.core.svc.cluster.local:2000"
