@@ -718,7 +718,7 @@ func (c *MomentusClient) getAuthRequest(method, endpoint string) (*http.Request,
 }
 
 func (c *MomentusClient) GetFunctions(eventID string) ([]MomentusFunction, error) {
-	req, err := c.getAuthRequest("GET", "/events/"+eventID+"/functions")
+	req, err := c.getAuthRequest("GET", "/functions/event/"+eventID)
 	if err != nil {
 		return nil, err
 	}
@@ -744,7 +744,7 @@ func (c *MomentusClient) GetFunctions(eventID string) ([]MomentusFunction, error
 }
 
 func (c *MomentusClient) GetBookedSpaces(eventID string) ([]MomentusBookedSpace, error) {
-	req, err := c.getAuthRequest("GET", "/events/"+eventID+"/booked-spaces")
+	req, err := c.getAuthRequest("GET", "/booked-spaces/"+eventID)
 	if err != nil {
 		return nil, err
 	}
