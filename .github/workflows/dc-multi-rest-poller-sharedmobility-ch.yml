@@ -1,7 +1,10 @@
 name: CI/CD dc-multi-rest-poller sharedmobility-ch
 
-on: 
+on:
   push:
+    branches:
+      - main
+      - feat/raw-writer-2
     paths:
       - "collectors/multi-rest-poller/**"
       - "!collectors/multi-rest-poller/infrastructure/helm/*"
@@ -34,7 +37,7 @@ jobs:
         docker-password: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-sharedmobility-ch-test:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feat/raw-writer-2'
     needs: build
     runs-on: ubuntu-24.04
     concurrency: dc-multi-rest-poller-sharedmobility-ch-test

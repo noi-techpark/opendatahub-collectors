@@ -4,11 +4,14 @@
 
 name: CI/CD tr-sharedmobility-ch
 
-on: 
+on:
   push:
+    branches:
+      - main
+      - feat/raw-writer-2
     paths:
       - "transformers/sharedmobility-ch/**"
-      - ".github/workflows/tr-sharedmobility-ch.yml"     
+      - ".github/workflows/tr-sharedmobility-ch.yml"
 
 env:
   PROJECT_NAME: tr-sharedmobility-ch
@@ -47,7 +50,7 @@ jobs:
         docker-password: ${{ secrets.GITHUB_TOKEN }}
           
   deploy-test:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feat/raw-writer-2'
     needs: 
       - build
     runs-on: ubuntu-24.04
