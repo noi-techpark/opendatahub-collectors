@@ -128,9 +128,15 @@ func processEvent(ctx context.Context, t *Transformer, event MomentusEvent) erro
 		venue = venueEurac
 	}
 
-	// We pass nil for the base event here, but a real transformer with database access
-	// would load the existing event from ODH and pass it here to preserve manually edited fields.
-	eventLinked := ParseMomentusEvent(event, functions, bookedSpaces, venue, nil, true)
+	// Fetch existing event from ODH to preserve manual fields
+	eventLinkedID := "urn:event:momentus:" + event.Id
+	var baseEvent *odhmodel.EventLinked
+	var existingEvent odhmodel.EventLinked
+	if err := t.contentClient.Get(ctx, "Event/" + eventLinkedID, nil, &existingEvent); err == nil {
+		baseEvent = &existingEvent
+	}
+
+	eventLinked := ParseMomentusEvent(event, functions, bookedSpaces, venue, baseEvent, true)
 	if eventLinked == nil {
 		slog.Info("Event skipped by parser (no languages)", "eventID", event.Id)
 		return nil
@@ -191,7 +197,7 @@ func ParseMomentusEvent(mevent MomentusEvent, functions []MomentusFunction, book
 		eventLinked.DateEnd = mevent.End
 	}
 
-	details := buildDetailFromFunctions(functions, mevent.Description, mevent.Name)
+	details := buildDetailFromFunctions(functions, mevent.Description, mevent.Name, base)
 	if len(details) > 0 {
 		eventLinked.Detail = details
 	} else {
@@ -277,7 +283,7 @@ func ParseMomentusEvent(mevent MomentusEvent, functions []MomentusFunction, book
 	return eventLinked
 }
 
-func buildDetailFromFunctions(functions []MomentusFunction, description string, eventName string) map[string]odhmodel.Detail {
+func buildDetailFromFunctions(functions []MomentusFunction, description string, eventName string, base *odhmodel.EventLinked) map[string]odhmodel.Detail {
 	details := make(map[string]odhmodel.Detail)
 
 	for _, fn := range functions {
@@ -329,6 +335,24 @@ func buildDetailFromFunctions(functions []MomentusFunction, description string, 
 			if d.BaseText == "" {
 				d.BaseText = description
 				details[lang] = d
+			}
+		}
+	}
+
+	// Restore existing BaseTexts from the base event if they are not empty
+	if base != nil && base.Detail != nil {
+		for lang, baseDetail := range base.Detail {
+			if baseDetail.BaseText != "" {
+				d, ok := details[lang]
+				if ok {
+					d.BaseText = baseDetail.BaseText
+					details[lang] = d
+				} else {
+					details[lang] = odhmodel.Detail{
+						Language: lang,
+						BaseText: baseDetail.BaseText,
+					}
+				}
 			}
 		}
 	}

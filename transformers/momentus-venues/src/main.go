@@ -71,6 +71,9 @@ func main() {
 			return err
 		}
 		
+		// Group rooms by venue
+		roomsByVenue := make(map[string][]odhmodel.MomentusRoom)
+
 		for _, room := range rooms {
 			if room.Id == "" {
 				slog.Warn("Received room without ID, skipping")
@@ -89,6 +92,10 @@ func main() {
 				continue
 			}
 
+			roomsByVenue[venueID] = append(roomsByVenue[venueID], room)
+		}
+
+		for venueID, groupedRooms := range roomsByVenue {
 			venue, err := t.odhClient.GetVenue(venueID)
 			if err != nil {
 				slog.Error("Failed to fetch venue from ODH", "venueID", venueID, "err", err)
@@ -99,19 +106,27 @@ func main() {
 				continue
 			}
 
-			venueLinked := ParseMomentusVenue(room, venue)
+			// Deep copy the venue to safely mutate it
+			venueBytes, _ := json.Marshal(venue)
+			var venueLinked odhmodel.VenueV2
+			json.Unmarshal(venueBytes, &venueLinked)
 
-			err = t.contentClient.Put(ctx, "Venue", venueLinked.Id, venueLinked)
+			for _, room := range groupedRooms {
+				venueLinkedPtr := ParseMomentusVenue(room, &venueLinked)
+				venueLinked = *venueLinkedPtr
+			}
+
+			err = t.contentClient.Put(ctx, "Venue", venueLinked.Id, &venueLinked)
 			if err != nil {
 				slog.Debug("Put failed, attempting Post as fallback", "err", err, "venueID", venueLinked.Id)
-				err = t.contentClient.Post(ctx, "Venue", nil, venueLinked)
+				err = t.contentClient.Post(ctx, "Venue", nil, &venueLinked)
 				if err != nil {
 					slog.Error("Failed to push Venue to ODH Core API (both Put and Post failed)", "err", err, "venueID", venueLinked.Id)
 					continue
 				}
 			}
 
-			slog.Info("Successfully processed room and pushed to Core", "roomID", room.Id, "venueID", venueLinked.Id)
+			slog.Info("Successfully processed grouped rooms and pushed to Core", "venueID", venueLinked.Id, "roomCount", len(groupedRooms))
 		}
 		return nil
 	})
@@ -216,7 +231,6 @@ type ODHClient struct {
 	BaseURL     string
 	Token       string
 	httpClient  *http.Client
-	venuesCache map[string]*odhmodel.VenueV2
 	mu          sync.Mutex
 }
 
@@ -225,7 +239,6 @@ func NewODHClient(baseURL, token string) *ODHClient {
 		BaseURL:     baseURL,
 		Token:       token,
 		httpClient:  &http.Client{Timeout: 30 * time.Second},
-		venuesCache: make(map[string]*odhmodel.VenueV2),
 	}
 }
 
@@ -233,13 +246,6 @@ func (c *ODHClient) GetVenue(venueID string) (*odhmodel.VenueV2, error) {
 	if venueID == "" {
 		return nil, nil
 	}
-
-	c.mu.Lock()
-	if v, ok := c.venuesCache[venueID]; ok {
-		c.mu.Unlock()
-		return v, nil
-	}
-	c.mu.Unlock()
 
 	req, err := http.NewRequest("GET", c.BaseURL+"/Venue/"+venueID, nil)
 	if err != nil {
@@ -263,10 +269,6 @@ func (c *ODHClient) GetVenue(venueID string) (*odhmodel.VenueV2, error) {
 	if err := json.NewDecoder(resp.Body).Decode(&venue); err != nil {
 		return nil, err
 	}
-
-	c.mu.Lock()
-	c.venuesCache[venueID] = &venue
-	c.mu.Unlock()
 
 	return &venue, nil
 }
