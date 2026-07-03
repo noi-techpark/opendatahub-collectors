@@ -8,6 +8,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log/slog"
 	"net/http"
 	"os"
@@ -96,30 +97,38 @@ func main() {
 		}
 
 		for venueID, groupedRooms := range roomsByVenue {
-			venue, err := t.odhClient.GetVenue(venueID)
+			venueBytes, err := t.odhClient.GetVenue(venueID)
 			if err != nil {
 				slog.Error("Failed to fetch venue from ODH", "venueID", venueID, "err", err)
 				continue
 			}
-			if venue == nil {
+			if len(venueBytes) == 0 {
 				slog.Error("Venue not found in ODH", "venueID", venueID)
 				continue
 			}
 
-			// Deep copy the venue to safely mutate it
-			venueBytes, _ := json.Marshal(venue)
+			// 1. Unmarshal into VenueV2 to process rooms
 			var venueLinked odhmodel.VenueV2
 			json.Unmarshal(venueBytes, &venueLinked)
 
+			// 2. Unmarshal into Map to preserve all raw properties
+			var venueMap map[string]interface{}
+			json.Unmarshal(venueBytes, &venueMap)
+
+			// 3. Process Rooms
 			for _, room := range groupedRooms {
 				venueLinkedPtr := ParseMomentusVenue(room, &venueLinked)
 				venueLinked = *venueLinkedPtr
 			}
 
-			err = t.contentClient.Put(ctx, "Venue", venueLinked.Id, &venueLinked)
+			// 4. Overwrite ONLY RoomDetails in the original map
+			venueMap["RoomDetails"] = venueLinked.RoomDetails
+
+			// 5. Send map to ODH API
+			err = t.contentClient.Put(ctx, "Venue", venueLinked.Id, &venueMap)
 			if err != nil {
 				slog.Debug("Put failed, attempting Post as fallback", "err", err, "venueID", venueLinked.Id)
-				err = t.contentClient.Post(ctx, "Venue", nil, &venueLinked)
+				err = t.contentClient.Post(ctx, "Venue", nil, &venueMap)
 				if err != nil {
 					slog.Error("Failed to push Venue to ODH Core API (both Put and Post failed)", "err", err, "venueID", venueLinked.Id)
 					continue
@@ -242,7 +251,7 @@ func NewODHClient(baseURL, token string) *ODHClient {
 	}
 }
 
-func (c *ODHClient) GetVenue(venueID string) (*odhmodel.VenueV2, error) {
+func (c *ODHClient) GetVenue(venueID string) ([]byte, error) {
 	if venueID == "" {
 		return nil, nil
 	}
@@ -265,10 +274,10 @@ func (c *ODHClient) GetVenue(venueID string) (*odhmodel.VenueV2, error) {
 		return nil, fmt.Errorf("failed to fetch venue %s: %d", venueID, resp.StatusCode)
 	}
 
-	var venue odhmodel.VenueV2
-	if err := json.NewDecoder(resp.Body).Decode(&venue); err != nil {
+	venueBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
 		return nil, err
 	}
 
-	return &venue, nil
+	return venueBytes, nil
 }

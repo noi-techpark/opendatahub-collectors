@@ -5,19 +5,34 @@
 package odhcontentmodel
 
 type VenueV2 struct {
-	Id           string                `json:"Id"`
-	RoomDetails  []VenueRoomDetailsV2  `json:"RoomDetails"`
-	Mapping      map[string]map[string]string `json:"Mapping,omitempty"`
+	Id                   string                       `json:"Id"`
+	Active               *bool                        `json:"Active"`
+	Shortname            string                       `json:"Shortname"`
+	Detail               map[string]any               `json:"Detail"`
+	Tags                 []any                        `json:"Tags"`
+	TagIds               []string                     `json:"TagIds"`
+	Mapping              map[string]map[string]string `json:"Mapping"`
+	Placement            any                          `json:"Placement"`
+	MaxCapacity          *int                         `json:"MaxCapacity"`
+	ImageGallery         []any                        `json:"ImageGallery"`
+	VenueRoomProperties  any                          `json:"VenueRoomProperties"`
+	RoomDetails          []VenueRoomDetailsV2         `json:"RoomDetails"`
+	ContactInfos         map[string]any               `json:"ContactInfos"`
+	DistanceInfo         any                          `json:"DistanceInfo"`
+	LocationInfo         map[string]any               `json:"LocationInfo"`
+	RelatedContent       []any                        `json:"RelatedContent"`
+	OperationSchedule    any                          `json:"OperationSchedule"`
+	AdditionalProperties any                          `json:"AdditionalProperties"`
 }
 
 type VenueRoomDetailsV2 struct {
-	Id                  string                           `json:"Id,omitempty"`
-	Shortname           string                           `json:"Shortname,omitempty"`
-	Detail              map[string]DetailGeneric         `json:"Detail,omitempty"`
+	Id                  string                           `json:"Id"`
+	Shortname           string                           `json:"Shortname"`
+	Detail              map[string]DetailGeneric         `json:"Detail"`
 	Active              bool                             `json:"Active"`
-	VenueRoomProperties *VenueRoomProperties             `json:"VenueRoomProperties,omitempty"`
-	MaxCapacity         *int                             `json:"MaxCapacity,omitempty"`
-	Mapping             map[string]map[string]string     `json:"Mapping,omitempty"`
+	VenueRoomProperties *VenueRoomProperties             `json:"VenueRoomProperties"`
+	MaxCapacity         *int                             `json:"MaxCapacity"`
+	Mapping             map[string]map[string]string     `json:"Mapping"`
 }
 
 type DetailGeneric struct {
