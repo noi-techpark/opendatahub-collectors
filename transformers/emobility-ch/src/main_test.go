@@ -17,8 +17,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func strPtr(value string) *string { return &value }
-func boolPtr(value bool) *bool    { return &value }
+func strPtr(value string) *string       { return &value }
+func boolPtr(value bool) *bool          { return &value }
+func flexStrPtr(value string) *FlexString { v := FlexString(value); return &v }
 
 func sampleRoot() Root {
 	return Root{
@@ -35,7 +36,7 @@ func sampleRoot() Root {
 						Address: &EVSEAddress{
 							Street:     strPtr("Via Stazione 1"),
 							City:       strPtr("Bolzano"),
-							PostalCode: strPtr("39100"),
+							PostalCode: flexStrPtr("39100"),
 							Country:    strPtr("CH"),
 						},
 						Accessibility:       strPtr("Public"),
