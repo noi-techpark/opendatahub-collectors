@@ -6,9 +6,6 @@ name: CI/CD tr-sharedmobility-ch
 
 on:
   push:
-    branches:
-      - main
-      - feat/raw-writer-2
     paths:
       - "transformers/sharedmobility-ch/**"
       - ".github/workflows/tr-sharedmobility-ch.yml"
