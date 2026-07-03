@@ -2,16 +2,16 @@ image:
   repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-webcam-feratel
   pullPolicy: IfNotPresent
 
-env:
+env:  
   LOG_LEVEL: INFO
 
   # content writer
   ODH_CORE_URL: https://api.tourism.testingmachine.eu/v1
   ODH_CORE_TOKEN_URL: https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token
 
-  MQ_QUEUE: api-crawler.feratel-webcams
+  MQ_QUEUE: webcams.webcam-feratel
   MQ_EXCHANGE: routed
-  MQ_KEY: api-crawler.feratel-webcams
+  MQ_KEY: webcams.webcam-feratel
   MQ_CLIENT: tr-webcam-feratel
 
   RAW_DATA_BRIDGE_ENDPOINT: "http://raw-data-bridge.core.svc.cluster.local:2000"
@@ -24,6 +24,6 @@ envSecret:
   ODH_CORE_TOKEN_CLIENT_SECRET: ""
 
 envSecretRef:
-  - name: MQ_URI
+  - name: MQ_URI 
     secret: rabbitmq-svcbind
     key: uri

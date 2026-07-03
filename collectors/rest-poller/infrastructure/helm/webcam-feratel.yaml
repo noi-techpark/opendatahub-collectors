@@ -1,0 +1,19 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/dc-rest-poller
+  pullPolicy: IfNotPresent
+  tag: "0.2.0" 
+
+env:
+  MQ_CLIENT: dc-webcam-feratel
+  PROVIDER: webcams/webcam-feratel
+
+  CRON: "0 */1 * * * *"
+  HTTP_URL: http://wtvxmlp.feratel.com/xmlpan/x3/infoxml.jsp?pg=CDB9645D-E67B-44D2-9FC9-E1539FF9A6B7&lg=de&showKeywords=1&geoXY=1&xmlv3=1&nolg=1
+
+  SERVICE_NAME: dc-rest-poller-webcam-feratel
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
