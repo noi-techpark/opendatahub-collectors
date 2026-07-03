@@ -5,7 +5,7 @@ go 1.25.0
 require (
 	github.com/klauspost/compress v1.18.5
 	github.com/noi-techpark/go-bdp-client v1.5.1
-	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.7
+	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.10-0.20260703092235-5f89829686e4
 	github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0
 	github.com/stretchr/testify v1.10.0
 )

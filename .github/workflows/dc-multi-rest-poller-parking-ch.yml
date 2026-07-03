@@ -34,7 +34,7 @@ jobs:
         docker-password: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-parking-ch-test:
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev/parking-ch'
+    if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-24.04
     concurrency: dc-multi-rest-poller-parking-ch-test
