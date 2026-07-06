@@ -18,7 +18,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     concurrency: dc-rest-poller-trains-rt-sad-build
     steps:
     - name: Checkout source code
@@ -34,7 +34,7 @@ jobs:
   deploy-trains-rt-sad-test:
     if: github.ref == 'refs/heads/main'
     needs: build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     concurrency: dc-rest-poller-trains-rt-sad-test
     environment: test
     steps:
@@ -62,9 +62,9 @@ jobs:
           aws-region: eu-west-1
 
   deploy-trains-rt-sad-prod:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/prod'
     needs: build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     concurrency: dc-rest-poller-trains-rt-sad-prod
     environment: prod
     steps:
