@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: CC0-1.0
 
 image:
-  repository: ghcr.io/noi-techpark/odh-collectors/tr-momentus-events
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-momentus-venues
 
 ingress:
   enabled: false
@@ -14,11 +14,11 @@ rabbitmq:
 
 env:
   - name: MQ_CLIENT
-    value: "tr-momentus-events-test"
+    value: "tr-momentus-venues-test"
   - name: MQ_EXCHANGE
     value: "ingress"
   - name: PROVIDER
-    value: "events/momentus"
+    value: "venues/momentus"
   - name: LOGLEVEL
     value: "DEBUG"
   - name: ODH_VENUE_API
