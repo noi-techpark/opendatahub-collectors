@@ -15,7 +15,7 @@ imagePullSecrets:
 env:
   LOG_LEVEL: "INFO"
   MQ_QUEUE: multi-rest-poller.parking-ch
-  MQ_EXCHANGE: routed  
+  MQ_EXCHANGE: routed
   MQ_KEY: multi-rest-poller.parking-ch
   MQ_CLIENT: tr-parking-ch
 

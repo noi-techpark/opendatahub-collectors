@@ -7,7 +7,7 @@ env:
   MQ_CLIENT: dc-multi-rest-poller-parking-ch
   PROVIDER: multi-rest-poller/parking-ch
 
-  CRON: "0 */5 * * * *"
+  CRON: "0 10,40 * * * *"
   HTTP_CONFIG_PATH: "/config/http-config.yaml"
   RAW_WRITER_REST_BASE_URL: http://raw-writer-2.core.svc.cluster.local
   SERVICE_NAME: dc-multi-rest-poller-parking-ch

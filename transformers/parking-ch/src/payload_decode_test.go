@@ -18,40 +18,36 @@ import (
 
 // sampleRoot returns a minimal valid Root for testing.
 func sampleRoot() Root {
+	point := GeoJSONGeometryCollection{
+		Type: "GeometryCollection",
+		Geometries: []GeoJSONGeometry{
+			{Type: "Point", Coordinates: json.RawMessage(`[7.4474, 46.948]`)},
+		},
+	}
+
 	return Root{
-		BikeParking: GeoJSONFeatureCollection{
-			Type: "FeatureCollection",
-			Features: []GeoJSONFeature{
-				{
-					Type: "Feature",
-					ID:   "bike-1",
-					Geometry: GeoJSONGeometry{
-						Type:        "Point",
-						Coordinates: []float64{7.4474, 46.9480},
-					},
-					Properties: map[string]interface{}{
-						"stopPlaceUic": "8507000",
-						"name":         "Bern Bahnhof",
-					},
+		Type: "FeatureCollection",
+		Features: []GeoJSONFeature{
+			{
+				Type:     "Feature",
+				ID:       "bike-1",
+				Geometry: point,
+				Properties: map[string]interface{}{
+					"parkingFacilityCategory": "BIKE",
+					"uic":                     8507000, // uic is a JSON number, unlike didokId
+					"displayName":             "Bern Bahnhof",
 				},
 			},
-		},
-		CarParking: GeoJSONFeatureCollection{
-			Type: "FeatureCollection",
-			Features: []GeoJSONFeature{
-				{
-					Type: "Feature",
-					ID:   "car-1",
-					Geometry: GeoJSONGeometry{
-						Type:        "Point",
-						Coordinates: []float64{7.4474, 46.9480},
-					},
-					Properties: map[string]interface{}{
-						"didokId":                        "123456",
-						"displayName":                    "Bern P+R",
-						"currentEstimatedOccupancy":      45.5,
-						"currentEstimatedOccupancyLevel": "MEDIUM",
-					},
+			{
+				Type:     "Feature",
+				ID:       "car-1",
+				Geometry: point,
+				Properties: map[string]interface{}{
+					"parkingFacilityCategory":        "CAR",
+					"didokId":                        "123456",
+					"displayName":                    "Bern P+R",
+					"currentEstimatedOccupancy":      45.5,
+					"currentEstimatedOccupancyLevel": "MEDIUM",
 				},
 			},
 		},
@@ -95,10 +91,9 @@ func TestPayloadDecode_PlainJSON(t *testing.T) {
 
 	decoded, err := DecodePayload[Root](raw)
 	require.NoError(t, err)
-	assert.Equal(t, len(root.BikeParking.Features), len(decoded.BikeParking.Features))
-	assert.Equal(t, len(root.CarParking.Features), len(decoded.CarParking.Features))
-	assert.Equal(t, "bike-1", decoded.BikeParking.Features[0].ID)
-	assert.Equal(t, "car-1", decoded.CarParking.Features[0].ID)
+	assert.Equal(t, len(root.Features), len(decoded.Features))
+	assert.Equal(t, "bike-1", decoded.Features[0].ID)
+	assert.Equal(t, "car-1", decoded.Features[1].ID)
 }
 
 func TestPayloadDecode_Base64JSON(t *testing.T) {
@@ -107,10 +102,9 @@ func TestPayloadDecode_Base64JSON(t *testing.T) {
 
 	decoded, err := DecodePayload[Root](raw)
 	require.NoError(t, err)
-	assert.Equal(t, len(root.BikeParking.Features), len(decoded.BikeParking.Features))
-	assert.Equal(t, len(root.CarParking.Features), len(decoded.CarParking.Features))
-	assert.Equal(t, "bike-1", decoded.BikeParking.Features[0].ID)
-	assert.Equal(t, "car-1", decoded.CarParking.Features[0].ID)
+	assert.Equal(t, len(root.Features), len(decoded.Features))
+	assert.Equal(t, "bike-1", decoded.Features[0].ID)
+	assert.Equal(t, "car-1", decoded.Features[1].ID)
 }
 
 func TestPayloadDecode_GzipBase64JSON(t *testing.T) {
@@ -119,10 +113,9 @@ func TestPayloadDecode_GzipBase64JSON(t *testing.T) {
 
 	decoded, err := DecodePayload[Root](raw)
 	require.NoError(t, err)
-	assert.Equal(t, len(root.BikeParking.Features), len(decoded.BikeParking.Features))
-	assert.Equal(t, len(root.CarParking.Features), len(decoded.CarParking.Features))
-	assert.Equal(t, "bike-1", decoded.BikeParking.Features[0].ID)
-	assert.Equal(t, "car-1", decoded.CarParking.Features[0].ID)
+	assert.Equal(t, len(root.Features), len(decoded.Features))
+	assert.Equal(t, "bike-1", decoded.Features[0].ID)
+	assert.Equal(t, "car-1", decoded.Features[1].ID)
 }
 
 func TestPayloadDecode_InvalidPayload(t *testing.T) {
