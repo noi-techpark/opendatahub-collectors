@@ -2,12 +2,10 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-version: "3.5"
-
 services:
-  build:
-    image: ghcr.io/noi-techpark/odh-collectors/tr-momentus-events
+  app:
+    image: ${DOCKER_IMAGE}:${DOCKER_TAG}
     build:
-      context: .
+      context: ../
       dockerfile: infrastructure/docker/Dockerfile
       target: build
