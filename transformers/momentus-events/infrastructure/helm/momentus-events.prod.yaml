@@ -1,0 +1,37 @@
+# SPDX-FileCopyrightText: 2025 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+image:
+  repository: ghcr.io/noi-techpark/odh-collectors/tr-momentus-events
+
+ingress:
+  enabled: false
+
+rabbitmq:
+  connection: 
+    secretName: "opendatahub-amqp-auth-prod"
+
+env:
+  - name: MQ_CLIENT
+    value: "tr-momentus-events-prod"
+  - name: MQ_EXCHANGE
+    value: "ingress"
+  - name: PROVIDER
+    value: "events/momentus"
+  - name: LOGLEVEL
+    value: "DEBUG"
+  - name: ODH_VENUE_API
+    value: "https://tourism.api.opendatahub.com/v1"
+  - name: ODH_VENUE_NOI_ID
+    value: "urn:venue:noi:6b3f0a14-3c5b-5d09-81f3-3ebe5b7885ea"
+  - name: ODH_VENUE_EURAC_ID
+    value: "urn:venue:eurac:df155f71-5cea-5a29-9ebc-213fad6ac1eb"
+
+secretEnv:
+  - name: MOMENTUS_CLIENT_ID
+    secretName: "tr-momentus-auth"
+    secretKey: "client_id"
+  - name: MOMENTUS_CLIENT_SECRET
+    secretName: "tr-momentus-auth"
+    secretKey: "client_secret"

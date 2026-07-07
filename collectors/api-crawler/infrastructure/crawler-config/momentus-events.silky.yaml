@@ -1,0 +1,75 @@
+options:
+  streamRootArray: true
+
+rootContext: []
+
+auth:
+  type: custom
+  loginRequest:
+    url: "https://auth-api.eu-venueops.com/token"
+    method: POST
+    headers:
+      Content-Type: "application/json"
+    body:
+      clientId: "${MOMENTUS_CLIENT_ID}"
+      clientSecret: "${MOMENTUS_CLIENT_SECRET}"
+  extractFrom: body
+  extractSelector: '"Bearer " + .accessToken'
+  injectInto: header
+  injectKey: Authorization
+  maxAgeSeconds: 3000
+
+steps:
+  - type: request
+    name: "Fetch Events Base List"
+    request:
+      method: POST
+      url: "https://api.eu-venueops.com/v1/events/query-by-date-range"
+      headers:
+        Content-Type: "application/json"
+        Accept: "application/json"
+      body:
+        start: '{{ now | dateModify "-1d" | date "2006-01-02" }}'
+        end: '{{ now | dateModify "+1y" | date "2006-01-02" }}'
+        includeBookedSpaces: true
+        venueIds:
+          - "venue-1-A"
+        roomIds:
+          - "room-1-A"
+          - "room-55-A"
+          - "room-58-A"
+          - "room-2-A"
+          - "room-4-A"
+          - "room-5-A"
+          - "room-48-A"
+          - "room-6-A"
+          - "room-50-A"
+          - "room-51-A"
+          - "room-53-A"
+          - "room-54-A"
+          - "room-57-A"
+          - "room-52-A"
+          - "room-56-A"
+          - "room-59-A"
+          - "room-61-A"
+          - "room-62-A"
+          - "room-63-A"
+          - "room-60-A"
+          - "room-3-A"
+          - "room-37-A"
+          - "room-44-A"
+          - "room-36-A"
+          - "room-35-A"
+          - "room-40-A"
+          - "room-39-A"
+          - "room-41-A"
+          - "room-34-A"
+          - "room-38-A"
+          - "room-42-A"
+          - "room-33-A"
+          - "room-43-A"
+          - "room-46-A"
+          - "room-47-A"
+          - "room-45-A"
+
+    resultTransformer: "map(select(.bookedSpaces | type == \"array\" and any(.[]; .usageType == \"event\")))"

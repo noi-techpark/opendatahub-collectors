@@ -1,0 +1,26 @@
+{
+  "Id": "urn:venue:noi:6b3f0a14-3c5b-5d09-81f3-3ebe5b7885ea",
+  "RoomDetails": [
+    {
+      "Id": "urn:room:noi:old-1",
+      "Shortname": "Seminar Room 1",
+      "Detail": {
+        "en": {
+          "Title": "Seminar Room 1",
+          "Language": "en"
+        }
+      },
+      "Active": false,
+      "Mapping": {
+        "momentus": {
+          "id": "old-momentus-id"
+        }
+      }
+    }
+  ],
+  "Mapping": {
+    "tag": {
+      "eventlocation": "noi"
+    }
+  }
+}
