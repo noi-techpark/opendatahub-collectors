@@ -8,6 +8,6 @@ services:
   build:
     image: ghcr.io/noi-techpark/odh-collectors/tr-momentus-events
     build:
-      context: .
+      context: ../
       dockerfile: infrastructure/docker/Dockerfile
       target: build
