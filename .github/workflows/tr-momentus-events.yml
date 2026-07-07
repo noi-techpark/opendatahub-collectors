@@ -74,8 +74,9 @@ jobs:
             yq -i '.image.repository = "${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML }}
             yq -i '.image.tag = "${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
             yq -i '.image.pullPolicy = "IfNotPresent"' ${{ env.VALUES_YAML }}      
-            yq -i '.env.BDP_PROVENANCE_NAME="${{ env.PROJECT_NAME }}"' ${{ env.VALUES_YAML }}      
-            yq -i '.env.BDP_PROVENANCE_VERSION="${{github.sha}}"' ${{ env.VALUES_YAML }}      
+            yq -i '.envSecret.MOMENTUS_CLIENT_ID="${{secrets.MOMENTUS_CLIENT_ID_TEST}}"' ${{ env.VALUES_YAML }}      
+            yq -i '.envSecret.MOMENTUS_CLIENT_SECRET="${{secrets.MOMENTUS_CLIENT_SECRET_TEST}}"' ${{ env.VALUES_YAML }}      
+            yq -i '.envSecret.ODH_CORE_TOKEN_CLIENT_SECRET="${{secrets.ODH_CORE_EVENTS_MOMENTUS_SECRET_TEST}}"' ${{ env.VALUES_YAML }}      
 
       - name: Deploy on cluster  
         uses: noi-techpark/github-actions/helm-deploy@v2
@@ -108,8 +109,9 @@ jobs:
             yq -i '.image.repository = "${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML }}
             yq -i '.image.tag = "${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
             yq -i '.image.pullPolicy = "IfNotPresent"' ${{ env.VALUES_YAML }}      
-            yq -i '.env.BDP_PROVENANCE_NAME="${{ env.PROJECT_NAME }}"' ${{ env.VALUES_YAML }}      
-            yq -i '.env.BDP_PROVENANCE_VERSION="${{github.sha}}"' ${{ env.VALUES_YAML }}      
+            yq -i '.envSecret.MOMENTUS_CLIENT_ID="${{secrets.MOMENTUS_CLIENT_ID_PROD}}"' ${{ env.VALUES_YAML }}      
+            yq -i '.envSecret.MOMENTUS_CLIENT_SECRET="${{secrets.MOMENTUS_CLIENT_SECRET_PROD}}"' ${{ env.VALUES_YAML }}      
+            yq -i '.envSecret.ODH_CORE_TOKEN_CLIENT_SECRET="${{secrets.ODH_CORE_EVENTS_MOMENTUS_SECRET_PROD}}"' ${{ env.VALUES_YAML }}      
 
       - name: Deploy on cluster  
         uses: noi-techpark/github-actions/helm-deploy@v2

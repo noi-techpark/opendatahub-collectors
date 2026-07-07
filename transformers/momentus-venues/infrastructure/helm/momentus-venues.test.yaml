@@ -4,34 +4,39 @@
 
 image:
   repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-momentus-venues
-
-ingress:
-  enabled: false
-
-rabbitmq:
-  connection: 
-    secretName: "opendatahub-amqp-auth-test"
+  pullPolicy: IfNotPresent
+  tag: latest
 
 env:
-  - name: MQ_CLIENT
-    value: "tr-momentus-venues-test"
-  - name: MQ_EXCHANGE
-    value: "ingress"
-  - name: PROVIDER
-    value: "venues/momentus"
-  - name: LOGLEVEL
-    value: "DEBUG"
-  - name: ODH_VENUE_API
-    value: "https://tourism.api.opendatahub.testingmachine.eu/v1"
-  - name: ODH_VENUE_NOI_ID
-    value: "urn:venue:noi:6b3f0a14-3c5b-5d09-81f3-3ebe5b7885ea"
-  - name: ODH_VENUE_EURAC_ID
-    value: "urn:venue:eurac:df155f71-5cea-5a29-9ebc-213fad6ac1eb"
+  LOG_LEVEL: "DEBUG"
+  MQ_QUEUE: venues.momentus
+  MQ_EXCHANGE: ingress
+  MQ_KEY: venues.momentus
+  MQ_CLIENT: tr-momentus-venues-test
+  PROVIDER: venues/momentus
 
-secretEnv:
-  - name: MOMENTUS_CLIENT_ID
-    secretName: "tr-momentus-auth"
-    secretKey: "client_id"
-  - name: MOMENTUS_CLIENT_SECRET
-    secretName: "tr-momentus-auth"
-    secretKey: "client_secret"
+  RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
+
+  ODH_VENUE_API: https://tourism.api.opendatahub.testingmachine.eu/v1
+  ODH_VENUE_NOI_ID: urn:venue:noi:6b3f0a14-3c5b-5d09-81f3-3ebe5b7885ea
+  ODH_VENUE_EURAC_ID: urn:venue:eurac:df155f71-5cea-5a29-9ebc-213fad6ac1eb
+
+  ODH_CORE_URL: https://tourism.api.opendatahub.testingmachine.eu/v1/
+  ODH_CORE_TOKEN_URL: https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token
+  ODH_CORE_TOKEN_CLIENT_ID: odh-api-core-venues-momentus-serviceaccount
+
+  INSECURE_SKIP_VERIFY: "true"
+  SKIP_SSL_VERIFY: "true"
+
+  SERVICE_NAME: tr-momentus-venues
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+envSecretRef:
+  - name: MQ_URI 
+    secret: rabbitmq-svcbind
+    key: uri
+
+envSecret:
+  MOMENTUS_CLIENT_ID: ""
+  MOMENTUS_CLIENT_SECRET: ""
+  ODH_CORE_TOKEN_CLIENT_SECRET: ""
