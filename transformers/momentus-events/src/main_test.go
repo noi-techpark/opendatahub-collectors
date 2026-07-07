@@ -14,7 +14,7 @@ import (
 )
 
 func TestParseMomentusEvent(t *testing.T) {
-	inBytes, err := os.ReadFile("../testdata/in.json")
+	inBytes, err := os.ReadFile("./testdata/in.json")
 	if err != nil {
 		t.Fatalf("Failed to read in.json: %v", err)
 	}
@@ -34,7 +34,7 @@ func TestParseMomentusEvent(t *testing.T) {
 }
 
 func TestParseMomentusEventFull(t *testing.T) {
-	inBytes, err := os.ReadFile("../testdata/in_full.json")
+	inBytes, err := os.ReadFile("./testdata/in_full.json")
 	if err != nil {
 		t.Fatalf("Failed to read in_full.json: %v", err)
 	}
@@ -53,7 +53,7 @@ func TestParseMomentusEventFull(t *testing.T) {
 	result.LastChange = "2026-06-24T10:00:00Z"
 
 	outBytes, _ := json.MarshalIndent(result, "", "  ")
-	os.WriteFile("../testdata/out_full.json", outBytes, 0644)
+	os.WriteFile("./testdata/out_full.json", outBytes, 0644)
 
 	var expected odhmodel.EventLinked
 	if err := json.Unmarshal(outBytes, &expected); err != nil {

@@ -14,7 +14,7 @@ import (
 
 func TestParseMomentusVenue(t *testing.T) {
 	// Read input
-	inBytes, err := os.ReadFile("../testdata/in_full.json")
+	inBytes, err := os.ReadFile("testdata/in_full.json")
 	if err != nil {
 		t.Fatalf("Failed to read in_full.json: %v", err)
 	}
@@ -25,7 +25,7 @@ func TestParseMomentusVenue(t *testing.T) {
 	}
 
 	// Read base venue
-	baseBytes, err := os.ReadFile("../testdata/base_venue.json")
+	baseBytes, err := os.ReadFile("./testdata/base_venue.json")
 	if err != nil {
 		t.Fatalf("Failed to read base_venue.json: %v", err)
 	}
@@ -52,7 +52,7 @@ func TestParseMomentusVenue(t *testing.T) {
 		// Wait, Shortname isn't actively updated except when it's new. Wait, in my logic I didn't update Shortname. The C# didn't either, it just set Detail["en"].Title.
 		// Let's check Detail
 	}
-	
+
 	if room.Detail["en"].Title != "Seminar Room 1" {
 		t.Errorf("Expected Title 'Seminar Room 1', got '%s'", room.Detail["en"].Title)
 	}
@@ -75,5 +75,5 @@ func TestParseMomentusVenue(t *testing.T) {
 
 	// Dump out to file to review visually
 	outBytes, _ := json.MarshalIndent(outVenue, "", "  ")
-	os.WriteFile("../testdata/out_full.json", outBytes, 0644)
+	os.WriteFile("./testdata/out_full.json", outBytes, 0644)
 }
