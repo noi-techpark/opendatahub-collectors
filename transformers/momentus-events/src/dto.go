@@ -18,8 +18,10 @@ type MomentusEvent struct {
 	EventTypeId   string                `json:"eventTypeId"`
 	EventTypeName string                `json:"eventTypeName"`
 	ExternalIds   []MomentusExternalId  `json:"externalIds"`
-	ContactRoles  []MomentusContactRole `json:"contactRoles"`
-	BookedSpaces  []MomentusBookedSpace `json:"bookedSpaces"`
+	ContactRoles        []MomentusContactRole `json:"contactRoles"`
+	BookedSpaces        []MomentusBookedSpace `json:"bookedSpaces"`
+	Functions           []MomentusFunction    `json:"functions"`
+	BookedSpacesDetails []MomentusBookedSpace `json:"bookedSpacesDetails"`
 }
 
 type MomentusExternalId struct {

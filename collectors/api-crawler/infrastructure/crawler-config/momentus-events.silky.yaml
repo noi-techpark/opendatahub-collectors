@@ -73,3 +73,27 @@ steps:
           - "room-45-A"
 
     resultTransformer: "map(select(.bookedSpaces | type == \"array\" and any(.[]; .usageType == \"event\")))"
+
+    steps:
+      - type: forEach
+        name: "Fetch Event Details"
+        path: .
+        as: event
+        steps:
+          - type: request
+            name: "Get Event Functions"
+            request:
+              method: GET
+              url: "https://api.eu-venueops.com/v1/functions/event/{{ .event.id }}"
+              headers:
+                Accept: "application/json"
+            mergeOn: .functions = $res
+            
+          - type: request
+            name: "Get Booked Spaces"
+            request:
+              method: GET
+              url: "https://api.eu-venueops.com/v1/booked-spaces/{{ .event.id }}"
+              headers:
+                Accept: "application/json"
+            mergeOn: .bookedSpacesDetails = $res
