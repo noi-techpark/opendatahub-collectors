@@ -1,19 +1,5 @@
 {
   "Id": "urn:venue:noi:6b3f0a14-3c5b-5d09-81f3-3ebe5b7885ea",
-  "Active": null,
-  "Shortname": "",
-  "Detail": null,
-  "Tags": null,
-  "TagIds": null,
-  "Mapping": {
-    "tag": {
-      "eventlocation": "noi"
-    }
-  },
-  "Placement": null,
-  "MaxCapacity": null,
-  "ImageGallery": null,
-  "VenueRoomProperties": null,
   "RoomDetails": [
     {
       "Id": "urn:room:noi:old-1",
@@ -42,10 +28,9 @@
       }
     }
   ],
-  "ContactInfos": null,
-  "DistanceInfo": null,
-  "LocationInfo": null,
-  "RelatedContent": null,
-  "OperationSchedule": null,
-  "AdditionalProperties": null
+  "Mapping": {
+    "tag": {
+      "eventlocation": "noi"
+    }
+  }
 }

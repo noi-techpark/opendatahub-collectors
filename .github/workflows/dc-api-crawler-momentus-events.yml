@@ -4,7 +4,7 @@
 
 name: CI/CD dc-api-crawler-momentus-events
 
-on:
+on: 
   push:
     paths:
       - "collectors/api-crawler/**"
@@ -26,6 +26,9 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     concurrency: dc-api-crawler-momentus-events-build
+    permissions:
+      contents: read
+      packages: write
     steps:
     - name: Checkout source code
       uses: actions/checkout@v4
@@ -38,7 +41,7 @@ jobs:
         docker-password: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-momentus-events-test:
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feat/momentus'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feat/momentus-transformers'
     needs: build
     runs-on: ubuntu-24.04
     concurrency: dc-api-crawler-momentus-events-test
@@ -57,50 +60,54 @@ jobs:
           yq -i '.image.repository="${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML}}
           yq -i '.image.tag="${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
           yq -i '.image.pullPolicy="IfNotPresent"' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.MOMENTUS_CLIENT_ID="${{secrets.MOMENTUS_CLIENT_ID_TEST}}"' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.MOMENTUS_CLIENT_SECRET="${{secrets.MOMENTUS_CLIENT_SECRET_TEST}}"' ${{ env.VALUES_YAML }}
           yq -i '.configMap.files["config.yaml"] = load_str("${{ env.HTTP_CONFIG_PATH }}")' ${{ env.VALUES_YAML }}
 
-      - name: Deploy on cluster
+      - name: Deploy on cluster  
         uses: noi-techpark/github-actions/helm-deploy@v2
         with:
-          k8s-name: dc-api-crawler-momentus-events
-          k8s-namespace: collector
+          k8s-name: ${{ env.K8S_NAME }}
+          k8s-namespace: ${{ env.KUBERNETES_NAMESPACE }}
           chart-path: helm/generic-collector
           values-file: ${{ env.WORKING_DIRECTORY}}/${{ env.VALUES_YAML }}
           aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
           aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
           aws-eks-cluster-name: aws-main-eu-01
           aws-region: eu-west-1
+    
+  deploy-momentus-events-prod:
+    if: github.ref == 'refs/heads/prod'
+    needs: build
+    runs-on: ubuntu-24.04
+    concurrency: dc-api-crawler-momentus-events-prod
+    environment: prod
+    env:
+      VALUES_YAML: infrastructure/helm/momentus-events.yaml
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
 
-  # deploy-momentus-events-prod:
-  #   if: github.ref == 'refs/heads/prod'
-  #   needs: build
-  #   runs-on: ubuntu-24.04
-  #   concurrency: dc-api-crawler-momentus-events-prod
-  #   environment: prod
-  #   env:
-  #     VALUES_YAML: infrastructure/helm/momentus-events.yaml
-  #   steps:
-  #     - name: Checkout source code
-  #       uses: actions/checkout@v4
+      - name: Customize values.yaml
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          # Personalize HTTP_CONFIG_PATH first
 
-  #     - name: Customize values.yaml
-  #       working-directory: ${{ env.WORKING_DIRECTORY }}
-  #       run: |
-  #         # Personalize HTTP_CONFIG_PATH first
+          yq -i '.image.repository="${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML}}
+          yq -i '.image.tag="${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
+          yq -i '.image.pullPolicy="IfNotPresent"' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.MOMENTUS_CLIENT_ID="${{secrets.MOMENTUS_CLIENT_ID_PROD}}"' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.MOMENTUS_CLIENT_SECRET="${{secrets.MOMENTUS_CLIENT_SECRET_PROD}}"' ${{ env.VALUES_YAML }}
+          yq -i '.configMap.files["config.yaml"] = load_str("${{ env.HTTP_CONFIG_PATH }}")' ${{ env.VALUES_YAML }}
 
-  #         yq -i '.image.repository="${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML}}
-  #         yq -i '.image.tag="${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
-  #         yq -i '.image.pullPolicy="IfNotPresent"' ${{ env.VALUES_YAML }}
-  #         yq -i '.configMap.files["config.yaml"] = load_str("${{ env.HTTP_CONFIG_PATH }}")' ${{ env.VALUES_YAML }}
-
-  #     - name: Deploy on cluster
-  #       uses: noi-techpark/github-actions/helm-deploy@v2
-  #       with:
-  #         k8s-name: dc-api-crawler-momentus-events
-  #         k8s-namespace: collector
-  #         chart-path: helm/generic-collector
-  #         values-file: ${{ env.WORKING_DIRECTORY}}/${{ env.VALUES_YAML }}
-  #         aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
-  #         aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
-  #         aws-eks-cluster-name: aws-main-eu-01
-  #         aws-region: eu-west-1
+      - name: Deploy on cluster  
+        uses: noi-techpark/github-actions/helm-deploy@v2
+        with:
+          k8s-name: ${{ env.K8S_NAME }}
+          k8s-namespace: ${{ env.KUBERNETES_NAMESPACE }}
+          chart-path: helm/generic-collector
+          values-file: ${{ env.WORKING_DIRECTORY}}/${{ env.VALUES_YAML }}
+          aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
+          aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
+          aws-eks-cluster-name: aws-main-eu-01
+          aws-region: eu-west-1
