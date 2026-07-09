@@ -9,6 +9,16 @@ on:
     paths:
       - "collectors/rest-push-skidata/**"
       - ".github/workflows/dc-rest-push-skidata.yml"
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment to build and deploy to"
+        type: choice
+        required: true
+        default: test
+        options:
+          - test
+          - prod
 
 env:
   WORKING_DIRECTORY: collectors/rest-push-skidata
@@ -33,7 +43,9 @@ jobs:
           docker-password: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-test:
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev/skidata'
+    if: >-
+      (github.event_name == 'workflow_dispatch' && inputs.environment == 'test') ||
+      (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev/skidata'))
     needs: build
     runs-on: ubuntu-24.04
     concurrency: dc-rest-push-skidata-test
@@ -69,7 +81,9 @@ jobs:
           aws-region: eu-west-1
 
   deploy-prod:
-    if: github.ref == 'refs/heads/prod'
+    if: >-
+      (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/prod')
     needs: build
     runs-on: ubuntu-24.04
     concurrency: dc-rest-push-skidata-prod
