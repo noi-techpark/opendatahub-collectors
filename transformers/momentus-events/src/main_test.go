@@ -10,60 +10,56 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/noi-techpark/opendatahub-go-sdk/testsuite"
 	odhmodel "opendatahub.com/momentus-events/odh-content-model"
 )
 
-func TestParseMomentusEvent(t *testing.T) {
-	inBytes, err := os.ReadFile("./testdata/in.json")
-	if err != nil {
-		t.Fatalf("Failed to read in.json: %v", err)
-	}
-
-	var msg MomentusEventMessage
-	if err := json.Unmarshal(inBytes, &msg); err != nil {
-		t.Fatalf("Failed to unmarshal in.json: %v", err)
-	}
-
-	result := ParseMomentusEvent(msg.Event, msg.Functions, msg.BookedSpaces, &msg.Venue, nil, true)
-	if result == nil {
-		t.Fatalf("Expected event to be parsed with fallback title, got nil")
-	}
-	if result.Detail["en"].Title != msg.Event.Name {
-		t.Fatalf("Expected fallback title %s, got %s", msg.Event.Name, result.Detail["en"].Title)
-	}
-}
-
-func TestParseMomentusEventFull(t *testing.T) {
-	inBytes, err := os.ReadFile("./testdata/in_full.json")
+func TestTransformer(t *testing.T) {
+	inBytes, err := os.ReadFile("../testdata/in_full.json")
 	if err != nil {
 		t.Fatalf("Failed to read in_full.json: %v", err)
 	}
 
-	var msg MomentusEventMessage
-	if err := json.Unmarshal(inBytes, &msg); err != nil {
+	var event MomentusEvent
+	if err := json.Unmarshal(inBytes, &event); err != nil {
 		t.Fatalf("Failed to unmarshal in_full.json: %v", err)
 	}
 
-	result := ParseMomentusEvent(msg.Event, msg.Functions, msg.BookedSpaces, &msg.Venue, nil, true)
-	if result == nil {
-		t.Fatalf("Expected event to be parsed, got nil")
+	venue := &ODHVenue{
+		Id: "urn:venue:noi:6b3f0a14-3c5b-5d09-81f3-3ebe5b7885ea",
+		Mapping: ODHVenueMapping{
+			Tag: map[string]string{"eventlocation": "noi"},
+		},
+		RoomDetails: []ODHRoomDetails{
+			{
+				Id: "urn:room:noi:1",
+				Mapping: map[string]map[string]string{
+					"momentus": {
+						"id": "room1",
+					},
+				},
+			},
+		},
 	}
 
-	result.FirstImport = "2026-06-24T10:00:00Z"
-	result.LastChange = "2026-06-24T10:00:00Z"
-
-	outBytes, _ := json.MarshalIndent(result, "", "  ")
-	os.WriteFile("./testdata/out_full.json", outBytes, 0644)
+	result := ParseMomentusEvent(event, venue, nil, true)
+	if result != nil {
+		// Normalize volatile fields for deterministic testing
+		result.FirstImport = "2026-06-24T10:00:00Z"
+		result.LastChange = "2026-06-24T10:00:00Z"
+	}
 
 	var expected odhmodel.EventLinked
-	if err := json.Unmarshal(outBytes, &expected); err != nil {
-		t.Fatalf("Failed to unmarshal out_full.json: %v", err)
+	err = testsuite.LoadOutput(&expected, "../testdata/out_full.json")
+	if err != nil {
+		t.Fatalf("Failed to load output: %v", err)
 	}
-
-	result.FirstImport = expected.FirstImport
-	result.LastChange = expected.LastChange
+	
+	// Normalize expected FirstImport and LastChange as well if they are different in JSON
+	expected.FirstImport = "2026-06-24T10:00:00Z"
+	expected.LastChange = "2026-06-24T10:00:00Z"
 
 	if !reflect.DeepEqual(result, &expected) {
-		t.Errorf("Result does not match expected output.\nGot: %+v\nExpected: %+v", result, expected)
+		t.Errorf("Result does not match expected output.\nGot: %+v\nExpected: %+v", result, &expected)
 	}
 }

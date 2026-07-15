@@ -8,13 +8,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"log/slog"
-	"net/http"
 	"os"
 	"strings"
-	"sync"
-	"time"
 
 	"github.com/noi-techpark/opendatahub-go-sdk/clib"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
@@ -26,18 +22,16 @@ import (
 
 var env struct {
 	tr.Env
-	ODHVenueAPI     string `envconfig:"ODH_VENUE_API" default:"https://tourism.api.opendatahub.testingmachine.eu/v1"`
-	ODHVenueNoiID   string `envconfig:"ODH_VENUE_NOI_ID" default:"urn:venue:noi:6b3f0a14-3c5b-5d09-81f3-3ebe5b7885ea"`
-	ODHVenueEuracID string `envconfig:"ODH_VENUE_EURAC_ID" default:"urn:venue:eurac:df155f71-5cea-5a29-9ebc-213fad6ac1eb"`
-	OdhCoreUrl                 string `envconfig:"ODH_CORE_URL"`
-	OdhCoreTokenUrl            string `envconfig:"ODH_CORE_TOKEN_URL"`
-	OdhCoreTokenClientId       string `envconfig:"ODH_CORE_TOKEN_CLIENT_ID"`
-	OdhCoreTokenClientSecret   string `envconfig:"ODH_CORE_TOKEN_CLIENT_SECRET"`
+	VenueMapping             string `envconfig:"VENUE_MAPPING" default:"{\"NOI TECHPARK\":\"urn:venue:noi:6b3f0a14-3c5b-5d09-81f3-3ebe5b7885ea\",\"EURAC RESEARCH HQ\":\"urn:venue:eurac:df155f71-5cea-5a29-9ebc-213fad6ac1eb\"}"`
+	OdhCoreUrl               string `envconfig:"ODH_CORE_URL"`
+	OdhCoreTokenUrl          string `envconfig:"ODH_CORE_TOKEN_URL"`
+	OdhCoreTokenClientId     string `envconfig:"ODH_CORE_TOKEN_CLIENT_ID"`
+	OdhCoreTokenClientSecret string `envconfig:"ODH_CORE_TOKEN_CLIENT_SECRET"`
 }
 
 type Transformer struct {
-	odhClient     *ODHClient
 	contentClient clib.ContentAPI
+	venueMapping  map[string]string
 }
 
 func main() {
@@ -55,9 +49,14 @@ func main() {
 	})
 	ms.FailOnError(context.Background(), err, "failed to create content client")
 
+	var venueMap map[string]string
+	if err := json.Unmarshal([]byte(env.VenueMapping), &venueMap); err != nil {
+		ms.FailOnError(context.Background(), err, "failed to parse VENUE_MAPPING")
+	}
+
 	t := &Transformer{
-		odhClient:     NewODHClient(env.ODHVenueAPI, ""),
 		contentClient: contentClient,
+		venueMapping:  venueMap,
 	}
 
 	listener := tr.NewTr[string](context.Background(), env.Env)
@@ -81,14 +80,18 @@ func main() {
 				continue
 			}
 
-			// Determine Venue ID based on group
+			// Determine Venue ID based on group mapping
 			var venueID string
 			groupUpper := strings.ToUpper(room.Group)
-			if strings.Contains(groupUpper, "NOI TECHPARK") {
-				venueID = env.ODHVenueNoiID
-			} else if strings.Contains(groupUpper, "EURAC") {
-				venueID = env.ODHVenueEuracID
-			} else {
+			
+			for mapKey, mapVal := range t.venueMapping {
+				if strings.Contains(groupUpper, mapKey) {
+					venueID = mapVal
+					break
+				}
+			}
+
+			if venueID == "" {
 				slog.Warn("Unknown room group, cannot match to venue", "roomID", room.Id, "group", room.Group)
 				continue
 			}
@@ -97,34 +100,25 @@ func main() {
 		}
 
 		for venueID, groupedRooms := range roomsByVenue {
-			venueBytes, err := t.odhClient.GetVenue(venueID)
-			if err != nil {
-				slog.Error("Failed to fetch venue from ODH", "venueID", venueID, "err", err)
-				continue
-			}
-			if len(venueBytes) == 0 {
-				slog.Error("Venue not found in ODH", "venueID", venueID)
-				continue
-			}
+			var venueMap map[string]interface{}
+			err := t.contentClient.Get(ctx, "Venue/"+venueID, nil, &venueMap)
+			ms.FailOnError(ctx, err, "Fatal error: Configured Venue ID not found in ODH Content API", "venueID", venueID)
 
-			// 1. Unmarshal into VenueV2 to process rooms
+			// 1. Marshal back to JSON to unmarshal into VenueV2
+			venueBytes, _ := json.Marshal(venueMap)
 			var venueLinked odhmodel.VenueV2
 			json.Unmarshal(venueBytes, &venueLinked)
 
-			// 2. Unmarshal into Map to preserve all raw properties
-			var venueMap map[string]interface{}
-			json.Unmarshal(venueBytes, &venueMap)
-
-			// 3. Process Rooms
+			// 2. Process Rooms
 			for _, room := range groupedRooms {
 				venueLinkedPtr := ParseMomentusVenue(room, &venueLinked)
 				venueLinked = *venueLinkedPtr
 			}
 
-			// 4. Overwrite ONLY RoomDetails in the original map
+			// 3. Overwrite ONLY RoomDetails in the original map
 			venueMap["RoomDetails"] = venueLinked.RoomDetails
 
-			// 5. Send map to ODH API
+			// 4. Send map to ODH API
 			err = t.contentClient.Put(ctx, "Venue", venueLinked.Id, &venueMap)
 			if err != nil {
 				slog.Debug("Put failed, attempting Post as fallback", "err", err, "venueID", venueLinked.Id)
@@ -220,8 +214,6 @@ func ParseMomentusVenue(momentusRoom odhmodel.MomentusRoom, baseVenue *odhmodel.
 
 	if matchedIdx == -1 {
 		// New room, add to list
-		// In C#, there's GenerateRoomDetailIds() which generates a new ID.
-		// For our transformer, we should probably generate a UUID if Id is empty, but we'll leave it empty to let the API handle it if we want, or generate one.
 		matchedRoom.Id = "urn:room:" + momentusRoom.Id // Use Momentus ID as temporary/permanent ID
 		venue.RoomDetails = append(venue.RoomDetails, *matchedRoom)
 	} else {
@@ -230,54 +222,4 @@ func ParseMomentusVenue(momentusRoom odhmodel.MomentusRoom, baseVenue *odhmodel.
 	}
 
 	return venue
-}
-
-// ----------------------------------------------------------------------------
-// CLIENT LOGIC
-// ----------------------------------------------------------------------------
-
-type ODHClient struct {
-	BaseURL     string
-	Token       string
-	httpClient  *http.Client
-	mu          sync.Mutex
-}
-
-func NewODHClient(baseURL, token string) *ODHClient {
-	return &ODHClient{
-		BaseURL:     baseURL,
-		Token:       token,
-		httpClient:  &http.Client{Timeout: 30 * time.Second},
-	}
-}
-
-func (c *ODHClient) GetVenue(venueID string) ([]byte, error) {
-	if venueID == "" {
-		return nil, nil
-	}
-
-	req, err := http.NewRequest("GET", c.BaseURL+"/Venue/"+venueID, nil)
-	if err != nil {
-		return nil, err
-	}
-	if c.Token != "" {
-		req.Header.Set("Authorization", "Bearer "+c.Token)
-	}
-
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to fetch venue %s: %d", venueID, resp.StatusCode)
-	}
-
-	venueBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	return venueBytes, nil
 }

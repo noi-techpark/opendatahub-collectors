@@ -17,16 +17,14 @@ env:
   SERVICE_NAME: dc-api-crawler-momentus-venues
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 
+envSecret:
+  MOMENTUS_CLIENT_ID: ""
+  MOMENTUS_CLIENT_SECRET: ""
+
 envSecretRef:
   - name: MQ_URI
     secret: rabbitmq-svcbind
     key: uri
-  - name: MOMENTUS_CLIENT_ID
-    secret: tr-momentus-auth
-    key: client_id
-  - name: MOMENTUS_CLIENT_SECRET
-    secret: tr-momentus-auth
-    key: client_secret
 
 configMap:
   mountPath: "/config/"

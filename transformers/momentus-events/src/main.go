@@ -5,12 +5,9 @@
 package main
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"log/slog"
-	"net/http"
 	"os"
 	"strings"
 	"sync"
@@ -26,21 +23,39 @@ import (
 
 var env struct {
 	tr.Env
-	MomentusClientID     string `envconfig:"MOMENTUS_CLIENT_ID"`
-	MomentusClientSecret string `envconfig:"MOMENTUS_CLIENT_SECRET"`
-	ODHVenueAPI          string `envconfig:"ODH_VENUE_API" default:"https://tourism.api.opendatahub.testingmachine.eu/v1"`
-	ODHVenueNoiID        string `envconfig:"ODH_VENUE_NOI_ID" default:"urn:venue:noi:6b3f0a14-3c5b-5d09-81f3-3ebe5b7885ea"`
-	ODHVenueEuracID      string `envconfig:"ODH_VENUE_EURAC_ID" default:"urn:venue:eurac:df155f71-5cea-5a29-9ebc-213fad6ac1eb"`
-	OdhCoreUrl                 string `envconfig:"ODH_CORE_URL"`
-	OdhCoreTokenUrl            string `envconfig:"ODH_CORE_TOKEN_URL"`
-	OdhCoreTokenClientId       string `envconfig:"ODH_CORE_TOKEN_CLIENT_ID"`
-	OdhCoreTokenClientSecret   string `envconfig:"ODH_CORE_TOKEN_CLIENT_SECRET"`
+	VenueMapping             string `envconfig:"VENUE_MAPPING" default:"{\"NOI TECHPARK\":\"urn:venue:noi:6b3f0a14-3c5b-5d09-81f3-3ebe5b7885ea\",\"EURAC RESEARCH HQ\":\"urn:venue:eurac:df155f71-5cea-5a29-9ebc-213fad6ac1eb\"}"`
+	OdhCoreUrl               string `envconfig:"ODH_CORE_URL"`
+	OdhCoreTokenUrl          string `envconfig:"ODH_CORE_TOKEN_URL"`
+	OdhCoreTokenClientId     string `envconfig:"ODH_CORE_TOKEN_CLIENT_ID"`
+	OdhCoreTokenClientSecret string `envconfig:"ODH_CORE_TOKEN_CLIENT_SECRET"`
 }
 
 type Transformer struct {
-	momentusClient *MomentusClient
-	odhClient      *ODHClient
-	contentClient  clib.ContentAPI
+	contentClient clib.ContentAPI
+	venuesCache   map[string]*ODHVenue
+	mu            sync.Mutex
+	venueMapping  map[string]string
+}
+
+func (t *Transformer) getVenues(ctx context.Context) []*ODHVenue {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+
+	var venues []*ODHVenue
+	for _, venueID := range t.venueMapping {
+		if v, ok := t.venuesCache[venueID]; ok {
+			venues = append(venues, v)
+			continue
+		}
+		
+		var venue ODHVenue
+		err := t.contentClient.Get(ctx, "Venue/"+venueID, nil, &venue)
+		ms.FailOnError(ctx, err, "Fatal error: Configured Venue ID not found in ODH Content API", "venueID", venueID)
+		
+		t.venuesCache[venueID] = &venue
+		venues = append(venues, &venue)
+	}
+	return venues
 }
 
 func main() {
@@ -58,10 +73,15 @@ func main() {
 	})
 	ms.FailOnError(context.Background(), err, "failed to create content client")
 
+	var venueMap map[string]string
+	if err := json.Unmarshal([]byte(env.VenueMapping), &venueMap); err != nil {
+		ms.FailOnError(context.Background(), err, "failed to parse VENUE_MAPPING")
+	}
+
 	t := &Transformer{
-		momentusClient: NewMomentusClient(env.MomentusClientID, env.MomentusClientSecret),
-		odhClient:      NewODHClient(env.ODHVenueAPI, ""),
-		contentClient:  contentClient,
+		contentClient: contentClient,
+		venuesCache:   make(map[string]*ODHVenue),
+		venueMapping:  venueMap,
 	}
 
 	listener := tr.NewTr[string](context.Background(), env.Env)
@@ -107,25 +127,33 @@ func processEvent(ctx context.Context, t *Transformer, event MomentusEvent) erro
 		return nil
 	}
 
-	// We fetch additional data
-	functions, err := t.momentusClient.GetFunctions(event.Id)
-	if err != nil {
-		slog.Error("Failed to fetch functions", "eventID", event.Id, "err", err)
-		return err
+	venues := t.getVenues(ctx)
+	
+	// Determine the correct venue by looking at the event's booked spaces' room IDs
+	var matchedVenue *ODHVenue
+	for _, space := range event.BookedSpaces {
+		if space.RoomId != "" {
+			for _, v := range venues {
+				for _, r := range v.RoomDetails {
+					if mm, ok := r.Mapping["momentus"]; ok {
+						if mm["id"] == space.RoomId {
+							matchedVenue = v
+							break
+						}
+					}
+				}
+				if matchedVenue != nil {
+					break
+				}
+			}
+		}
+		if matchedVenue != nil {
+			break
+		}
 	}
 
-	bookedSpaces, err := t.momentusClient.GetBookedSpaces(event.Id)
-	if err != nil {
-		slog.Error("Failed to fetch booked spaces", "eventID", event.Id, "err", err)
-		return err
-	}
-
-	venueEurac, _ := t.odhClient.GetVenue(env.ODHVenueEuracID)
-	venueNoi, _ := t.odhClient.GetVenue(env.ODHVenueNoiID)
-
-	venue := venueNoi
-	if venue == nil {
-		venue = venueEurac
+	if matchedVenue == nil {
+		slog.Warn("Could not determine venue for event from room IDs, skipping venue linking", "eventID", event.Id)
 	}
 
 	// Fetch existing event from ODH to preserve manual fields
@@ -136,13 +164,13 @@ func processEvent(ctx context.Context, t *Transformer, event MomentusEvent) erro
 		baseEvent = &existingEvent
 	}
 
-	eventLinked := ParseMomentusEvent(event, functions, bookedSpaces, venue, baseEvent, true)
+	eventLinked := ParseMomentusEvent(event, matchedVenue, baseEvent, true)
 	if eventLinked == nil {
 		slog.Info("Event skipped by parser (no languages)", "eventID", event.Id)
 		return nil
 	}
 
-	err = t.contentClient.Put(ctx, "Event", eventLinked.Id, eventLinked)
+	err := t.contentClient.Put(ctx, "Event", eventLinked.Id, eventLinked)
 	if err != nil {
 		slog.Debug("Put failed, attempting Post as fallback", "err", err, "eventID", event.Id)
 		err = t.contentClient.Post(ctx, "Event", nil, eventLinked)
@@ -161,7 +189,7 @@ func processEvent(ctx context.Context, t *Transformer, event MomentusEvent) erro
 // PARSER LOGIC
 // ----------------------------------------------------------------------------
 
-func ParseMomentusEvent(mevent MomentusEvent, functions []MomentusFunction, bookedSpaces []MomentusBookedSpace, venue *ODHVenue, base *odhmodel.EventLinked, optimizedays bool) *odhmodel.EventLinked {
+func ParseMomentusEvent(mevent MomentusEvent, venue *ODHVenue, base *odhmodel.EventLinked, optimizedays bool) *odhmodel.EventLinked {
 	var eventLinked *odhmodel.EventLinked
 	if base != nil {
 		copy := *base
@@ -197,7 +225,7 @@ func ParseMomentusEvent(mevent MomentusEvent, functions []MomentusFunction, book
 		eventLinked.DateEnd = mevent.End
 	}
 
-	details := buildDetailFromFunctions(functions, mevent.Description, mevent.Name, base)
+	details := buildDetailFromFunctions(mevent.Functions, mevent.Description, mevent.Name, base)
 	if len(details) > 0 {
 		eventLinked.Detail = details
 	} else {
@@ -208,7 +236,7 @@ func ParseMomentusEvent(mevent MomentusEvent, functions []MomentusFunction, book
 		eventLinked.VenueIds = []string{venue.Id}
 	}
 
-	eventLinked.EventDate = buildEventDates(mevent, venue, bookedSpaces)
+	eventLinked.EventDate = buildEventDates(mevent, venue, mevent.BookedSpacesDetails)
 
 	if optimizedays {
 		refineRootDatesFromEventDates(eventLinked)
@@ -259,7 +287,7 @@ func ParseMomentusEvent(mevent MomentusEvent, functions []MomentusFunction, book
 		venueEventLocation = venue.Mapping.Tag["eventlocation"]
 	}
 
-	eventLinked.PublishedOn = determinePublishedOn(mevent, bookedSpaces, venueEventLocation)
+	eventLinked.PublishedOn = determinePublishedOn(mevent, mevent.BookedSpacesDetails, venueEventLocation)
 
 	var tagIds []string
 	if venueEventLocation != "" {
@@ -596,203 +624,4 @@ func assignTechnologyFields(companyName string, techFields []string) []string {
 	checkAndAdd("green", "green")
 
 	return techFields
-}
-
-// ----------------------------------------------------------------------------
-// CLIENT LOGIC
-
-
-type ODHClient struct {
-	BaseURL    string
-	Token      string
-	httpClient *http.Client
-	venuesCache map[string]*ODHVenue
-	mu         sync.Mutex
-}
-
-func NewODHClient(baseURL, token string) *ODHClient {
-	return &ODHClient{
-		BaseURL:     baseURL,
-		Token:       token,
-		httpClient:  &http.Client{Timeout: 30 * time.Second},
-		venuesCache: make(map[string]*ODHVenue),
-	}
-}
-
-func (c *ODHClient) GetVenue(venueID string) (*ODHVenue, error) {
-	if venueID == "" {
-		return nil, nil
-	}
-
-	c.mu.Lock()
-	if v, ok := c.venuesCache[venueID]; ok {
-		c.mu.Unlock()
-		return v, nil
-	}
-	c.mu.Unlock()
-
-	req, err := http.NewRequest("GET", c.BaseURL+"/Venue/"+venueID, nil)
-	if err != nil {
-		return nil, err
-	}
-	if c.Token != "" {
-		req.Header.Set("Authorization", "Bearer "+c.Token)
-	}
-
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to fetch venue %s: %d", venueID, resp.StatusCode)
-	}
-
-	var venue ODHVenue
-	if err := json.NewDecoder(resp.Body).Decode(&venue); err != nil {
-		return nil, err
-	}
-
-	c.mu.Lock()
-	c.venuesCache[venueID] = &venue
-	c.mu.Unlock()
-
-	return &venue, nil
-}
-
-// ----------------------------------------------------------------------------
-// CLIENT LOGIC
-// ----------------------------------------------------------------------------
-
-type MomentusClient struct {
-	ClientID     string
-	ClientSecret string
-	BaseURL      string
-	AuthURL      string
-	Token        string
-	TokenExpiry  time.Time
-	mu           sync.Mutex
-	httpClient   *http.Client
-}
-
-func NewMomentusClient(clientID, clientSecret string) *MomentusClient {
-	return &MomentusClient{
-		ClientID:     clientID,
-		ClientSecret: clientSecret,
-		BaseURL:      "https://api.eu-venueops.com/v1",
-		AuthURL:      "https://auth-api.eu-venueops.com/token",
-		httpClient:   &http.Client{Timeout: 30 * time.Second},
-	}
-}
-
-func (c *MomentusClient) getToken() (string, error) {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-
-	if c.Token != "" && time.Now().Before(c.TokenExpiry) {
-		return c.Token, nil
-	}
-
-	payload := map[string]string{
-		"clientId":     c.ClientID,
-		"clientSecret": c.ClientSecret,
-	}
-	body, _ := json.Marshal(payload)
-
-	req, err := http.NewRequest("POST", c.AuthURL, bytes.NewBuffer(body))
-	if err != nil {
-		return "", err
-	}
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("auth failed with status: %d", resp.StatusCode)
-	}
-
-	var res map[string]any
-	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
-		return "", err
-	}
-
-	tokenStr, ok := res["accessToken"].(string)
-	if !ok {
-		return "", fmt.Errorf("no accessToken in response: %v", res)
-	}
-	c.Token = tokenStr
-	c.TokenExpiry = time.Now().Add(50 * time.Minute)
-
-	return c.Token, nil
-}
-
-func (c *MomentusClient) getAuthRequest(method, endpoint string) (*http.Request, error) {
-	token, err := c.getToken()
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(method, c.BaseURL+endpoint, nil)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Authorization", "Bearer "+token)
-	return req, nil
-}
-
-func (c *MomentusClient) GetFunctions(eventID string) ([]MomentusFunction, error) {
-	req, err := c.getAuthRequest("GET", "/functions/event/"+eventID)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode == http.StatusNotFound {
-		return []MomentusFunction{}, nil
-	}
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to get functions: %d", resp.StatusCode)
-	}
-
-	var functions []MomentusFunction
-	if err := json.NewDecoder(resp.Body).Decode(&functions); err != nil {
-		return nil, err
-	}
-	return functions, nil
-}
-
-func (c *MomentusClient) GetBookedSpaces(eventID string) ([]MomentusBookedSpace, error) {
-	req, err := c.getAuthRequest("GET", "/booked-spaces/"+eventID)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode == http.StatusNotFound {
-		return []MomentusBookedSpace{}, nil
-	}
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to get booked spaces: %d", resp.StatusCode)
-	}
-
-	var spaces []MomentusBookedSpace
-	if err := json.NewDecoder(resp.Body).Decode(&spaces); err != nil {
-		return nil, err
-	}
-	return spaces, nil
 }
