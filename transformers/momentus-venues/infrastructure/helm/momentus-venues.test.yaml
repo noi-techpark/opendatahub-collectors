@@ -37,6 +37,4 @@ envSecretRef:
     key: uri
 
 envSecret:
-  MOMENTUS_CLIENT_ID: ""
-  MOMENTUS_CLIENT_SECRET: ""
   ODH_CORE_TOKEN_CLIENT_SECRET: ""
