@@ -8,9 +8,9 @@ image:
   tag: latest
 
 env:
-  LOG_LEVEL: "DEBUG"
+  LOG_LEVEL: "INFO"
   MQ_QUEUE: venues.momentus
-  MQ_EXCHANGE: ingress
+  MQ_EXCHANGE: routed
   MQ_KEY: venues.momentus
   MQ_CLIENT: tr-momentus-venues-prod
   PROVIDER: venues/momentus

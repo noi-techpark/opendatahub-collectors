@@ -10,7 +10,7 @@ image:
 env:
   LOG_LEVEL: "DEBUG"
   MQ_QUEUE: events.momentus
-  MQ_EXCHANGE: ingress
+  MQ_EXCHANGE: routed
   MQ_KEY: events.momentus
   MQ_CLIENT: tr-momentus-events-test
   PROVIDER: events/momentus
