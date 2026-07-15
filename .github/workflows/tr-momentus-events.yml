@@ -28,6 +28,7 @@ jobs:
       
       - name: Run tests
         run: docker run --rm --volume ./src:/code $(docker build -q . -f infrastructure/docker/Dockerfile --target test)
+        working-directory: ${{ env.WORKING_DIRECTORY }}
 
   build:
     runs-on: ubuntu-24.04
