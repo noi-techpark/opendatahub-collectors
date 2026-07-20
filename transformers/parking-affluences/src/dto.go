@@ -6,8 +6,8 @@ package main
 
 // AffluencesPayload is the merged per-poll document produced by the
 // api-crawler collector: one array element per Affluences site, each carrying
-// the site's static metadata plus the nested real-time reading. Stations are
-// identified by Site.ID.
+// the site's static metadata plus the nested real-time reading. Site.ID is
+// the provider key from which the BDP station code is derived (clib.GenerateID).
 type AffluencesPayload []Site
 
 // Site is the Affluences site metadata ($.data of /v1/site/{id}) with the

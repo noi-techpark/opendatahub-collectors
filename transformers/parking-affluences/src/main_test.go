@@ -11,6 +11,7 @@ import (
 
 	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"github.com/noi-techpark/go-bdp-client/bdpmock"
+	"github.com/noi-techpark/opendatahub-go-sdk/clib"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	"github.com/noi-techpark/opendatahub-go-sdk/testsuite"
 	"github.com/stretchr/testify/require"
@@ -52,6 +53,9 @@ func TestTransform_Snapshot(t *testing.T) {
 }
 
 func intp(i int) *int { return &i }
+
+// scode is the BDP station code the transformer derives for a provider id.
+func scode(providerID string) string { return clib.GenerateID(IDTemplate, providerID) }
 
 // singleSite builds a one-site payload for behavioral assertions.
 func singleSite(id string, occupancy, capacity *int, open bool) AffluencesPayload {
@@ -105,36 +109,36 @@ func mustRecord(t *testing.T, mock *bdpmock.BdpMock, stationID, datatype string)
 
 func TestTransform_FreeAndOpen(t *testing.T) {
 	mock := runTransform(t, singleSite("site-1", intp(60), intp(100), true))
-	require.Equal(t, 60, mustRecord(t, mock, "site-1", DataTypeOccupancy))
-	require.Equal(t, 40, mustRecord(t, mock, "site-1", DataTypeFree))
-	require.Equal(t, "true", mustRecord(t, mock, "site-1", DataTypeOpen))
+	require.Equal(t, 60, mustRecord(t, mock, scode("site-1"), DataTypeOccupancy))
+	require.Equal(t, 40, mustRecord(t, mock, scode("site-1"), DataTypeFree))
+	require.Equal(t, "true", mustRecord(t, mock, scode("site-1"), DataTypeOpen))
 }
 
 func TestTransform_OpenFalseAsString(t *testing.T) {
 	mock := runTransform(t, singleSite("site-1", intp(4), intp(250), false))
-	require.Equal(t, "false", mustRecord(t, mock, "site-1", DataTypeOpen))
+	require.Equal(t, "false", mustRecord(t, mock, scode("site-1"), DataTypeOpen))
 }
 
 func TestTransform_ClampNegativeOccupancy(t *testing.T) {
 	mock := runTransform(t, singleSite("site-1", intp(-5), intp(100), true))
-	require.Equal(t, 0, mustRecord(t, mock, "site-1", DataTypeOccupancy), "negative occupancy clamped to 0")
-	require.Equal(t, 100, mustRecord(t, mock, "site-1", DataTypeFree), "free clamped to capacity")
+	require.Equal(t, 0, mustRecord(t, mock, scode("site-1"), DataTypeOccupancy), "negative occupancy clamped to 0")
+	require.Equal(t, 100, mustRecord(t, mock, scode("site-1"), DataTypeFree), "free clamped to capacity")
 }
 
 func TestTransform_ClampOccupancyAboveCapacity(t *testing.T) {
 	mock := runTransform(t, singleSite("site-1", intp(120), intp(100), true))
-	require.Equal(t, 100, mustRecord(t, mock, "site-1", DataTypeOccupancy), "occupancy clamped to capacity")
-	require.Equal(t, 0, mustRecord(t, mock, "site-1", DataTypeFree), "free clamped to 0")
+	require.Equal(t, 100, mustRecord(t, mock, scode("site-1"), DataTypeOccupancy), "occupancy clamped to capacity")
+	require.Equal(t, 0, mustRecord(t, mock, scode("site-1"), DataTypeFree), "free clamped to 0")
 }
 
 // When occupancy/capacity are not activated (null), only "open" is published;
 // no occupancy/free records are emitted.
 func TestTransform_MissingOccupancy_OnlyOpen(t *testing.T) {
 	mock := runTransform(t, singleSite("site-1", nil, nil, true))
-	require.Equal(t, "true", mustRecord(t, mock, "site-1", DataTypeOpen))
-	_, hasOcc := recordValue(mock, "site-1", DataTypeOccupancy)
+	require.Equal(t, "true", mustRecord(t, mock, scode("site-1"), DataTypeOpen))
+	_, hasOcc := recordValue(mock, scode("site-1"), DataTypeOccupancy)
 	require.False(t, hasOcc, "no occupancy record when occupancy is null")
-	_, hasFree := recordValue(mock, "site-1", DataTypeFree)
+	_, hasFree := recordValue(mock, scode("site-1"), DataTypeFree)
 	require.False(t, hasFree, "no free record when occupancy is null")
 }
 
@@ -146,14 +150,16 @@ func TestTransform_StationMetadata(t *testing.T) {
 	calls := mock.Requests().SyncedStations[StationTypeParkingStation]
 	require.NotEmpty(t, calls)
 
-	// Find the P1 station (UUID a5a6...) and check the mapping.
+	// Find the P1 station by its derived URN code and check the mapping.
+	const p1UUID = "a5a6294b-36b5-4d57-851d-c66e90024fe5"
 	var found bool
 	for _, call := range calls {
 		for _, s := range call.Stations {
-			if s.Id != "a5a6294b-36b5-4d57-851d-c66e90024fe5" {
+			if s.Id != scode(p1UUID) {
 				continue
 			}
 			found = true
+			require.Equal(t, p1UUID, s.MetaData["provider_id"], "raw provider id kept in metadata")
 			require.Equal(t, "Parcheggio Passo delle Erbe (P1)", s.Name)
 			require.Equal(t, StationTypeParkingStation, s.StationType)
 			require.InDelta(t, 46.681725, s.Latitude, 0.00001)

@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/noi-techpark/go-bdp-client/bdplib"
+	"github.com/noi-techpark/opendatahub-go-sdk/clib"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
@@ -21,6 +22,10 @@ import (
 
 const (
 	StationTypeParkingStation = "ParkingStation"
+
+	// IDTemplate is the URN prefix for deterministically deriving the BDP
+	// station code from the provider's site id via clib.GenerateID (UUIDv5).
+	IDTemplate = "urn:parking:affluences"
 
 	// Affluences elaborates a fresh occupancy roughly every 30 minutes; we
 	// poll more often and the measurements are idempotent (same provider
@@ -93,13 +98,18 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[AffluencesP
 			log.Warn("skipping site with empty id")
 			continue
 		}
-		stations = append(stations, buildStation(bdp, site))
+
+		// BDP station code: deterministic UUIDv5 URN derived from the
+		// provider site id (never the raw provider id). Same code is used
+		// for the station and all its records.
+		code := clib.GenerateID(IDTemplate, site.ID)
+		stations = append(stations, buildStation(bdp, code, site))
 
 		rt := site.Realtime
 		ts := measurementTimestamp(rt.OccupancyDatetimeUTC, payload.Timestamp)
 
 		// "open" is always available; store the boolean as a string.
-		dm.AddRecord(site.ID, DataTypeOpen, bdplib.CreateRecord(ts, strconv.FormatBool(rt.Open), Period))
+		dm.AddRecord(code, DataTypeOpen, bdplib.CreateRecord(ts, strconv.FormatBool(rt.Open), Period))
 
 		// occupancy and free need both occupancy and capacity to be present.
 		if rt.Occupancy == nil || rt.Capacity == nil {
@@ -122,8 +132,8 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[AffluencesP
 			free = clampInt(free, capacity)
 		}
 
-		dm.AddRecord(site.ID, DataTypeOccupancy, bdplib.CreateRecord(ts, occupancy, Period))
-		dm.AddRecord(site.ID, DataTypeFree, bdplib.CreateRecord(ts, free, Period))
+		dm.AddRecord(code, DataTypeOccupancy, bdplib.CreateRecord(ts, occupancy, Period))
+		dm.AddRecord(code, DataTypeFree, bdplib.CreateRecord(ts, free, Period))
 	}
 
 	log.Info("Syncing stations and pushing measurements", "stations", len(stations))
@@ -137,11 +147,12 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[AffluencesP
 }
 
 // buildStation maps Affluences site metadata to a flat ParkingStation. The
-// site UUID is stable and globally unique, so it is used directly as the
-// station code.
-func buildStation(bdp bdplib.Bdp, site Site) bdplib.Station {
+// station code is the deterministic URN passed in (derived via
+// clib.GenerateID); the raw provider site id is kept in metadata for
+// traceability.
+func buildStation(bdp bdplib.Bdp, code string, site Site) bdplib.Station {
 	station := bdplib.CreateStation(
-		site.ID,
+		code,
 		site.PrimaryName,
 		StationTypeParkingStation,
 		site.Location.Coordinates.Latitude,
@@ -149,7 +160,7 @@ func buildStation(bdp bdplib.Bdp, site Site) bdplib.Station {
 		bdp.GetOrigin(),
 	)
 
-	meta := map[string]any{}
+	meta := map[string]any{"provider_id": site.ID}
 	if site.Realtime.Capacity != nil {
 		meta["capacity"] = *site.Realtime.Capacity
 	}
