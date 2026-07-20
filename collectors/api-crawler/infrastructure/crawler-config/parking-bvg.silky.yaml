@@ -4,7 +4,7 @@ stream: false
 auth:
   type: cookie
   loginRequest:
-    url: https://bvg-communication-techno.eu4.alta.avigilon.com/api/v1/dologin
+    url: https://sta.eu3.alta.avigilon.com/api/v1/dologin
     method: POST
     headers:
       Content-Type: application/json
@@ -17,7 +17,7 @@ steps:
   - type: request
     name: countingAreas
     request:
-        url: https://bvg-communication-techno.eu4.alta.avigilon.com/api/v1/countingAreas
+        url: https://sta.eu3.alta.avigilon.com/api/v1/countingAreas
         method: GET
 
     steps:
@@ -33,7 +33,7 @@ steps:
           - type: request
             name: details-request
             request:
-                url: https://bvg-communication-techno.eu4.alta.avigilon.com/api/v1/countingAreas/{{ .area.id }}/counts
+                url: https://sta.eu3.alta.avigilon.com/api/v1/countingAreas/{{ .area.id }}/counts
                 method: GET
             mergeOn: .counts = $res
 
