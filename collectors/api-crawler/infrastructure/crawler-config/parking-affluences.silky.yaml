@@ -1,0 +1,41 @@
+# Affluences smart-parking sites (Passo delle Erbe). Iterate the known site
+# UUIDs; for each, fetch the static metadata and merge in the real-time
+# reading (occupancy / capacity / open) as a nested "realtime" object, then
+# append the site to the root array. One JSON array is published per poll:
+#   [ { <site metadata>, "realtime": { ... } }, ... ]
+#
+# Auth is a static "Authorization: key <apikey>" header; the token is expanded
+# from the AFFLUENCES_API_KEY env var (injected as an envSecret) at load time,
+# so no credential is stored in this file or the ConfigMap.
+rootContext: []
+stream: false
+
+headers:
+  Accept: application/json
+  Authorization: "key ${AFFLUENCES_API_KEY}"
+
+steps:
+  - type: forValues
+    name: iterate-sites
+    values:
+      - a5a6294b-36b5-4d57-851d-c66e90024fe5 # Parcheggio Passo delle Erbe (P1) — 7478
+      - 871cbd18-0dc5-4398-a986-930fc164aad2 # Parcheggio Passo delle Erbe - Pe de Börz (P2) — 7479
+    as: siteId
+    steps:
+      - type: request
+        name: site-metadata
+        request:
+          url: "https://data.affluences.com/v1/site/{{ .siteId }}"
+          method: GET
+        resultTransformer: .data
+        mergeWithContext:
+          name: root
+          rule: ". += [$res]"
+        steps:
+          - type: request
+            name: site-realtime
+            request:
+              url: "https://data.affluences.com/v1/data/realtime/{{ .siteId }}"
+              method: GET
+            resultTransformer: .data
+            mergeOn: .realtime = $res

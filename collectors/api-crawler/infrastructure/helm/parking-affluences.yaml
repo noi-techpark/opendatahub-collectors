@@ -1,0 +1,32 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/api-crawler
+  pullPolicy: IfNotPresent
+  tag: "0.2.0" # Set this when upgrading chart with --set-value
+
+env:
+  LOG_LEVEL: "INFO"
+  MQ_CLIENT: dc-api-crawler-parking-affluences
+  PROVIDER: api-crawler/parking-affluences
+
+  CRON: "0 0/10 * * * *"
+  CONFIG_PATH: "/config/config.yaml"
+
+  SERVICE_NAME: dc-api-crawler-parking-affluences
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+# AFFLUENCES_API_KEY holds the raw Affluences token. The silky config expands
+# ${AFFLUENCES_API_KEY} into the "Authorization: key <token>" header at load
+# time, so the secret lives in this k8s Secret and never in the ConfigMap.
+# Populated by the workflow from the AFFLUENCES_API_KEY GitHub secret; left
+# empty in git so no credential is ever committed.
+envSecret:
+  AFFLUENCES_API_KEY: ""
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
+
+configMap:
+  mountPath: "/config/"
+  files: {}
