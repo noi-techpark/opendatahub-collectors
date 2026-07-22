@@ -20,8 +20,8 @@ import (
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
 	"github.com/noi-techpark/opendatahub-go-sdk/tel"
 	"github.com/noi-techpark/opendatahub-go-sdk/tel/logger"
-	"opendatahub.com/tr-sudtirolwein/dto"
-	odhContentModel "opendatahub.com/tr-sudtirolwein/odh-content-model"
+	"opendatahub.com/tr-suedtirolwein/dto"
+	odhContentModel "opendatahub.com/tr-suedtirolwein/odh-content-model"
 )
 
 const (

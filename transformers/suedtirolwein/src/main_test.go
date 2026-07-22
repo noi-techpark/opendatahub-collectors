@@ -13,8 +13,8 @@ import (
 	"github.com/noi-techpark/opendatahub-go-sdk/clib/clibmock"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	"github.com/noi-techpark/opendatahub-go-sdk/testsuite"
-	"opendatahub.com/tr-sudtirolwein/dto"
-	odhContentModel "opendatahub.com/tr-sudtirolwein/odh-content-model"
+	"opendatahub.com/tr-suedtirolwein/dto"
+	odhContentModel "opendatahub.com/tr-suedtirolwein/odh-content-model"
 )
 
 func Test_Transform_Snapshot(t *testing.T) {

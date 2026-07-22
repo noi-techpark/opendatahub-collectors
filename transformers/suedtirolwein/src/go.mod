@@ -1,4 +1,4 @@
-module opendatahub.com/tr-sudtirolwein
+module opendatahub.com/tr-suedtirolwein
 
 go 1.24.0
 
