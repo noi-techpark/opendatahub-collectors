@@ -10,6 +10,7 @@ env:
   # content writer
   ODH_CORE_URL: https://tourism.api.opendatahub.testingmachine.eu/v1
   ODH_CORE_TOKEN_URL: https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token
+  ODH_CORE_REFERER: https://importer.v2.opendatahub.testingmachine.eu/suedtirolwein.companies
 
   MQ_QUEUE: api-crawler.suedtirolwein-companies
   MQ_EXCHANGE: routed

@@ -5,11 +5,12 @@ image:
 env:
   LOG_LEVEL: INFO
 
-  SOURCE: suedtirolwein
+  SOURCE: suedtirolwein.companies
 
   # content writer
   ODH_CORE_URL: https://tourism.api.opendatahub.com/v1
   ODH_CORE_TOKEN_URL: https://auth.opendatahub.com/auth/realms/noi/protocol/openid-connect/token
+  ODH_CORE_REFERER: https://importer.v2.opendatahub.com/suedtirolwein.companies
 
   MQ_QUEUE: api-crawler.suedtirolwein-companies
   MQ_EXCHANGE: routed
