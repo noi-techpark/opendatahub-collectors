@@ -58,7 +58,7 @@ func main() {
 		ClientID:     env.ODH_CORE_TOKEN_CLIENT_ID,
 		ClientSecret: env.ODH_CORE_TOKEN_CLIENT_SECRET,
 		DisableOAuth: env.ODH_CORE_TOKEN_URL == "",
-	})
+	}, clib.WithReferer("https://importer.v2.opendatahub.com/suedtirolwein.companies"))
 	ms.FailOnError(context.Background(), err, "failed to create client")
 
 	poiCache, err = clib.LoadExisting(context.Background(), contentClient, clib.LoadConfig[odhContentModel.ODHActivityPoi]{
