@@ -8,6 +8,7 @@ env:
   # content writer
   ODH_CORE_URL: https://api.tourism.testingmachine.eu/v1
   ODH_CORE_TOKEN_URL: https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token
+  ODH_CORE_REFERER: https://importer.v2.opendatahub.testingmachine.eu/panomax.webcams
 
   MQ_QUEUE: api-crawler.panomax-webcams
   MQ_EXCHANGE: routed
