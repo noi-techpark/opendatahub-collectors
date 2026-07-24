@@ -32,6 +32,11 @@ ingress:
       paths:
         - path: "/push/skidata/parking-stations"
           pathType: Prefix
+        # Some facilities are configured vendor-side without the /push prefix.
+        # Without this path those requests match the dc-rest-push "/" catch-all
+        # on the same host and are dropped with a 404.
+        - path: "/skidata/parking-stations"
+          pathType: Prefix
 
 env:
   LOGLEVEL: "INFO"
