@@ -23,6 +23,7 @@ env:
   ODH_CORE_URL: https://tourism.api.opendatahub.com/v1/
   ODH_CORE_TOKEN_URL: https://auth.opendatahub.com/auth/realms/noi/protocol/openid-connect/token
   ODH_CORE_TOKEN_CLIENT_ID: odh-api-core-events-momentus-serviceaccount
+  ODH_CORE_REFERER: https://importer.v2.opendatahub.com/momentus.events
 
   INSECURE_SKIP_VERIFY: "false"
   SKIP_SSL_VERIFY: "false"
