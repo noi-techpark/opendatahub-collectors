@@ -107,6 +107,7 @@ func sanitizeHTML(s string) string {
 	// Strip raw backslash escape symbols from input strings
 	s = strings.ReplaceAll(s, "\\n", " ")
 	s = strings.ReplaceAll(s, "\\r", "")
+	s = strings.ReplaceAll(s, "\\\"", "\"")
 
 	// Strip structural/literal line breaks
 	s = strings.ReplaceAll(s, "\n", " ")
@@ -198,6 +199,10 @@ func cleanCachedPOI(poi *odhContentModel.ODHActivityPoi) {
 		cleanMap(p.OpeningTimesGuides)
 		cleanMap(p.OpeningTimesGastronomie)
 		cleanMap(p.CompanyHoliday)
+		cleanMap(p.H1SparklingWineproducer)
+		cleanMap(p.H2SparklingWineproducer)
+		cleanMap(p.ImageSparklingWineproducer)
+		cleanMap(p.DescriptionSparklingWineproducer)
 	}
 }
 
