@@ -1,0 +1,209 @@
+{
+    "posts": [],
+    "puts": [
+        {
+            "apiPath": "Venue",
+            "id": "urn:venue:centrotrevi-drin:trevilab",
+            "payload": {
+                "Active": true,
+                "ContactInfos": {
+                    "de": {
+                        "Address": "Kapuzinergasse 28, 39100 Bozen, BZ",
+                        "City": "Bozen",
+                        "Email": "trevilab@provincia.bz.it",
+                        "Language": "de",
+                        "Phonenumber": "0471/300980",
+                        "ZipCode": "39100"
+                    },
+                    "en": {
+                        "Address": "Via Cappuccini 28, 39100 Bolzano (BZ)",
+                        "City": "Bozen/Bolzano",
+                        "Email": "trevilab@provincia.bz.it",
+                        "Language": "en",
+                        "Phonenumber": "0471/300980",
+                        "ZipCode": "39100"
+                    },
+                    "it": {
+                        "Address": "Via dei Cappuccini 28, 39100 Bolzano BZ",
+                        "City": "Bolzano",
+                        "Email": "trevilab@provincia.bz.it",
+                        "Language": "it",
+                        "Phonenumber": "0471/300980",
+                        "ZipCode": "39100"
+                    }
+                },
+                "Detail": {
+                    "de": {
+                        "Language": "de",
+                        "Title": "TreviLab"
+                    },
+                    "en": {
+                        "Language": "en",
+                        "Title": "TreviLab"
+                    },
+                    "it": {
+                        "Language": "it",
+                        "Title": "TreviLab"
+                    }
+                },
+                "Id": "urn:venue:centrotrevi-drin:trevilab",
+                "LocationInfo": {
+                    "Latitude": 0,
+                    "Longitude": 0
+                },
+                "RoomDetails": [
+                    {
+                        "Active": true,
+                        "Detail": {
+                            "de": {
+                                "Language": "de",
+                                "Title": "Lab 1 - DE"
+                            },
+                            "en": {
+                                "Language": "en",
+                                "Title": "Lab 1 - EN"
+                            },
+                            "it": {
+                                "Language": "it",
+                                "Title": "Lab 1 - IT"
+                            }
+                        },
+                        "Id": "urn:room:centrotrevi-drin:lab-1---it",
+                        "MaxCapacity": 220,
+                        "Shortname": "Lab 1 - IT"
+                    }
+                ],
+                "Shortname": "TreviLab"
+            }
+        },
+        {
+            "apiPath": "Event",
+            "id": "09022026-1500-09022026-1600-CENTROMULTILINGUE-CONV",
+            "payload": {
+                "Active": true,
+                "DateBegin": "2026-02-09T15:00:00",
+                "DateEnd": "2026-02-09T16:00:00",
+                "Detail": {
+                    "de": {
+                        "BaseText": "Incontro di conversazione in lingua inglese",
+                        "Language": "de",
+                        "Title": "CONVERSATION CLUB"
+                    },
+                    "en": {
+                        "BaseText": "Incontro di conversazione in lingua inglese",
+                        "Language": "en",
+                        "Title": "CONVERSATION CLUB"
+                    },
+                    "it": {
+                        "BaseText": "Incontro di conversazione in lingua inglese",
+                        "Language": "it",
+                        "Title": "CONVERSATION CLUB"
+                    }
+                },
+                "EventDate": [
+                    {
+                        "Active": false,
+                        "Begin": "15:00:00",
+                        "End": "16:00:00",
+                        "From": "2026-02-09T00:00:00",
+                        "To": "2026-02-09T00:00:00"
+                    }
+                ],
+                "EventProperty": {
+                    "EventOrganizerId": "TreviLab",
+                    "RegistrationRequired": false,
+                    "TicketRequired": false
+                },
+                "FirstImport": "2026-07-27T12:00:00Z",
+                "GpsInfo": [
+                    {
+                        "Gpstype": "position",
+                        "Latitude": 46.49581,
+                        "Longitude": 11.352324
+                    }
+                ],
+                "Id": "09022026-1500-09022026-1600-CENTROMULTILINGUE-CONV",
+                "LicenseInfo": {
+                    "Author": "",
+                    "ClosedData": false,
+                    "License": "CC0",
+                    "LicenseHolder": "unknown"
+                },
+                "OrganizerInfos": {
+                    "de": {
+                        "Address": "Kapuzinergasse 28, 39100 Bozen, BZ",
+                        "City": "Bozen",
+                        "CompanyName": "TreviLab",
+                        "CountryCode": "IT",
+                        "Email": "trevilab@provincia.bz.it",
+                        "Language": "de",
+                        "Phonenumber": "0471/300980",
+                        "ZipCode": "39100"
+                    },
+                    "en": {
+                        "Address": "Via Cappuccini 28, 39100 Bolzano (BZ)",
+                        "City": "Bozen/Bolzano",
+                        "CompanyName": "TreviLab",
+                        "CountryCode": "IT",
+                        "Email": "trevilab@provincia.bz.it",
+                        "Language": "en",
+                        "Phonenumber": "0471/300980",
+                        "ZipCode": "39100"
+                    },
+                    "it": {
+                        "Address": "Via dei Cappuccini 28, 39100 Bolzano BZ",
+                        "City": "Bolzano",
+                        "CompanyName": "TreviLab",
+                        "CountryCode": "IT",
+                        "Email": "trevilab@provincia.bz.it",
+                        "Language": "it",
+                        "Phonenumber": "0471/300980",
+                        "ZipCode": "39100"
+                    }
+                },
+                "OrgRID": "TreviLab",
+                "Shortname": "CONVERSATION CLUB",
+                "Source": "trevilab",
+                "Topics": [
+                    {
+                        "TopicInfo": "Gruppo  di conversazione",
+                        "TopicRID": "Corsi/lezioni"
+                    }
+                ],
+                "VenueIds": [
+                    "urn:venue:centrotrevi-drin:trevilab"
+                ],
+                "Mapping": {
+                    "culture": {
+                        "id": "09022026-1500-09022026-1600-CentroMultilingue-CONV"
+                    }
+                }
+            }
+        }
+    ],
+    "putMultiples": [],
+    "gets": [
+        {
+            "apiPath": "Venue/urn:venue:centrotrevi-drin:trevilab",
+            "queryParams": null
+        },
+        {
+            "apiPath": "Event/09022026-1500-09022026-1600-CENTROMULTILINGUE-CONV",
+            "queryParams": null
+        },
+        {
+            "apiPath": "Event",
+            "queryParams": {
+                "active": "true",
+                "source": "drin"
+            }
+        },
+        {
+            "apiPath": "Event",
+            "queryParams": {
+                "active": "true",
+                "source": "trevilab"
+            }
+        }
+    ]
+}

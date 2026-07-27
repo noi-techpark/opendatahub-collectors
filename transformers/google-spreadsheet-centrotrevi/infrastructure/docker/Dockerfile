@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: CC0-1.0
 
 FROM golang:1.24.4-bookworm AS base
-EXPOSE 8082
 
 FROM base AS build-env
 WORKDIR /app
@@ -13,6 +12,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o main
 
 # BUILD published image
 FROM alpine:latest AS build
+RUN apk add --no-cache tzdata
 WORKDIR /app
 COPY --from=build-env /app/main .
 ENTRYPOINT [ "./main"]
