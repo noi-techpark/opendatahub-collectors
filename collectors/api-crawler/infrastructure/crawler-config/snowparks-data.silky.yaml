@@ -6,7 +6,7 @@ steps:
   - type: request
     name: "Fetch DSS Snowparks"
     request:
-      url: "https://www.dolomitisuperski.com/jsonexport/export/snowparks?username=idmidm&password=idmidm"
+      url: "https://www.dolomitisuperski.com/jsonexport/export/snowparks?username=${DSS_USERNAME}&password=${DSS_PASSWORD}"
       method: GET
     resultTransformer: "."
     mergeOn: .dssSnowparks = $res
