@@ -6,6 +6,7 @@ env:
   LOG_LEVEL: INFO
 
   SOURCE: suedtirolwein.companies
+  PUBLISHED_ON_CHANNELS: idm-marketplace,suedtirolwein.com
 
   # content writer
   ODH_CORE_URL: https://tourism.api.opendatahub.com/v1
