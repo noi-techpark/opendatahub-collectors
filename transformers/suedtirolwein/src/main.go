@@ -39,6 +39,7 @@ var env struct {
 	ODH_CORE_TOKEN_CLIENT_SECRET string
 	ODH_CORE_TOKEN_URL           string
 	ODH_CORE_REFERER             string
+	PUBLISHED_ON_CHANNELS        string
 }
 
 var contentClient clib.ContentAPI
@@ -83,6 +84,63 @@ func main() {
 type langBatch struct {
 	lang      string
 	companies []dto.WineCompany
+}
+
+func getPublishedOnChannels() []string {
+	if env.PUBLISHED_ON_CHANNELS == "" {
+		return []string{}
+	}
+	parts := strings.Split(env.PUBLISHED_ON_CHANNELS, ",")
+	var channels []string
+	for _, p := range parts {
+		if t := strings.TrimSpace(p); t != "" {
+			channels = append(channels, t)
+		}
+	}
+	if channels == nil {
+		return []string{}
+	}
+	return channels
+}
+
+func addChannels(existing []string, toAdd []string) []string {
+	if len(toAdd) == 0 {
+		return existing
+	}
+	exists := make(map[string]bool)
+	for _, ch := range existing {
+		exists[ch] = true
+	}
+	res := existing
+	for _, ch := range toAdd {
+		if !exists[ch] {
+			res = append(res, ch)
+		}
+	}
+	if res == nil {
+		return []string{}
+	}
+	return res
+}
+
+func removeChannels(existing []string, toRemove []string) []string {
+	if len(existing) == 0 || len(toRemove) == 0 {
+		return existing
+	}
+	removeMap := make(map[string]bool)
+	for _, ch := range toRemove {
+		removeMap[ch] = true
+	}
+	var res []string
+	for _, ch := range existing {
+		if !removeMap[ch] {
+			res = append(res, ch)
+		}
+	}
+	if res == nil {
+		return []string{}
+	}
+	return res
 }
 
 func noEscapeJSON(v interface{}) (json.RawMessage, error) {
@@ -220,23 +278,31 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 	seen := map[string]struct{}{}
 
 	deCompanies := companiesFromLang(r.Rawdata.De)
-	deBySlug := make(map[string]dto.WineCompany, len(deCompanies))
+	deByID := make(map[string]dto.WineCompany, len(deCompanies))
 	for _, c := range deCompanies {
-		if c.Slug != "" {
-			deBySlug[c.Slug] = c
+		master := c.OriginID
+		if master == "" {
+			master = c.ID
+		}
+		if master != "" {
+			deByID[master] = c
 		}
 	}
 
-	allLangsBySlug := map[string]map[string]dto.WineCompany{}
+	allLangsByID := map[string]map[string]dto.WineCompany{}
 	for _, batch := range batches {
 		for _, company := range batch.companies {
-			if company.Slug == "" {
+			master := company.OriginID
+			if master == "" {
+				master = company.ID
+			}
+			if master == "" {
 				continue
 			}
-			if allLangsBySlug[company.Slug] == nil {
-				allLangsBySlug[company.Slug] = map[string]dto.WineCompany{}
+			if allLangsByID[master] == nil {
+				allLangsByID[master] = map[string]dto.WineCompany{}
 			}
-			allLangsBySlug[company.Slug][batch.lang] = company
+			allLangsByID[master][batch.lang] = company
 		}
 	}
 
@@ -245,8 +311,12 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 			continue
 		}
 		for _, company := range batch.companies {
-			if company.Slug == "" {
-				logger.Get(ctx).Warn("Skipping company with empty slug", "name", company.Title)
+			master := company.OriginID
+			if master == "" {
+				master = company.ID
+			}
+			if master == "" {
+				logger.Get(ctx).Warn("Skipping company with empty ID", "name", company.Title)
 				continue
 			}
 
@@ -254,16 +324,16 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 				continue
 			}
 
-			deCopy, hasDe := deBySlug[company.Slug]
-			var id string
-			if hasDe {
-				id = deCopy.ID
-			} else {
-				id = company.ID
-			}
-			if id == "" {
-				logger.Get(ctx).Warn("Skipping company with empty ID", "name", company.Title)
-				continue
+			deCopy, hasDe := deByID[master]
+			id := master
+
+			if batch.lang != "de" {
+				if company.OriginID == "" {
+					logger.Get(ctx).Warn("Translation missing OriginID (cannot map to master)", "lang", batch.lang, "slug", company.Slug, "id", company.ID, "name", company.Title)
+				}
+				if !hasDe {
+					logger.Get(ctx).Warn("Master DE record missing for translation", "lang", batch.lang, "slug", company.Slug, "origin_id", master, "name", company.Title)
+				}
 			}
 
 			seen[id] = struct{}{}
@@ -275,10 +345,16 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 				if !hasDe {
 					deCopy = company
 				}
-				poi := mapToPoi(id, company, batch.lang, deCopy, allLangsBySlug[company.Slug], r.Timestamp)
+				poi := mapToPoi(id, company, batch.lang, deCopy, allLangsByID[master], r.Timestamp)
 				poi.AdditionalProperties = &odhContentModel.AdditionalProperties{
-					SuedtirolWeinCompanyDataProperties: buildAdditionalProperties(allLangsBySlug[company.Slug]),
+					SuedtirolWeinCompanyDataProperties: buildAdditionalProperties(allLangsByID[master]),
 				}
+				
+				if cachedEntry, ok := poiCache.Get(id); ok {
+					poi.PublishedOn = cachedEntry.Entity.PublishedOn
+				}
+				poi.PublishedOn = addChannels(poi.PublishedOn, getPublishedOnChannels())
+
 				pois[id] = poi
 			}
 		}
@@ -350,6 +426,7 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 		}
 		poi := entry.Entity
 		poi.Active = false
+		poi.PublishedOn = removeChannels(poi.PublishedOn, getPublishedOnChannels())
 
 		// SCRUB THE CACHED ENTITY BEFORE SENDING IT BACK TO ODH API!
 		cleanCachedPOI(&poi)
