@@ -220,23 +220,31 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 	seen := map[string]struct{}{}
 
 	deCompanies := companiesFromLang(r.Rawdata.De)
-	deBySlug := make(map[string]dto.WineCompany, len(deCompanies))
+	deByID := make(map[string]dto.WineCompany, len(deCompanies))
 	for _, c := range deCompanies {
-		if c.Slug != "" {
-			deBySlug[c.Slug] = c
+		master := c.OriginID
+		if master == "" {
+			master = c.ID
+		}
+		if master != "" {
+			deByID[master] = c
 		}
 	}
 
-	allLangsBySlug := map[string]map[string]dto.WineCompany{}
+	allLangsByID := map[string]map[string]dto.WineCompany{}
 	for _, batch := range batches {
 		for _, company := range batch.companies {
-			if company.Slug == "" {
+			master := company.OriginID
+			if master == "" {
+				master = company.ID
+			}
+			if master == "" {
 				continue
 			}
-			if allLangsBySlug[company.Slug] == nil {
-				allLangsBySlug[company.Slug] = map[string]dto.WineCompany{}
+			if allLangsByID[master] == nil {
+				allLangsByID[master] = map[string]dto.WineCompany{}
 			}
-			allLangsBySlug[company.Slug][batch.lang] = company
+			allLangsByID[master][batch.lang] = company
 		}
 	}
 
@@ -245,8 +253,12 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 			continue
 		}
 		for _, company := range batch.companies {
-			if company.Slug == "" {
-				logger.Get(ctx).Warn("Skipping company with empty slug", "name", company.Title)
+			master := company.OriginID
+			if master == "" {
+				master = company.ID
+			}
+			if master == "" {
+				logger.Get(ctx).Warn("Skipping company with empty ID", "name", company.Title)
 				continue
 			}
 
@@ -254,17 +266,8 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 				continue
 			}
 
-			deCopy, hasDe := deBySlug[company.Slug]
-			var id string
-			if hasDe {
-				id = deCopy.ID
-			} else {
-				id = company.ID
-			}
-			if id == "" {
-				logger.Get(ctx).Warn("Skipping company with empty ID", "name", company.Title)
-				continue
-			}
+			deCopy, hasDe := deByID[master]
+			id := master
 
 			seen[id] = struct{}{}
 
@@ -275,9 +278,9 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 				if !hasDe {
 					deCopy = company
 				}
-				poi := mapToPoi(id, company, batch.lang, deCopy, allLangsBySlug[company.Slug], r.Timestamp)
+				poi := mapToPoi(id, company, batch.lang, deCopy, allLangsByID[master], r.Timestamp)
 				poi.AdditionalProperties = &odhContentModel.AdditionalProperties{
-					SuedtirolWeinCompanyDataProperties: buildAdditionalProperties(allLangsBySlug[company.Slug]),
+					SuedtirolWeinCompanyDataProperties: buildAdditionalProperties(allLangsByID[master]),
 				}
 				pois[id] = poi
 			}
