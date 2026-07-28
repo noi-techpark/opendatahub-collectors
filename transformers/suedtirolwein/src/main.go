@@ -269,6 +269,15 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 			deCopy, hasDe := deByID[master]
 			id := master
 
+			if batch.lang != "de" {
+				if company.OriginID == "" {
+					logger.Get(ctx).Warn("Translation missing OriginID (cannot map to master)", "lang", batch.lang, "slug", company.Slug, "id", company.ID, "name", company.Title)
+				}
+				if !hasDe {
+					logger.Get(ctx).Warn("Master DE record missing for translation", "lang", batch.lang, "slug", company.Slug, "origin_id", master, "name", company.Title)
+				}
+			}
+
 			seen[id] = struct{}{}
 
 			if existing, ok := pois[id]; ok {
