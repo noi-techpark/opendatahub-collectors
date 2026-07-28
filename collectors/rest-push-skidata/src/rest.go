@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/subtle"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -123,7 +124,11 @@ func facilityContext(next echo.HandlerFunc) echo.HandlerFunc {
 			"status", responseStatus(c, err),
 		}
 		if req := c.Request(); req != nil {
-			attrs = append(attrs, "method", req.Method, "uri", req.RequestURI)
+			user, pass := basicAuthShape(req)
+			attrs = append(attrs,
+				"method", req.Method, "uri", req.RequestURI,
+				"auth_user", user, "auth_pass", pass,
+			)
 		}
 		if err != nil {
 			attrs = append(attrs, "err", err.Error())
@@ -227,6 +232,51 @@ func asInt(v any) (int, bool) {
 		}
 	}
 	return 0, false
+}
+
+// basicAuthShape returns the masked shape of the Basic-Auth username and
+// password the caller sent, for diagnosing which credential a 401'ing facility
+// is actually using. It never returns the full secret and never fails: a
+// missing or malformed Authorization header yields sentinel markers.
+func basicAuthShape(req *http.Request) (userShape, passShape string) {
+	if req == nil {
+		return "<none>", "<none>"
+	}
+	h := req.Header.Get("Authorization")
+	if h == "" {
+		return "<none>", "<none>"
+	}
+	const prefix = "Basic "
+	if len(h) <= len(prefix) || !strings.EqualFold(h[:len(prefix)], prefix) {
+		return "<non-basic>", "<non-basic>"
+	}
+	raw, err := base64.StdEncoding.DecodeString(strings.TrimSpace(h[len(prefix):]))
+	if err != nil {
+		return "<unparseable>", "<unparseable>"
+	}
+	user, pass, ok := strings.Cut(string(raw), ":")
+	if !ok {
+		return passwordify(string(raw)), "<no-colon>"
+	}
+	return passwordify(user), passwordify(pass)
+}
+
+// passwordify masks a secret to just its first and last 3 characters plus its
+// length — enough to compare its "shape" against the expected credential
+// without logging it in full. Strings of 6 chars or fewer are hidden entirely
+// so short secrets are never fully revealed. Uses runes so it can't split a
+// multi-byte character and never panics.
+func passwordify(s string) string {
+	r := []rune(s)
+	n := len(r)
+	switch {
+	case n == 0:
+		return "<empty>"
+	case n <= 6:
+		return fmt.Sprintf("<%d chars>", n)
+	default:
+		return fmt.Sprintf("%s...%s (%d)", string(r[:3]), string(r[n-3:]), n)
+	}
 }
 
 func validateInbound(username, password string, c echo.Context) (bool, error) {
