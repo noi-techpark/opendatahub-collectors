@@ -11,6 +11,8 @@ import (
 	"strings"
 	"testing"
 
+	"encoding/base64"
+
 	"github.com/labstack/echo/v4"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/dc"
 	"github.com/stretchr/testify/require"
@@ -170,6 +172,47 @@ func TestRouter_WrongUrlStillAttributed(t *testing.T) {
 	require.Equal(t, http.StatusNotFound, rec.Code)
 	require.Equal(t, "0608448", seen, "a 404'd push must still carry its facility")
 	require.Len(t, ch, 0, "nothing is ingested from an unrouted path")
+}
+
+func TestPasswordify(t *testing.T) {
+	require.Equal(t, "<empty>", passwordify(""))
+	require.Equal(t, "<3 chars>", passwordify("abc"))
+	require.Equal(t, "<6 chars>", passwordify("abcdef"))
+	// first 3 + last 3 + length, middle hidden
+	require.Equal(t, "abc...xyz (9)", passwordify("abcmmmxyz"))
+	require.Equal(t, "OPE...585 (25)", passwordify("OPENDATAHUB_BRUOSP_640585"))
+}
+
+// TestBasicAuthShape proves credentials are masked (never logged in full) and
+// that a broken/absent Authorization header degrades to a marker, not a panic.
+func TestBasicAuthShape(t *testing.T) {
+	mk := func(v string) *http.Request {
+		r := httptest.NewRequest(http.MethodPost, "/", nil)
+		if v != "" {
+			r.Header.Set("Authorization", v)
+		}
+		return r
+	}
+	basic := func(u, p string) string {
+		return "Basic " + base64.StdEncoding.EncodeToString([]byte(u+":"+p))
+	}
+
+	u, p := basicAuthShape(mk(basic("OPENDATAHUB_582998", "TZPv6q3o0YKt3XlEe7qjl2d0H90D63aTV57Xs4uS")))
+	require.Equal(t, "OPE...998 (18)", u)
+	require.Equal(t, "TZP...4uS (40)", p)
+	require.NotContains(t, p, "6q3o", "must not log the middle of the password")
+
+	u, p = basicAuthShape(mk(""))
+	require.Equal(t, "<none>", u)
+	require.Equal(t, "<none>", p)
+
+	u, _ = basicAuthShape(mk("Bearer sometoken"))
+	require.Equal(t, "<non-basic>", u)
+
+	u, _ = basicAuthShape(mk("Basic !!!notbase64!!!"))
+	require.Equal(t, "<unparseable>", u)
+
+	require.NotPanics(t, func() { basicAuthShape(nil) })
 }
 
 // TestResponseStatus checks the status reported to the log for the error paths,
