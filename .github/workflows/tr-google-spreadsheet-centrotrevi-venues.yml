@@ -2,25 +2,25 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-name: CI/CD tr-google-spreadsheet-centrotrevi
+name: CI/CD tr-google-spreadsheet-centrotrevi-venues
 
 on:
   push:
     paths:
       - "transformers/google-spreadsheet-centrotrevi/**"
-      - ".github/workflows/tr-google-spreadsheet-centrotrevi.yml"
+      - ".github/workflows/tr-google-spreadsheet-centrotrevi-venues.yml"
 
 env:
-  PROJECT_NAME: tr-google-spreadsheet-centrotrevi
+  PROJECT_NAME: tr-google-spreadsheet-centrotrevi-venues
   WORKING_DIRECTORY: transformers/google-spreadsheet-centrotrevi
-  DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/tr-google-spreadsheet-centrotrevi
+  DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/tr-google-spreadsheet-centrotrevi-venues
   DOCKER_TAG: ${{ github.sha }}
   KUBERNETES_NAMESPACE: collector
 
 jobs:
   tests:
     runs-on: ubuntu-24.04
-    concurrency: tr-google-spreadsheet-centrotrevi-tests
+    concurrency: tr-google-spreadsheet-centrotrevi-venues-tests
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -36,7 +36,7 @@ jobs:
 
   build:
     runs-on: ubuntu-24.04
-    concurrency: tr-google-spreadsheet-centrotrevi-build
+    concurrency: tr-google-spreadsheet-centrotrevi-venues-build
     permissions:
       contents: read
       packages: write
@@ -58,7 +58,7 @@ jobs:
     needs:
       - build
     runs-on: ubuntu-24.04
-    concurrency: tr-google-spreadsheet-centrotrevi-deploy-test
+    concurrency: tr-google-spreadsheet-centrotrevi-venues-deploy-test
     environment: test
     env:
       VALUES_YAML: infrastructure/helm/centro-trevi.test.yaml
@@ -91,7 +91,7 @@ jobs:
     needs:
       - build
     runs-on: ubuntu-24.04
-    concurrency: tr-google-spreadsheet-centrotrevi-deploy-prod
+    concurrency: tr-google-spreadsheet-centrotrevi-venues-deploy-prod
     environment: prod
     env:
       VALUES_YAML: infrastructure/helm/centro-trevi.prod.yaml

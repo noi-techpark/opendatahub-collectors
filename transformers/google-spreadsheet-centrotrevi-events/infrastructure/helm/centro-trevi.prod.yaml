@@ -3,16 +3,16 @@
 # SPDX-License-Identifier: CC0-1.0
 
 image:
-  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-google-spreadsheet-centrotrevi
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-google-spreadsheet-centrotrevi-events
   pullPolicy: IfNotPresent
   tag: latest
 
 env:
   LOG_LEVEL: "INFO"
-  MQ_QUEUE: spreadsheets.centro-trevi
+  MQ_QUEUE: spreadsheets.centro-trevi-events
   MQ_EXCHANGE: routed
   MQ_KEY: spreadsheets.centro-trevi
-  MQ_CLIENT: tr-google-spreadsheet-centrotrevi-prod
+  MQ_CLIENT: tr-google-spreadsheet-centrotrevi-events-prod
   PROVIDER: spreadsheets/centro-trevi
 
   RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
@@ -21,7 +21,7 @@ env:
   ODH_CORE_TOKEN_URL: https://auth.opendatahub.com/auth/realms/noi/protocol/openid-connect/token
   ODH_CORE_TOKEN_CLIENT_ID: odh-api-core-events-culture-serviceaccount
 
-  SERVICE_NAME: tr-google-spreadsheet-centrotrevi
+  SERVICE_NAME: tr-google-spreadsheet-centrotrevi-events
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 
 envSecretRef:
