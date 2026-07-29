@@ -36,6 +36,7 @@ var env struct {
 	ODH_CORE_TOKEN_CLIENT_ID     string
 	ODH_CORE_TOKEN_CLIENT_SECRET string
 	ODH_CORE_TOKEN_URL           string
+	PUBLISHED_ON_CHANNELS        string
 	ODH_CORE_REFERER             string
 }
 
@@ -105,7 +106,12 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 				mergeLang(&existing, museum, batch.lang)
 				pois[id] = existing
 			} else {
-				pois[id] = mapToPoi(museum, batch.lang)
+				poi := mapToPoi(museum, batch.lang)
+				if cachedEntry, ok := poiCache.Get(id); ok {
+					poi.PublishedOn = cachedEntry.Entity.PublishedOn
+				}
+				poi.PublishedOn = addChannels(poi.PublishedOn, getPublishedOnChannels())
+				pois[id] = poi
 			}
 		}
 	}
@@ -195,6 +201,7 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 
 		poi := entry.Entity
 		poi.Active = false
+		poi.PublishedOn = removeChannels(poi.PublishedOn, getPublishedOnChannels())
 
 		if err := contentClient.Put(ctx, ENTITY_TYPE, id, poi); err != nil {
 			logger.Get(ctx).Error("Failed to deactivate POI", "id", id, "error", err)
@@ -262,6 +269,63 @@ func collectTagDefs(e dto.SiagElements, defs map[string]clib.TagDef) {
 	if choiceIsYes(e.MuseumAssociation) {
 		addSimple("siag:museum:museum_association", "Museum association")
 	}
+}
+
+func getPublishedOnChannels() []string {
+	if env.PUBLISHED_ON_CHANNELS == "" {
+		return []string{}
+	}
+	parts := strings.Split(env.PUBLISHED_ON_CHANNELS, ",")
+	var channels []string
+	for _, p := range parts {
+		if t := strings.TrimSpace(p); t != "" {
+			channels = append(channels, t)
+		}
+	}
+	if channels == nil {
+		return []string{}
+	}
+	return channels
+}
+
+func addChannels(existing []string, toAdd []string) []string {
+	if len(toAdd) == 0 {
+		return existing
+	}
+	exists := make(map[string]bool)
+	for _, ch := range existing {
+		exists[ch] = true
+	}
+	res := existing
+	for _, ch := range toAdd {
+		if !exists[ch] {
+			res = append(res, ch)
+		}
+	}
+	if res == nil {
+		return []string{}
+	}
+	return res
+}
+
+func removeChannels(existing []string, toRemove []string) []string {
+	if len(existing) == 0 || len(toRemove) == 0 {
+		return existing
+	}
+	removeMap := make(map[string]bool)
+	for _, ch := range toRemove {
+		removeMap[ch] = true
+	}
+	var res []string
+	for _, ch := range existing {
+		if !removeMap[ch] {
+			res = append(res, ch)
+		}
+	}
+	if res == nil {
+		return []string{}
+	}
+	return res
 }
 
 // buildID generates the ODH Id: "smgpoi{numericId}siag"
