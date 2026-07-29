@@ -13,7 +13,12 @@ steps:
         request:
           url: "https://www.suedtirolwein.com/api/collections/winzers/entries?filter[site]={{ .language }}"
           method: GET
+          pagination:
+            nextPageUrlSelector: body:.links.next
+            stopOn:
+              - type: responseBody
+                expression: ".links.next == null"
 
-        resultTransformer: "."
+        resultTransformer: ".data"
 
-        mergeOn: .[$ctx.language] = $res
+        mergeOn: .[$ctx.language].data = $res

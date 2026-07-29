@@ -271,7 +271,6 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 		{"de", companiesFromLang(r.Rawdata.De)},
 		{"it", companiesFromLang(r.Rawdata.It)},
 		{"en", companiesFromLang(r.Rawdata.En)},
-		{"ru", companiesFromLang(r.Rawdata.Ru)},
 	}
 
 	pois := map[string]odhContentModel.ODHActivityPoi{}
@@ -354,6 +353,7 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 					poi.PublishedOn = cachedEntry.Entity.PublishedOn
 				}
 				poi.PublishedOn = addChannels(poi.PublishedOn, getPublishedOnChannels())
+				mergeLang(&poi, company, batch.lang)
 
 				pois[id] = poi
 			}
