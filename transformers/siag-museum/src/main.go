@@ -37,6 +37,7 @@ var env struct {
 	ODH_CORE_TOKEN_CLIENT_SECRET string
 	ODH_CORE_TOKEN_URL           string
 	PUBLISHED_ON_CHANNELS        string
+	ODH_CORE_REFERER             string
 }
 
 var contentClient clib.ContentAPI
@@ -57,7 +58,7 @@ func main() {
 		ClientID:     env.ODH_CORE_TOKEN_CLIENT_ID,
 		ClientSecret: env.ODH_CORE_TOKEN_CLIENT_SECRET,
 		DisableOAuth: env.ODH_CORE_TOKEN_URL == "",
-	})
+	}, clib.WithReferer(env.ODH_CORE_REFERER))
 	ms.FailOnError(context.Background(), err, "failed to create client")
 
 	poiCache, err = clib.LoadExisting(context.Background(), contentClient, clib.LoadConfig[odhContentModel.ODHActivityPoi]{
