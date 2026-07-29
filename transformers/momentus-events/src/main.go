@@ -173,7 +173,7 @@ func processEvent(ctx context.Context, t *Transformer, event MomentusEvent) erro
 	err := t.contentClient.Put(ctx, "Event", eventLinked.Id, eventLinked)
 	if err != nil {
 		slog.Debug("Put failed, attempting Post as fallback", "err", err, "eventID", event.Id)
-		err = t.contentClient.Post(ctx, "Event", nil, eventLinked)
+		err = t.contentClient.Post(ctx, "Event", map[string]string{"generateid": "false"}, eventLinked)
 		if err != nil {
 			slog.Error("Failed to push Event to ODH Core API (both Put and Post failed)", "err", err, "eventID", event.Id)
 			return err
