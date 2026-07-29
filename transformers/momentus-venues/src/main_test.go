@@ -16,7 +16,7 @@ import (
 
 func TestParseMomentusVenue(t *testing.T) {
 	// Read input
-	inBytes, err := os.ReadFile("../testdata/in_full.json")
+	inBytes, err := os.ReadFile("./testdata/in_full.json")
 	if err != nil {
 		t.Fatalf("Failed to read in_full.json: %v", err)
 	}
@@ -27,7 +27,7 @@ func TestParseMomentusVenue(t *testing.T) {
 	}
 
 	// Read base venue
-	baseBytes, err := os.ReadFile("../testdata/base_venue.json")
+	baseBytes, err := os.ReadFile("./testdata/base_venue.json")
 	if err != nil {
 		t.Fatalf("Failed to read base_venue.json: %v", err)
 	}
@@ -46,7 +46,7 @@ func TestParseMomentusVenue(t *testing.T) {
 	}
 
 	var expected odhmodel.VenueV2
-	err = testsuite.LoadOutput(&expected, "../testdata/out_full.json")
+	err = testsuite.LoadOutput(&expected, "./testdata/out_full.json")
 	if err != nil {
 		t.Fatalf("Failed to load output: %v", err)
 	}

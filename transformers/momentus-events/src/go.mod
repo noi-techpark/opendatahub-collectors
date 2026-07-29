@@ -3,7 +3,7 @@ module opendatahub.com/momentus-events
 go 1.24.0
 
 require (
-	github.com/noi-techpark/opendatahub-go-sdk/clib v0.0.1
+	github.com/noi-techpark/opendatahub-go-sdk/clib v0.0.2
 	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.9
 	github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0
 	github.com/noi-techpark/opendatahub-go-sdk/testsuite v1.1.1

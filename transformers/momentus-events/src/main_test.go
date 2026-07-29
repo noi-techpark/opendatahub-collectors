@@ -15,7 +15,7 @@ import (
 )
 
 func TestTransformer(t *testing.T) {
-	inBytes, err := os.ReadFile("../testdata/in_full.json")
+	inBytes, err := os.ReadFile("./testdata/in_full.json")
 	if err != nil {
 		t.Fatalf("Failed to read in_full.json: %v", err)
 	}
@@ -50,11 +50,11 @@ func TestTransformer(t *testing.T) {
 	}
 
 	var expected odhmodel.EventLinked
-	err = testsuite.LoadOutput(&expected, "../testdata/out_full.json")
+	err = testsuite.LoadOutput(&expected, "./testdata/out_full.json")
 	if err != nil {
 		t.Fatalf("Failed to load output: %v", err)
 	}
-	
+
 	// Normalize expected FirstImport and LastChange as well if they are different in JSON
 	expected.FirstImport = "2026-06-24T10:00:00Z"
 	expected.LastChange = "2026-06-24T10:00:00Z"

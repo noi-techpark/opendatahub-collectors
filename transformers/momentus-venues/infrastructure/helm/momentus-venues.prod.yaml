@@ -8,9 +8,9 @@ image:
   tag: latest
 
 env:
-  LOG_LEVEL: "DEBUG"
+  LOG_LEVEL: "INFO"
   MQ_QUEUE: venues.momentus
-  MQ_EXCHANGE: ingress
+  MQ_EXCHANGE: routed
   MQ_KEY: venues.momentus
   MQ_CLIENT: tr-momentus-venues-prod
   PROVIDER: venues/momentus
@@ -18,12 +18,12 @@ env:
   RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
 
   ODH_VENUE_API: https://tourism.api.opendatahub.com/v1
-  ODH_VENUE_NOI_ID: urn:venue:noi:6b3f0a14-3c5b-5d09-81f3-3ebe5b7885ea
-  ODH_VENUE_EURAC_ID: urn:venue:eurac:df155f71-5cea-5a29-9ebc-213fad6ac1eb
+  VENUE_MAPPING: "{\"NOI TECHPARK\":\"urn:venue:noi:6b3f0a14-3c5b-5d09-81f3-3ebe5b7885ea\",\"EURAC RESEARCH HQ\":\"urn:venue:eurac:df155f71-5cea-5a29-9ebc-213fad6ac1eb\"}"
 
   ODH_CORE_URL: https://tourism.api.opendatahub.com/v1/
   ODH_CORE_TOKEN_URL: https://auth.opendatahub.com/auth/realms/noi/protocol/openid-connect/token
-  ODH_CORE_TOKEN_CLIENT_ID: odh-api-core-venues-momentus-serviceaccount
+  ODH_CORE_TOKEN_CLIENT_ID: odh-api-core-events-momentus-serviceaccount
+  ODH_CORE_REFERER: https://importer.v2.opendatahub.com/momentus.venues
 
   INSECURE_SKIP_VERIFY: "false"
   SKIP_SSL_VERIFY: "false"
@@ -37,6 +37,4 @@ envSecretRef:
     key: uri
 
 envSecret:
-  MOMENTUS_CLIENT_ID: ""
-  MOMENTUS_CLIENT_SECRET: ""
   ODH_CORE_TOKEN_CLIENT_SECRET: ""
