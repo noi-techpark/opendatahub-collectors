@@ -19,6 +19,6 @@ steps:
               - type: responseBody
                 expression: ".links.next == null"
 
-        resultTransformer: ".data"
+        resultTransformer: "."
 
-        mergeOn: .[$ctx.language].data = $res
+        mergeOn: .[$ctx.language].data = ($res | map(.data) | flatten)
