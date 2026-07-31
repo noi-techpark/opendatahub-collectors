@@ -21,4 +21,4 @@ steps:
 
         resultTransformer: "."
 
-        mergeOn: .[$ctx.language].data = ($res | map(.data) | flatten)
+        mergeOn: .[$ctx.language].data = ((.[$ctx.language].data // []) + $res.data)
