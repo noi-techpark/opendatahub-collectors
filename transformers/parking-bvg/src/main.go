@@ -6,8 +6,10 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -135,8 +137,17 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CountingAre
 
 	var allParkingStations []*bdplib.Station
 	var allParkingFacilities []*bdplib.Station
+	var skipped []string
 
 	for standort, areas := range areasByStandort {
+		// A payload carries every facility of the provider account, so an unknown area
+		// may only cost us its own facility, never the others.
+		if err := checkKnownStations(standort, areas); err != nil {
+			slog.Error("skipping facility", "facility", standort, "err", err)
+			skipped = append(skipped, standort)
+			continue
+		}
+
 		totalCapacity := 0
 
 		// Maps to hold capacity sums for ParkingFacility metadata
@@ -158,7 +169,10 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CountingAre
 
 			// 2. Create the ParkingStation (Camera)
 			singleTypeCapacityMap := map[string]int{parsed.Typ: capacity}
-			station := createParkingStation(bdp, area, parsed, capacity, singleTypeCapacityMap)
+			station, err := createParkingStation(bdp, area, parsed, capacity, singleTypeCapacityMap)
+			if err != nil {
+				return err
+			}
 			allParkingStations = append(allParkingStations, station)
 
 			// 3. Calculate and Add Measurements for the ParkingStation
@@ -190,7 +204,10 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CountingAre
 		}
 
 		// --- 1. Create Parking Facility (Site) ---
-		facility := createParkingFacility(bdp, standort, standort, totalCapacity, facilityCapacityByType)
+		facility, err := createParkingFacility(bdp, standort, standort, totalCapacity, facilityCapacityByType)
+		if err != nil {
+			return err
+		}
 		allParkingFacilities = append(allParkingFacilities, facility)
 
 		// --- 4. Push Facility Measurements ---
@@ -223,6 +240,19 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CountingAre
 			facilityDataMap.AddRecord(facility.Id, occupiedTypeDataType, bdplib.CreateRecord(ts, typeOccupancy, PERIOD))
 			facilityDataMap.AddRecord(facility.Id, freeTypeDataType, bdplib.CreateRecord(ts, typeFree, PERIOD))
 		}
+	}
+
+	if len(skipped) > 0 {
+		sort.Strings(skipped)
+		slog.Error("facilities skipped, they will be deactivated until stations.csv describes them",
+			"skipped", strings.Join(skipped, ", "), "count", len(skipped))
+	}
+
+	// Syncing an empty list with syncState would deactivate every station of the
+	// origin. A payload we understood nothing of is a reason to publish nothing, not
+	// a reason to tear down what is already there.
+	if len(allParkingFacilities) == 0 {
+		return fmt.Errorf("no facility in the payload is described by stations.csv, nothing to publish")
 	}
 
 	slog.Info("Syncing stations and pushing data",
@@ -290,28 +320,54 @@ func parseAreaName(name string) AreaNameComponents {
 	}
 }
 
-// createParkingStation now accepts a map for capacityByType
-func createParkingStation(bdp bdplib.Bdp, area CountingArea, parsed AreaNameComponents, capacity int, capacityByType map[string]int) *bdplib.Station {
-	proto := StationProto.GetStationByID(area.ID)
+// checkKnownStations reports every station of one facility that stations.csv does
+// not describe, so the csv can be completed in one go instead of one poll at a time.
+//
+// The provider recreates its counting areas from time to time, which gives them new
+// ids and new names. Publishing such an area anyway yields a station with no
+// coordinates and no localized names: it lands on 0,0 and drops out of every
+// bounding box query. Skipping it alone is no better, because then the facility
+// aggregates free/occupied over a subset of its zones and reports those totals as if
+// they covered the whole car park. Both failures are invisible from the outside, so
+// an unknown area takes its entire facility out of the payload.
+func checkKnownStations(standort string, areas []CountingArea) error {
+	var missing []string
 
-	standardName := area.Name
-	var lat, lon float64
-	metadata := make(map[string]any)
-
-	if proto != nil {
-		standardName = proto.StandardName
-		lat = proto.Lat
-		lon = proto.Lon
-		metadata = proto.ToMetadata()
-	} else {
-		slog.Warn("area not found in stations.csv, creating station without enrichment", "id", area.ID)
+	if StationProto.GetStationByID(standort) == nil {
+		slog.Error("facility not found in stations.csv", "facility", standort)
+		missing = append(missing, standort)
 	}
+	for _, area := range areas {
+		if StationProto.GetStationByID(area.ID) == nil {
+			slog.Error("counting area not found in stations.csv",
+				"area", area.Name, "provider_id", area.ID, "facility", standort)
+			missing = append(missing, area.Name)
+		}
+	}
+
+	if len(missing) == 0 {
+		return nil
+	}
+
+	sort.Strings(missing)
+	return fmt.Errorf("%d station(s) not found in stations.csv: %s",
+		len(missing), strings.Join(missing, ", "))
+}
+
+// createParkingStation now accepts a map for capacityByType
+func createParkingStation(bdp bdplib.Bdp, area CountingArea, parsed AreaNameComponents, capacity int, capacityByType map[string]int) (*bdplib.Station, error) {
+	proto := StationProto.GetStationByID(area.ID)
+	if proto == nil {
+		return nil, fmt.Errorf("counting area %q (provider_id %s) not found in stations.csv", area.Name, area.ID)
+	}
+
+	metadata := proto.ToMetadata()
 
 	station := bdplib.CreateStation(
 		area.Name,
-		standardName,
+		proto.StandardName,
 		StationTypeParkingStation,
-		lat, lon,
+		proto.Lat, proto.Lon,
 		bdp.GetOrigin(),
 	)
 
@@ -333,30 +389,22 @@ func createParkingStation(bdp bdplib.Bdp, area CountingArea, parsed AreaNameComp
 	}
 
 	station.MetaData = metadata
-	return &station
+	return &station, nil
 }
 
-func createParkingFacility(bdp bdplib.Bdp, siteID, facilityName string, totalCapacity int, capacityByType map[string]int) *bdplib.Station {
+func createParkingFacility(bdp bdplib.Bdp, siteID, facilityName string, totalCapacity int, capacityByType map[string]int) (*bdplib.Station, error) {
 	proto := StationProto.GetStationByID(siteID)
-
-	standardName := facilityName
-	var lat, lon float64
-	metadata := make(map[string]any)
-
-	if proto != nil {
-		standardName = proto.StandardName
-		lat = proto.Lat
-		lon = proto.Lon
-		metadata = proto.ToMetadata()
-	} else {
-		slog.Warn("facility not found in stations.csv, creating station without enrichment", "id", siteID)
+	if proto == nil {
+		return nil, fmt.Errorf("facility %q not found in stations.csv", siteID)
 	}
+
+	metadata := proto.ToMetadata()
 
 	station := bdplib.CreateStation(
 		facilityName,
-		standardName,
+		proto.StandardName,
 		StationTypeParkingFacility,
-		lat, lon,
+		proto.Lat, proto.Lon,
 		bdp.GetOrigin(),
 	)
 
@@ -372,7 +420,7 @@ func createParkingFacility(bdp bdplib.Bdp, siteID, facilityName string, totalCap
 	}
 
 	station.MetaData = metadata
-	return &station
+	return &station, nil
 }
 
 // Normalizes the type suffix from the name string
