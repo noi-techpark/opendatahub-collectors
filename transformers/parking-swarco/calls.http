@@ -1,0 +1,19 @@
+# Manual requests against the Swarco SMI endpoint of the Rodeneck parking
+# guidance system. Put SWARCO_USERNAME / SWARCO_PASSWORD in the .env file.
+
+@base = http://195.254.241.29:8081/api
+
+### All parking guidance systems (basic metadata)
+GET {{base}}/getAllPgsInfo
+Accept: application/json
+Authorization: Basic {{$dotenv SWARCO_USERNAME}}:{{$dotenv SWARCO_PASSWORD}}
+
+### Full static metadata for all POIs
+GET {{base}}/getAllStaticPOIData
+Accept: application/json
+Authorization: Basic {{$dotenv SWARCO_USERNAME}}:{{$dotenv SWARCO_PASSWORD}}
+
+### Real-time occupancy for all POIs
+GET {{base}}/getAllDynamicPOIData
+Accept: application/json
+Authorization: Basic {{$dotenv SWARCO_USERNAME}}:{{$dotenv SWARCO_PASSWORD}}

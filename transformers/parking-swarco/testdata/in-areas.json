@@ -1,0 +1,88 @@
+{
+  "dynamic": {
+    "dynamicPOIData": [
+      {
+        "name": "P Test Facility",
+        "objectID": "200001",
+        "occupancyAreas": [
+          {
+            "name": "Area Nord",
+            "objectId": "200001-A",
+            "occupancy": {
+              "capacity": 60,
+              "occupiedSpaces": 30,
+              "parkingSpaceType": "total",
+              "vacantSpaces": 30
+            }
+          },
+          {
+            "name": "Area Sud",
+            "objectId": "200001-B",
+            "occupancy": {
+              "capacity": 40,
+              "occupiedSpaces": 15,
+              "parkingSpaceType": "total",
+              "vacantSpaces": 25
+            }
+          }
+        ],
+        "occupancyTotal": [
+          {
+            "capacity": 100,
+            "occupiedSpaces": 45,
+            "parkingSpaceType": "total",
+            "vacantSpaces": 55
+          }
+        ],
+        "timeStamp": "2026-01-01T10:00:00.000+00:00"
+      }
+    ],
+    "total": 1
+  },
+  "static": {
+    "staticPOIData": [
+      {
+        "areas": [
+          {
+            "capacity": {
+              "capacity": 60,
+              "parkingSpaceType": "total"
+            },
+            "name": "Area Nord",
+            "objectID": "200001-A"
+          },
+          {
+            "capacity": {
+              "capacity": 40,
+              "parkingSpaceType": "total"
+            },
+            "name": "Area Sud",
+            "objectID": "200001-B"
+          }
+        ],
+        "capacity": [
+          {
+            "capacity": 100,
+            "parkingSpaceType": "total"
+          }
+        ],
+        "guID": "abc-123",
+        "location": {
+          "point": {
+            "coordinates": {
+              "coordinateSystem": "WGS84",
+              "latitude": 46.7,
+              "longitude": 11.7
+            }
+          }
+        },
+        "name": "P Test Facility",
+        "objectID": "200001",
+        "operationalStatus": true,
+        "pgsID": "pgs-1",
+        "type": "carPark"
+      }
+    ],
+    "total": 1
+  }
+}
