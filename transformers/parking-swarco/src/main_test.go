@@ -47,13 +47,13 @@ func runSnapshot(t *testing.T, inFile, outFile string) {
 // Real payload captured from the Swarco SMI endpoint (single ParkingStation,
 // no areas).
 func TestTransformRealData(t *testing.T) {
-	runSnapshot(t, "../testdata/in.json", "../testdata/out.json")
+	runSnapshot(t, "testdata/in.json", "testdata/out.json")
 }
 
 // A POI with areas becomes a ParkingFacility parent whose areas are child
 // ParkingStations, each with its own occupancy from occupancyAreas.
 func TestTransformFacilityWithAreas(t *testing.T) {
-	runSnapshot(t, "../testdata/in-areas.json", "../testdata/out-areas.json")
+	runSnapshot(t, "testdata/in-areas.json", "testdata/out-areas.json")
 }
 
 // An empty static list would deactivate every station of the origin on sync;
