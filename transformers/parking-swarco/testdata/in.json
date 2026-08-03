@@ -1,0 +1,101 @@
+{
+  "dynamic": {
+    "dynamicPOIData": [
+      {
+        "guID": null,
+        "name": "P Zumis",
+        "objectID": "100308",
+        "occupancyAreas": [],
+        "occupancyTotal": [
+          {
+            "capacity": 236,
+            "colourIndicator": null,
+            "occupiedSpaces": 110,
+            "parkingSpaceType": "total",
+            "vacantSpaces": 126
+          },
+          {
+            "capacity": 236,
+            "colourIndicator": null,
+            "occupiedSpaces": 110,
+            "parkingSpaceType": "shortterm",
+            "vacantSpaces": 126
+          }
+        ],
+        "timeStamp": "2026-08-03T11:58:44.000+00:00"
+      }
+    ],
+    "total": 1
+  },
+  "static": {
+    "staticPOIData": [
+      {
+        "address": null,
+        "areas": [],
+        "capacity": [
+          {
+            "capacity": 236,
+            "parkingSpaceType": "total"
+          },
+          {
+            "capacity": 236,
+            "parkingSpaceType": "shortterm"
+          }
+        ],
+        "clientID": null,
+        "context": [],
+        "entryLimitation": null,
+        "extraEquipment": null,
+        "guID": null,
+        "location": {
+          "point": {
+            "coordinates": {
+              "coordinateSystem": "WGS84",
+              "latitude": 46.776287,
+              "longitude": 11.727713
+            },
+            "index": null
+          },
+          "polygon": null,
+          "polyline": null
+        },
+        "maxDuration": null,
+        "name": "P Zumis",
+        "objectID": "100308",
+        "openingHours": [
+          {
+            "dateRanges": [],
+            "dates": [],
+            "dayType": [
+              "sunday",
+              "monday",
+              "tuesday",
+              "wednesday",
+              "thursday",
+              "friday",
+              "saturday"
+            ],
+            "end": "21:59:00Z",
+            "holidays": [],
+            "months": [],
+            "start": "22:00:00Z",
+            "yearlyDates": []
+          }
+        ],
+        "operationalStatus": false,
+        "parkingRestriction": null,
+        "payablePerApp": null,
+        "pgsID": "null",
+        "publicTransportStops": null,
+        "reservationTariff": [],
+        "tariff": [],
+        "timeTransfer": false,
+        "type": "parkingGarage",
+        "waitingPeriod": null,
+        "withParcoServiceFee": true,
+        "zoneID": null
+      }
+    ],
+    "total": 1
+  }
+}
