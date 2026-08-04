@@ -1,0 +1,34 @@
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-suedtirolwein
+  pullPolicy: IfNotPresent
+
+env:
+  LOG_LEVEL: INFO
+
+  SOURCE: suedtirolwein.companies
+  PUBLISHED_ON_CHANNELS: idm-marketplace,suedtirolwein.com
+
+  # content writer
+  ODH_CORE_URL: https://tourism.api.opendatahub.com/v1
+  ODH_CORE_TOKEN_URL: https://auth.opendatahub.com/auth/realms/noi/protocol/openid-connect/token
+  ODH_CORE_REFERER: https://importer.v2.opendatahub.com/suedtirolwein.companies
+
+  MQ_QUEUE: api-crawler.suedtirolwein-companies
+  MQ_EXCHANGE: routed
+  MQ_KEY: api-crawler.suedtirolwein-companies
+  MQ_CLIENT: tr-suedtirolwein
+
+
+  RAW_DATA_BRIDGE_ENDPOINT: "http://raw-data-bridge.core.svc.cluster.local:2000"
+
+  SERVICE_NAME: tr-suedtirolwein
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+envSecret:
+  ODH_CORE_TOKEN_CLIENT_ID: ""
+  ODH_CORE_TOKEN_CLIENT_SECRET: ""
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
