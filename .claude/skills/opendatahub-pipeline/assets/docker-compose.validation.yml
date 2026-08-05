@@ -1,0 +1,251 @@
+# SPDX-FileCopyrightText: 2026 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+# Self-contained local validation stack for Open Data Hub ingestion pipelines.
+# All images are pulled from ghcr.io — the infrastructure-v2 and
+# opendatahub-content-api repositories are NOT required on the developer machine.
+#
+#   core (always):        rabbitmq, mongodb (raw data lake), raw-writer, router, raw-data-bridge
+#   --profile timeseries: postgres + bdp writer (:8081) + ninja timeseries api (:8082)
+#   --profile content:    postgres seeded from GitHub + content api (:8083)
+#
+# Usage:
+#   docker compose -f docker-compose.validation.yml --profile timeseries up -d
+#   docker compose -f docker-compose.validation.yml --profile content up -d
+#   docker compose -f docker-compose.validation.yml --profile timeseries --profile content down -v
+#
+# The bdp writer and the content api validate OAuth tokens against the public
+# testingmachine Keycloak (internet access required).
+
+name: opendatahub-pipeline-validation
+
+configs:
+  rabbitmq-conf:
+    content: |
+      # ack timeout https://www.rabbitmq.com/consumers.html#acknowledgement-timeout
+      consumer_timeout = 60000
+
+services:
+  # ---------------------------------------------------------------- core ----
+  rabbitmq:
+    image: rabbitmq:management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672" # management UI, guest/guest
+    configs:
+      - source: rabbitmq-conf
+        target: /etc/rabbitmq/rabbitmq.conf
+    healthcheck:
+      test: nc -z localhost:5672
+    attach: false
+
+  mongodb:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    command: --replSet rs0 --bind_ip localhost,mongodb,127.0.0.1 --port 27017
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+    attach: false
+
+  mongodb-init:
+    image: mongo:7
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    restart: "no"
+    entrypoint: |
+      mongosh "mongodb://mongodb" --eval "
+        try{
+          rs.initiate({
+            _id : 'rs0',
+            members: [
+              { _id : 0, host : 'mongodb:27017' },
+            ]
+          })
+        } catch(error) {
+          // Already initialized. that's fine
+          if (error.code != 23) {
+            throw(error)
+          }
+        }"
+
+  # Listens on the ingress queue, persists raw payloads to mongodb, notifies on the ready exchange
+  raw-writer:
+    image: ghcr.io/noi-techpark/infrastructure-v2/raw-writer:latest
+    pull_policy: always
+    environment:
+      APP_MQ_URI: amqp://guest:guest@rabbitmq:5672
+      APP_MQ_INGRESS_EXCHANGE: ingress
+      APP_MQ_INGRESS_QUEUE: ingress
+      APP_MQ_INGRESS_DL_QUEUE: ingress-dl
+      APP_MQ_READY_EXCHANGE: ready
+      APP_MQ_READY_QUEUE: ready
+      APP_MQ_READY_DL_QUEUE: ready-dl
+      APP_MQ_CLIENT_NAME: writer
+      APP_MONGO_URI: mongodb://mongodb/?replicaSet=rs0&directConnection=true
+      APP_LOGLEVEL: INFO
+    depends_on:
+      mongodb-init:
+        condition: service_completed_successfully
+      rabbitmq:
+        condition: service_healthy
+
+  # Routes notifications from ready to the routed exchange by provider routing key
+  router:
+    image: ghcr.io/noi-techpark/infrastructure-v2/router:latest
+    pull_policy: always
+    environment:
+      APP_MQ_URI: amqp://guest:guest@rabbitmq:5672
+      APP_MQ_READY_EXCHANGE: ready
+      APP_MQ_READY_QUEUE: ready
+      APP_MQ_ROUTED_EXCHANGE: routed
+      APP_MQ_ROUTED_QUEUE: routed
+    depends_on:
+      mongodb-init:
+        condition: service_completed_successfully
+      rabbitmq:
+        condition: service_healthy
+
+  # Serves raw payloads by URN over HTTP (RAW_DATA_BRIDGE_ENDPOINT)
+  raw-data-bridge:
+    image: ghcr.io/noi-techpark/infrastructure-v2/raw-data-bridge:latest
+    pull_policy: always
+    environment:
+      APP_MONGO_URI: mongodb://mongodb/?replicaSet=rs0&directConnection=true
+    ports:
+      - "2000:2000"
+    depends_on:
+      mongodb-init:
+        condition: service_completed_successfully
+      rabbitmq:
+        condition: service_healthy
+
+  # ---------------------------------------------------------- timeseries ----
+  timeseries-db:
+    image: postgis/postgis:12-3.2-alpine
+    profiles: [timeseries]
+    environment:
+      POSTGRES_DB: bdp
+      POSTGRES_USER: bdp
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5555:5432"
+    tty: true
+
+  # BDP timeseries writer — the transformer's write target (BDP_BASE_URL=http://localhost:8081)
+  bdp:
+    image: ghcr.io/noi-techpark/opendatahub-timeseries-writer/opendatahub-timeseries-writer-app:latest
+    profiles: [timeseries]
+    restart: unless-stopped
+    depends_on:
+      - timeseries-db
+    environment:
+      POSTGRES_DB: bdp
+      POSTGRES_PORT: 5432
+      POSTGRES_SCHEMA: intimev2
+      POSTGRES_SERVER: timeseries-db
+      POSTGRES_USERNAME: bdp
+      POSTGRES_PASSWORD: password
+      HIBERNATE_LOG_LEVEL: warn
+      HIBERNATE_MAX_POOL_SIZE: 15
+      HIBERNATE_SQL_LOG: "false"
+      KEYCLOAK_CLIENT_ID: odh-mobility-writer-development
+      KEYCLOAK_CLIENT_SECRET: a0c41578-7f31-4b52-8efe-fab8aece34da
+      KEYCLOAK_REALM: noi
+      KEYCLOAK_SSL_REQUIRED: none
+      KEYCLOAK_URL: https://auth.opendatahub.testingmachine.eu/auth
+      LOG_APPLICATION_NAME: writer
+      LOG_APPLICATION_VERSION: 0.0.1-localdev
+      ROOT_LOG_LEVEL: info
+      LOG_LEVEL: debug
+      LOG_STYLE: json
+      SECURITY_ALLOWED_ORIGINS: "*"
+      SERVER_PORT: 8991
+    ports:
+      - "8081:8991"
+
+  # Ninja timeseries API — read side, used to verify pushed data (http://localhost:8082)
+  ninja:
+    image: ghcr.io/noi-techpark/opendatahub-timeseries-api/opendatahub-timeseries-api-app:latest
+    profiles: [timeseries]
+    restart: unless-stopped
+    depends_on:
+      - bdp
+    environment:
+      SERVER_PORT: 8991
+      SECURITY_ALLOWED_ORIGINS: "*"
+      NINJA_BASE_URL: http://localhost:8991
+      NINJA_HOST_URL: http://localhost:8991
+      NINJA_QUERY_TIMEOUT_SEC: 30
+      NINJA_RESPONSE_MAX_SIZE_MB: 100
+      KEYCLOAK_CLIENT_ID: odh-mobility-writer-development
+      KEYCLOAK_CLIENT_SECRET: a0c41578-7f31-4b52-8efe-fab8aece34da
+      KEYCLOAK_REALM: noi
+      KEYCLOAK_SSL_REQUIRED: none
+      KEYCLOAK_URL: https://auth.opendatahub.testingmachine.eu/auth
+      LOG_APPLICATION_NAME: ninja
+      LOG_APPLICATION_VERSION: 0.0.0-local-dev
+      JDBC_URL: jdbc:postgresql://timeseries-db:5432/bdp?currentSchema=intimev2,public
+      DB_USERNAME: bdp
+      DB_PASSWORD: password
+    ports:
+      - "8082:8991"
+
+  # ------------------------------------------------------------- content ----
+  # Postgres seeded with the Content API dev fixtures, fetched from GitHub at
+  # build time so the opendatahub-content-api repository is not needed locally.
+  content-db:
+    profiles: [content]
+    build:
+      context: .
+      dockerfile_inline: |
+        FROM postgis/postgis:15-3.3-alpine
+        ADD --chmod=644 https://raw.githubusercontent.com/noi-techpark/opendatahub-content-api/main/.dev/content-api-db-init/01-init.sql /docker-entrypoint-initdb.d/01-init.sql
+        ADD --chmod=644 https://raw.githubusercontent.com/noi-techpark/opendatahub-content-api/main/.dev/content-api-db-init/01.1-sources.sql /docker-entrypoint-initdb.d/01.1-sources.sql
+        ADD --chmod=644 https://raw.githubusercontent.com/noi-techpark/opendatahub-content-api/main/.dev/content-api-db-init/01.2-publishers.sql /docker-entrypoint-initdb.d/01.2-publishers.sql
+        ADD --chmod=644 https://raw.githubusercontent.com/noi-techpark/opendatahub-content-api/main/.dev/content-api-db-init/02-GeoShapes.sql /docker-entrypoint-initdb.d/02-GeoShapes.sql
+        ADD --chmod=644 https://raw.githubusercontent.com/noi-techpark/opendatahub-content-api/main/.dev/content-api-db-init/03-Announcements.sql /docker-entrypoint-initdb.d/03-Announcements.sql
+        ADD --chmod=644 https://raw.githubusercontent.com/noi-techpark/opendatahub-content-api/main/.dev/content-api-db-init/04-tags.sql /docker-entrypoint-initdb.d/04-tags.sql
+        ADD --chmod=644 https://raw.githubusercontent.com/noi-techpark/opendatahub-content-api/main/.dev/content-api-db-init/05-rawchanges.sql /docker-entrypoint-initdb.d/05-rawchanges.sql
+        ADD --chmod=644 https://raw.githubusercontent.com/noi-techpark/opendatahub-content-api/main/.dev/content-api-db-init/06-Testdata.sql /docker-entrypoint-initdb.d/06-Testdata.sql
+        ADD --chmod=644 https://raw.githubusercontent.com/noi-techpark/opendatahub-content-api/main/.dev/content-api-db-init/07-Metadata.sql /docker-entrypoint-initdb.d/07-Metadata.sql
+        ADD --chmod=644 https://raw.githubusercontent.com/noi-techpark/opendatahub-content-api/main/.dev/content-api-db-init/08-UrbanGreens.sql /docker-entrypoint-initdb.d/08-UrbanGreens.sql
+        ADD --chmod=644 https://raw.githubusercontent.com/noi-techpark/opendatahub-content-api/main/.dev/content-api-db-init/09-Trips.sql /docker-entrypoint-initdb.d/09-Trips.sql
+        ADD --chmod=644 https://raw.githubusercontent.com/noi-techpark/opendatahub-content-api/main/.dev/content-api-db-init/10-activity-pois.sql /docker-entrypoint-initdb.d/10-activity-pois.sql
+        ADD --chmod=644 https://raw.githubusercontent.com/noi-techpark/opendatahub-content-api/main/.dev/content-api-db-init/11-fillgeoshapes.sql /docker-entrypoint-initdb.d/11-fillgeoshapes.sql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: your_password
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Content API — the transformer's write target (ODH_CORE_URL=http://localhost:8083/v1)
+  content-api:
+    image: ghcr.io/noi-techpark/opendatahub-content-api/opendatahub-content-api-api:unstable
+    profiles: [content]
+    restart: unless-stopped
+    depends_on:
+      content-db:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:80
+      ASPNETCORE_ConnectionStrings__PgConnection: "Host=content-db;Port=5432;Username=postgres;Password=your_password;Database=postgres"
+      ASPNETCORE_OauthServerConfig__Authority: "https://auth.opendatahub.testingmachine.eu/auth/realms/noi/"
+      ASPNETCORE_ApiConfig__Url: "http://localhost:8083/"
+      ASPNETCORE_JsonConfig__Jsondir: "/tmp/"
+    ports:
+      - "8083:80"
+
+networks:
+  default:
+    name: ingestion
+    attachable: true

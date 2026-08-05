@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Nerzal/gocloak/v13"
+	"github.com/Nerzal/gocloak/v14"
 	"github.com/golang-jwt/jwt/v5/request"
 	"github.com/labstack/echo/v4"
 )
@@ -34,15 +34,15 @@ func (a *UMAAuthz) AuthorizeURL(token string, url string) (bool, error) {
 	ctx := context.Background()
 
 	// https://www.keycloak.org/docs/latest/authorization_services/index.html#_service_obtaining_permissions
-	// Get a authorization decision from keycloak, supplying an URL
-	req := gocloak.RequestingPartyTokenOptions{}
-	req.Audience = &a.ClientId
-	req.Permissions = &[]string{url}
-	// TODO: Once we are on keycloak 22.0+, consider upgrading to URI instead of resource ID
-	// t := true
-	// req.PermissionResourceMatchingURI = &t
-	// formatURI := "uri"
-	// req.PermissionResourceFormat = &formatURI
+	// Get a authorization decision from keycloak, supplying a URI
+	t := true
+	formatURI := "uri"
+	req := gocloak.RequestingPartyTokenOptions{
+		Audience:                      &a.ClientId,
+		Permissions:                   []string{url},
+		PermissionResourceMatchingURI: &t,
+		PermissionResourceFormat:      &formatURI,
+	}
 
 	res, err := client.GetRequestingPartyPermissionDecision(ctx, token, a.Realm, req)
 	if err != nil {
