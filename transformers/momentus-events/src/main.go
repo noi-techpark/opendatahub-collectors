@@ -350,14 +350,7 @@ func buildDetailFromFunctions(functions []MomentusFunction, description string, 
 		}
 	}
 
-	if len(details) == 0 && eventName != "" {
-		for _, lang := range []string{"en", "de", "it"} {
-			details[lang] = odhmodel.Detail{
-				Language: lang,
-				Title:    eventName,
-			}
-		}
-	}
+
 
 	if description != "" {
 		for lang, d := range details {
