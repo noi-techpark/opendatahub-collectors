@@ -1,18 +1,19 @@
-image:
-  repository: ghcr.io/noi-techpark/opendatahub-collectors/google-spreadsheet
-  pullPolicy: Always
-  tag: "0.0.0" # Set this when upgrading chart with --set-value
+# SPDX-FileCopyrightText: 2026 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
 
-imagePullSecrets:
-  - name: container-registry-r
-    
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/dc-google-spreadsheet
+  pullPolicy: IfNotPresent
+  tag: latest
+
 service:
   enabled: true
   type: ClusterIP
   port: 8082
   health:
-    delay: 30
-    path: /actuator/health
+    delay: 15
+    path: /health
 
 ingress:
   enabled: true
@@ -28,39 +29,35 @@ ingress:
       secretName: tls-spreadsheets
   hosts:
     - host: spreadsheets.dev.testingmachine.eu
-      paths: 
+      paths:
         - path: "/centro-trevi/(.*)"
           pathType: Prefix
-            
+
 resources:
   requests:
     cpu: 10m
     memory: 200Mi
 
 env:
-  SHEETS_APPLICATION_NAME: dc-spreadsheets-google-centro-trevi
+  MQ_CLIENT: dc-google-spreadsheet-centro-trevi
+  MQ_EXCHANGE: ingress
+  PROVIDER: spreadsheets/centro-trevi
 
   TRIGGER_PATH: trigger
-  TRIGGER_PORT: 8082
+  TRIGGER_PORT: "8082"
+  TRIGGER_MAX_UPDATE_FREQUENCY: "10000"
+  GOOGLE_WATCH_EXPIRATION_HOURS: "24"
 
-  INGRESS_PROVIDER: spreadsheets/centro-trevi
-
-  # consolidate update triggers and only update every n milliseconds
-  TRIGGER_MAX_UPDATE_FREQUENCY: 10000
-  SPREADSHEET_NOTIFICATION_URL: "https://spreadsheets.dev.testingmachine.eu/centro-trevi/trigger"
-
-  GOOGLE_WATCH_EXPIRATION_HOURS: 24
-  INGRESS_RABBITMQ_CLIENTNAME: spreadsheet-datacollector-centro-trevi
-
-envSecretRef:
-  - name: INGRESS_RABBITMQ_URI 
-    secret: rabbitmq-svcbind
-    key: uri
+  SERVICE_NAME: dc-google-spreadsheet-centro-trevi
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 
 envSecret:
-  SHEETS_CLIENT_ID: 
-  SHEETS_CLIENT_SECRET: 
-  SHEETS_REFRESH_TOKEN: 
+  SHEETS_CLIENT_ID: ""
+  SHEETS_CLIENT_SECRET: ""
+  SHEETS_REFRESH_TOKEN: ""
+  SPREADSHEET_ID: ""
 
-  SPREADSHEET_ID: 
-
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
