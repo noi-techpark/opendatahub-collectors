@@ -109,6 +109,7 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 				poi := mapToPoi(museum, batch.lang)
 				if cachedEntry, ok := poiCache.Get(id); ok {
 					poi.PublishedOn = cachedEntry.Entity.PublishedOn
+					poi.SmgTags = addChannels(cachedEntry.Entity.SmgTags, poi.SmgTags)
 				}
 				poi.PublishedOn = addChannels(poi.PublishedOn, getPublishedOnChannels())
 				pois[id] = poi
