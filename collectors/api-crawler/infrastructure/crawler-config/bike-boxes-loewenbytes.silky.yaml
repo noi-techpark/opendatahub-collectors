@@ -1,0 +1,43 @@
+# SPDX-FileCopyrightText: 2026 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+# Bike Boxen STA (Loewenbytes) - see transformers/bike-boxes-loewenbytes/documentation,
+# built against 260430_openapi-suedtirolmobile-bikebox-api-loewenbytes-v1.0.1.yaml.
+#
+# Per the integration spec, /resources/stations alone carries every field
+# needed (including type/totalPlaces/places), so /resources/locations and
+# the singular /resources/station are not called; languageID is the only
+# required query param (locationID/typeStation are optional filters).
+#
+# tokenUrl: the OpenAPI spec is internally inconsistent (securitySchemes
+# says /oauth/token, paths says /connect/token). Verified live against the
+# test environment on 2026-08-10: /oauth/token 404s, /connect/token is the
+# real endpoint (body-param client_credentials, per the spec's own example).
+rootContext: {}
+stream: false
+
+auth:
+    type: oauth
+    method: client_credentials
+    tokenUrl: "https://test.app.loewenbytes.com/api/v1/connect/token"
+    clientId: "${LOEWENBYTES_CLIENT_ID}"
+    clientSecret: "${LOEWENBYTES_CLIENT_SECRET}"
+
+headers:
+    Accept: application/json
+    Content-Type: application/json
+
+steps:
+    - type: forValues
+      name: "Fetch stations for all languages"
+      values: ["it", "de", "en", "lld"]
+      as: language
+      steps:
+        - type: request
+          name: "Get stations (language={{ .language }})"
+          request:
+              url: "https://test.app.loewenbytes.com/api/v1/resources/stations?languageID={{ .language }}"
+              method: GET
+
+          mergeOn: .[$ctx.language] = $res

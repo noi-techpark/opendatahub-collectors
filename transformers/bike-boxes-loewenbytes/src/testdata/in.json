@@ -1,0 +1,86 @@
+{
+  "it": [
+    {
+      "stationID": "101",
+      "locationID": "7",
+      "locationName": "Bolzano",
+      "name": "Stazione FS",
+      "address": "Piazza Stazione 1, Bolzano",
+      "latitude": 46.4964,
+      "longitude": 11.3547,
+      "type": 5,
+      "state": 1,
+      "countFreePlacesAvailable_MuscularBikes": 3,
+      "countFreePlacesAvailable_AssistedBikes": 2,
+      "countFreePlacesAvailable": 5,
+      "totalPlaces": 10,
+      "places": [
+        { "position": 1, "state": 1, "level": 0, "type": 1 },
+        { "position": 2, "state": 2, "level": 0, "type": 2 }
+      ]
+    }
+  ],
+  "de": [
+    {
+      "stationID": "101",
+      "locationID": "7",
+      "locationName": "Bozen",
+      "name": "Bahnhof",
+      "address": "Bahnhofsplatz 1, Bozen",
+      "latitude": 46.4964,
+      "longitude": 11.3547,
+      "type": 5,
+      "state": 1,
+      "countFreePlacesAvailable_MuscularBikes": 3,
+      "countFreePlacesAvailable_AssistedBikes": 2,
+      "countFreePlacesAvailable": 5,
+      "totalPlaces": 10,
+      "places": [
+        { "position": 1, "state": 1, "level": 0, "type": 1 },
+        { "position": 2, "state": 2, "level": 0, "type": 2 }
+      ]
+    }
+  ],
+  "en": [
+    {
+      "stationID": "101",
+      "locationID": "7",
+      "locationName": "Bolzano",
+      "name": "Train Station",
+      "address": "Station Square 1, Bolzano",
+      "latitude": 46.4964,
+      "longitude": 11.3547,
+      "type": 5,
+      "state": 1,
+      "countFreePlacesAvailable_MuscularBikes": 3,
+      "countFreePlacesAvailable_AssistedBikes": 2,
+      "countFreePlacesAvailable": 5,
+      "totalPlaces": 10,
+      "places": [
+        { "position": 1, "state": 1, "level": 0, "type": 1 },
+        { "position": 2, "state": 2, "level": 0, "type": 2 }
+      ]
+    }
+  ],
+  "lld": [
+    {
+      "stationID": "101",
+      "locationID": "7",
+      "locationName": "Balsan",
+      "name": "Stazion",
+      "address": "Plaza dla Stazion 1, Balsan",
+      "latitude": 46.4964,
+      "longitude": 11.3547,
+      "type": 5,
+      "state": 1,
+      "countFreePlacesAvailable_MuscularBikes": 3,
+      "countFreePlacesAvailable_AssistedBikes": 2,
+      "countFreePlacesAvailable": 5,
+      "totalPlaces": 10,
+      "places": [
+        { "position": 1, "state": 1, "level": 0, "type": 1 },
+        { "position": 2, "state": 2, "level": 0, "type": 2 }
+      ]
+    }
+  ]
+}
