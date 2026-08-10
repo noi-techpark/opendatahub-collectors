@@ -7,12 +7,12 @@ name: CI/CD tr-google-spreadsheet-centrotrevi-venues
 on:
   push:
     paths:
-      - "transformers/google-spreadsheet-centrotrevi/**"
+      - "transformers/google-spreadsheet-centrotrevi-venues/**"
       - ".github/workflows/tr-google-spreadsheet-centrotrevi-venues.yml"
 
 env:
   PROJECT_NAME: tr-google-spreadsheet-centrotrevi-venues
-  WORKING_DIRECTORY: transformers/google-spreadsheet-centrotrevi
+  WORKING_DIRECTORY: transformers/google-spreadsheet-centrotrevi-venues
   DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/tr-google-spreadsheet-centrotrevi-venues
   DOCKER_TAG: ${{ github.sha }}
   KUBERNETES_NAMESPACE: collector
