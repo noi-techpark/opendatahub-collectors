@@ -119,15 +119,15 @@ func main() {
 			// 3. Overwrite ONLY RoomDetails in the original map
 			venueMap["RoomDetails"] = venueLinked.RoomDetails
 
-			// 4. Send map to ODH API
+			// 4. Strip read-only metadata before pushing
+			delete(venueMap, "_Meta")
+			delete(venueMap, "Self")
+
+			// 5. Send map to ODH API
 			err = t.contentClient.Put(ctx, "Venue", venueLinked.Id, &venueMap)
 			if err != nil {
-				slog.Debug("Put failed, attempting Post as fallback", "err", err, "venueID", venueLinked.Id)
-				err = t.contentClient.Post(ctx, "Venue", map[string]string{"generateid": "false"}, &venueMap)
-				if err != nil {
-					slog.Error("Failed to push Venue to ODH Core API (both Put and Post failed)", "err", err, "venueID", venueLinked.Id)
-					continue
-				}
+				slog.Error("Failed to push Venue to ODH Core API", "err", err, "venueID", venueLinked.Id)
+				continue
 			}
 
 			slog.Info("Successfully processed grouped rooms and pushed to Core", "venueID", venueLinked.Id, "roomCount", len(groupedRooms))
