@@ -123,7 +123,7 @@ func main() {
 			err = t.contentClient.Put(ctx, "Venue", venueLinked.Id, &venueMap)
 			if err != nil {
 				slog.Debug("Put failed, attempting Post as fallback", "err", err, "venueID", venueLinked.Id)
-				err = t.contentClient.Post(ctx, "Venue", nil, &venueMap)
+				err = t.contentClient.Post(ctx, "Venue", map[string]string{"generateid": "false"}, &venueMap)
 				if err != nil {
 					slog.Error("Failed to push Venue to ODH Core API (both Put and Post failed)", "err", err, "venueID", venueLinked.Id)
 					continue
