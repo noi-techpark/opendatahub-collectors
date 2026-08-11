@@ -96,10 +96,8 @@ github.com/modern-go/reflect2 v1.0.2 h1:xBagoLtFs94CBntxluKeaWgTMpvLxC4ur3nMaC9G
 github.com/modern-go/reflect2 v1.0.2/go.mod h1:yWuevngMOJpCy52FWWMvUC8ws7m/LJsjYzDa0/r8luk=
 github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 h1:C3w9PqII01/Oq1c1nUAm88MOHcQC9l5mIlSMApZMrHA=
 github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
-github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.10-0.20260703090703-3208d5638a13 h1:Y3JmodaIbFB04fBWVnNTgjMMCGA53CeX0YUaCWqpDtA=
-github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.10-0.20260703090703-3208d5638a13/go.mod h1:/ZD5ehai/2+RdNvtbSyznvzNKh3Bq4usXHDmyJFcBNU=
-github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.10-0.20260703092235-5f89829686e4 h1:TkEveXoQ+JWcv6iPgncJHALKTvqWt9Yx3sjxbeZnV8o=
-github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.10-0.20260703092235-5f89829686e4/go.mod h1:/ZD5ehai/2+RdNvtbSyznvzNKh3Bq4usXHDmyJFcBNU=
+github.com/noi-techpark/opendatahub-go-sdk/ingest v1.1.0 h1:BS/eGO935a7XYAxVca9L56dOm35U3vYjP5Dl5C25HIs=
+github.com/noi-techpark/opendatahub-go-sdk/ingest v1.1.0/go.mod h1:/ZD5ehai/2+RdNvtbSyznvzNKh3Bq4usXHDmyJFcBNU=
 github.com/noi-techpark/opendatahub-go-sdk/qmill v1.0.4 h1:m12YaN7btMyzM5Li+MPHDO1pSnPrK3AThFb+dDRuOfE=
 github.com/noi-techpark/opendatahub-go-sdk/qmill v1.0.4/go.mod h1:iHTLcqZRJ21TiakPeH+eScQskx3w1KpG70GXKX+x9gE=
 github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0 h1:qZNcndXyVDNMjm97UUHY83SE/ajxFb3EG8Fy0knYJVA=
