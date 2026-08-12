@@ -7,14 +7,14 @@ name: CI/CD dc-google-spreadsheet centro-trevi
 on:
   push:
     paths:
-      - "collectors/google-spreadsheet/**"
+      - "collectors/google-spreadsheet-go/**"
       - ".github/workflows/dc-google-spreadsheet-centro-trevi.yml"
-      - "!collectors/google-spreadsheet/infrastructure/helm/*.yaml"
-      - "collectors/google-spreadsheet/infrastructure/helm/centro-trevi.yaml"
+      - "!collectors/google-spreadsheet-go/infrastructure/helm/*.yaml"
+      - "collectors/google-spreadsheet-go/infrastructure/helm/centro-trevi.yaml"
 
 env:
   PROJECT_NAME: dc-google-spreadsheet-centro-trevi
-  WORKING_DIRECTORY: collectors/google-spreadsheet
+  WORKING_DIRECTORY: collectors/google-spreadsheet-go
   DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/dc-google-spreadsheet
   DOCKER_TAG: ${{ github.sha }}
   KUBERNETES_NAMESPACE: collector

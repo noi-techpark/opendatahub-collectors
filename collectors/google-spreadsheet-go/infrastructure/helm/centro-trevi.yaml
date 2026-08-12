@@ -29,28 +29,28 @@ ingress:
   hosts:
     - host: spreadsheets.dev.testingmachine.eu
       paths: 
-        - path: "/traffic-bluetooth/(.*)"
+        - path: "/centro-trevi/(.*)"
           pathType: Prefix
-
+            
 resources:
   requests:
     cpu: 10m
     memory: 200Mi
-    
+
 env:
-  SHEETS_APPLICATION_NAME: dc-spreadsheets-google-traffic-bluetooth
+  SHEETS_APPLICATION_NAME: dc-spreadsheets-google-centro-trevi
 
   TRIGGER_PATH: trigger
   TRIGGER_PORT: 8082
 
-  INGRESS_PROVIDER: spreadsheets/traffic-bluetooth
+  INGRESS_PROVIDER: spreadsheets/centro-trevi
 
   # consolidate update triggers and only update every n milliseconds
-  TRIGGER_MAX_UPDATE_FREQUENCY: 20000
-  SPREADSHEET_NOTIFICATION_URL: "https://spreadsheets.dev.testingmachine.eu/traffic-bluetooth/trigger"
+  TRIGGER_MAX_UPDATE_FREQUENCY: 10000
+  SPREADSHEET_NOTIFICATION_URL: "https://spreadsheets.dev.testingmachine.eu/centro-trevi/trigger"
 
   GOOGLE_WATCH_EXPIRATION_HOURS: 24
-  INGRESS_RABBITMQ_CLIENTNAME: spreadsheet-datacollector-traffic-bluetooth
+  INGRESS_RABBITMQ_CLIENTNAME: spreadsheet-datacollector-centro-trevi
 
 envSecretRef:
   - name: INGRESS_RABBITMQ_URI
