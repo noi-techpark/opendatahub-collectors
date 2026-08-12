@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: CC0-1.0
 
 image:
-  repository: ghcr.io/noi-techpark/opendatahub-collectors/dc-google-spreadsheet
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/dc-google-spreadsheet-go
   pullPolicy: IfNotPresent
   tag: latest
 
@@ -21,6 +21,7 @@ ingress:
   annotations:
     cert-manager.io/issuer: "letsencrypt-prod"
     nginx.ingress.kubernetes.io/rewrite-target: "/$1"
+    nginx.ingress.kubernetes.io/use-regex: "true"
 
   className: nginx
   tls:
@@ -31,7 +32,7 @@ ingress:
     - host: spreadsheets.dev.testingmachine.eu
       paths:
         - path: "/centro-trevi/(.*)"
-          pathType: Prefix
+          pathType: ImplementationSpecific
 
 resources:
   requests:

@@ -15,7 +15,7 @@ on:
 env:
   PROJECT_NAME: dc-google-spreadsheet-centro-trevi
   WORKING_DIRECTORY: collectors/google-spreadsheet-go
-  DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/dc-google-spreadsheet
+  DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/dc-google-spreadsheet-go
   DOCKER_TAG: ${{ github.sha }}
   KUBERNETES_NAMESPACE: collector
 
