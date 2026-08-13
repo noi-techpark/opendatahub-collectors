@@ -352,9 +352,9 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 		err := client.Put(ctx, "Venue", venue.Id, &venueMap)
 		if err != nil {
 			slog.Debug("Put venue failed, trying Post", "err", err, "id", venue.Id)
-			err = client.Post(ctx, "Venue", nil, &venueMap)
+			err = client.Post(ctx, "Venue", map[string]string{"generateid": "false"}, &venueMap)
 			if err != nil {
-				slog.Error("Failed to save venue", "err", err, "id", venue.Id)
+				slog.Error("Failed to save venue", "err", err.Error(), "id", venue.Id)
 			}
 		} else {
 			slog.Info("Saved venue", "id", venue.Id)
