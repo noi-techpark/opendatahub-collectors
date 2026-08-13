@@ -74,6 +74,8 @@ jobs:
           yq -i '.image.repository = "${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML }}
           yq -i '.image.tag = "${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
           yq -i '.image.pullPolicy = "IfNotPresent"' ${{ env.VALUES_YAML }}
+          yq -i '.ingress.tls[0].hosts[0] = "${{ vars.G_SHEETS_CALLBACK_HOST }}"' ${{ env.VALUES_YAML }}
+          yq -i '.ingress.hosts[0].host = "${{ vars.G_SHEETS_CALLBACK_HOST }}"' ${{ env.VALUES_YAML }}
           yq -i '.env.SPREADSHEET_NOTIFICATION_URL = "https://${{ vars.G_SHEETS_CALLBACK_HOST }}/centro-trevi/trigger"' ${{ env.VALUES_YAML }}
           yq -i '.envSecret.SHEETS_CLIENT_ID = "${{ secrets.G_SHEETS_CLIENT_ID }}"' ${{ env.VALUES_YAML }}
           yq -i '.envSecret.SHEETS_CLIENT_SECRET = "${{ secrets.G_SHEETS_CLIENT_SECRET }}"' ${{ env.VALUES_YAML }}
@@ -111,6 +113,8 @@ jobs:
           yq -i '.image.repository = "${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML }}
           yq -i '.image.tag = "${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
           yq -i '.image.pullPolicy = "IfNotPresent"' ${{ env.VALUES_YAML }}
+          yq -i '.ingress.tls[0].hosts[0] = "${{ vars.G_SHEETS_CALLBACK_HOST }}"' ${{ env.VALUES_YAML }}
+          yq -i '.ingress.hosts[0].host = "${{ vars.G_SHEETS_CALLBACK_HOST }}"' ${{ env.VALUES_YAML }}
           yq -i '.env.SPREADSHEET_NOTIFICATION_URL = "https://${{ vars.G_SHEETS_CALLBACK_HOST }}/centro-trevi/trigger"' ${{ env.VALUES_YAML }}
           yq -i '.envSecret.SHEETS_CLIENT_ID = "${{ secrets.G_SHEETS_CLIENT_ID }}"' ${{ env.VALUES_YAML }}
           yq -i '.envSecret.SHEETS_CLIENT_SECRET = "${{ secrets.G_SHEETS_CLIENT_SECRET }}"' ${{ env.VALUES_YAML }}
