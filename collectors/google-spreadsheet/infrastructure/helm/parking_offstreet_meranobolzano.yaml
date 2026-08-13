@@ -30,7 +30,7 @@ ingress:
     - host: spreadsheets.dev.testingmachine.eu
       paths: 
         - path: "/parking-offstreet-mebo/(.*)"
-          pathType: Prefix
+          pathType: ImplementationSpecific
 
 resources:
   requests:

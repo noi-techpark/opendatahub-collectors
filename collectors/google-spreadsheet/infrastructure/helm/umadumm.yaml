@@ -30,7 +30,7 @@ ingress:
     - host: spreadsheets.dev.testingmachine.eu
       paths: 
         - path: "/umadumm/(.*)"
-          pathType: Prefix
+          pathType: ImplementationSpecific
 
 resources:
   requests:

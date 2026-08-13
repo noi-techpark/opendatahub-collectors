@@ -30,7 +30,7 @@ ingress:
     - host: spreadsheets.dev.testingmachine.eu
       paths: 
         - path: "/creative-industries/(.*)"
-          pathType: Prefix
+          pathType: ImplementationSpecific
 
 resources:
   requests:
