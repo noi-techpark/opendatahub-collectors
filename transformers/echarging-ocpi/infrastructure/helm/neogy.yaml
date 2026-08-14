@@ -18,10 +18,10 @@ env:
   NINJA_URL: http://ninja-api.core.svc.cluster.local
 
   MQ_EXCHANGE: routed
-  MQ_PUSH_QUEUE: echarging-ocpi.neogy-push-evse
-  MQ_PUSH_KEY: echarging-ocpi.neogy-push-evse
-  MQ_POLL_QUEUE: echarging-ocpi.neogy-pull-locations
-  MQ_POLL_KEY: echarging-ocpi.neogy-pull-locations
+  MQ_PUSH_QUEUE: echarging-ocpi.neogy-ampeco-push-evse
+  MQ_PUSH_KEY: echarging-ocpi.neogy-ampeco-push-evse
+  MQ_POLL_QUEUE: echarging-ocpi.neogy-ampeco-pull-locations
+  MQ_POLL_KEY: echarging-ocpi.neogy-ampeco-pull-locations
 
 envFrom:
   MQ_CONSUMER: 
