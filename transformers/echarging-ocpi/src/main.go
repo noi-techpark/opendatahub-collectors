@@ -97,6 +97,7 @@ func main() {
 			plugData := b.CreateDataMap()
 
 			plugid := stationId(r.Rawdata.Params.Evse_uid, b.GetOrigin())
+			locationId := stationId(r.Rawdata.Params.Location_id, b.GetOrigin())
 			plugData.AddRecord(plugid, dtPlugStatus.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), r.Rawdata.Body.Status, period))
 			if err := b.PushData(stationTypePlug, plugData); err != nil {
 				return fmt.Errorf("error pushing plug data: %w", err)
@@ -114,7 +115,7 @@ func main() {
 				req.Repr = odhts.FlatNode
 				req.DataTypes = append(req.DataTypes, dtPlugStatus.Name)
 				// count available plugs under same parent
-				req.Where = fmt.Sprintf("sactive.eq.true,pcode.eq.\"%s\",mvalue.eq.AVAILABLE", r.Rawdata.Params.Location_id)
+				req.Where = fmt.Sprintf("sactive.eq.true,pcode.eq.\"%s\",mvalue.eq.AVAILABLE", locationId)
 				req.Select = "scode"
 
 				res := odhts.Response[[]struct{ Mvalue string }]{}
