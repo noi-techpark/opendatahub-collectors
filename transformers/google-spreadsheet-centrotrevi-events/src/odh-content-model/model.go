@@ -41,9 +41,10 @@ type Detail struct {
 type EventDate struct {
 	Active bool   `json:"Active"`
 	Begin  string `json:"Begin,omitempty"`
-	End    string `json:"End,omitempty"`
-	From   string `json:"From,omitempty"`
-	To     string `json:"To,omitempty"`
+	End                 string   `json:"End,omitempty"`
+	From                string   `json:"From,omitempty"`
+	To                  string   `json:"To,omitempty"`
+	VenueRoomDetailsIds []string `json:"VenueRoomDetailsIds,omitempty"`
 }
 
 type ContactInfos struct {

@@ -286,6 +286,10 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 		}
 
 		venue.Shortname = pd.Names["it"]
+		venue.Source = "trevilab"
+		if strings.Contains(strings.ToLower(pd.ID), "drin") {
+			venue.Source = "drin"
+		}
 		venue.Detail = map[string]any{
 			"it": map[string]any{"Language": "it", "Title": pd.Names["it"]},
 			"de": map[string]any{"Language": "de", "Title": pd.Names["de"]},
@@ -296,6 +300,9 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 			"it": map[string]any{"Address": pd.Addresses["it"], "City": pd.Cities["it"], "Email": pd.Email, "Phonenumber": pd.Phone, "ZipCode": pd.ZipCode, "Language": "it"},
 			"de": map[string]any{"Address": pd.Addresses["de"], "City": pd.Cities["de"], "Email": pd.Email, "Phonenumber": pd.Phone, "ZipCode": pd.ZipCode, "Language": "de"},
 			"en": map[string]any{"Address": pd.Addresses["en"], "City": pd.Cities["en"], "Email": pd.Email, "Phonenumber": pd.Phone, "ZipCode": pd.ZipCode, "Language": "en"},
+		}
+		venue.GpsInfo = []map[string]any{
+			{"Gpstype": "position", "Latitude": pd.Lat, "Longitude": pd.Lon},
 		}
 
 		// Attach rooms belonging to this place

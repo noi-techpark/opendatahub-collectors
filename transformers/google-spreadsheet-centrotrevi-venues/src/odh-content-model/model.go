@@ -77,6 +77,7 @@ type ImageGalleryItem struct {
 type VenueV2 struct {
 	Id              string                       `json:"Id"`
 	Active          *bool                        `json:"Active,omitempty"`
+	Source          string                       `json:"Source,omitempty"`
 	Shortname       string                       `json:"Shortname"`
 	Detail          map[string]any               `json:"Detail,omitempty"`
 	Mapping         map[string]map[string]string `json:"Mapping,omitempty"`
@@ -84,6 +85,7 @@ type VenueV2 struct {
 	RoomDetails     []VenueRoomDetailsV2         `json:"RoomDetails,omitempty"`
 	ContactInfos    map[string]any               `json:"ContactInfos,omitempty"`
 	LocationInfo    map[string]any               `json:"LocationInfo,omitempty"`
+	GpsInfo         []map[string]any             `json:"GpsInfo,omitempty"`
 }
 
 type VenueRoomDetailsV2 struct {
