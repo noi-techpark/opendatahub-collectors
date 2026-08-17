@@ -16,6 +16,7 @@ env:
   LOG_LEVEL: INFO
 
   NINJA_URL: http://ninja-api.core.svc.cluster.local
+  LOCATION_CACHE_ENABLED: "false"
 
   MQ_EXCHANGE: routed
   MQ_PUSH_QUEUE: echarging-ocpi.neogy-ampeco-push-evse
