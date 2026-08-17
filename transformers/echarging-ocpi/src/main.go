@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log/slog"
 	"strconv"
+	"strings"
 	"sync"
 
 	"github.com/kelseyhightower/envconfig"
@@ -72,7 +73,7 @@ type EVSERaw struct {
 var ninja odhts.C
 
 func setupNinja() {
-	ninja = odhts.NewCustomClient(cfg.NINJA_URL+"/v2", "", cfg.MQ_CONSUMER)
+	ninja = odhts.NewCustomClient(cfg.NINJA_URL, "", cfg.MQ_CONSUMER)
 }
 
 var locDataMu = sync.Mutex{}
@@ -117,11 +118,11 @@ func main() {
 				req.Repr = odhts.FlatNode
 				req.DataTypes = append(req.DataTypes, dtPlugStatus.Name)
 				// count available plugs under same parent
-				req.Where = where.And(
+				req.Where = strings.Join([]string{
 					where.Eq("sactive", "true"),
 					where.Eq("pcode", where.Escape(locationId)),
 					where.Eq("mvalue", "AVAILABLE"),
-				)
+				}, ",")
 				req.Select = "scode"
 
 				res := odhts.Response[[]struct{ Mvalue string }]{}
