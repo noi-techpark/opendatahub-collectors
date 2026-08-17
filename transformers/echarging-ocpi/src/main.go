@@ -17,6 +17,7 @@ import (
 	"github.com/noi-techpark/go-opendatahub-ingest/ms"
 	"github.com/noi-techpark/go-opendatahub-ingest/tr"
 	"github.com/noi-techpark/go-timeseries-client/odhts"
+	"github.com/noi-techpark/go-timeseries-client/where"
 )
 
 const stationTypeLocation = "EChargingStation"
@@ -68,9 +69,10 @@ type EVSERaw struct {
 	Body OCPIEvse
 }
 
+var ninja odhts.C
+
 func setupNinja() {
-	odhts.C.BaseUrl = cfg.NINJA_URL
-	odhts.C.Referer = cfg.MQ_CONSUMER
+	ninja = odhts.NewCustomClient(cfg.NINJA_URL+"/v2", "", cfg.MQ_CONSUMER)
 }
 
 var locDataMu = sync.Mutex{}
@@ -115,12 +117,16 @@ func main() {
 				req.Repr = odhts.FlatNode
 				req.DataTypes = append(req.DataTypes, dtPlugStatus.Name)
 				// count available plugs under same parent
-				req.Where = fmt.Sprintf("sactive.eq.true,pcode.eq.\"%s\",mvalue.eq.AVAILABLE", locationId)
+				req.Where = where.And(
+					where.Eq("sactive", "true"),
+					where.Eq("pcode", where.Escape(locationId)),
+					where.Eq("mvalue", "AVAILABLE"),
+				)
 				req.Select = "scode"
 
 				res := odhts.Response[[]struct{ Mvalue string }]{}
 
-				if err := odhts.Latest(req, &res); err != nil {
+				if err := odhts.Latest(ninja, req, &res); err != nil {
 					slog.Error("failed requesting sibling plug states", "err", err)
 					return
 				}
