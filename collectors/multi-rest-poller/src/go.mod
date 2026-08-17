@@ -4,7 +4,7 @@ go 1.25.5
 
 require (
 	github.com/hashicorp/go-retryablehttp v0.7.8
-	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.8
+	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.1.0
 	github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0
 	github.com/oliveagle/jsonpath v0.1.4
 	github.com/robfig/cron/v3 v3.0.1
