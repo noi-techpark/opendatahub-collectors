@@ -1,0 +1,3182 @@
+{
+  "dssWebcams": {
+    "items": [
+      {
+        "altitude": 2060,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.526951720704, "lon": 12.177014350891 },
+        "name": { "de": "Bigontina", "en": "Bigontina", "it": "Bigontina" },
+        "original-image": "https://webcam.faloriacristallo.it/img/precbigontina.jpg",
+        "pid": 134559660,
+        "regionId": 1,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Faloria",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2193,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.567476240604, "lon": 12.175426483154 },
+        "name": { "de": "Padeon", "en": "Padeon", "it": "Padeon" },
+        "original-image": "https://webcam.faloriacristallo.it/img/padeon.jpg",
+        "pid": 135237749,
+        "regionId": 1,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Faloria",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2092,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.53772, "lon": 12.085314 },
+        "name": { "de": "Le 5 Torri", "en": "Le 5 Torri", "it": "Le 5 Torri" },
+        "original-image": "https://live-image.panomax.com/cams/2883/5torri.jpg",
+        "pid": 141938028,
+        "regionId": 1,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Tofana",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2690,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.5275287, "lon": 12.0089548 },
+        "name": {
+          "de": null,
+          "en": null,
+          "it": "Rifugio Lagazuoi con vista sulla Tofana di Rozes"
+        },
+        "original-image": "https://www.montagnaitalia.it/webcam/original/TofanaRozes.jpg",
+        "pid": 40825740,
+        "regionId": 1,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Falzarego",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2239,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.526951720704, "lon": 12.177014350891 },
+        "name": { "de": "Punta Nera", "en": "Punta Nera", "it": "Punta Nera" },
+        "original-image": "https://webcam.faloriacristallo.it/img/pnera.jpg",
+        "pid": 134573108,
+        "regionId": 1,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Faloria",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2000,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.57416242246033, "lon": 11.673888187402358 },
+        "name": { "de": "Vitelli", "en": "Vitelli", "it": "Vitelli" },
+        "original-image": "https://webcam.faloriacristallo.it/img/vitelli.jpg",
+        "pid": 134573609,
+        "regionId": 1,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Faloria",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2356,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.52751271802, "lon": 12.18409538269 },
+        "name": {
+          "de": "Vitelli Bergstation",
+          "en": "Vitelli Mountain station",
+          "it": "Vitelli stazione a monte"
+        },
+        "original-image": "https://webcam.faloriacristallo.it/img/vitelli-alta.jpg",
+        "pid": 135236860,
+        "regionId": 1,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Faloria",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2150,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.551659634691, "lon": 12.190361022949 },
+        "name": { "de": "Sonforca", "en": "Sonforca", "it": "Sonforca" },
+        "original-image": "https://webcam.faloriacristallo.it/img/sonforca.jpg",
+        "pid": 135237269,
+        "regionId": 1,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Faloria",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2092,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.53772, "lon": 12.085314 },
+        "name": {
+          "de": "Stratofana Olimpica Piste",
+          "en": "Stratofana Olimpica slope",
+          "it": "Pista Stratofana Olimpica"
+        },
+        "original-image": "https://live-image.panomax.com/cams/2880/pistaolimpia.jpg",
+        "pid": 141937607,
+        "regionId": 1,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Tofana",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2092,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://cortina.panomax.com/ducadaosta"
+        },
+        "location": { "lat": 46.53772, "lon": 12.085314 },
+        "name": {
+          "de": "Cortina vom Duca D'Aosta",
+          "en": "Cortina from Duca D'Aosta",
+          "it": "Cortina dal Duca D'Aosta"
+        },
+        "original-image": "https://live-image.panomax.com/cams/2880/cortina.jpg",
+        "pid": 141938211,
+        "regionId": 1,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Tofana",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2475,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v4\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6290"
+        },
+        "location": { "lat": 46.54744073040844, "lon": 12.084926897900381 },
+        "name": { "de": "Ra Valles", "en": "Ra Valles", "it": "Ra Valles" },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6290.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 6320,
+        "regionId": 1,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Ra Valles",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2200,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://cortina.panomax.com/pomedes"
+        },
+        "location": { "lat": 46.5363358, "lon": 12.0754802 },
+        "name": { "de": null, "en": null, "it": "Pomedes" },
+        "original-image": "https://live-image.panomax.com/cams/2880/cortina.jpg",
+        "pid": 1676303605,
+        "regionId": 1,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Tofana",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2275,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://kronplatz.panomax.com/"
+        },
+        "location": { "lat": 46.739757663212, "lon": 11.959465742111 },
+        "name": {
+          "de": "Kronplatz 360° Panomax",
+          "en": "Kronplatz 360° Panomax",
+          "it": "Plan de Corones 360° Panomax"
+        },
+        "original-image": "https://live-image.panomax.com/cams/2044/recent_optimized.jpg",
+        "pid": 42750023,
+        "regionId": 2,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Kronplatz",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2275,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v5\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6121"
+        },
+        "location": { "lat": 46.739757663212, "lon": 11.959465742111 },
+        "name": {
+          "de": "Kronplatz / Gipfel ",
+          "en": "Kronplatz / Peak",
+          "it": "Plan de Corones / Vetta "
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6121.jpeg?t=38\u0026design=v5",
+        "pid": 3869628,
+        "regionId": 2,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Kronplatz",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2153,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?cam=6122\u0026design=v3\u0026c0=0\u0026c2=0\u0026lg=de\u0026s=0\u0026c2=0"
+        },
+        "location": { "lat": 46.744595465384, "lon": 12.006425857544 },
+        "name": {
+          "de": "Kronplatz / Olang",
+          "en": "Kronplatz / Valdaora",
+          "it": "Plan de Corones / Valdaora"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6122.jpeg?t=38\u0026design=v5",
+        "pid": 2838,
+        "regionId": 2,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Kronplatz",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1600,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://pizdeplaies.panomax.com/"
+        },
+        "location": { "lat": 46.704085698323, "lon": 11.930294036865 },
+        "name": {
+          "de": "Kronplatz / Piz de Plaies",
+          "en": "Plan de Corones / Piz de Plaies",
+          "it": "Plan de Corones / Piz de Plaies"
+        },
+        "original-image": "https://panodata.panomax.com/cams/2932/recent_reduced.jpg",
+        "pid": 2830,
+        "regionId": 2,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Kronplatz",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2250,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v5\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6124"
+        },
+        "location": { "lat": 46.739390031318, "lon": 11.95930480957 },
+        "name": {
+          "de": "Kronplatz / Bruneck ",
+          "en": "Kronplatz / Brunico",
+          "it": "Plan de Corones / Brunico"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6124.jpeg?t=38\u0026design=v5",
+        "pid": 3869726,
+        "regionId": 2,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Kronplatz",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2275,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.788424682355, "lon": 11.977093219757 },
+        "name": {
+          "de": "Kronplatz / Gipfel ",
+          "en": "Kronplatz / Peak",
+          "it": "Plan de Corones / Vetta"
+        },
+        "original-image": "https://webcams.kronplatz.com/webcam/kronplatz/160/webcam16.jpg",
+        "pid": 1215083,
+        "regionId": 2,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Kronplatz",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2275,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.73852055562422, "lon": 11.957532934423826 },
+        "name": {
+          "de": "Kronplatz / Olang",
+          "en": "Kronplatz / Valdaora",
+          "it": "Plan de Corones / Valdaora"
+        },
+        "original-image": "https://webcams.kronplatz.com/webcam/kronplatz/30/webcam3.jpg",
+        "pid": 6124,
+        "regionId": 2,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Plan de Corones",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 1201,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.771886355842, "lon": 11.941130161285 },
+        "name": {
+          "de": "Kronplatz / St. Vigil",
+          "en": "Kronplatz / San Vigilio",
+          "it": "Plan de Corones / San Vigilio"
+        },
+        "original-image": "https://webcams.kronplatz.com/webcam/kronplatz/170/webcam17.jpg",
+        "pid": 41329400,
+        "regionId": 2,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Kronplatz",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 1220,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.57416242246033, "lon": 11.673888187402358 },
+        "name": {
+          "de": "Kronplatz / Talstation Miara",
+          "en": "Kronplatz / Valley station Miara",
+          "it": "Plan de Corones / Stazione a valle Miara"
+        },
+        "original-image": "https://webcams.kronplatz.com/webcam/kronplatz/130/webcam13.jpg",
+        "pid": 1736864778,
+        "regionId": 2,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Kronplatz",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 1759,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.57416242246033, "lon": 11.673888187402358 },
+        "name": {
+          "de": "Webcam Kronplatz / Furkelpass",
+          "en": "Kronplatz / Passo Furcia",
+          "it": "Plan de Corones / Passo Furcia"
+        },
+        "original-image": "https://webcams.kronplatz.com/webcam/kronplatz/40/webcam4.jpg",
+        "pid": 1736865007,
+        "regionId": 2,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Kronplatz",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2224,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v4\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6321"
+        },
+        "location": { "lat": 46.5259, "lon": 11.8633 },
+        "name": {
+          "de": "Corvara, Boè",
+          "en": "Corvara, Boè",
+          "it": "Corvara - Boé"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6321.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 193422,
+        "regionId": 3,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Corvara - Boé",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2077,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v4\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6323"
+        },
+        "location": { "lat": 46.565479876293, "lon": 11.906225302002 },
+        "name": {
+          "de": "La Villa, Piz La Ila",
+          "en": "La Villa, Piz La Ila",
+          "it": "La Villa - Piz La Ila"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6323.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 2839,
+        "regionId": 3,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "La Villa - Piz La Ila",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1574,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v4\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6325"
+        },
+        "location": { "lat": 46.652826, "lon": 11.946805 },
+        "name": {
+          "de": "Alta Badia - La Val",
+          "en": "Alta Badia - La Val",
+          "it": "La Val - Coz"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6325.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 40463838,
+        "regionId": 3,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "La Val - Coz",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2122,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v5\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6322"
+        },
+        "location": { "lat": 46.554453677396, "lon": 11.805142667145 },
+        "name": {
+          "de": "Alta Badia, Grödner Joch",
+          "en": "Alta Badia, Passo Gardena",
+          "it": "Colfosco - Passo Gardena"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6322.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 58920412,
+        "regionId": 3,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Colfosco - Passo Gardena",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2002,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v4\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6320"
+        },
+        "location": { "lat": 46.54914360215327, "lon": 11.898869276046753 },
+        "name": {
+          "de": "Corvara - Piz Arlara",
+          "en": "Corvara - Piz Arlara",
+          "it": "Corvara - Piz Arlara"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6320.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 11155237,
+        "regionId": 3,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Corvara - Piz Arlara",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2062,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v4\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6326"
+        },
+        "location": { "lat": 47.3688387, "lon": 8.53751490000002 },
+        "name": { "de": "La Crusc", "en": "La Crusc", "it": "La Crusc" },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6326.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 1668438274,
+        "regionId": 3,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "La Crusc",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2284,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v4\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6342"
+        },
+        "location": { "lat": 46.53182334619, "lon": 11.750242710114 },
+        "name": {
+          "de": "Piz Sella - Live",
+          "en": "Piz Sella - Live",
+          "it": "Piz Sella - Live"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6342.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 189442,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val Gardena - Gröden",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2016,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v5\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6345"
+        },
+        "location": { "lat": 46.584866232458, "lon": 11.745522022247 },
+        "name": {
+          "de": "Col Raiser - Live",
+          "en": "Col Raiser - Live",
+          "it": "Col Raiser - Live"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6345.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 185066,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val Gardena - Gröden",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2265,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v5\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6340"
+        },
+        "location": { "lat": 46.553932079958, "lon": 11.79972410202 },
+        "name": {
+          "de": "Dantercepies - Live",
+          "en": "Dantercepies - Live",
+          "it": "Dantercepies - Live"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6340.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 191684,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val Gardena - Gröden",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2254,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v4\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6341"
+        },
+        "location": { "lat": 46.538436247624, "lon": 11.752817630768 },
+        "name": {
+          "de": "Ciampinoi - Live",
+          "en": "Ciampinoi - Live",
+          "it": "Ciampinoi - Live"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6341.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 186040,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val Gardena - Gröden",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2000,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v5\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6343"
+        },
+        "location": { "lat": 46.600157145766, "lon": 11.67780160904 },
+        "name": {
+          "de": "Raschötz - Live",
+          "en": "Resciesa - Live",
+          "it": "Resciesa - Live"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6343.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 3581,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val Gardena - Gröden",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1600,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v4\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6347"
+        },
+        "location": { "lat": 46.551128399998, "lon": 11.715631484985 },
+        "name": {
+          "de": "Monte Pana - Live",
+          "en": "Monte Pana - Live",
+          "it": "Monte Pana - Live"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6347.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 6595602,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val Gardena - Gröden",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2016,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://valgardena.panomax.com/colraiser"
+        },
+        "location": { "lat": 46.584983966126, "lon": 11.745425336571 },
+        "name": {
+          "de": "Col Raiser - Panocam",
+          "en": "Col Raiser - Panocam",
+          "it": "Col Raiser - Panocam"
+        },
+        "original-image": "https://live-image.panomax.com/cams/1226/recent_reduced.jpg",
+        "pid": 11783572,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val Gardena - Gröden",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2450,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://valgardena.panomax.com/seceda"
+        },
+        "location": { "lat": 46.596961205365, "lon": 11.724085681648 },
+        "name": {
+          "de": "Seceda - Panocam",
+          "en": "Seceda - Panocam",
+          "it": "Seceda - Panocam"
+        },
+        "original-image": "https://live-image.panomax.com/cams/1044/recent_reduced.jpg",
+        "pid": 6593501,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val Gardena - Gröden",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2440,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://valgardena.panomax.com/dantercepies"
+        },
+        "location": { "lat": 46.553754764048, "lon": 11.799750797958 },
+        "name": {
+          "de": "Dantercepies - Panocam",
+          "en": "Dantercepies - Panocam",
+          "it": "Dantercepies - Panocam"
+        },
+        "original-image": "https://live-image.panomax.com/cams/1186/recent_reduced.jpg",
+        "pid": 9406439,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val Gardena - Gröden",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2280,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://valgardena.panomax.com/ciampinoi"
+        },
+        "location": { "lat": 46.538738581902, "lon": 11.753423683853 },
+        "name": {
+          "de": "Ciampinoi - Panocam",
+          "en": "Ciampinoi - Panocam",
+          "it": "Ciampinoi - Panocam"
+        },
+        "original-image": "https://live-image.panomax.com/cams/1219/recent_reduced.jpg",
+        "pid": 9406203,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val Gardena - Gröden",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1782,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://wolkenstein.it-wms.com/en"
+        },
+        "location": { "lat": 46.56375832677, "lon": 11.742995255203 },
+        "name": {
+          "de": "Wolkenstein - Panocam",
+          "en": "Selva Gardena - Panocam",
+          "it": "Selva Gardena - Panocam"
+        },
+        "original-image": "https://wolkenstein.it-wms.com/panorama1.jpg",
+        "pid": 188941,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val Gardena - Gröden",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1428,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://s-cristina.it-wms.com/en"
+        },
+        "location": { "lat": 46.561265231549, "lon": 11.723302602767 },
+        "name": {
+          "de": "St. Christina - Panocam",
+          "en": "S. Cristina - Panocam",
+          "it": "S. Cristina - Panocam"
+        },
+        "original-image": "https://s-cristina.it-wms.com/panorama1.jpg",
+        "pid": 188940,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val Gardena - Gröden",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1280,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://st-ulrich.it-wms.com/en"
+        },
+        "location": { "lat": 46.579173430998, "lon": 11.667416095733 },
+        "name": {
+          "de": "St. Ulrich - Panocam",
+          "en": "Ortisei - Panocam",
+          "it": "Ortisei - Panocam"
+        },
+        "original-image": "https://st-ulrich.it-wms.com/panorama1.jpg",
+        "pid": 188939,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val Gardena - Gröden",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1997,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://valgardena.panomax.com/sassolungo"
+        },
+        "location": { "lat": 46.525748263753, "lon": 11.759088509292 },
+        "name": {
+          "de": "Piz Seteur - Webcam",
+          "en": "Piz Seteur - Webcam",
+          "it": "Piz Seteur - Webcam"
+        },
+        "original-image": "https://live-image.panomax.com/cams/1723/recent_reduced.jpg",
+        "pid": 29775286,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val Gardena - Gröden",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1428,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://sslsites.de/webcam.hotel-interski.com/webcam3.jpg?dummy=1654614572774"
+        },
+        "location": { "lat": 46.579173430998, "lon": 11.667416095733 },
+        "name": {
+          "de": "St. Christina",
+          "en": "S. Cristina",
+          "it": "S. Cristina"
+        },
+        "original-image": "https://sslsites.de/webcam.hotel-interski.com/webcam3.jpg?dummy=1654614572774",
+        "pid": 185067,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val Gardena - Gröden",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2015,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://valgardena.panomax.com/sassolevante"
+        },
+        "location": { "lat": 47.3688387, "lon": 8.53751490000002 },
+        "name": {
+          "de": "Sassolevante - Panocam",
+          "en": "Sassolevante - Panocam",
+          "it": "Sasso Levante - Panocam"
+        },
+        "original-image": "https://live-image.panomax.com/cams/4495/recent_reduced.jpg",
+        "pid": 6571,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Val Gardena - Gröden",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1600,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": null, "lon": null },
+        "name": { "de": "Larciunei", "en": "Larciunei", "it": "Larciunei" },
+        "original-image": "https://livepanorama.it/gardena/larciunei/image.jpg",
+        "pid": 5564,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Val Gardena - Gröden",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2258,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://valgardena.panomax.com/citta-dei-sassi"
+        },
+        "location": { "lat": 46.519126434682, "lon": 11.750441067428 },
+        "name": {
+          "de": "Steinerne Stadt (Gran Paradiso) - Panocam",
+          "en": "Città dei Sassi (Gran Paradiso) - Panocam",
+          "it": "Città dei Sassi (Gran Paradiso) - Panocam"
+        },
+        "original-image": "https://live-image.panomax.com/cams/1382/recent_reduced.jpg",
+        "pid": 13504538,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val Gardena - Gröden",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1450,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://www.foto-webcam.eu/webcam/valgardena/?embed=true"
+        },
+        "location": { "lat": 46.559885730423, "lon": 11.717053055763 },
+        "name": {
+          "de": "St. Christina - Webcam",
+          "en": "S. Cristina - Webcam",
+          "it": "S. Cristina - Webcam"
+        },
+        "original-image": "https://www.foto-webcam.eu/webcam/valgardena/current/1200.jpg",
+        "pid": 29921714,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val Gardena - Gröden",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2225,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.503650453112, "lon": 11.752066612243 },
+        "name": { "de": "Sellajoch", "en": "Passo Sella", "it": "Passo Sella" },
+        "original-image": "https://api.scenaridigitali.com/media/sassolungo/image.jpg",
+        "pid": 185064,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val Gardena - Gröden",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 1795,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.534354942651774, "lon": 11.7723548412323 },
+        "name": {
+          "de": null,
+          "en": "Plan de Gralba - Selva Val Gardena",
+          "it": "Plan de Gralba - Selva Val Gardena"
+        },
+        "original-image": "https://livepanorama.it/gardena/plandegralba/image.jpg",
+        "pid": 1664176684,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val Gardena - Gröden",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2100,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v4\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6216"
+        },
+        "location": { "lat": 46.551777686139, "lon": 11.617269515991 },
+        "name": {
+          "de": "Seiser Alm - Puflatsch Live",
+          "en": "Alpe di Siusi - Bullaccia Live",
+          "it": "Alpe di Siusi - Bullaccia Live"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6216.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 94254682,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Alpe di Siusi - Seiser Alm",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2000,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://seiseralm-puflatsch.panomax.com"
+        },
+        "location": { "lat": 47.3688387, "lon": 8.53751490000002 },
+        "name": {
+          "de": "Seiser Alm - Puflatsch- Panocam 360°",
+          "en": "Alpe di Siusi - Bullaccia - Panocam 360°",
+          "it": "Alpe di Siusi - Bullaccia - Panocam 360°"
+        },
+        "original-image": "https://live-image.panomax.com/cams/7296/preview_og.jpg",
+        "pid": 1676300144,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Alpe di Siusi - Seiser Alm",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2000,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://seiseralm-puflatsch.panomax.com/"
+        },
+        "location": { "lat": 46.57416242246033, "lon": 11.673888187402358 },
+        "name": {
+          "de": "Seiser Alm - Puflatsch Panorama 360°",
+          "en": "Seiser Alm - Bullacia Panorama 360°",
+          "it": "Alpe di Siusi - Bullacia Panorama 360°"
+        },
+        "original-image": "https://live-image.panomax.com/cams/7296/preview_og.jpg",
+        "pid": 1698764064,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Alpe di Siusi - Seiser Alm",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1850,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://seiseralm.panomax.com/"
+        },
+        "location": { "lat": 46.542509866388, "lon": 11.61675453186 },
+        "name": {
+          "de": "Seiser Alm - Bergstation/Compatsch - Panorama 360°",
+          "en": "Alpe di Siusi - Mountain station/Compatsch - Panorama 360°",
+          "it": "Alpe di Siusi - Stazione a monte/Compatsch - Panorama 360°"
+        },
+        "original-image": "https://live-image.panomax.com/cams/1389/recent_optimized.jpg",
+        "pid": 6536898,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Alpe di Siusi - Seiser Alm",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2100,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v4\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6217"
+        },
+        "location": { "lat": 46.515051307634, "lon": 11.684818267822 },
+        "name": {
+          "de": "Seiser Alm - Florianlift Live",
+          "en": "Alpe di Siusi - Florianlift Live",
+          "it": "Alpe di Siusi - Seggovia Florian Live"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6217.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 94259336,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Alpe di Siusi - Seiser Alm",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2070,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v5\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6218"
+        },
+        "location": { "lat": 46.558329138908, "lon": 11.657824516296 },
+        "name": {
+          "de": "Seiser Alm - Mezdí Live",
+          "en": "Alpe di Siusi - Mezdí Live",
+          "it": "Alpe di Siusi - Mezdí Live"
+        },
+        "original-image": "https://wtvpict.feratel.com/picture/37/6218.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 94262411,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Alpe di Siusi - Seiser Alm",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2249,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://seiseralm-goldknopf.panomax.com"
+        },
+        "location": { "lat": 46.519478, "lon": 11.639128 },
+        "name": {
+          "de": "Seiser Alm - Goldknopf - Panorama 360°",
+          "en": "Alpe di Siusi - Punta d'Oro - Panorama 360°",
+          "it": "Alpe di Siusi - Punta d'Oro - Panorama 360°"
+        },
+        "original-image": "https://live-image.panomax.com/cams/7293/preview_og.jpg",
+        "pid": 14890845,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Alpe di Siusi - Seiser Alm",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1050,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://kastelruth.it-wms.com"
+        },
+        "location": { "lat": 46.559557, "lon": 11.576506 },
+        "name": {
+          "de": "Kastelruth - Panorama 360°",
+          "en": "Castelrotto - Panorama 360°",
+          "it": "Castelrotto - Panorama 360°"
+        },
+        "original-image": "https://kastelruth.it-wms.com/panorama1.jpg",
+        "pid": 7717904,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Alpe di Siusi - Seiser Alm",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2050,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": "https://voels.it-wms.com/" },
+        "location": { "lat": 46.517317902375936, "lon": 11.501795053481256 },
+        "name": {
+          "de": "Völs am Schlern - Panocam 360°",
+          "en": "Fiè allo Sciliar - Panocam 360°",
+          "it": "Fiè allo Sciliar - Panocam 360°"
+        },
+        "original-image": "https://voels.it-wms.com/panorama1.jpg",
+        "pid": 185068,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Alpe di Siusi - Seiser Alm",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1000,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://seisamschlern.it-wms.com/"
+        },
+        "location": { "lat": 46.549011, "lon": 11.554437 },
+        "name": {
+          "de": "Seis am Schlern - Panocam 360°",
+          "en": "Siusi allo Sciliar - Panocam 360°",
+          "it": "Siusi allo Sciliar - Panocam 360°"
+        },
+        "original-image": "https://seisamschlern.it-wms.com/panorama1.jpg",
+        "pid": 1676299818,
+        "regionId": 4,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Alpe di Siusi - Seiser Alm",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2950,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v5\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6416"
+        },
+        "location": { "lat": 46.500426679912586, "lon": 11.807631509853366 },
+        "name": {
+          "de": "Canazei - Passo Pordoi - Sass Pordoi",
+          "en": "Canazei - Passo Pordoi - Sass Pordoi",
+          "it": "Canazei - Passo Pordoi - Sass Pordoi"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6416.jpeg?t=38\u0026design=v5\u0026dcsdesign=WTP_partner",
+        "pid": 1712653034,
+        "regionId": 5,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val di Fassa",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2306,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://ciampac.panomax.com/?cu=en-GB"
+        },
+        "location": { "lat": 46.436910495781, "lon": 11.764104366302 },
+        "name": {
+          "de": "Alba - Ciampac panorama 360°",
+          "en": "Alba - Ciampac panorama 360°",
+          "it": "Alba - Ciampac panorama 360°"
+        },
+        "original-image": "https://panodata.panomax.com/cams/1674/skiareaciampac.jpg",
+        "pid": 2848,
+        "regionId": 5,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val di Fassa",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2306,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://panodata.panomax.com/cams/1674/colac.jpg"
+        },
+        "location": { "lat": 46.444776939924, "lon": 11.771378517151 },
+        "name": {
+          "de": "Alba di Canazei - Ciampac - Colac",
+          "en": "Alba di Canazei - Ciampac - Colac",
+          "it": "Alba di Canazei - Ciampac - Colac"
+        },
+        "original-image": "https://panodata.panomax.com/cams/1674/colac.jpg",
+        "pid": 2849,
+        "regionId": 5,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val di Fassa",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2306,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://panodata.panomax.com/cams/1674/sellabrunech.jpg"
+        },
+        "location": { "lat": 46.440281968058, "lon": 11.768932342529 },
+        "name": {
+          "de": "Alba di Canazei - Ciampac - Sella Brunech",
+          "en": "Alba di Canazei - Ciampac - Sella Brunech",
+          "it": "Alba di Canazei - Ciampac - Sella Brunech"
+        },
+        "original-image": "https://panodata.panomax.com/cams/1674/sellabrunech.jpg",
+        "pid": 2850,
+        "regionId": 5,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val di Fassa",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2306,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://panodata.panomax.com/cams/1674/roseal.jpg"
+        },
+        "location": { "lat": 46.436496440944, "lon": 11.763610839844 },
+        "name": {
+          "de": "Canazei - Ciampac - Roseal und Sasso di Rocca",
+          "en": "Canazei - Ciampac - Roseal and Sasso di Rocca",
+          "it": "Canazei - Ciampac - Roseal e Sasso di Rocca"
+        },
+        "original-image": "https://panodata.panomax.com/cams/1674/roseal.jpg",
+        "pid": 2851,
+        "regionId": 5,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val di Fassa",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2382,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://panodata.panomax.com/cams/1395/sassolungo.jpg"
+        },
+        "location": { "lat": 46.495411946184, "lon": 11.751061730096 },
+        "name": {
+          "de": "Campitello di Fassa - Col Rodella - Langkofel",
+          "en": "Webcam Campitello di Fassa - Col Rodella - Sassolungo group",
+          "it": "Gruppo Sassolungo - skiarea Col Rodella - Campitello"
+        },
+        "original-image": "https://panodata.panomax.com/cams/1395/sassolungo.jpg",
+        "pid": 2854,
+        "regionId": 5,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val di Fassa",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2382,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://panodata.panomax.com/cams/1395/grupposella.jpg"
+        },
+        "location": { "lat": 46.496940297801, "lon": 11.751845935961 },
+        "name": {
+          "de": "Sellapass und Sellagruppe",
+          "en": "Sella pass and Sella group",
+          "it": "Passo Sella e Gruppo del Sella"
+        },
+        "original-image": "https://panodata.panomax.com/cams/1395/grupposella.jpg",
+        "pid": 2855,
+        "regionId": 5,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val di Fassa",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2382,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://panodata.panomax.com/cams/1395/skiarea2.jpg"
+        },
+        "location": { "lat": 46.47750252412, "lon": 11.804809529053 },
+        "name": {
+          "de": "Webcam Canazei - Pordoijoch - Sass Pordoi",
+          "en": "Canazei - Pordoi Pass - Sass Pordoi",
+          "it": "Skiarea Belvedere - Marmolada - Canazei"
+        },
+        "original-image": "https://panodata.panomax.com/cams/1395/skiarea2.jpg",
+        "pid": 2858,
+        "regionId": 5,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val di Fassa",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2150,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://panodata.panomax.com/cams/1343/belvedere_snowpark.jpg"
+        },
+        "location": { "lat": 46.480486952148, "lon": 11.790046691895 },
+        "name": {
+          "de": "Canazei - Sellagruppe",
+          "en": "Canazei - Sella group",
+          "it": "Funslope - Canazei"
+        },
+        "original-image": "https://panodata.panomax.com/cams/1343/belvedere_snowpark.jpg",
+        "pid": 2859,
+        "regionId": 5,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val di Fassa",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2413,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://panodata.panomax.com/cams/1343/canazei_pecol.jpg"
+        },
+        "location": { "lat": 46.481485, "lon": 11.789215 },
+        "name": {
+          "de": "Canazei panorama",
+          "en": "Canazei panorama",
+          "it": "Canazei - Pecol"
+        },
+        "original-image": "https://panodata.panomax.com/cams/1343/canazei_pecol.jpg",
+        "pid": 11885299,
+        "regionId": 5,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val di Fassa",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2382,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://panodata.panomax.com/cams/1343/sassolungo_e_sella.jpg"
+        },
+        "location": { "lat": 46.476940647751, "lon": 11.810216903687 },
+        "name": {
+          "de": "Canazei - Alba di Canazei",
+          "en": "Canazei - Alba di Canazei",
+          "it": "Gruppo del Sassolungo e Gruppo del Sella"
+        },
+        "original-image": "https://panodata.panomax.com/cams/1343/sassolungo_e_sella.jpg",
+        "pid": 11885478,
+        "regionId": 5,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val di Fassa",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2300,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://panodata.panomax.com/cams/1343/canazei_skiarea_belvedere.jpg"
+        },
+        "location": { "lat": 46.47448765199, "lon": 11.803522109985 },
+        "name": {
+          "de": "Belvedere - Marmolada panorama",
+          "en": "Belvedere - Marmolada panorama",
+          "it": "Skiarea Belvedere"
+        },
+        "original-image": "https://panodata.panomax.com/cams/1343/canazei_skiarea_belvedere.jpg",
+        "pid": 11885768,
+        "regionId": 5,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val di Fassa",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2300,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://panodata.panomax.com/cams/1343/col_dei_rossi.jpg"
+        },
+        "location": { "lat": 46.47445809715, "lon": 11.801719665527 },
+        "name": {
+          "de": "Col dei Rossi - Diego Piste",
+          "en": "Col dei Rossi - Diego slope",
+          "it": "Canazei - Col dei Rossi"
+        },
+        "original-image": "https://panodata.panomax.com/cams/1343/col_dei_rossi.jpg",
+        "pid": 11885819,
+        "regionId": 5,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val di Fassa",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2382,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://canazei.panomax.com/?cu=en-GB"
+        },
+        "location": { "lat": 46.474871863449, "lon": 11.803221702576 },
+        "name": {
+          "de": "Canazei - Belvedere panorama 360°",
+          "en": "Canazei - Belvedere panorama 360°",
+          "it": "Canazei - Belvedere panorama 360°"
+        },
+        "original-image": "https://live-image.panomax.com/cams/1343/recent_small.jpg",
+        "pid": 11852559,
+        "regionId": 5,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val di Fassa",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1590,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v3\u0026cam=6244"
+        },
+        "location": { "lat": 46.57416242246033, "lon": 11.673888187402358 },
+        "name": {
+          "de": "Frin - Carezza Dolomites",
+          "en": "Frin - Carezza Dolomites",
+          "it": "Frin - Carezza Dolomites"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6244.jpeg?t=38\u0026design=v3",
+        "pid": 82722786,
+        "regionId": 5,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Carezza",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1740,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v4\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6240"
+        },
+        "location": { "lat": 46.403130152506, "lon": 11.608006608521 },
+        "name": {
+          "de": "Carezza Ski - Live Cam Pra di Tori ",
+          "en": "Carezza Ski - Live Cam Pra di Tori ",
+          "it": "Carezza - Talstation Pra di Tori"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6240.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 40049942,
+        "regionId": 5,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Carezza - Talstation Pra di Tori",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1630,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v4\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6242"
+        },
+        "location": { "lat": 46.407889468057, "lon": 11.591305732727 },
+        "name": {
+          "de": "Carezza Dolomites -  Paolina Talstation",
+          "en": "Carezza Dolomites -  Paolina valley station",
+          "it": "Carezza - Paolina stazione a valle"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6242.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 40049943,
+        "regionId": 5,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Carezza",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1743,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v4\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6241"
+        },
+        "location": { "lat": 46.4444082854507, "lon": 11.588421108862835 },
+        "name": {
+          "de": null,
+          "en": "Carezza - König Laurin valley station ",
+          "it": "Carezza - König Laurin valley station "
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6241.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 1669054641,
+        "regionId": 5,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Carezza",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2350,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://pordoi.panomax.com"
+        },
+        "location": { "lat": 46.478086162938, "lon": 11.813859651868 },
+        "name": {
+          "de": "Pordoi Pass",
+          "en": "Pordoi Pass",
+          "it": "Passo Pordoi"
+        },
+        "original-image": "https://live-image.panomax.com/cams/1293/recent_reduced.jpg",
+        "pid": 14372290,
+        "regionId": 6,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Arabba",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2478,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://portavescovo.panomax.com"
+        },
+        "location": { "lat": 46.473261854848, "lon": 11.867420629053 },
+        "name": {
+          "de": "Porta Vescovo",
+          "en": "Porta Vescovo",
+          "it": "Porta Vescovo"
+        },
+        "original-image": "https://live-image.panomax.com/cams/1065/recent_reduced.jpg",
+        "pid": 6733829,
+        "regionId": 6,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Arabba",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2160,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://becderoces.panomax.com"
+        },
+        "location": { "lat": 46.51237152804021, "lon": 11.864626238712752 },
+        "name": {
+          "de": "Bec de Roces",
+          "en": "Bec de Roces",
+          "it": "Bec de Roces"
+        },
+        "original-image": "https://live-image.panomax.com/cams/1064/recent_reduced.jpg",
+        "pid": 6801248,
+        "regionId": 6,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Arabba",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2160,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "http://webtv.feratel.com/webtv/?design=v5\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6371"
+        },
+        "location": { "lat": 46.51305860302735, "lon": 11.864108895832496 },
+        "name": {
+          "de": "Bec de Roces",
+          "en": "Bec de Roces",
+          "it": "Bec de Roces"
+        },
+        "original-image": "https://live-image.panomax.com/cams/1064/recent_reduced.jpg",
+        "pid": 1703255402,
+        "regionId": 6,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Arabba/Marmolada",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1936,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "http://webtv.feratel.com/webtv/?design=v5\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6372"
+        },
+        "location": { "lat": 46.499750265793885, "lon": 11.860372220308694 },
+        "name": { "de": "Burz", "en": "Burz", "it": "Burz" },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6372.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 6801808,
+        "regionId": 6,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Arabba",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2478,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "http://webtv.feratel.com/webtv/?design=v5\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6374"
+        },
+        "location": { "lat": 46.47294408873175, "lon": 11.867669617986305 },
+        "name": {
+          "de": "Porta Vescovo 1",
+          "en": "Porta Vescovo 1",
+          "it": "Porta Vescovo 2"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6374.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 1707897309,
+        "regionId": 6,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Arabba",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1850,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v5\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6373"
+        },
+        "location": { "lat": 46.48696646576651, "lon": 11.858944733646778 },
+        "name": {
+          "de": "Fodoma schwarze Piste ",
+          "en": "Fodoma slope ",
+          "it": "Pista nera Fodoma "
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6373.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v4",
+        "pid": 1703255256,
+        "regionId": 6,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Arabba/Marmolada",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1665,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://dreizinnen.panocloud.webcam/it"
+        },
+        "location": { "lat": 46.71657724681811, "lon": 12.374575138092041 },
+        "name": {
+          "de": "Bergstation Hasenköpfl",
+          "en": "Chairlift Hasenköpfl",
+          "it": "Seggiovia Hasenköpfl"
+        },
+        "original-image": "https://dreizinnen.panocloud.webcam/panorama1.jpg",
+        "pid": 1734604936,
+        "regionId": 7,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Bergstation Hasenköpfl",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2050,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v4\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6200"
+        },
+        "location": { "lat": 46.716545529457, "lon": 12.362356027075 },
+        "name": {
+          "de": "Livecam Helm",
+          "en": "Livecam M. Elmo",
+          "it": "Livecam M. Elmo"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6200.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 2347,
+        "regionId": 7,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Livecam M. Elmo",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2100,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v4\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6201"
+        },
+        "location": { "lat": 46.694576707395, "lon": 12.396709760138 },
+        "name": {
+          "de": "Livecam Stiergarten",
+          "en": "Livecam Stiergarten",
+          "it": "Livecam Stiergarten"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6201.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 644867,
+        "regionId": 7,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Livecam Stiergarten",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1920,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v4\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6198"
+        },
+        "location": { "lat": 46.66532871176, "lon": 12.372838099905 },
+        "name": {
+          "de": "Rotwand Bergstation",
+          "en": "Rotwand - Croda Rossa Mountain Station",
+          "it": "Croda Rossa - Stazione a monte"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6198.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 2348,
+        "regionId": 7,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Croda Rossa",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1450,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v5\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6203"
+        },
+        "location": { "lat": 46.679960209223, "lon": 12.38012297959 },
+        "name": {
+          "de": "Kabinenbahn Signaue",
+          "en": "Cabinovia Signaue",
+          "it": "Cabinovia Signaue"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6203.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 186417,
+        "regionId": 7,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Croda Rossa",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1665,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?cam=6208\u0026\u0026design=v4\u0026c0=0\u0026c2=1\u0026c39=1\u0026c40=0\u0026lg=it\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026s=0\u0026lc=6208"
+        },
+        "location": { "lat": 46.66959, "lon": 12.383038 },
+        "name": {
+          "de": "Talstation Porzen",
+          "en": "Valley Station Porzen",
+          "it": "Stazione a valle Porzen"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6208.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 1759933755,
+        "regionId": 7,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Croda Rossa",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1490,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v4\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6207"
+        },
+        "location": { "lat": 46.718128105543, "lon": 12.278761870886 },
+        "name": {
+          "de": "Haunold Bergstatiion",
+          "en": "Mountain Station Baranci",
+          "it": "Stazione a Monte Baranci"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6207.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 2329,
+        "regionId": 7,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Monte Baranci",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1636,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v4\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6204"
+        },
+        "location": { "lat": 46.655487492385, "lon": 12.419648011633 },
+        "name": {
+          "de": "Kreuzbergpass",
+          "en": "Kreuzbergpass - Passo Monte Croce",
+          "it": "Passo Monte Croce"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6204.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 2354,
+        "regionId": 7,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Passo Monte Croce",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1970,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://www.realcam4k.it/bellamonte/"
+        },
+        "location": { "lat": 46.331461677167, "lon": 11.707906723022 },
+        "name": {
+          "de": "Alpe Lusia - Panoramica",
+          "en": "Alpe Lusia - Panoramica",
+          "it": "Alpe Lusia - Panoramica"
+        },
+        "original-image": "https://4k.realcam.it/live/pub/30-2.jpg",
+        "pid": 30915555,
+        "regionId": 8,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val di Fiemme",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2250,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://www.realcam4k.it/cermis/"
+        },
+        "location": { "lat": 46.241750162408, "lon": 11.503200531006 },
+        "name": {
+          "de": "Alpe Cermis - Panoramica",
+          "en": "Alpe Cermis - Panoramica",
+          "it": "Alpe Cermis - Panoramica"
+        },
+        "original-image": "https://4k.realcam.it/live/pub/22-1.jpg",
+        "pid": 30924196,
+        "regionId": 8,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val di Fiemme",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2200,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://www.realcam4k.it/pampeago/"
+        },
+        "location": { "lat": 46.341120991389, "lon": 11.557531356812 },
+        "name": {
+          "de": "SkiCenterLatemar - Panoramica",
+          "en": "SkiCenterLatemar - Panoramica",
+          "it": "Latemar Dolomites - Panoramica"
+        },
+        "original-image": "https://4k.realcam.it/live/pub/9-9.jpg",
+        "pid": 30924199,
+        "regionId": 8,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val di Fiemme",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2190,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.342069052972, "lon": 11.54182434082 },
+        "name": {
+          "de": "SkiCenterLatemar - Passo Feudo",
+          "en": "SkiCenterLatemar - Passo Feudo",
+          "it": "Latemar Dolomites - Passo Feudo"
+        },
+        "original-image": "https://4k.realcam.it/live/pub/9-7.jpg",
+        "pid": 2903,
+        "regionId": 8,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val di Fiemme",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2200,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.333713694351, "lon": 11.547746658325 },
+        "name": {
+          "de": "SkiCenterLatemar - Agnello",
+          "en": "SkiCenterLatemar - Agnello Slope",
+          "it": "Latemar Dolomites - Pista Agnello"
+        },
+        "original-image": "https://4k.realcam.it/live/pub/9-9.jpg",
+        "pid": 2904,
+        "regionId": 8,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Val di Fiemme",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2400,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.345564887977, "lon": 11.520366668701 },
+        "name": {
+          "de": "SkiCenterLatemar - Pala di Santa",
+          "en": "SkiCenterLatemar - Pala di Santa",
+          "it": "Latemar Dolomites - Pala di Santa"
+        },
+        "original-image": "https://4k.realcam.it/live/pub/9-2.jpg",
+        "pid": 2906,
+        "regionId": 8,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Val di Fiemme",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 1900,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.350482379126, "lon": 11.547060012817 },
+        "name": {
+          "de": "SkiCenterLatemar - Zischgalm und Ganischgeralm",
+          "en": "SkiCenterLatemar - Zischgalm \u0026 Ganischgeralm",
+          "it": "Latemar Dolomites - Rifugi Zischg e Ganischger"
+        },
+        "original-image": "https://4k.realcam.it/live/pub/9-5.jpg",
+        "pid": 2907,
+        "regionId": 8,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val di Fiemme",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 1850,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.349030876553, "lon": 11.548347473145 },
+        "name": {
+          "de": "SkiCenterLatemar - Rifugio Latemar",
+          "en": "SkiCenterLatemar - Rifugio Latemar",
+          "it": "Latemar Dolomites - Rifugio Latemar"
+        },
+        "original-image": "https://4k.realcam.it/live/pub/9-8.jpg",
+        "pid": 2908,
+        "regionId": 8,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val di Fiemme",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 1970,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.329214013012, "lon": 11.703980879522 },
+        "name": {
+          "de": "Alpe Lusia - Pista Le Fassane e Morea Snowpark",
+          "en": "Alpe Lusia - Pista Le Fassane e Morea Snowpark",
+          "it": "Alpe Lusia - Pista Le Fassane e Morea Snowpark"
+        },
+        "original-image": "https://4k.realcam.it/live/pub/30-2.jpg",
+        "pid": 184468,
+        "regionId": 8,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Val di Fiemme",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 1970,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.331224617332, "lon": 11.708164215088 },
+        "name": {
+          "de": "Alpe Lusia - Direttissima Piste , Le Cune",
+          "en": "Alpe Lusia - Slope Direttissima and Le Cune",
+          "it": "Alpe Lusia - Pista Direttissima e Le Cune"
+        },
+        "original-image": "https://4k.realcam.it/live/pub/30-3.jpg",
+        "pid": 184630,
+        "regionId": 8,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Val di Fiemme",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 1970,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.345031639459, "lon": 11.72155380249 },
+        "name": {
+          "de": "Alpe Lusia - Pale di San Martino",
+          "en": "Alpe Lusia - Pale di San Martino",
+          "it": "Alpe Lusia - Pale di San Martino"
+        },
+        "original-image": "https://4k.realcam.it/live/pub/30-4.jpg",
+        "pid": 30924194,
+        "regionId": 8,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Val di Fiemme",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2000,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.29559470175, "lon": 11.782236099243 },
+        "name": {
+          "de": "Passo Rolle",
+          "en": "Passo Rolle",
+          "it": "Passo Rolle"
+        },
+        "original-image": "https://4k.realcam.it/live/pub/21-1.jpg",
+        "pid": 7121410,
+        "regionId": 8,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Val di Fiemme",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2670,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.360612201235, "lon": 11.560707092285 },
+        "name": {
+          "de": "Torre di Pisa Hütte",
+          "en": "Rifugio Torre di Pisa",
+          "it": "Rifugio Torre di Pisa"
+        },
+        "original-image": "https://4k.realcam.it/live/pub/9-10.jpg",
+        "pid": 60409891,
+        "regionId": 8,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val di Fiemme",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2223,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 47.3688387, "lon": 8.53751490000002 },
+        "name": {
+          "de": "Oclini/Jochgrimm – Schwarzhorn",
+          "en": "Oclini - Corno Nero",
+          "it": "Oclini - Corno Nero"
+        },
+        "original-image": "https://jochgrimm.com/webcam/webcam1.jpg",
+        "pid": 1677509726,
+        "regionId": 8,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Val di Fiemme",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2000,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.346275877909, "lon": 11.452860832214 },
+        "name": {
+          "de": "Oclini/Jochgrimm – Weißhorn",
+          "en": "Oclini - Corno Bianco",
+          "it": "Oclini - Corno Bianco"
+        },
+        "original-image": "https://jochgrimm.com/webcam/webcam3.jpg",
+        "pid": 2446163,
+        "regionId": 8,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Val di Fiemme",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2151,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.35229898220197, "lon": 11.447588262655358 },
+        "name": {
+          "de": "Oclini/Jochgrimm – Weißhorn",
+          "en": "Oclini - Corno Bianco",
+          "it": "Oclini - Corno Bianco"
+        },
+        "original-image": "https://jochgrimm.com/webcam/webcam2.jpg",
+        "pid": 1677509994,
+        "regionId": 8,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Val di Fiemme",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 1989,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.57416242246033, "lon": 11.673888187402358 },
+        "name": { "de": "Oclini", "en": "Oclini", "it": "Oclini" },
+        "original-image": "https://oclini.com/webcam/webcam4.jpg",
+        "pid": 1744115140,
+        "regionId": 8,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Val di Fiemme",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2200,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://www.realcam4k.it/pampeago/"
+        },
+        "location": { "lat": 46.57416242246033, "lon": 11.673888187402358 },
+        "name": {
+          "de": "SkiCenterLatemar - Panoramica",
+          "en": "SkiCenterLatemar - Panoramica",
+          "it": "Latemar Dolomites - Panoramica"
+        },
+        "original-image": "https://4k.realcam.it/live/pub/9-2.jpg",
+        "pid": 30924201,
+        "regionId": 8,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Obereggen",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1900,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.353029821058, "lon": 11.537275314331 },
+        "name": {
+          "de": "SkiCenterLatemar - Snowpark Obereggen ",
+          "en": "SkiCenterLatemar - Snowpark Obereggen ",
+          "it": "Latemar Dolomites - Snowpark Obereggen "
+        },
+        "original-image": "https://4k.realcam.it/live/pub/9-6.jpg",
+        "pid": 2902,
+        "regionId": 8,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Obereggen",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 1550,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?cam=6213\u0026design=v5\u0026c0=0\u0026c2=1\u0026lg=it\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026s=0"
+        },
+        "location": { "lat": 46.383441841931, "lon": 11.527061462402 },
+        "name": {
+          "de": "Talstation Obereggen",
+          "en": "Bottom station Obereggen",
+          "it": "Obereggen - Oberholz stazione a valle"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6213.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 2551,
+        "regionId": 8,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Obereggen - Oberholz stazione a valle",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1600,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?cam=6210\u0026design=v5\u0026c0=0\u0026c2=1\u0026lg=it\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026s=0"
+        },
+        "location": { "lat": 46.37242345127377, "lon": 11.532984798425296 },
+        "name": {
+          "de": null,
+          "en": "Laner",
+          "it": "Latemar Dolomites - Laner"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6210.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 6212,
+        "regionId": 8,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Laner",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2840,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.356643430337, "lon": 11.5553855896 },
+        "name": {
+          "de": "Latemar - Rosengarten",
+          "en": "Latemar - Rosengarten",
+          "it": "Gruppo del Latemar - Rosengarten"
+        },
+        "original-image": "https://4k.realcam.it/live/pub/22-6.jpg",
+        "pid": 2899,
+        "regionId": 8,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Obereggen",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2000,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.29559470175, "lon": 11.782665252686 },
+        "name": {
+          "de": "Passo Rolle - Il Cimone",
+          "en": "Passo Rolle - Il Cimone",
+          "it": "Passo Rolle - Il Cimone"
+        },
+        "original-image": "https://4k.realcam.it/live/pub/21-1-1280.jpg",
+        "pid": 2918,
+        "regionId": 9,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Rolle Pass",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2000,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.29559470175, "lon": 11.782665252686 },
+        "name": {
+          "de": "Passo Rolle - Castellazzo",
+          "en": "Passo Rolle - Castellazzo",
+          "it": "Passo Rolle - Castellazzo"
+        },
+        "original-image": "https://4k.realcam.it/live/pub/21-2-1280.jpg",
+        "pid": 2919,
+        "regionId": 9,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Rolle Pass",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2000,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.29559470175, "lon": 11.782665252686 },
+        "name": {
+          "de": "Passo Rolle - Tognazza",
+          "en": "Passo Rolle - Tognazza",
+          "it": "Passo Rolle - Tognazza"
+        },
+        "original-image": "https://4k.realcam.it/live/pub/21-3-1280.jpg",
+        "pid": 2920,
+        "regionId": 9,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Rolle Pass",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2200,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.241661119383, "lon": 11.777601242065 },
+        "name": {
+          "de": "Pale di San Martino",
+          "en": "Pale di San Martino",
+          "it": "Pale di San Martino"
+        },
+        "original-image": "https://4k.realcam.it/live/pub/8-1-1920.jpg",
+        "pid": 2924,
+        "regionId": 9,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "San Martino di Castrozza - Carosello delle Malghe",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2200,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.241215902091, "lon": 11.777172088623 },
+        "name": {
+          "de": "Tognola - Kabinenbahn",
+          "en": "Tognola lift",
+          "it": "Tognola - Rododendro"
+        },
+        "original-image": "https://4k.realcam.it/live/pub/8-2-1920.jpg",
+        "pid": 2925,
+        "regionId": 9,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "San Martino di Castrozza - Carosello delle Malghe",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2200,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.251098875803, "lon": 11.792106628418 },
+        "name": {
+          "de": "Malga Tognola",
+          "en": "Malga Tognola",
+          "it": "San Martino Pista UNO"
+        },
+        "original-image": "https://4k.realcam.it/live/pub/8-4-1920.jpg",
+        "pid": 2926,
+        "regionId": 9,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "San Martino di Castrozza - Carosello delle Malghe",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2200,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.243323232018, "lon": 11.766185760498 },
+        "name": {
+          "de": "Ski area Col Verde",
+          "en": "Ski area Col Verde",
+          "it": "Pista Scandola"
+        },
+        "original-image": "https://4k.realcam.it/live/pub/8-5-1920.jpg",
+        "pid": 2927,
+        "regionId": 9,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "San Martino di Castrozza - Colverde",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2200,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.241661119383, "lon": 11.777601242065 },
+        "name": {
+          "de": "Ski area Col Verde",
+          "en": "Ski area Col Verde",
+          "it": "Cima Tognola"
+        },
+        "original-image": "https://4k.realcam.it/live/pub/8-6-1920.jpg",
+        "pid": 1733651,
+        "regionId": 9,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "San Martino di Castrozza - Colverde",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2200,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v4\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6386"
+        },
+        "location": { "lat": 46.267358872463, "lon": 11.836223602295 },
+        "name": {
+          "de": "Ski area Col Verde",
+          "en": "Ski area Col Verde",
+          "it": "Malga Valcigolera"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6386.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 1733691,
+        "regionId": 9,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "San Martino di Castrozza - Colverde",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2200,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.267358872463, "lon": 11.836223602295 },
+        "name": {
+          "de": "Ski area Col Verde",
+          "en": "Ski area Col Verde",
+          "it": "Malga Tognola"
+        },
+        "original-image": "https://4k.realcam.it/live/pub/8-10-1920.jpg",
+        "pid": 11825154,
+        "regionId": 9,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "San Martino di Castrozza - Colverde",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 1989,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v4\u0026pg=661739B9-8377-4401-8A37-6B9FA40523F4\u0026cam=6384"
+        },
+        "location": { "lat": 47.3688387, "lon": 8.53751490000002 },
+        "name": {
+          "de": "San Martino di Castrozza - Passo Rolle",
+          "en": "San Martino di Castrozza - Passo Rolle",
+          "it": "San Martino di Castrozza - Passo Rolle"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6384.jpeg?t=38\u0026dcsdesign=Dolomitisuperski\u0026design=v5",
+        "pid": 1669732199,
+        "regionId": 9,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "San Martino di Castrozza - Passo Rolle",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2050,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v5\u0026cam=6060"
+        },
+        "location": { "lat": 46.684157, "lon": 11.711989 },
+        "name": {
+          "de": "Kreuztal ",
+          "en": "Valcroce/Kreuztal ",
+          "it": "Valcroce "
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6060.jpeg?t=38\u0026design=v5",
+        "pid": 42819380,
+        "regionId": 10,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Plose - Brixen/Bressanone",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1706,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.837187186018, "lon": 11.685719490051 },
+        "name": {
+          "de": "Talstation Ski Express",
+          "en": "Valley station Ski Express",
+          "it": "Stazione a valle Ski Express"
+        },
+        "original-image": "https://www.gitschberg-jochtal.com/webcam/webcam9.jpg",
+        "pid": 2805,
+        "regionId": 10,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Gitschberg - Jochtal",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2337,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.846499695997, "lon": 11.68411158728 },
+        "name": { "de": "Nesselbahn", "en": "Nesselbahn", "it": "Nesselbahn" },
+        "original-image": "https://www.gitschberg-jochtal.com/webcam/webcam2.jpg",
+        "pid": 6462739,
+        "regionId": 10,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Jochtal",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2340,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.821375973795, "lon": 11.665345430374 },
+        "name": {
+          "de": "Talstation Meransen",
+          "en": "Valley station Meransen",
+          "it": "Stazione a valle Maranza"
+        },
+        "original-image": "https://www.gitschberg-jochtal.com/webcam/webcam8.jpg",
+        "pid": 2804,
+        "regionId": 10,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Gitschberg - Jochtal",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2330,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.842346477463, "lon": 11.593451499939 },
+        "name": {
+          "de": "Jochtal Hinterberg",
+          "en": "Jochtal Hinterberg",
+          "it": "Jochtal Hinterberg"
+        },
+        "original-image": "https://www.gitschberg-jochtal.com/webcam/webcam1.jpg",
+        "pid": 2807,
+        "regionId": 10,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Jochtal",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2200,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://www.gitschberg-jochtal.com/webcam/webcam6.jpg"
+        },
+        "location": { "lat": 46.846041341186, "lon": 11.635503172874 },
+        "name": {
+          "de": "Mittelstation Schilling",
+          "en": "Intermediate station Schilling",
+          "it": "Stazione intermedia Schilling"
+        },
+        "original-image": "https://www.gitschberg-jochtal.com/webcam/webcam6.jpg",
+        "pid": 2808,
+        "regionId": 10,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Jochtal",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2500,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://plosenewcam.panomax.com/"
+        },
+        "location": { "lat": 46.691568115048334, "lon": 11.746568481159992 },
+        "name": {
+          "de": "Plose Pfannspitze",
+          "en": "Plose Pfannspitze",
+          "it": "Plose Pfannspitze"
+        },
+        "original-image": "https://live-image.panomax.com/cams/9485/recent_reduced.jpg",
+        "pid": 1678722099,
+        "regionId": 10,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Plose Pfannspitze",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2500,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://ploselift.panomax.com/"
+        },
+        "location": { "lat": 46.57416242246033, "lon": 11.673888187402358 },
+        "name": {
+          "de": "Plose Gipfel",
+          "en": "Plose - Top",
+          "it": "Plose Cima"
+        },
+        "original-image": "https://panodata.panomax.com/cams/1929/preview_og.jpg?x=1738568209",
+        "pid": 1738568521,
+        "regionId": 10,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Plose",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2513,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://4k.meteocam.it/colmargherita/youtube.html"
+        },
+        "location": { "lat": 46.367153380056, "lon": 11.793372631073 },
+        "name": {
+          "de": "Col Margherita - LIVE",
+          "en": "Col Margherita - LIVE",
+          "it": "Col Margherita - LIVE"
+        },
+        "original-image": "https://4k.meteocam.it/live/pub/meteocam12_1.jpg",
+        "pid": 40525619,
+        "regionId": 11,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "San Pellegrino",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2513,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://webtv.feratel.com/webtv/?design=v5\u0026pg=5EB12424-7C2D-428A-BEFF-0C9140CD772F\u0026cam=6414\u0026c1=0"
+        },
+        "location": { "lat": 46.367153380056, "lon": 11.793372631073 },
+        "name": {
+          "de": "Col Margherita",
+          "en": "Col Margherita",
+          "it": "Col Margherita"
+        },
+        "original-image": "https://wtvthmb.feratel.com/thumbnails/6414.jpeg?t=38\u0026design=v5\u0026dcsdesign=WTP_partner",
+        "pid": 1767965918,
+        "regionId": 11,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "San Pellegrino",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2202,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://www.realcam4k.it/alpelusia/"
+        },
+        "location": { "lat": 46.367153380056, "lon": 11.793372631073 },
+        "name": {
+          "de": "Alpe Lusia 360°",
+          "en": "Alpe Lusia 360°",
+          "it": "Alpe Lusia 360°"
+        },
+        "original-image": "https://realcam4k.it/live/pub/10-1.jpg",
+        "pid": 82705022,
+        "regionId": 11,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Lusia",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1884,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://4k.meteocam.it/lebuse/"
+        },
+        "location": { "lat": 46.353600017088, "lon": 11.836422085762 },
+        "name": {
+          "de": "Falcade - Le Buse 360°",
+          "en": "Falcade - Le Buse 360°",
+          "it": "Falcade - Le Buse 360°"
+        },
+        "original-image": "https://4k.meteocam.it/live/pub//meteocam10_2.jpg",
+        "pid": 2186347,
+        "regionId": 11,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Falcade",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2225,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://www.realcam4k.it/live/pub/10-2.jpg"
+        },
+        "location": { "lat": 46.367153380056, "lon": 11.793372631073 },
+        "name": { "de": "Piavac", "en": "Piavac", "it": "Piavac" },
+        "original-image": "https://www.realcam4k.it/live/pub/10-2.jpg",
+        "pid": 82705521,
+        "regionId": 11,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "San Pellegrino",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2180,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://4k.meteocam.it/costabella/"
+        },
+        "location": { "lat": 46.393891138555, "lon": 11.780347824097 },
+        "name": { "de": null, "en": null, "it": "Costabella" },
+        "original-image": "https://4k.meteocam.it/live/pub//meteocam11_2.jpg",
+        "pid": 87533921,
+        "regionId": 11,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "San Pellegrino",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1880,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://4k.meteocam.it/cimauomo/"
+        },
+        "location": { "lat": 46.384750923443434, "lon": 11.799302502852047 },
+        "name": { "de": null, "en": null, "it": "Chalet Cima Uomo 360°" },
+        "original-image": "https://4k.meteocam.it/live/pub/meteocam1_2-1280.jpg",
+        "pid": -401516668,
+        "regionId": 11,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "San Pellegrino",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2202,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://www.realcam4k.it/live/pub/10-1.jpg"
+        },
+        "location": { "lat": 46.367153380056, "lon": 11.793372631073 },
+        "name": { "de": "Le Cune", "en": "Le Cune", "it": "Le Cune" },
+        "original-image": "https://www.realcam4k.it/live/pub/10-1.jpg",
+        "pid": 82703333,
+        "regionId": 11,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "San Pellegrino",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2513,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://4k.realcam.it/pano19/"
+        },
+        "location": { "lat": 46.367586469514, "lon": 11.793973445892 },
+        "name": {
+          "de": "Col Margherita 2 360°",
+          "en": "Col Margherita 2 360°",
+          "it": "Col Margherita 2 360°"
+        },
+        "original-image": "https://4k.realcam.it/live/pub/19-10.jpg",
+        "pid": 29542655,
+        "regionId": 11,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "San Pellegrino",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2202,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://www.realcam4k.it/live/pub/10-5.jpg"
+        },
+        "location": { "lat": 46.367153380056, "lon": 11.793372631073 },
+        "name": { "de": "Campo Cune", "en": "Campo Cune", "it": "Campo Cune" },
+        "original-image": "https://www.realcam4k.it/live/pub/10-5.jpg",
+        "pid": 82706223,
+        "regionId": 11,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "San Pellegrino",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2310,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://www.realcam4k.it/live/pub/10-7.jpg"
+        },
+        "location": { "lat": 46.367153380056, "lon": 11.793372631073 },
+        "name": { "de": "Lastè", "en": "Lastè", "it": "Lastè" },
+        "original-image": "https://www.realcam4k.it/live/pub/10-7.jpg",
+        "pid": 82707781,
+        "regionId": 11,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "San Pellegrino",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1970,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://www.realcam4k.it/bellamonte/"
+        },
+        "location": { "lat": 46.345031639459, "lon": 11.72155380249 },
+        "name": { "de": "Bellamonte", "en": "Bellamonte", "it": "Bellamonte" },
+        "original-image": "https://www.realcam4k.it/live/pub/30-1.jpg",
+        "pid": 32742156,
+        "regionId": 11,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Bellamonte",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 2083,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://alleghe.panomax.com/fertazza"
+        },
+        "location": { "lat": 46.423392937999, "lon": 12.045607566833 },
+        "name": {
+          "de": "Alleghe vista dal Monte Fertazza",
+          "en": "Alleghe vista dal Monte Fertazza",
+          "it": "Alleghe vista dal Monte Fertazza"
+        },
+        "original-image": "https://panodata.panomax.com/cams/1629/preview_og.jpg",
+        "pid": 28930634,
+        "regionId": 12,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Alleghe",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1922,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://alleghe.panomax.com/coldeibaldi"
+        },
+        "location": { "lat": 46.415286711529, "lon": 12.069211006164 },
+        "name": {
+          "de": "Alleghe - Col dei Baldi",
+          "en": "Alleghe - Col dei Baldi",
+          "it": "Alleghe - Col dei Baldi"
+        },
+        "original-image": "https://panodata.panomax.com/cams/1620/quattroridotto.jpg",
+        "pid": 28930636,
+        "regionId": 12,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Alleghe",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1470,
+        "feratelId": "",
+        "iframe": {
+          "de": null,
+          "en": null,
+          "it": "https://alleghe.panomax.com/pianidipezze"
+        },
+        "location": { "lat": 46.415286711529, "lon": 12.069211006164 },
+        "name": {
+          "de": "Alleghe - Piani di Pezzè",
+          "en": "Alleghe - Piani di Pezzè",
+          "it": "Alleghe - Piani di Pezzè"
+        },
+        "original-image": "https://panodata.panomax.com/cams/2052/570x428.jpg",
+        "pid": 81479516,
+        "regionId": 12,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Alleghe",
+        "webcamType": "iFrame"
+      },
+      {
+        "altitude": 1350,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.382464893261, "lon": 12.084445953369 },
+        "name": {
+          "de": "Val di Zoldo - Pista Grava",
+          "en": "Val di Zoldo - Pista Grava",
+          "it": "Val di Zoldo - Pista Grava"
+        },
+        "original-image": "https://valdizoldoskiarea.it/webcam.php?i=5",
+        "pid": 2825,
+        "regionId": 12,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Zoldo",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 1756,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.381547, "lon": 12.094524 },
+        "name": {
+          "de": "Val di Zoldo - Pian del Crep",
+          "en": "Val di Zoldo - Pian del Crep",
+          "it": "Val di Zoldo - Pian del Crep"
+        },
+        "original-image": "https://valdizoldoskiarea.it/webcam.php?i=1",
+        "pid": 189597,
+        "regionId": 12,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Zoldo",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 1764,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.38083, "lon": 12.09408 },
+        "name": {
+          "de": "Val di Zoldo - Pelmo e pista Cristelin",
+          "en": "Val di Zoldo - Pelmo e pista Cristelin",
+          "it": "Val di Zoldo - Pelmo e pista Cristelin"
+        },
+        "original-image": "https://valdizoldoskiarea.it/webcam.php?i=3",
+        "pid": 2826,
+        "regionId": 12,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Zoldo",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 1680,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.383116, "lon": 12.10101 },
+        "name": {
+          "de": "Val di Zoldo - Cristelin Piste",
+          "en": "Val di Zoldo - Cristelin Slope",
+          "it": "Val di Zoldo - Pista Cristellin"
+        },
+        "original-image": "https://valdizoldoskiarea.it/webcam.php?i=2",
+        "pid": 189730,
+        "regionId": 12,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Zoldo",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 1870,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.369541, "lon": 12.092275 },
+        "name": {
+          "de": "Val di Zoldo - Pista Grava Sud",
+          "en": "Val di Zoldo - Pista Grava Sud",
+          "it": "Val di Zoldo - Pista Grava Sud"
+        },
+        "original-image": "https://valdizoldoskiarea.it/webcam.php?i=6",
+        "pid": 189732,
+        "regionId": 12,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Zoldo",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 1913,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.414854, "lon": 12.068445 },
+        "name": {
+          "de": "Val Di Zoldo - vista monte Civetta",
+          "en": "Val Di Zoldo - vista Monte Civetta",
+          "it": "Val Di Zoldo - vista Monte Civetta"
+        },
+        "original-image": "https://valdizoldoskiarea.it/webcam.php?i=4",
+        "pid": 1192886,
+        "regionId": 12,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Zoldo",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 1764,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.38083, "lon": 12.09408 },
+        "name": {
+          "de": "Val di Zoldo -  Pecol",
+          "en": "Val di Zoldo -  Pecol",
+          "it": "Val di Zoldo -  Pecol"
+        },
+        "original-image": "https://valdizoldoskiarea.it/webcam.php?i=7",
+        "pid": 41838100,
+        "regionId": 12,
+        "rid": 0,
+        "showOnSummer": true,
+        "skiresort": "Zoldo",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 1521,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.402825476482, "lon": 12.100115418434 },
+        "name": { "de": "Palafavera", "en": "Palafavera", "it": "Palafavera" },
+        "original-image": "https://www.palafavera.com/webcam/current.jpg",
+        "pid": 131444728,
+        "regionId": 12,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Civetta",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": null,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": null, "lon": null },
+        "name": { "de": null, "en": null, "it": null },
+        "original-image": null,
+        "pid": null,
+        "regionId": 12,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": null,
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 1409,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.43697149466658, "lon": 12.069911062592238 },
+        "name": {
+          "de": "Stazione a valle seggiovia Pescul-Fertazza",
+          "en": "Stazione a valle seggiovia Pescul-Fertazza",
+          "it": "Stazione a valle seggiovia Pescul-Fertazza"
+        },
+        "original-image": "https://valfiorentinadolomiti.it/webcam/pescul.jpg",
+        "pid": 1758873091,
+        "regionId": 12,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Civetta",
+        "webcamType": "Image"
+      },
+      {
+        "altitude": 2082,
+        "feratelId": "",
+        "iframe": { "de": null, "en": null, "it": null },
+        "location": { "lat": 46.423459018779454, "lon": 12.045749826104108 },
+        "name": {
+          "de": "Ristoro Belvedere - Cima Fertazza ",
+          "en": "Ristoro Belvedere - Cima Fertazza ",
+          "it": "Ristoro Belvedere - Cima Fertazza "
+        },
+        "original-image": "https://valfiorentinadolomiti.it/webcam/belvedere.jpg",
+        "pid": 1758873390,
+        "regionId": 12,
+        "rid": 0,
+        "showOnSummer": false,
+        "skiresort": "Civetta",
+        "webcamType": "Image"
+      }
+    ],
+    "lastUpdate": "25.05.2026 12:02:45",
+    "modification": 1779703365
+  }
+}

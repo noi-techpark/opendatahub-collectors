@@ -1,0 +1,17 @@
+rootContext: {}
+stream: false
+
+steps:
+
+  # ── SLOPES ─────────────────────────────────────────────────────────────────
+  - type: request
+    name: "Fetch DSS Slopes"
+    request:
+      url: "https://www.dolomitisuperski.com/jsonexport/export/pistebasis"
+      method: GET
+      auth:
+        type: basic
+        username: "${DSS_USERNAME}"
+        password: "${DSS_PASSWORD}"
+    resultTransformer: "."
+    mergeOn: .dssSlopes = $res
