@@ -12,7 +12,11 @@ steps:
   - type: request
     name: "Fetch DSS SkiAreas (talschaften)"
     request:
-      url: "https://www.dolomitisuperski.com/jsonexport/export/talschaften?username=${DSS_USERNAME}&password=${DSS_PASSWORD}"
+      url: "https://www.dolomitisuperski.com/jsonexport/export/talschaften"
       method: GET
+      auth:
+        type: basic
+        username: "${DSS_USERNAME}"
+        password: "${DSS_PASSWORD}"
     resultTransformer: "."
     mergeOn: .dssSkiAreas = $res

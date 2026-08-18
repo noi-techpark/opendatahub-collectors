@@ -7,7 +7,11 @@ steps:
   - type: request
     name: "Fetch DSS Slopes"
     request:
-      url: "https://www.dolomitisuperski.com/jsonexport/export/pistebasis?username=${DSS_USERNAME}&password=${DSS_PASSWORD}"
+      url: "https://www.dolomitisuperski.com/jsonexport/export/pistebasis"
       method: GET
+      auth:
+        type: basic
+        username: "${DSS_USERNAME}"
+        password: "${DSS_PASSWORD}"
     resultTransformer: "."
     mergeOn: .dssSlopes = $res
