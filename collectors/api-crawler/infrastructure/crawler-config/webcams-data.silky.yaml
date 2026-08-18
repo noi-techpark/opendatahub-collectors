@@ -6,7 +6,11 @@ steps:
   - type: request
     name: "Fetch DSS Webcams"
     request:
-      url: "https://www.dolomitisuperski.com/jsonexport/export/webcams?username=${DSS_USERNAME}&password=${DSS_PASSWORD}"
+      url: "https://www.dolomitisuperski.com/jsonexport/export/webcams"
       method: GET
+      auth:
+        type: basic
+        username: "${DSS_USERNAME}"
+        password: "${DSS_PASSWORD}"
     resultTransformer: "."
     mergeOn: .dssWebcams = $res
