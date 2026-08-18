@@ -358,10 +358,11 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 
 				event.EventDate = []odhmodel.EventDate{
 					{
-						From:  fromISO + "T00:00:00",
-						To:    toISO + "T00:00:00",
-						Begin: beginTime + ":00",
-						End:   endTime + ":00",
+						Active: true,
+						From:   fromISO + "T00:00:00",
+						To:     toISO + "T00:00:00",
+						Begin:  beginTime + ":00",
+						End:    endTime + ":00",
 					},
 				}
 				event.DateBegin = fromISO + "T" + beginTime + ":00"
@@ -379,6 +380,9 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 
 				// ContactInfos — room name + room/place address
 				if rd != nil && pd != nil {
+					roomURN := "urn:room:centrotrevi-drin:" + normalizeID(rd.Names["it"])
+					event.EventDate[0].VenueRoomDetailsIds = []string{roomURN}
+
 					event.ContactInfos = map[string]odhmodel.ContactInfos{
 						"it": {Language: "it", CompanyName: rd.Names["it"], Address: pd.Addresses["it"], City: pd.Cities["it"], ZipCode: pd.ZipCode, CountryCode: "IT"},
 						"de": {Language: "de", CompanyName: rd.Names["de"], Address: pd.Addresses["de"], City: pd.Cities["de"], ZipCode: pd.ZipCode, CountryCode: "IT"},
