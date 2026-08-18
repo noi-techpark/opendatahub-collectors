@@ -91,7 +91,7 @@ jobs:
 
   deploy-prod:
     if: github.ref == 'refs/heads/prod'
-    needs: 
+    needs:
       - build
     runs-on: ubuntu-24.04
     concurrency: tr-bike-boxes-deploy-prod
@@ -107,11 +107,11 @@ jobs:
         run: |
             yq -i '.image.repository = "${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML }}
             yq -i '.image.tag = "${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
-            yq -i '.image.pullPolicy = "IfNotPresent"' ${{ env.VALUES_YAML }}      
-            yq -i '.env.BDP_PROVENANCE_NAME="${{ env.PROJECT_NAME }}"' ${{ env.VALUES_YAML }}      
-            yq -i '.env.BDP_PROVENANCE_VERSION="${{github.sha}}"' ${{ env.VALUES_YAML }}      
+            yq -i '.image.pullPolicy = "IfNotPresent"' ${{ env.VALUES_YAML }}
+            yq -i '.env.BDP_PROVENANCE_NAME="${{ env.PROJECT_NAME }}"' ${{ env.VALUES_YAML }}
+            yq -i '.env.BDP_PROVENANCE_VERSION="${{github.sha}}"' ${{ env.VALUES_YAML }}
 
-      - name: Deploy on cluster  
+      - name: Deploy on cluster
         uses: noi-techpark/github-actions/helm-deploy@v2
         with:
           k8s-name: ${{ env.PROJECT_NAME }}
