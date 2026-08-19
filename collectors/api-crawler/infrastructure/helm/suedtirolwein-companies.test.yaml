@@ -7,7 +7,7 @@ env:
   MQ_CLIENT: dc-api-crawler-suedtirolwein-companies
   PROVIDER: api-crawler/suedtirolwein-companies
 
-  CRON: "0 30 6,22 * * *"
+  CRON: "0 30 6 * * *"
   CONFIG_PATH: "/config/config.yaml"
 
   SERVICE_NAME: dc-api-crawler-suedtirolwein-companies
