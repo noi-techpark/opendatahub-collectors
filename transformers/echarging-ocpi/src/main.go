@@ -159,7 +159,7 @@ func fetchPlugStates(locationId string) (map[string]string, error) {
 		where.Eq("sactive", "true"),
 		where.Eq("pcode", where.Escape(locationId)),
 	}, ",")
-	req.Select = "scode"
+	req.Select = "scode,mvalue"
 
 	res := odhts.Response[[]struct{ Scode, Mvalue string }]{}
 	if err := odhts.Latest(ninja, req, &res); err != nil {
