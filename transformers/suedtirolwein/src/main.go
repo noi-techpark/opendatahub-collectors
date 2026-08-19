@@ -62,19 +62,7 @@ func main() {
 		DisableOAuth: env.ODH_CORE_TOKEN_URL == "",
 	}, clib.WithReferer(env.ODH_CORE_REFERER))
 	ms.FailOnError(context.Background(), err, "failed to create client")
-
-	poiCache, err = clib.LoadExisting(context.Background(), contentClient, clib.LoadConfig[odhContentModel.ODHActivityPoi]{
-		EntityType:  ENTITY_TYPE,
-		QueryParams: map[string]string{"source": SOURCE},
-		IDFunc: func(p odhContentModel.ODHActivityPoi) string {
-			if p.Generic.ID == nil {
-				return ""
-			}
-			return *p.Generic.ID
-		},
-	})
-	ms.FailOnError(context.Background(), err, "failed to load existing POIs")
-	slog.Info("Loaded existing POIs", "count", len(poiCache.Entries()))
+	// poiCache initialization has been moved to Transform() to rebuild it per sync
 
 	listener := tr.NewTr[string](context.Background(), env.Env)
 	err = listener.Start(context.Background(), tr.RawString2JsonMiddleware(Transform))
@@ -267,71 +255,104 @@ func cleanCachedPOI(poi *odhContentModel.ODHActivityPoi) {
 func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 	logger.Get(ctx).Info("Processing wine company data")
 
+	// Rebuild cache for every incoming sync to reflect accurate DB state
+	var err error
+	poiCache, err = clib.LoadExisting(ctx, contentClient, clib.LoadConfig[odhContentModel.ODHActivityPoi]{
+		EntityType:  ENTITY_TYPE,
+		QueryParams: map[string]string{"source": SOURCE},
+		IDFunc: func(p odhContentModel.ODHActivityPoi) string {
+			if p.Generic.ID == nil {
+				return ""
+			}
+			return *p.Generic.ID
+		},
+	})
+	if err != nil {
+		logger.Get(ctx).Error("Failed to load existing POIs", "error", err)
+		return err
+	}
+	logger.Get(ctx).Info("Loaded existing POIs", "count", len(poiCache.Entries()))
+
 	batches := []langBatch{
 		{"de", companiesFromLang(r.Rawdata.De)},
 		{"it", companiesFromLang(r.Rawdata.It)},
 		{"en", companiesFromLang(r.Rawdata.En)},
+		{"ru", companiesFromLang(r.Rawdata.Ru)},
 	}
 
-	pois := map[string]odhContentModel.ODHActivityPoi{}
-	seen := map[string]struct{}{}
+	// 1. Gather all companies into a single map by their exact ID
+	allCompaniesByID := map[string]dto.WineCompany{}
+	for _, batch := range batches {
+		for _, c := range batch.companies {
+			allCompaniesByID[c.ID] = c
+		}
+	}
+
+	// 2. Helper to traverse OriginID chains to find the root ID
+	findRootID := func(id string) string {
+		curr := id
+		visited := map[string]bool{}
+		for {
+			if visited[curr] {
+				break // prevent infinite loops
+			}
+			visited[curr] = true
+			c, ok := allCompaniesByID[curr]
+			if !ok || c.OriginID == "" {
+				break
+			}
+			curr = c.OriginID
+		}
+		return curr
+	}
 
 	deCompanies := companiesFromLang(r.Rawdata.De)
 	deByID := make(map[string]dto.WineCompany, len(deCompanies))
 	for _, c := range deCompanies {
-		master := c.OriginID
-		if master == "" {
-			master = c.ID
-		}
-		if master != "" {
-			deByID[master] = c
-		}
+		deByID[c.ID] = c
 	}
 
 	allLangsByID := map[string]map[string]dto.WineCompany{}
 	for _, batch := range batches {
 		for _, company := range batch.companies {
-			master := company.OriginID
-			if master == "" {
-				master = company.ID
-			}
-			if master == "" {
+			root := findRootID(company.ID)
+			if root == "" {
 				continue
 			}
-			if allLangsByID[master] == nil {
-				allLangsByID[master] = map[string]dto.WineCompany{}
+			if allLangsByID[root] == nil {
+				allLangsByID[root] = map[string]dto.WineCompany{}
 			}
-			allLangsByID[master][batch.lang] = company
+			allLangsByID[root][batch.lang] = company
 		}
 	}
+
+	pois := map[string]odhContentModel.ODHActivityPoi{}
+	seen := map[string]struct{}{}
 
 	for _, batch := range batches {
 		if len(batch.companies) == 0 {
 			continue
 		}
 		for _, company := range batch.companies {
-			master := company.OriginID
-			if master == "" {
-				master = company.ID
-			}
-			if master == "" {
-				logger.Get(ctx).Warn("Skipping company with empty ID", "name", company.Title)
-				continue
-			}
-
 			if !company.Active {
 				continue
 			}
 
-			deCopy, hasDe := deByID[master]
-			id := master
+			root := findRootID(company.ID)
+			if root == "" {
+				logger.Get(ctx).Warn("Skipping company with empty root ID", "name", company.Title)
+				continue
+			}
+
+			deCopy, hasDe := deByID[root]
+			id := root
 
 			if batch.lang != "de" {
 				if company.OriginID == "" {
 					logger.Get(ctx).Warn("Translation missing OriginID (cannot map to master)", "lang", batch.lang, "slug", company.Slug, "id", company.ID, "name", company.Title)
 				}
 				if !hasDe {
-					logger.Get(ctx).Warn("Master DE record missing for translation", "lang", batch.lang, "slug", company.Slug, "origin_id", master, "name", company.Title)
+					logger.Get(ctx).Warn("Master DE record missing for translation", "lang", batch.lang, "slug", company.Slug, "origin_id", company.OriginID, "root_id", root, "name", company.Title)
 				}
 			}
 
@@ -344,9 +365,9 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 				if !hasDe {
 					deCopy = company
 				}
-				poi := mapToPoi(id, company, batch.lang, deCopy, allLangsByID[master], r.Timestamp)
+				poi := mapToPoi(id, company, batch.lang, deCopy, allLangsByID[root], r.Timestamp)
 				poi.AdditionalProperties = &odhContentModel.AdditionalProperties{
-					SuedtirolWeinCompanyDataProperties: buildAdditionalProperties(allLangsByID[master]),
+					SuedtirolWeinCompanyDataProperties: buildAdditionalProperties(allLangsByID[root]),
 				}
 				
 				if cachedEntry, ok := poiCache.Get(id); ok {
