@@ -62,19 +62,7 @@ func main() {
 		DisableOAuth: env.ODH_CORE_TOKEN_URL == "",
 	}, clib.WithReferer(env.ODH_CORE_REFERER))
 	ms.FailOnError(context.Background(), err, "failed to create client")
-
-	poiCache, err = clib.LoadExisting(context.Background(), contentClient, clib.LoadConfig[odhContentModel.ODHActivityPoi]{
-		EntityType:  ENTITY_TYPE,
-		QueryParams: map[string]string{"source": SOURCE},
-		IDFunc: func(p odhContentModel.ODHActivityPoi) string {
-			if p.Generic.ID == nil {
-				return ""
-			}
-			return *p.Generic.ID
-		},
-	})
-	ms.FailOnError(context.Background(), err, "failed to load existing POIs")
-	slog.Info("Loaded existing POIs", "count", len(poiCache.Entries()))
+	// poiCache initialization has been moved to Transform() to rebuild it per sync
 
 	listener := tr.NewTr[string](context.Background(), env.Env)
 	err = listener.Start(context.Background(), tr.RawString2JsonMiddleware(Transform))
@@ -266,6 +254,24 @@ func cleanCachedPOI(poi *odhContentModel.ODHActivityPoi) {
 
 func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 	logger.Get(ctx).Info("Processing wine company data")
+
+	// Rebuild cache for every incoming sync to reflect accurate DB state
+	var err error
+	poiCache, err = clib.LoadExisting(ctx, contentClient, clib.LoadConfig[odhContentModel.ODHActivityPoi]{
+		EntityType:  ENTITY_TYPE,
+		QueryParams: map[string]string{"source": SOURCE},
+		IDFunc: func(p odhContentModel.ODHActivityPoi) string {
+			if p.Generic.ID == nil {
+				return ""
+			}
+			return *p.Generic.ID
+		},
+	})
+	if err != nil {
+		logger.Get(ctx).Error("Failed to load existing POIs", "error", err)
+		return err
+	}
+	logger.Get(ctx).Info("Loaded existing POIs", "count", len(poiCache.Entries()))
 
 	batches := []langBatch{
 		{"de", companiesFromLang(r.Rawdata.De)},
