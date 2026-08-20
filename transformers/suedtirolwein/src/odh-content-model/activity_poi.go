@@ -219,15 +219,15 @@ type SuedtirolWeinCompanyDataProperties struct {
 	Quote       FlexibleMap `json:"Quote,omitempty"`
 	QuoteAuthor FlexibleMap `json:"QuoteAuthor,omitempty"`
 
-	Slogan   FlexibleMap `json:"Slogan,omitempty"`
-	FarmName FlexibleMap `json:"FarmName,omitempty"`
+	Slogan   FlexibleMap `json:"Slogan,omitempty" hash:"ignore"`
+	FarmName FlexibleMap `json:"FarmName,omitempty" hash:"ignore"`
 
 	OpeningTimesWineShop    FlexibleMap `json:"OpeningtimesWineshop,omitempty"`
 	OpeningTimesGuides      FlexibleMap `json:"OpeningtimesGuides,omitempty"`
 	OpeningTimesGastronomie FlexibleMap `json:"OpeningtimesGastronomie,omitempty"`
 	CompanyHoliday          FlexibleMap `json:"CompanyHoliday,omitempty"`
 
-	Wines []string `json:"Wines,omitempty"`
+	Wines []string `json:"Wines,omitempty" hash:"set"`
 
 	HasVisits                  bool  `json:"HasVisits"`
 	HasOvernights              bool  `json:"HasOvernights"`
@@ -242,7 +242,7 @@ type SuedtirolWeinCompanyDataProperties struct {
 	IsWineSummit               bool  `json:"IsWineSummit"`
 	IsSparklingWineassociation bool  `json:"IsSparklingWineassociation"`
 	IsWinery                   bool  `json:"IsWinery"`
-	IsWineryAssociation        bool  `json:"IsWineryAssociation"`
+	IsWineryAssociation        bool  `json:"IsWineryAssociation" hash:"ignore"`
 	IsSkyalpsPartner           bool  `json:"IsSkyalpsPartner"`
 
 	OnlineShopurl      FlexibleMap `json:"OnlineShopurl,omitempty"`
