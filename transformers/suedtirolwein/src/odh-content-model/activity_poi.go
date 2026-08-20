@@ -107,9 +107,9 @@ type ODHActivityPoi struct {
 	Generic
 
 	Detail               map[string]*DetailGeneric      `json:"Detail"`
-	ContactInfos         map[string]*ContactInfo        `json:"ContactInfos"`
-	AdditionalContact    map[string][]AdditionalContact `json:"AdditionalContact,omitempty"`
-	ImageGallery         []ImageGalleryEntry            `json:"ImageGallery"`
+	ContactInfos         map[string]*ContactInfo        `json:"ContactInfos,omitempty"`
+	AdditionalContact    map[string][]AdditionalContact `json:"AdditionalContact,omitempty" hash:"ignore"`
+	ImageGallery         []ImageGalleryEntry            `json:"ImageGallery,omitempty"`
 	PoiProperty          map[string][]PoiPropertyEntry  `json:"PoiProperty"`
 	PoiServices          []string                       `json:"PoiServices"`
 	AdditionalProperties *AdditionalProperties          `json:"AdditionalProperties,omitempty"`
@@ -132,12 +132,12 @@ type Metadata struct {
 
 type Generic struct {
 	ID          *string                      `json:"Id,omitempty"`
-	Meta        *Metadata                    `json:"_Meta,omitempty"`
+	Meta        *Metadata                    `json:"_Meta,omitempty" hash:"ignore"`
 	LicenseInfo *LicenseInfo                 `json:"LicenseInfo,omitempty"`
 	Shortname   *string                      `json:"Shortname,omitempty"`
 	Active      bool                         `json:"Active"`
-	FirstImport *FlexibleTime                `json:"FirstImport,omitempty"`
-	LastChange  *FlexibleTime                `json:"LastChange,omitempty"`
+	FirstImport *FlexibleTime                `json:"FirstImport,omitempty" hash:"ignore"`
+	LastChange  *FlexibleTime                `json:"LastChange,omitempty" hash:"ignore"`
 	HasLanguage []string                     `json:"HasLanguage"`
 	Mapping     map[string]map[string]string `json:"Mapping,omitempty"`
 	Source      *string                      `json:"Source,omitempty"`
@@ -183,9 +183,9 @@ type AdditionalContact struct {
 type ImageGalleryEntry struct {
 	ImageUrl      string            `json:"ImageUrl"`
 	ImageName     string            `json:"ImageName,omitempty"`
-	ImageDesc     map[string]string `json:"ImageDesc,omitempty"`
-	ImageTitle    map[string]string `json:"ImageTitle,omitempty"`
-	ImageAltText  map[string]string `json:"ImageAltText,omitempty"`
+	ImageDesc     map[string]string `json:"ImageDesc,omitempty" hash:"ignore"`
+	ImageTitle    map[string]string `json:"ImageTitle,omitempty" hash:"ignore"`
+	ImageAltText  map[string]string `json:"ImageAltText,omitempty" hash:"ignore"`
 	CopyRight     string            `json:"CopyRight,omitempty"`
 	License       string            `json:"License,omitempty"`
 	ImageSource   string            `json:"ImageSource,omitempty"`
@@ -220,7 +220,7 @@ type SuedtirolWeinCompanyDataProperties struct {
 	QuoteAuthor FlexibleMap `json:"QuoteAuthor,omitempty"`
 
 	Slogan   FlexibleMap `json:"Slogan,omitempty"`
-	FarmName FlexibleMap `json:"FarmName,omitempty"`
+	FarmName FlexibleMap `json:"FarmName,omitempty" hash:"ignore"`
 
 	OpeningTimesWineShop    FlexibleMap `json:"OpeningtimesWineshop,omitempty"`
 	OpeningTimesGuides      FlexibleMap `json:"OpeningtimesGuides,omitempty"`
