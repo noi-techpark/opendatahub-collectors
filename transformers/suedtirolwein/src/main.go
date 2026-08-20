@@ -271,7 +271,15 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 		logger.Get(ctx).Error("Failed to load existing POIs", "error", err)
 		return err
 	}
-	logger.Get(ctx).Info("Loaded existing POIs", "count", len(poiCache.Entries()))
+	activeCount, inactiveCount := 0, 0
+	for _, e := range poiCache.Entries() {
+		if e.Entity.Active {
+			activeCount++
+		} else {
+			inactiveCount++
+		}
+	}
+	logger.Get(ctx).Info("Loaded existing POIs", "count", len(poiCache.Entries()), "active", activeCount, "inactive", inactiveCount)
 
 	batches := []langBatch{
 		{"de", companiesFromLang(r.Rawdata.De)},
@@ -369,7 +377,7 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 				poi.AdditionalProperties = &odhContentModel.AdditionalProperties{
 					SuedtirolWeinCompanyDataProperties: buildAdditionalProperties(allLangsByID[root]),
 				}
-				
+
 				if cachedEntry, ok := poiCache.Get(id); ok {
 					poi.PublishedOn = cachedEntry.Entity.PublishedOn
 					poi.SmgTags = addChannels(cachedEntry.Entity.SmgTags, poi.SmgTags)
@@ -397,6 +405,11 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 		}
 
 		_, exists := poiCache.Get(id)
+		// cachedForDiag, exists := poiCache.Get(id)
+		// if exists && changed {
+		// 	logger.Get(ctx).Warn("POI changed vs cache", "id", id,
+		// 		"diff", cmp.Diff(cachedForDiag.Entity, poi))
+		// }
 
 		if !exists {
 			payload, serErr := noEscapeJSON(poi)
@@ -438,12 +451,19 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 	for id := range poiCache.Entries() {
 		cacheIDs = append(cacheIDs, id)
 	}
+
+	logger.Get(ctx).Warn("Deactivation diagnostics", "seenCount", len(seen), "cacheCount", len(cacheIDs))
 	for _, id := range cacheIDs {
 		if _, ok := seen[id]; ok {
 			continue
 		}
 		entry, stillExists := poiCache.Get(id)
 		if !stillExists {
+			continue
+		}
+		if !entry.Entity.Active {
+			// Already inactive on the API - nothing to do, and re-PUTting it
+			// every run just wastes an HTTP round trip on ~340 stale records.
 			continue
 		}
 		poi := entry.Entity
