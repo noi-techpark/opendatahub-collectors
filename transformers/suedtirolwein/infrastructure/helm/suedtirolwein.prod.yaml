@@ -5,7 +5,7 @@ image:
 env:
   LOG_LEVEL: INFO
 
-  SOURCE: suedtirolwein.companies
+  SOURCE: suedtirolwein
   PUBLISHED_ON_CHANNELS: idm-marketplace,suedtirolwein.com
 
   # content writer
