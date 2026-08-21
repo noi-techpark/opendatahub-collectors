@@ -33,14 +33,14 @@ type EventLinked struct {
 	EventPublisher        map[string]any                    `json:"EventPublisher"`
 	EventUrls             []EventUrl                        `json:"EventUrls,omitempty"`
 	EventVariants         []map[string]any                  `json:"EventVariants"`
-	FirstImport           string                            `json:"FirstImport,omitempty"`
+	FirstImport           string                            `json:"FirstImport,omitempty" hash:"ignore"`
 	GpsInfo               []GpsInfo                         `json:"GpsInfo"`
 	GpsPoints             map[string]any                    `json:"GpsPoints"`
 	Gpstype               string                            `json:"Gpstype,omitempty"`
 	HasLanguage           []string                          `json:"HasLanguage"`
 	Id                    string                            `json:"Id"`
 	ImageGallery          []ImageGalleryItem                `json:"ImageGallery"`
-	LastChange            string                            `json:"LastChange,omitempty"`
+	LastChange            string                            `json:"LastChange,omitempty" hash:"ignore"`
 	Latitude              float64                           `json:"Latitude,omitempty"`
 	LicenseInfo           map[string]any                    `json:"LicenseInfo"`
 	LocationInfo          map[string]any                    `json:"LocationInfo"`
