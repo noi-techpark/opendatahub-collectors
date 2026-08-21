@@ -15,7 +15,7 @@ stream: false
 auth:
     type: oauth
     method: client_credentials
-    tokenUrl: "https://test.app.loewenbytes.com/api/v1/connect/token"
+    tokenUrl: "https://app.loewenbytes.com/api/v1/connect/token"
     clientId: "${LOEWENBYTES_CLIENT_ID}"
     clientSecret: "${LOEWENBYTES_CLIENT_SECRET}"
 
@@ -32,7 +32,7 @@ steps:
         - type: request
           name: "Get locations in language"
           request:
-              url: "https://test.app.loewenbytes.com/api/v1/resources/locations?languageID={{ .language }}"
+              url: "https://app.loewenbytes.com/api/v1/resources/locations?languageID={{ .language }}"
               method: GET
 
           mergeOn: .[$ctx.language] = $res
@@ -46,7 +46,7 @@ steps:
                 - type: request
                   name: "Get Stations"
                   request:
-                      url: "https://test.app.loewenbytes.com/api/v1/resources/stations?languageID={{ .language }}&locationId={{ .location.locationID }}"
+                      url: "https://app.loewenbytes.com/api/v1/resources/stations?languageID={{ .language }}&locationId={{ .location.locationID }}"
                       method: GET
 
                   mergeOn: .stations = $res
@@ -55,7 +55,7 @@ steps:
     - type: request
       name: "Get all locations"
       request:
-          url: "https://test.app.loewenbytes.com/api/v1/resources/locations?languageID=it"
+          url: "https://app.loewenbytes.com/api/v1/resources/locations?languageID=it"
           method: GET
 
       mergeOn: .it = $res
@@ -69,7 +69,7 @@ steps:
             - type: request
               name: "Get Stations"
               request:
-                  url: "https://test.app.loewenbytes.com/api/v1/resources/stations?languageID=it&locationId={{ .location.locationID }}"
+                  url: "https://app.loewenbytes.com/api/v1/resources/stations?languageID=it&locationId={{ .location.locationID }}"
                   method: GET
 
               mergeOn: .stations = $res
@@ -83,7 +83,7 @@ steps:
                     - type: request
                       name: "Get Station"
                       request:
-                          url: "https://test.app.loewenbytes.com/api/v1/resources/station?languageID=it&stationID={{ .station.stationID }}"
+                          url: "https://app.loewenbytes.com/api/v1/resources/station?languageID=it&stationID={{ .station.stationID }}"
                           method: GET
 
                       mergeOn: .places = $res.places
