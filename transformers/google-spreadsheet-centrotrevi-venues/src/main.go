@@ -166,6 +166,48 @@ func normalizeID(val string) string {
 func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet Spreadsheet) error {
 	slog.Info("Processing spreadsheet...", "spreadsheetID", spreadsheet.SpreadsheetID)
 
+	drinCache, err := clib.LoadExisting(ctx, client, clib.LoadConfig[odhmodel.VenueV2]{
+		EntityType:  "Venue",
+		QueryParams: map[string]string{"source": "drin"},
+		IDFunc: func(p odhmodel.VenueV2) string {
+			return p.Id
+		},
+	})
+	if err != nil {
+		slog.Error("Failed to load existing drin venues", "err", err)
+		return err
+	}
+
+	treviCache, err := clib.LoadExisting(ctx, client, clib.LoadConfig[odhmodel.VenueV2]{
+		EntityType:  "Venue",
+		QueryParams: map[string]string{"source": "trevilab"},
+		IDFunc: func(p odhmodel.VenueV2) string {
+			return p.Id
+		},
+	})
+	if err != nil {
+		slog.Error("Failed to load existing trevilab venues", "err", err)
+		return err
+	}
+
+	venueCache := clib.NewCache[odhmodel.VenueV2]()
+	for id, entry := range drinCache.Entries() {
+		venueCache.Set(id, entry.Entity, entry.Hash)
+	}
+	for id, entry := range treviCache.Entries() {
+		venueCache.Set(id, entry.Entity, entry.Hash)
+	}
+
+	activeCount, inactiveCount := 0, 0
+	for _, e := range venueCache.Entries() {
+		if e.Entity.Active != nil && *e.Entity.Active {
+			activeCount++
+		} else {
+			inactiveCount++
+		}
+	}
+	slog.Info("Loaded existing Venues", "count", len(venueCache.Entries()), "active", activeCount, "inactive", inactiveCount)
+
 	var placesSheet, roomsSheet *Sheet
 
 	for i := range spreadsheet.Sheets {
@@ -276,9 +318,8 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 		venueID := venueIDs[placeKey]
 
 		var venue odhmodel.VenueV2
-		var existingVenue map[string]any
-		if err := client.Get(ctx, "Venue/"+venueID, nil, &existingVenue); err == nil {
-			venueBytes, _ := json.Marshal(existingVenue)
+		if cachedEntry, ok := venueCache.Get(venueID); ok {
+			venueBytes, _ := json.Marshal(cachedEntry.Entity)
 			_ = json.Unmarshal(venueBytes, &venue)
 		} else {
 			active := true
@@ -356,15 +397,65 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 		venueBytes, _ := json.Marshal(venue)
 		_ = json.Unmarshal(venueBytes, &venueMap)
 
+		hash, changed, hashErr := venueCache.HasChanged(venue.Id, venue)
+		if hashErr != nil {
+			slog.Error("Failed to hash venue", "err", hashErr, "id", venue.Id)
+			continue
+		}
+
+		if !changed {
+			continue
+		}
+
 		err := client.Put(ctx, "Venue", venue.Id, &venueMap)
 		if err != nil {
 			slog.Debug("Put venue failed, trying Post", "err", err, "id", venue.Id)
 			err = client.Post(ctx, "Venue", map[string]string{"generateid": "false"}, &venueMap)
 			if err != nil {
 				slog.Error("Failed to save venue", "err", err.Error(), "id", venue.Id)
+			} else {
+				slog.Info("Saved venue (Post)", "id", venue.Id)
+				venueCache.Set(venue.Id, venue, hash)
 			}
 		} else {
-			slog.Info("Saved venue", "id", venue.Id)
+			slog.Info("Saved venue (Put)", "id", venue.Id)
+			venueCache.Set(venue.Id, venue, hash)
+		}
+	}
+
+	// 5. Deactivate orphaned venues
+	seenVenues := make(map[string]bool)
+	for _, vid := range venueIDs {
+		seenVenues[vid] = true
+	}
+
+	cacheIDs := make([]string, 0, len(venueCache.Entries()))
+	for id := range venueCache.Entries() {
+		cacheIDs = append(cacheIDs, id)
+	}
+
+	slog.Warn("Deactivation diagnostics", "seenCount", len(seenVenues), "cacheCount", len(cacheIDs))
+	for _, id := range cacheIDs {
+		if _, ok := seenVenues[id]; ok {
+			continue
+		}
+		
+		entry, _ := venueCache.Get(id)
+		if entry.Entity.Active != nil && !*entry.Entity.Active {
+			continue
+		}
+
+		slog.Info("Deactivating orphaned venue", "id", id, "source", entry.Entity.Source)
+		apiVenue := entry.Entity
+		active := false
+		apiVenue.Active = &active
+		
+		var venueMap map[string]any
+		venueBytes, _ := json.Marshal(apiVenue)
+		_ = json.Unmarshal(venueBytes, &venueMap)
+
+		if err := client.Put(ctx, "Venue", apiVenue.Id, &venueMap); err != nil {
+			slog.Error("Failed to deactivate venue", "err", err, "id", apiVenue.Id)
 		}
 	}
 
