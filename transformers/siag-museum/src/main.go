@@ -61,15 +61,6 @@ func main() {
 	}, clib.WithReferer(env.ODH_CORE_REFERER))
 	ms.FailOnError(context.Background(), err, "failed to create client")
 
-	poiCache, err = clib.LoadExisting(context.Background(), contentClient, clib.LoadConfig[odhContentModel.ODHActivityPoi]{
-		EntityType:  ENTITY_TYPE,
-		QueryParams: map[string]string{"source": SOURCE},
-		IDFunc:      func(p odhContentModel.ODHActivityPoi) string { return *p.Generic.ID },
-	})
-	ms.FailOnError(context.Background(), err, "failed to load existing POIs")
-
-	slog.Info("Loaded existing POIs", "count", len(poiCache.Entries()))
-
 	listener := tr.NewTr[string](context.Background(), env.Env)
 	err = listener.Start(context.Background(), tr.RawString2JsonMiddleware(Transform))
 	ms.FailOnError(context.Background(), err, "error while listening to queue")
@@ -77,6 +68,18 @@ func main() {
 
 func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 	logger.Get(ctx).Info("Processing museum data")
+
+	var err error
+	poiCache, err = clib.LoadExisting(ctx, contentClient, clib.LoadConfig[odhContentModel.ODHActivityPoi]{
+		EntityType:  ENTITY_TYPE,
+		QueryParams: map[string]string{"source": SOURCE},
+		IDFunc:      func(p odhContentModel.ODHActivityPoi) string { return *p.Generic.ID },
+	})
+	if err != nil {
+		logger.Get(ctx).Error("Failed to load existing POIs", "error", err)
+		return err
+	}
+	slog.Info("Loaded existing POIs", "count", len(poiCache.Entries()))
 
 	pois := map[string]odhContentModel.ODHActivityPoi{}
 	// seen tracks every id present in the current source batch.
@@ -121,6 +124,10 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 	for _, def := range tagDefsMap {
 		tagDefs = append(tagDefs, def)
 	}
+	
+	sort.Slice(tagDefs, func(i, j int) bool {
+		return tagDefs[i].ID < tagDefs[j].ID
+	})
 
 	// Sync all tags discovered in this batch to the ODH Tag endpoint.
 	// clib.SyncTags POSTs each tag and ignores ErrAlreadyExists, so it is
@@ -200,6 +207,10 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 		}
 
 		poi := entry.Entity
+		if !poi.Active {
+			continue
+		}
+		
 		poi.Active = false
 		poi.PublishedOn = removeChannels(poi.PublishedOn, getPublishedOnChannels())
 
