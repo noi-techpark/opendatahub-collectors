@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
 openapi: 3.0.3
 info:
   title: Loewenbytes Bikebox Provider API for Suedtirolmobile App
