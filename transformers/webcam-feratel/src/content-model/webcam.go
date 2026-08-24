@@ -16,7 +16,7 @@ type WebcamInfo struct {
 	SmgActive        bool                         `json:"SmgActive"`
 	OdhActive        bool                         `json:"OdhActive"`
 	WebCamProperties WebCamProperties             `json:"WebCamProperties"`
-	LastChange       time.Time                    `json:"LastChange,omitempty"`
+	LastChange       time.Time                    `json:"LastChange,omitempty" hash:"ignore"`
 	Shortname        string                       `json:"Shortname,omitempty"`
 	Detail           map[string]Detail            `json:"Detail,omitempty"`
 	GpsInfo          []GpsInfo                    `json:"GpsInfo,omitempty"`
