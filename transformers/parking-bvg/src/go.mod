@@ -4,7 +4,7 @@ go 1.24.1
 
 require (
 	github.com/gocarina/gocsv v0.0.0-20240520201108-78e41c74b4b1
-	github.com/noi-techpark/go-bdp-client v1.4.4
+	github.com/noi-techpark/go-bdp-client v1.5.3
 	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.7
 	github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0
 	github.com/noi-techpark/opendatahub-go-sdk/testsuite v1.1.1

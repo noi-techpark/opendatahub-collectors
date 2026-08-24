@@ -33,7 +33,7 @@ jobs:
         docker-password: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-parking-bvg-test:
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feat/bvg-parking'
+    if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-24.04
     concurrency: dc-api-crawler-parking-bvg-test
