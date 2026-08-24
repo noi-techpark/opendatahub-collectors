@@ -31,6 +31,7 @@ const (
 	dataTypeVehicleFutureAvailability30   = "future-availability-30"
 	dataTypeVehicleFutureAvailability60   = "future-availability-60"
 	dataTypeVehicleFutureAvailability120  = "future-availability-120"
+	dataTypeVehicleFutureAvailability180  = "future-availability-180"
 	dataTypeVehicleFutureAvailability360  = "future-availability-360"
 	dataTypeVehicleFutureAvailability720  = "future-availability-720"
 	dataTypeVehicleFutureAvailability1440 = "future-availability-1440"
@@ -119,6 +120,7 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 		vechile_dataMap.AddRecord(vehicle_code, dataTypeVehicleFutureAvailability30, bdplib.CreateRecord(ts, checkAvailabilityAt(avail, now.Add(30*time.Minute)), 300))
 		vechile_dataMap.AddRecord(vehicle_code, dataTypeVehicleFutureAvailability60, bdplib.CreateRecord(ts, checkAvailabilityAt(avail, now.Add(60*time.Minute)), 300))
 		vechile_dataMap.AddRecord(vehicle_code, dataTypeVehicleFutureAvailability120, bdplib.CreateRecord(ts, checkAvailabilityAt(avail, now.Add(120*time.Minute)), 300))
+		vechile_dataMap.AddRecord(vehicle_code, dataTypeVehicleFutureAvailability180, bdplib.CreateRecord(ts, checkAvailabilityAt(avail, now.Add(180*time.Minute)), 300))
 		vechile_dataMap.AddRecord(vehicle_code, dataTypeVehicleFutureAvailability360, bdplib.CreateRecord(ts, checkAvailabilityAt(avail, now.Add(360*time.Minute)), 300))
 		vechile_dataMap.AddRecord(vehicle_code, dataTypeVehicleFutureAvailability720, bdplib.CreateRecord(ts, checkAvailabilityAt(avail, now.Add(720*time.Minute)), 300))
 		vechile_dataMap.AddRecord(vehicle_code, dataTypeVehicleFutureAvailability1440, bdplib.CreateRecord(ts, checkAvailabilityAt(avail, now.Add(1440*time.Minute)), 300))
