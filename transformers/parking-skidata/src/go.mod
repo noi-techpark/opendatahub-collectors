@@ -7,7 +7,7 @@ require (
 	github.com/noi-techpark/go-bdp-client v1.5.2
 	github.com/noi-techpark/go-timeseries-client v0.0.0-20250822084439-8aae699d91e0
 	github.com/noi-techpark/opendatahub-go-sdk/clib v0.0.1
-	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.1.1-0.20260824112911-125158456fdd
+	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.1.1-0.20260824124000-0368d72ac0d7
 	github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0
 	github.com/noi-techpark/opendatahub-go-sdk/testsuite v1.1.1
 	github.com/stretchr/testify v1.10.0

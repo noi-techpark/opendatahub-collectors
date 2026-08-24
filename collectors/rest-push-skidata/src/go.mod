@@ -9,7 +9,7 @@ go 1.25.0
 require (
 	github.com/hashicorp/go-retryablehttp v0.7.8
 	github.com/labstack/echo/v4 v4.15.1
-	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.1.1-0.20260824112911-125158456fdd
+	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.1.1-0.20260824124000-0368d72ac0d7
 	github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0
 	github.com/stretchr/testify v1.11.1
 )
