@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"os"
 	"time"
 
 	"github.com/noi-techpark/go-bdp-client/bdplib"
@@ -178,7 +179,15 @@ func main() {
 
 	defer tel.FlushOnPanic()
 
-	b := bdplib.FromEnv()
+	b := bdplib.FromEnv(bdplib.BdpEnv{
+		BDP_BASE_URL:           os.Getenv("BDP_BASE_URL"),
+		BDP_PROVENANCE_VERSION: os.Getenv("BDP_PROVENANCE_VERSION"),
+		BDP_PROVENANCE_NAME:    os.Getenv("BDP_PROVENANCE_NAME"),
+		BDP_ORIGIN:             os.Getenv("BDP_ORIGIN"),
+		BDP_TOKEN_URL:          os.Getenv("ODH_TOKEN_URL"),
+		BDP_CLIENT_ID:          os.Getenv("ODH_CLIENT_ID"),
+		BDP_CLIENT_SECRET:      os.Getenv("ODH_CLIENT_SECRET"),
+	})
 
 	SyncDataTypes(b)
 
