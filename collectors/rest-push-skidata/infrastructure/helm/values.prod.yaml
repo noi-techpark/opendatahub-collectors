@@ -52,7 +52,7 @@ env:
   SKIDATA_CATEGORY_REFRESH: "1h"
 
   # Raw payloads go to the HTTP raw writer, not the ingress queue.
-  RAW_WRITER_URL: "http://raw-writer-2.core.svc.cluster.local:8080"
+  RAW_WRITER_URL: "http://raw-writer-2.core.svc.cluster.local"
   SERVICE_NAME: "dc-rest-push-skidata"
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 
