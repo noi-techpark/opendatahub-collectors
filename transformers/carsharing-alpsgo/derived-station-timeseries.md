@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 NOI Techpark <digital@noi.bz.it>
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
 @rcavaliere  i now get what `current-station` means and the fact that cars are "stationary" in a CarSharingStations reframes the situation.
 
 I will add `future-availability-180` timeseries to meet the bussiness requirement.
