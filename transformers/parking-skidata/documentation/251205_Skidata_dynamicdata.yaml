@@ -1,0 +1,348 @@
+openapi: 3.0.3
+info:
+  description: Configuration API to setup an integrator system to receive notifications
+    over the sweb® Interface 'Dynamic Data' Notification API. The calls are issued
+    by the integrator and implemented and received by SKIDATA.
+  title: sweb Interface 'Dynamic Data' API
+  version: "1.8"
+servers:
+- description: Production EU Car
+  url: https://car.webhost.skidata.com/bei/advconn/dynamicdata
+- description: Production ASIA PACIFIC
+  url: https://car.au.skidata.com/bei/advconn/dynamicdata
+- description: Production US
+  url: https://hb.usa.skidata.com/bei/advconn/dynamicdata
+- description: Staging server
+  url: https://sweb.skidata.com/bei/advconn/dynamicdata
+- description: Local deployment server
+  url: https://localhost:8080/bei/advconn/dynamicdata
+security:
+- basicAuth: []
+tags:
+- name: counting
+- name: notification
+- name: health
+paths:
+  /v1/health:
+    get:
+      description: Only used at configuration time (by SKIDATA) when the integrator
+        system URL is configured to verify the endpoint. The content of the response
+        is irrelevant, only the HTTP return code 200 is checked.
+      operationId: getHealth
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                example: UP
+                type: string
+          description: DEPRECATED. A health string, the string is not processed or
+            interpreted
+        "204":
+          description: Success
+        "401":
+          description: Not authorized
+      summary: Returns the health status of the service.
+      tags:
+      - health
+  /v1/notifications/config:
+    get:
+      description: Fetch the notifcation configuration for the integrator
+      operationId: getNotificationConfig
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegratorConfig'
+          description: Return the integrator system configuration, i.e. URL and user
+            name for Basic Auth.
+        "401":
+          description: Not authorized
+        "500":
+          content:
+            application/text:
+              schema:
+                description: error message
+                type: string
+          description: Failure
+      tags:
+      - notification
+  /v1/notifications/config/{facilityNr}:
+    get:
+      description: Fetch the carparks for which notification is configured
+      operationId: getNotificationConfigFacility
+      parameters:
+      - description: facilityNr for which to fetch car park ID's for which notifications
+          will be sent
+        explode: false
+        in: path
+        name: facilityNr
+        required: true
+        schema:
+          $ref: '#/components/schemas/FacilityNr'
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarparkIds'
+          description: list of carparks configured for notifications
+        "401":
+          description: Not authorized
+        "500":
+          content:
+            application/text:
+              schema:
+                description: error message
+                type: string
+          description: Failure
+      tags:
+      - notification
+  /v1/notifications/enable/{facilityNr}:
+    put:
+      description: Enables notification for counter areas and categories of a list
+        of carparks
+      operationId: enableNotification
+      parameters:
+      - description: facilityNr for which to enable notifications
+        explode: false
+        in: path
+        name: facilityNr
+        required: true
+        schema:
+          $ref: '#/components/schemas/FacilityNr'
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarparkIds'
+        description: list of car park ID's to enable notifications for
+        required: true
+      responses:
+        "204":
+          description: Success
+        "401":
+          description: Not authorized
+        "500":
+          content:
+            application/text:
+              schema:
+                description: error message
+                type: string
+          description: Failure
+      tags:
+      - notification
+  /v1/notifications/disable/{facilityNr}:
+    put:
+      description: Disables notification for counter areas and categories of a list
+        of carparks
+      operationId: disableNotification
+      parameters:
+      - description: facilityNr for which to disbale notifications
+        explode: false
+        in: path
+        name: facilityNr
+        required: true
+        schema:
+          $ref: '#/components/schemas/FacilityNr'
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarparkIds'
+        description: list of car park ID's to disable notifications for
+        required: true
+      responses:
+        "204":
+          description: Success
+        "401":
+          description: Not authorized
+        "500":
+          content:
+            application/text:
+              schema:
+                description: error message
+                type: string
+          description: Failure
+      tags:
+      - notification
+  /v1/countingcategories/{facilityNr}:
+    get:
+      description: Returns the counting categories from Parking.Logic.
+      operationId: getCountingCategories
+      parameters:
+      - explode: false
+        in: path
+        name: facilityNr
+        required: true
+        schema:
+          $ref: '#/components/schemas/FacilityNr'
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/CountingCategory'
+                type: array
+          description: Counting Category List
+        "401":
+          description: Not authorized
+        "500":
+          content:
+            application/text:
+              schema:
+                description: error message
+                type: string
+          description: Failure
+      tags:
+      - counting
+  /v1/countingareas/{facilityNr}:
+    get:
+      description: Returns the current counting areas (e.g. 1th storey) of a Parking
+        Facility
+      operationId: getCountingAreas
+      parameters:
+      - explode: false
+        in: path
+        name: facilityNr
+        required: true
+        schema:
+          $ref: '#/components/schemas/FacilityNr'
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/CountingArea'
+                type: array
+          description: Counting Area List
+        "401":
+          description: Not authorized
+        "500":
+          content:
+            application/text:
+              schema:
+                description: error message
+                type: string
+          description: Failure
+      tags:
+      - counting
+  /v1/counters/{facilityNr}/resend:
+    put:
+      description: Triggers resending all counters of Parking Facility
+      operationId: resendCounters
+      parameters:
+      - explode: false
+        in: path
+        name: facilityNr
+        required: true
+        schema:
+          $ref: '#/components/schemas/FacilityNr'
+        style: simple
+      responses:
+        "204":
+          description: Accepted
+        "401":
+          description: Not authorized
+        "500":
+          content:
+            application/text:
+              schema:
+                description: error message
+                type: string
+          description: Failure
+      tags:
+      - counting
+components:
+  schemas:
+    CarparkIds:
+      items:
+        example: 1
+        type: integer
+      type: array
+    CountingCategory:
+      example:
+        carparkId: 1
+        freeLimit: 76
+        name: Short-term
+        occupancyLimit: 76
+        countingCategoryId: 2
+        capacity: 2
+      properties:
+        carparkId:
+          example: 1
+          type: integer
+        countingCategoryId:
+          description: 1..short-term parker, 2..contract parker, 2..total, others..user
+            defined
+          example: 2
+          type: integer
+        name:
+          example: Short-term
+          type: string
+        capacity:
+          example: 2
+          type: integer
+        occupancyLimit:
+          example: 76
+          type: integer
+        freeLimit:
+          example: 76
+          type: integer
+    CountingArea:
+      example:
+        carparkId: 1
+        freeLimit: 76
+        name: Area2
+        countingAreaId: 2
+        occupancyLimit: 76
+        capacity: 2
+      properties:
+        carparkId:
+          example: 1
+          type: integer
+        countingAreaId:
+          example: 2
+          type: integer
+        name:
+          example: Area2
+          type: string
+        capacity:
+          example: 2
+          type: integer
+        occupancyLimit:
+          example: 76
+          type: integer
+        freeLimit:
+          example: 76
+          type: integer
+    IntegratorConfig:
+      example:
+        user: INTUSER
+        url: https://integrator.com/eventreceiver
+      properties:
+        url:
+          example: https://integrator.com/eventreceiver
+          type: string
+        user:
+          description: the Bsaic Auth user name
+          example: INTUSER
+          type: string
+    FacilityNr:
+      example: 1376
+      format: int32
+      maximum: 9999999
+      minimum: 1
+      type: integer
+  securitySchemes:
+    basicAuth:
+      scheme: basic
+      type: http
