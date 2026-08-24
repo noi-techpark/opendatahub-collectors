@@ -62,12 +62,12 @@ type ODHActivityPoi struct {
 // Generic matches the pattern used across transformers in the monorepo.
 type Generic struct {
 	ID          *string                      `json:"Id,omitempty"`
-	Meta        *clib.Metadata               `json:"_Meta,omitempty"`
+	Meta        *clib.Metadata               `json:"_Meta,omitempty" hash:"ignore"`
 	LicenseInfo *LicenseInfo                 `json:"LicenseInfo,omitempty"`
 	Shortname   *string                      `json:"Shortname,omitempty"`
 	Active      bool                         `json:"Active"`
-	FirstImport *FlexibleTime                `json:"FirstImport,omitempty"`
-	LastChange  *FlexibleTime                `json:"LastChange,omitempty"`
+	FirstImport *FlexibleTime                `json:"FirstImport,omitempty" hash:"ignore"`
+	LastChange  *FlexibleTime                `json:"LastChange,omitempty" hash:"ignore"`
 	HasLanguage []string                     `json:"HasLanguage,omitempty"`
 	Mapping     map[string]map[string]string `json:"Mapping,omitempty"`
 	Source      *string                      `json:"Source,omitempty"`
