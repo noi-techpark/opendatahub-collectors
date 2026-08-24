@@ -165,6 +165,48 @@ func normalizeID(val string) string {
 func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet Spreadsheet) error {
 	slog.Info("Processing spreadsheet...", "spreadsheetID", spreadsheet.SpreadsheetID)
 
+	drinCache, err := clib.LoadExisting(ctx, client, clib.LoadConfig[odhmodel.EventLinked]{
+		EntityType:  "Event",
+		QueryParams: map[string]string{"source": "drin"},
+		IDFunc: func(p odhmodel.EventLinked) string {
+			return p.Id
+		},
+	})
+	if err != nil {
+		slog.Error("Failed to load existing drin events", "err", err)
+		return err
+	}
+
+	treviCache, err := clib.LoadExisting(ctx, client, clib.LoadConfig[odhmodel.EventLinked]{
+		EntityType:  "Event",
+		QueryParams: map[string]string{"source": "trevilab"},
+		IDFunc: func(p odhmodel.EventLinked) string {
+			return p.Id
+		},
+	})
+	if err != nil {
+		slog.Error("Failed to load existing trevilab events", "err", err)
+		return err
+	}
+
+	eventCache := clib.NewCache[odhmodel.EventLinked]()
+	for id, entry := range drinCache.Entries() {
+		eventCache.Set(id, entry.Entity, entry.Hash)
+	}
+	for id, entry := range treviCache.Entries() {
+		eventCache.Set(id, entry.Entity, entry.Hash)
+	}
+
+	activeCount, inactiveCount := 0, 0
+	for _, e := range eventCache.Entries() {
+		if e.Entity.Active {
+			activeCount++
+		} else {
+			inactiveCount++
+		}
+	}
+	slog.Info("Loaded existing Events", "count", len(eventCache.Entries()), "active", activeCount, "inactive", inactiveCount)
+
 	var eventsSheet, placesSheet, roomsSheet *Sheet
 
 	for i := range spreadsheet.Sheets {
@@ -307,9 +349,8 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 				spreadsheetEventIDs[eventID] = true
 
 				var event odhmodel.EventLinked
-				var existingEvent odhmodel.EventLinked
-				if err := client.Get(ctx, "Event/"+eventID, nil, &existingEvent); err == nil {
-					event = existingEvent
+				if cachedEntry, ok := eventCache.Get(eventID); ok {
+					event = cachedEntry.Entity
 				} else {
 					event = odhmodel.EventLinked{
 						Id:          eventID,
@@ -464,38 +505,56 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 					"License": "CC0", "Author": "", "ClosedData": false, "LicenseHolder": "unknown",
 				}
 
+				hash, changed, hashErr := eventCache.HasChanged(eventID, event)
+				if hashErr != nil {
+					slog.Error("Failed to hash event", "err", hashErr, "id", event.Id)
+					continue
+				}
+
+				if !changed {
+					continue
+				}
+
 				err := client.Put(ctx, "Event", event.Id, &event)
 				if err != nil {
 					slog.Debug("Put event failed, trying Post", "err", err, "id", event.Id)
 					err = client.Post(ctx, "Event", nil, &event)
 					if err != nil {
 						slog.Error("Failed to save event", "err", err, "id", event.Id)
+					} else {
+						slog.Info("Saved event (Post)", "id", event.Id)
+						eventCache.Set(eventID, event, hash)
 					}
 				} else {
-					slog.Info("Saved event", "id", event.Id)
+					slog.Info("Saved event (Put)", "id", event.Id)
+					eventCache.Set(eventID, event, hash)
 				}
 			}
 		}
 	}
 
 	// 5. Deactivate orphaned events
-	for _, source := range []string{"drin", "trevilab"} {
-		var page struct {
-			Items []odhmodel.EventLinked `json:"Items"`
-		}
-		err := client.Get(ctx, "Event", map[string]string{"source": source, "active": "true"}, &page)
-		if err != nil {
-			slog.Warn("Failed to fetch events for deactivation", "source", source, "err", err)
+	cacheIDs := make([]string, 0, len(eventCache.Entries()))
+	for id := range eventCache.Entries() {
+		cacheIDs = append(cacheIDs, id)
+	}
+
+	slog.Warn("Deactivation diagnostics", "seenCount", len(spreadsheetEventIDs), "cacheCount", len(cacheIDs))
+	for _, id := range cacheIDs {
+		if _, ok := spreadsheetEventIDs[id]; ok {
 			continue
 		}
-		for _, apiEvent := range page.Items {
-			if !spreadsheetEventIDs[strings.ToUpper(apiEvent.Id)] {
-				slog.Info("Deactivating orphaned event", "id", apiEvent.Id, "source", source)
-				apiEvent.Active = false
-				if err := client.Put(ctx, "Event", apiEvent.Id, &apiEvent); err != nil {
-					slog.Error("Failed to deactivate event", "err", err, "id", apiEvent.Id)
-				}
-			}
+		
+		entry, _ := eventCache.Get(id)
+		if !entry.Entity.Active {
+			continue
+		}
+
+		slog.Info("Deactivating orphaned event", "id", id, "source", entry.Entity.Source)
+		apiEvent := entry.Entity
+		apiEvent.Active = false
+		if err := client.Put(ctx, "Event", apiEvent.Id, &apiEvent); err != nil {
+			slog.Error("Failed to deactivate event", "err", err, "id", apiEvent.Id)
 		}
 	}
 
