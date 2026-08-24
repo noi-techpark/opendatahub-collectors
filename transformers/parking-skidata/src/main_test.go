@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 NOI Techpark <digital@noi.bz.it>
+// SPDX-FileCopyrightText: 2026 NOI Techpark <digital@noi.bz.it>
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -6,7 +6,8 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"encoding/json"
+	"os"
 	"testing"
 	"time"
 
@@ -14,448 +15,83 @@ import (
 	"github.com/noi-techpark/go-bdp-client/bdpmock"
 	"github.com/noi-techpark/opendatahub-go-sdk/clib"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/reftable"
+	tr "github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
 	"github.com/noi-techpark/opendatahub-go-sdk/testsuite"
 	"github.com/stretchr/testify/require"
 )
 
-// loadTestFixtures wires stations/categories the same way main() does,
-// with RESOURCES_OVERLAY=test so the .test.csv overlay (carrying the 0600015
-// demo rows) is merged on top of the production CSVs. It also creates an
-// empty Cache so per-event aggregations have somewhere to go.
-func loadTestFixtures(t *testing.T) {
+// loadTestFixtures wires the transformer the way main() does, minus the
+// ingestion stack: both reference tables are injected as fixtures instead of
+// being bootstrapped from the raw data lake.
+//
+// Stations are deliberately not preloaded — there is no list any more. Each
+// test discovers them from the events it feeds in.
+func loadTestFixtures(t *testing.T) bdplib.Bdp {
 	t.Helper()
-	t.Setenv("RESOURCES_OVERLAY", "test")
-	loadResources("../resources")
 	cache = NewCache()
-}
 
-func TestTransform_Event1(t *testing.T) {
-	loadTestFixtures(t)
+	// Discovery state is package-level. Reset it so one test cannot leak into
+	// the next through the registry or the synced-station cache — a station
+	// left cached would make the next test's sync look like a no-op.
+	regMu.Lock()
+	registry = map[string]entry{}
+	observedCapacity = map[string]int{}
+	regMu.Unlock()
+	syncedStations = tr.NewCache[bdplib.Station]()
 
-	var in ParkingEvent
-	err := testsuite.LoadInputData(&in, "testdata/in1.json")
-	require.Nil(t, err)
-
-	timestamp, err := time.Parse("2006-01-02", "2025-01-01")
-	require.Nil(t, err)
-
-	raw := rdb.Raw[ParkingEvent]{
-		Rawdata:   in,
-		Timestamp: timestamp,
-	}
+	refTable = loadJSONFixture[map[string]any](t, "testdata/enrichment.json")
+	catTable = loadJSONFixture[FacilityCategories](t, "testdata/counting_categories.json")
+	t.Cleanup(func() { refTable = nil; catTable = nil })
 
 	b := bdpmock.MockFromEnv(bdplib.BdpEnv{})
-
-	// Exercise the same startup flow as main(): data types, then all
-	// stations, then the per-event Transform.
-	require.Nil(t, syncDataTypes(b))
-	require.Nil(t, syncAllStations(b))
-	require.Nil(t, Transform(context.TODO(), b, &raw))
-
-	mock := b.(*bdpmock.BdpMock)
-	req := mock.Requests()
-
-	var out bdpmock.BdpMockCalls
-	err = testsuite.LoadOutput(&out, "testdata/out1.json")
-	if err != nil {
-		t.Logf("No snapshot found, generating testdata/out1.json")
-		if werr := testsuite.WriteOutput(req, "testdata/out1.json"); werr != nil {
-			t.Fatalf("failed to write snapshot: %v", werr)
-		}
-		t.Log("Snapshot generated. Re-run the test to validate.")
-		return
-	}
-
-	bdpmock.CompareBdpMockCalls(t, out, req)
+	bdpForRebuild = b
+	return b
 }
 
-// TestSyncAllStations_Snapshot exercises only the startup-sync path
-// (data types + every parent/child station with full metadata) against
-// the BDP mock, and snapshots the resulting calls into testdata/out_sync.json.
-// Useful to inspect the actual SyncDataTypes/SyncStations payloads sent
-// to BDP, including aggregated facility-level capacities and per-category
-// child metadata.
-func TestSyncAllStations_Snapshot(t *testing.T) {
-	loadTestFixtures(t)
-
-	b := bdpmock.MockFromEnv(bdplib.BdpEnv{})
-
-	require.Nil(t, syncDataTypes(b))
-	require.Nil(t, syncAllStations(b))
-
-	mock := b.(*bdpmock.BdpMock)
-	req := mock.Requests()
-
-	var out bdpmock.BdpMockCalls
-	err := testsuite.LoadOutput(&out, "testdata/out_sync.json")
-	if err != nil {
-		t.Logf("No snapshot found, generating testdata/out_sync.json")
-		if werr := testsuite.WriteOutput(req, "testdata/out_sync.json"); werr != nil {
-			t.Fatalf("failed to write snapshot: %v", werr)
-		}
-		t.Log("Snapshot generated. Re-run the test to validate.")
-		return
-	}
-
-	bdpmock.CompareBdpMockCalls(t, out, req)
-}
-
-func TestStations(t *testing.T) {
-	// The 0600015 demo rows live in the optional .test.csv overlay, not in
-	// the production stations.csv. Merge the two like main() does.
-	s := append(
-		ReadStations("../resources/stations.csv"),
-		ReadStationsOptional("../resources/stations.test.csv")...,
-	)
-
-	byID := map[string]*Station{}
-	for i := range s {
-		byID[s[i].ID] = &s[i]
-	}
-	require.Nil(t, byID["does-not-exist"])
-
-	parent := byID["0600015"]
-	require.NotNil(t, parent)
-	require.Equal(t, "0600015", parent.ID)
-	require.Equal(t, "ParkingFacility", parent.StationType)
-	require.Equal(t, "Parcheggio Demo", parent.Name)
-	require.InDelta(t, 46.49067, parent.Lat, 0.00001)
-
-	meta := parent.ToMetadata()
-	require.Equal(t, "Bolzano - Bozen", meta["municipality"])
-	netex, ok := meta["netex_parking"].(map[string]any)
-	require.True(t, ok, "netex_parking should be a nested map")
-	require.Equal(t, "urbanParking", netex["type"])
-	require.Equal(t, true, netex["charging"])
-	require.Equal(t, "noReservations", netex["reservation"])
-
-	child := byID["0600015_0"]
-	require.NotNil(t, child)
-	require.Equal(t, "0600015_0", child.ID)
-	require.Equal(t, "ParkingStation", child.StationType)
-	require.Equal(t, "0600015", child.ParentID)
-	require.Equal(t, 0, child.CarparkID)
-}
-
-// TestStationsReferentialIntegrity validates the real stations.csv the
-// same way BDP does at sync time: every ParkingStation must point at a
-// ParkingFacility that exists in the same data set, and the child id must
-// be exactly "<parent_id>_<carpark_id>". This catches CSV mutations — e.g.
-// a spreadsheet stripping the leading zero from a numeric parent_id, or
-// demo rows leaking from the overlay into the base — at test time instead
-// of as a 400 "could not find parent station" panic in production.
-//
-// It runs against both configs: the production set (base CSV only, what
-// ships) and the test set (base + .test.csv overlay, what the rest of the
-// suite runs on). Neither may contain an orphan child or a duplicate id.
-func TestStationsReferentialIntegrity(t *testing.T) {
-	t.Run("production", func(t *testing.T) {
-		assertStationsValid(t, ReadStations("../resources/stations.csv"))
-	})
-	t.Run("with_test_overlay", func(t *testing.T) {
-		assertStationsValid(t, append(
-			ReadStations("../resources/stations.csv"),
-			ReadStationsOptional("../resources/stations.test.csv")...,
-		))
-	})
-}
-
-func assertStationsValid(t *testing.T, s Stations) {
+// loadJSONFixture reads a `{"<key>": {…}}` document — the same shape a
+// reference table holds at runtime.
+func loadJSONFixture[T any](t *testing.T, path string) reftable.Lookup[T] {
 	t.Helper()
+	raw, err := os.ReadFile(path)
+	require.Nil(t, err, path)
+	tbl, err := reftable.StaticFromJSON[T](raw)
+	require.Nil(t, err, path)
+	return tbl
+}
 
-	parentURNs := map[string]bool{}
-	seen := map[string]bool{}
-	for _, row := range s {
-		require.NotEmptyf(t, row.ID, "row with empty id")
-		require.Falsef(t, seen[row.ID], "duplicate station id %q", row.ID)
-		seen[row.ID] = true
-
-		switch row.StationType {
-		case stationTypeParent:
-			require.Emptyf(t, row.ParentID, "ParkingFacility %q must not have a parent_id", row.ID)
-			parentURNs[clib.GenerateID(ID_TEMPLATE, row.ID)] = true
-		case stationType:
-			// validated in the second pass, once every parent is known
-		default:
-			t.Fatalf("station %q has unknown station_type %q", row.ID, row.StationType)
-		}
-	}
-
-	for _, row := range s {
-		if row.StationType != stationType {
-			continue
-		}
-		require.NotEmptyf(t, row.ParentID, "ParkingStation %q has empty parent_id", row.ID)
-
-		// id, parent_id and carpark_id must be mutually consistent, mirroring
-		// how Transform derives childProviderID ("%s_%d") from the event.
-		wantID := fmt.Sprintf("%s_%d", row.ParentID, row.CarparkID)
-		require.Equalf(t, wantID, row.ID,
-			"ParkingStation id %q inconsistent with parent_id=%q carpark_id=%d",
-			row.ID, row.ParentID, row.CarparkID)
-
-		// Referential integrity: the ParentStation URN sent to BDP must
-		// resolve to a ParkingFacility in this data set.
-		parentURN := clib.GenerateID(ID_TEMPLATE, row.ParentID)
-		require.Truef(t, parentURNs[parentURN],
-			"ParkingStation %q references parent_id %q (%s) with no matching ParkingFacility row",
-			row.ID, row.ParentID, parentURN)
+func event(facilityNr, carparkID, categoryID, level, capacity int, name string) ParkingEvent {
+	return ParkingEvent{
+		Name:               name,
+		Level:              level,
+		Capacity:           capacity,
+		CountingCategoryId: categoryID,
+		Carpark:            Carpark{Name: "Demo", FacilityNr: facilityNr, Id: carparkID},
 	}
 }
 
-func TestCountingCategories(t *testing.T) {
-	c := ReadCountingCategories("../resources/counting_categories.csv")
-
-	// 0607242 carpark 0 has the canonical short_stay/subscribers/total trio.
-	require.Len(t, c.ForFacility("0607242"), 3)
-	require.Len(t, c.ForCarpark("0607242", 0), 3)
-
-	row := c.Find("0607242", 0, 3)
-	require.NotNil(t, row)
-	require.Equal(t, "Totale", row.Name)
-	require.Equal(t, 245, row.Capacity)
-
-	require.Nil(t, c.Find("nonexistent", 0, 1))
-}
-
-// TestTransform_Cat2WithPrimedCache exercises the aggregation paths
-// that only fire for non-cat-3 events: the per-category push lands on
-// free_subscribers/occupied_subscribers, and the overall step copies
-// the cached cat-3 value forward to free/occupied. The facility-level
-// push includes both the overall AND the per-category sums.
-func TestTransform_Cat2WithPrimedCache(t *testing.T) {
-	loadTestFixtures(t)
-	// Pre-existing cat 3 (Totale) for facility 0600015 carpark 0,
-	// and another carpark to exercise facility-level summing.
-	cache.Set("0600015_0", "free", 120, 1)
-	cache.Set("0600015_0", "occupied", 5, 1)
-	cache.Set("0600015_0", "free_short_stay", 80, 1)
-	cache.Set("0600015_0", "occupied_short_stay", 4, 1)
-	cache.Set("0600015_1", "free", 50, 1)
-	cache.Set("0600015_1", "occupied", 10, 1)
-
-	// Synthesize a cat-2 (Abbonati / subscribers) event for carpark 0.
-	timestamp, err := time.Parse("2006-01-02", "2025-01-01")
-	require.Nil(t, err)
-	raw := rdb.Raw[ParkingEvent]{
-		Rawdata: ParkingEvent{
-			Capacity:           141,
-			Level:              91,
-			CountingCategoryId: 2,
-			Name:               "Abbonati",
-			Carpark:            Carpark{FacilityNr: 600015, Id: 0},
-		},
-		Timestamp: timestamp,
-	}
-
-	b := bdpmock.MockFromEnv(bdplib.BdpEnv{})
-	require.Nil(t, syncDataTypes(b))
-	require.Nil(t, Transform(context.TODO(), b, &raw))
-
-	mock := b.(*bdpmock.BdpMock)
-	req := mock.Requests()
-
-	var out bdpmock.BdpMockCalls
-	err = testsuite.LoadOutput(&out, "testdata/out_cat2.json")
-	if err != nil {
-		t.Logf("No snapshot found, generating testdata/out_cat2.json")
-		if werr := testsuite.WriteOutput(req, "testdata/out_cat2.json"); werr != nil {
-			t.Fatalf("failed to write snapshot: %v", werr)
-		}
-		t.Log("Snapshot generated. Re-run the test to validate.")
-		return
-	}
-	bdpmock.CompareBdpMockCalls(t, out, req)
-}
-
-// TestTransform_MultiCategorySequence drives a facility with 3 carparks
-// and 6 counting categories (id 1..6) through three events in a row,
-// each touching a different category. The cache is pre-hydrated as if
-// the transformer had already absorbed earlier events. The snapshot
-// proves that:
-//
-//   - cat 2 (Abbonati) → carpark gets free_subscribers + carpark overall
-//     from cat-3 cache; facility gets free + free_subscribers summed.
-//   - cat 3 (Totale)   → carpark gets free/occupied only (no duplicate
-//     overall push, because cat 3's per-category names ARE free/occupied);
-//     facility gets free + occupied summed across carparks (no per-cat
-//     facility push because suffix == "").
-//   - cat 4 (Meusburger, unknown id) → suffix derived by slugify; carpark
-//     gets free_meusburger + carpark overall from cat-3 cache; facility
-//     gets free + free_meusburger summed.
-//
-// The fixture facility 0601336 actually exists in resources/counting_categories.csv
-// with 3 carparks and 6 categories.
-func TestTransform_MultiCategorySequence(t *testing.T) {
-	loadTestFixtures(t)
-
-	// Pre-hydrate the cache as if we had already seen recent measurements.
-	// Carpark 0: full coverage of cats 1/2/3/4.
-	cache.Set("0601336_0", "free_short_stay", 100, 1)
-	cache.Set("0601336_0", "occupied_short_stay", 91, 1)
-	cache.Set("0601336_0", "free_subscribers", 80, 1)
-	cache.Set("0601336_0", "occupied_subscribers", 70, 1)
-	cache.Set("0601336_0", "free", 200, 1)
-	cache.Set("0601336_0", "occupied", 161, 1)
-	cache.Set("0601336_0", "free_meusburger", 15, 1)
-	cache.Set("0601336_0", "occupied_meusburger", 6, 1)
-	// Carpark 1: only cat 3 cached.
-	cache.Set("0601336_1", "free", 250, 1)
-	cache.Set("0601336_1", "occupied", 122, 1)
-	// Carpark 2: only cat 3 cached.
-	cache.Set("0601336_2", "free", 50, 1)
-	cache.Set("0601336_2", "occupied", 35, 1)
-
-	timestamp, err := time.Parse("2006-01-02", "2025-01-01")
-	require.Nil(t, err)
-
-	// Events come from a fixture file: cat 2 / cat 3 / cat 4 in order,
-	// drawn from facility 0601336. Each event runs through Transform
-	// against the same mock and contributes to the snapshot.
-	var events []ParkingEvent
-	require.Nil(t, testsuite.LoadInputData(&events, "testdata/in_multi.json"))
-
-	b := bdpmock.MockFromEnv(bdplib.BdpEnv{})
-	require.Nil(t, syncDataTypes(b))
-
-	for i, e := range events {
-		raw := &rdb.Raw[ParkingEvent]{Rawdata: e, Timestamp: timestamp}
-		require.Nil(t, Transform(context.TODO(), b, raw), "event %d failed", i)
-	}
-
-	mock := b.(*bdpmock.BdpMock)
-	req := mock.Requests()
-
-	var out bdpmock.BdpMockCalls
-	err = testsuite.LoadOutput(&out, "testdata/out_multi.json")
-	if err != nil {
-		t.Logf("No snapshot found, generating testdata/out_multi.json")
-		if werr := testsuite.WriteOutput(req, "testdata/out_multi.json"); werr != nil {
-			t.Fatalf("failed to write snapshot: %v", werr)
-		}
-		t.Log("Snapshot generated. Re-run the test to validate.")
-		return
-	}
-	bdpmock.CompareBdpMockCalls(t, out, req)
-}
-
-// TestAddKnownRecord_PrunesUnregistered verifies that records for
-// datatypes not registered via syncDataTypes (e.g. per-floor counting
-// categories absent from counting_categories.csv) are dropped before
-// pushing, while registered datatypes pass through.
-func TestAddKnownRecord_PrunesUnregistered(t *testing.T) {
-	loadTestFixtures(t) // populates knownDataTypes from the loaded categories
-
-	// Sanity: the floor datatypes the live feed sends are NOT registered.
-	require.False(t, knownDataTypes["free_1_ug"])
-	require.False(t, knownDataTypes["free_eg"])
-	require.True(t, knownDataTypes["free"])
-	require.True(t, knownDataTypes["free_short_stay"])
-
-	dm := bdplib.DataMap{Name: "(default)", Branch: map[string]bdplib.DataMap{}}
-	addKnownRecord(context.TODO(), &dm, "child", "free", 1, 10)           // registered
-	addKnownRecord(context.TODO(), &dm, "child", "free_short_stay", 1, 5) // registered
-	addKnownRecord(context.TODO(), &dm, "child", "free_1_ug", 1, 7)       // floor → pruned
-	addKnownRecord(context.TODO(), &dm, "child", "free_eg", 1, 3)         // floor → pruned
-
-	branch := dm.Branch["child"].Branch
-	require.Contains(t, branch, "free")
-	require.Contains(t, branch, "free_short_stay")
-	require.NotContains(t, branch, "free_1_ug")
-	require.NotContains(t, branch, "free_eg")
-}
-
-// TestTransform_RealData_Snapshot drives Transform with a sequence of REAL
-// events captured from the live feed (via the raw-data bridge), starting
-// from an empty cache, and snapshots the resulting BDP calls into
-// testdata/out_realdata.json for visual inspection. It documents current
-// behaviour AND makes the data-quality issues visible in the snapshot:
-//
-//   - 608935/0 cat-3        : normal -> ParkingStation free=466 occupied=54
-//   - 602581/0 cat-1 cap9999: the "9999 unlimited" sentinel leaks as a real
-//     number -> free_short_stay=9836 (garbage)
-//   - 609420/0 cat-1 lvl<0  : negative provider level -> clamped into
-//     [0, capacity] -> occupied_short_stay=0, free_short_stay=9999
-//   - 601393/1 cat-2 then cat-3: per-category then the cat-3 overall
-//   - 602581/0 cat-7 "1. UG": a per-floor category absent from
-//     counting_categories.csv -> datatype pruned -> empty ParkingStation push
-//
-// Regenerate by deleting testdata/out_realdata.json and re-running.
-func TestTransform_RealData_Snapshot(t *testing.T) {
-	loadTestFixtures(t)
-
-	var events []ParkingEvent
-	require.Nil(t, testsuite.LoadInputData(&events, "testdata/in_realdata.json"))
-
-	timestamp, err := time.Parse("2006-01-02", "2025-01-01")
-	require.Nil(t, err)
-
-	b := bdpmock.MockFromEnv(bdplib.BdpEnv{})
-	require.Nil(t, syncDataTypes(b))
-
-	for i, e := range events {
-		raw := &rdb.Raw[ParkingEvent]{Rawdata: e, Timestamp: timestamp}
-		require.Nil(t, Transform(context.TODO(), b, raw), "event %d failed", i)
-	}
-
-	mock := b.(*bdpmock.BdpMock)
-	req := mock.Requests()
-
-	var out bdpmock.BdpMockCalls
-	err = testsuite.LoadOutput(&out, "testdata/out_realdata.json")
-	if err != nil {
-		t.Logf("No snapshot found, generating testdata/out_realdata.json")
-		if werr := testsuite.WriteOutput(req, "testdata/out_realdata.json"); werr != nil {
-			t.Fatalf("failed to write snapshot: %v", werr)
-		}
-		t.Log("Snapshot generated. Re-run the test to validate.")
-		return
-	}
-	bdpmock.CompareBdpMockCalls(t, out, req)
-}
-
-// TestTransform_RealData_Clamping verifies out-of-range provider data is
-// clamped into [0, capacity] before publishing. With a negative level the
-// raw values would be occupied=-4559, free=14558; after clamping they must
-// be occupied=0, free=capacity.
-func TestTransform_RealData_Clamping(t *testing.T) {
-	loadTestFixtures(t)
-	b := bdpmock.MockFromEnv(bdplib.BdpEnv{})
-	ts, err := time.Parse("2006-01-02", "2025-01-01")
-	require.Nil(t, err)
-
-	neg := &rdb.Raw[ParkingEvent]{
-		Rawdata:   ParkingEvent{Name: "Sosta Breve", Level: -4559, Capacity: 9999, CountingCategoryId: 1, Carpark: Carpark{FacilityNr: 609420, Id: 0}},
-		Timestamp: ts,
-	}
-	require.Nil(t, Transform(context.TODO(), b, neg))
-
-	occ := recordFor(t, b.(*bdpmock.BdpMock), stationType, "occupied_short_stay")
-	require.Equal(t, 0, occ, "negative occupied must be clamped to 0")
-	free := recordFor(t, b.(*bdpmock.BdpMock), stationType, "free_short_stay")
-	require.Equal(t, 9999, free, "free above capacity must be clamped to capacity")
-}
-
-// recordFor returns the latest value pushed for (stationType, datatype),
-// searching every carpark in the captured dataMaps. Fails if not found.
-func recordFor(t *testing.T, mock *bdpmock.BdpMock, stype, datatype string) int {
+func feed(t *testing.T, b bdplib.Bdp, ev ParkingEvent) {
 	t.Helper()
-	found := false
-	val := 0
-	for _, dm := range mock.Requests().SyncedData[stype] {
-		for _, branch := range dm.Branch {
-			if rec, ok := branch.Branch[datatype]; ok {
-				for _, r := range rec.Data {
-					if v, ok := toInt(r.Value); ok {
-						val = v
-						found = true
+	raw := rdb.Raw[ParkingEvent]{Rawdata: ev, Timestamp: time.Unix(0, 0).UTC()}
+	require.Nil(t, Transform(context.TODO(), b, &raw))
+}
+
+// records returns every (datatype -> value) pushed for a station type.
+func records(t *testing.T, b bdplib.Bdp, stype string) map[string]int {
+	t.Helper()
+	out := map[string]int{}
+	for _, dm := range b.(*bdpmock.BdpMock).Requests().SyncedData[stype] {
+		for _, station := range dm.Branch {
+			for datatype, leaf := range station.Branch {
+				for _, rec := range leaf.Data {
+					if v, ok := toInt(rec.Value); ok {
+						out[datatype] = v
 					}
 				}
 			}
 		}
 	}
-	require.Truef(t, found, "no record pushed for %s/%s", stype, datatype)
-	return val
+	return out
 }
 
 func toInt(v any) (int, bool) {
@@ -466,95 +102,481 @@ func toInt(v any) (int, bool) {
 		return int(n), true
 	case float64:
 		return int(n), true
+	case json.Number:
+		i, err := n.Int64()
+		return int(i), err == nil
 	}
 	return 0, false
 }
 
-func TestCarparkOverall_Cat3Wins(t *testing.T) {
-	c := NewCache()
-	c.Set("0600015_0", "free_short_stay", 80, 1)
-	c.Set("0600015_0", "free_subscribers", 40, 1)
-	c.Set("0600015_0", "free", 120, 1) // cat 3 — should be returned
-
-	v, ok := c.CarparkOverall("0600015_0", "free")
-	require.True(t, ok)
-	require.Equal(t, 120, v)
+// metaInt reads a numeric metadata value regardless of how it was produced.
+// A station the merge touched carries json.Number in its untyped metadata, so
+// the published literal stays exact; one it did not carries a plain int. Both
+// serialize identically.
+func metaInt(t *testing.T, s bdplib.Station, key string) int {
+	t.Helper()
+	v, ok := toInt(s.MetaData[key])
+	require.True(t, ok, "metadata %q is not numeric: %#v", key, s.MetaData[key])
+	return v
 }
 
-func TestCarparkOverall_NoTotalUntilCat3(t *testing.T) {
+func syncedStations_(t *testing.T, b bdplib.Bdp) []bdplib.Station {
+	t.Helper()
+	var out []bdplib.Station
+	for _, calls := range b.(*bdpmock.BdpMock).Requests().SyncedStations {
+		for _, c := range calls {
+			out = append(out, c.Stations...)
+		}
+	}
+	return out
+}
+
+// stationByProviderID returns the most recently synced copy of a station. The
+// last one matters: a re-sync appends, so taking the first would report the
+// state before the change under test.
+func stationByProviderID(t *testing.T, b bdplib.Bdp, providerID string) (bdplib.Station, bool) {
+	t.Helper()
+	want := clib.GenerateID(ID_TEMPLATE, providerID)
+	var found bdplib.Station
+	ok := false
+	for _, s := range syncedStations_(t, b) {
+		if s.Id == want {
+			found, ok = s, true
+		}
+	}
+	return found, ok
+}
+
+// ---------------------------------------------------------------- datatypes
+
+// The published set is fixed. Deriving it from what the provider sends is what
+// let per-floor labels in three languages mint datatypes that were then
+// silently dropped for a quarter of all traffic.
+func TestPublishedDataTypesAreExactlySix(t *testing.T) {
+	got := allDataTypeNames()
+	want := []string{
+		"free", "free_short_stay", "free_subscribers",
+		"occupied", "occupied_short_stay", "occupied_subscribers",
+	}
+	require.Equal(t, want, got)
+}
+
+func TestSuffixForOnlyPublishesTotalShortStayAndSubscribers(t *testing.T) {
+	cases := map[int]struct {
+		suffix    string
+		published bool
+	}{
+		catTotal:       {"", true},
+		catShortStay:   {"short_stay", true},
+		catSubscribers: {"subscribers", true},
+		4:              {"", false}, // Autobus / Meusburger / QRCode
+		5:              {"", false}, // Camper / Nobis Privat
+		6:              {"", false}, // Nobis Abo
+		0:              {"", false}, // what a countingAreaId message decodes to
+	}
+	for id, want := range cases {
+		suffix, published := suffixFor(id)
+		require.Equal(t, want.published, published, "category %d", id)
+		if published {
+			require.Equal(t, want.suffix, suffix, "category %d", id)
+		}
+	}
+}
+
+// A per-floor message arrives with countingAreaId, which this DTO does not
+// decode, so it lands as category 0. It must produce nothing at all.
+func TestFloorMessageProducesNothing(t *testing.T) {
+	b := loadTestFixtures(t)
+
+	var ev ParkingEvent
+	require.Nil(t, json.Unmarshal([]byte(`{
+	  "name":"Ebene -2","level":23,"capacity":49,"countingAreaId":3,
+	  "carpark":{"name":"RIBOPARKING","facilityNr":406009,"id":0}
+	}`), &ev))
+	require.Equal(t, 0, ev.CountingCategoryId, "countingAreaId must not populate the category")
+
+	feed(t, b, ev)
+
+	require.Empty(t, records(t, b, stationType), "a floor message published measurements")
+	require.Empty(t, records(t, b, stationTypeParent))
+}
+
+func TestNonPublishedCategoryProducesNoMeasurements(t *testing.T) {
+	b := loadTestFixtures(t)
+	feed(t, b, event(602581, 0, 4, 10, 50, "Autobus"))
+	require.Empty(t, records(t, b, stationType), "category 4 published measurements")
+}
+
+// A dropped category must still register the station: the carpark exists even
+// if this particular measurement is not published.
+func TestNonPublishedCategoryStillRegistersTheStation(t *testing.T) {
+	b := loadTestFixtures(t)
+	feed(t, b, event(602581, 0, 4, 10, 50, "Autobus"))
+	_, ok := stationByProviderID(t, b, "0602581_0")
+	require.True(t, ok, "the carpark station was not synced")
+}
+
+// ---------------------------------------------------------------- capacity
+
+func TestCarparkCapacityIsTheTotalOnly(t *testing.T) {
+	b := loadTestFixtures(t)
+	feed(t, b, event(607242, 0, catTotal, 70, 245, "Totale"))
+
+	s, ok := stationByProviderID(t, b, "0607242_0")
+	require.True(t, ok)
+
+	require.Equal(t, 245, metaInt(t, s, "capacity"), "carpark capacity must be the category-3 total")
+	for _, gone := range []string{
+		"capacity_short_stay", "capacity_subscribers",
+		"free_limit", "free_limit_short_stay",
+		"occupancy_limit", "occupancy_limit_subscribers",
+	} {
+		require.NotContains(t, s.MetaData, gone,
+			"%s is a live quota or a signage threshold and must not be metadata", gone)
+	}
+}
+
+// The defect that started all of this: a station advertising 125 slots while
+// reporting 154 free. The capacity published as metadata and the capacity the
+// free count is computed from have to be the same number.
+func TestFreeNeverExceedsTheAdvertisedCapacity(t *testing.T) {
+	b := loadTestFixtures(t)
+
+	// The categories say 245 for this carpark; the event says 490. Whichever
+	// wins, the two published figures must agree with each other.
+	feed(t, b, event(600015, 0, catTotal, 95, 490, "Totale"))
+
+	s, ok := stationByProviderID(t, b, "0600015_0")
+	require.True(t, ok)
+	capacity := metaInt(t, s, "capacity")
+
+	free := records(t, b, stationType)["free"]
+	require.Equal(t, 490, capacity, "the live event states the total capacity")
+	require.LessOrEqual(t, free, capacity,
+		"published free (%d) exceeds the advertised capacity (%d)", free, capacity)
+	require.Equal(t, 395, free)
+}
+
+// Before any event arrives there is nothing live to go on, so the counting
+// categories supply the capacity — which is what the facility sum and
+// hydration need at boot.
+func TestCapacityFallsBackToTheCountingCategories(t *testing.T) {
+	b := loadTestFixtures(t)
+
+	// A non-total category never restates the carpark total.
+	feed(t, b, event(600015, 0, catShortStay, 4, 104, "SostaBreve"))
+
+	s, ok := stationByProviderID(t, b, "0600015_0")
+	require.True(t, ok)
+	require.Equal(t, 245, metaInt(t, s, "capacity"),
+		"with no category-3 event yet, the counting categories supply the total")
+}
+
+func TestFacilityCapacityIsTheSumOfItsCarparks(t *testing.T) {
+	cats := FacilityCategories{
+		{CarparkId: 0, CountingCategoryId: catTotal, Capacity: 200},
+		{CarparkId: 1, CountingCategoryId: catTotal, Capacity: 50},
+		{CarparkId: 0, CountingCategoryId: catShortStay, Capacity: 150},
+	}
+	require.Equal(t, 250, cats.FacilityCapacity())
+	require.Equal(t, []int{0, 1}, cats.CarparkIDs())
+}
+
+// The sentinel is the bug that put "19998 free spaces" on the public API.
+func TestSentinelCapacityBecomesUnknown(t *testing.T) {
+	require.Equal(t, capacityUnknown, normalizeCapacity(sentinelCapacity))
+	require.Equal(t, capacityUnknown, normalizeCapacity(10000))
+	require.Equal(t, capacityUnknown, normalizeCapacity(-5))
+	require.Equal(t, 245, normalizeCapacity(245))
+	require.Equal(t, 0, normalizeCapacity(0))
+}
+
+// Only carparks with a known capacity contribute; a facility with none is
+// itself unknown rather than zero.
+func TestUnknownCapacityDoesNotContributeToTheFacility(t *testing.T) {
+	mixed := FacilityCategories{
+		{CarparkId: 0, CountingCategoryId: catTotal, Capacity: 222},
+		{CarparkId: 1, CountingCategoryId: catTotal, Capacity: sentinelCapacity},
+	}
+	require.Equal(t, 222, mixed.FacilityCapacity(), "the sentinel carpark must contribute nothing")
+	require.Equal(t, capacityUnknown, mixed.TotalCapacity(1))
+
+	allUnknown := FacilityCategories{
+		{CarparkId: 0, CountingCategoryId: catTotal, Capacity: sentinelCapacity},
+		{CarparkId: 1, CountingCategoryId: catTotal, Capacity: sentinelCapacity},
+	}
+	require.Equal(t, capacityUnknown, allUnknown.FacilityCapacity())
+
+	noTotalRow := FacilityCategories{
+		{CarparkId: 0, CountingCategoryId: catShortStay, Capacity: 100},
+	}
+	require.Equal(t, capacityUnknown, noTotalRow.TotalCapacity(0))
+}
+
+// ------------------------------------------------------------- measurements
+
+// occupied is a real count and is published; free is not computable without a
+// capacity and is withheld rather than invented.
+func TestSentinelEventPublishesOccupiedButNotFree(t *testing.T) {
+	b := loadTestFixtures(t)
+	feed(t, b, event(602581, 0, catTotal, 137, sentinelCapacity, "Totale"))
+
+	got := records(t, b, stationType)
+	require.Equal(t, 137, got["occupied"], "occupied is a real count and must survive")
+	require.NotContains(t, got, "free", "free was published from a sentinel capacity")
+}
+
+func TestFreeIsCapacityMinusLevel(t *testing.T) {
+	b := loadTestFixtures(t)
+	feed(t, b, event(607242, 0, catShortStay, 5, 160, "SostaBreve"))
+
+	got := records(t, b, stationType)
+	require.Equal(t, 155, got["free_short_stay"])
+	require.Equal(t, 5, got["occupied_short_stay"])
+}
+
+func TestOutOfRangeValuesAreClamped(t *testing.T) {
+	b := loadTestFixtures(t)
+	// level above capacity would otherwise yield a negative free
+	feed(t, b, event(607242, 0, catTotal, 300, 245, "Totale"))
+
+	got := records(t, b, stationType)
+	require.Equal(t, 0, got["free"])
+	require.Equal(t, 300, got["occupied"], "occupied is reported as measured")
+}
+
+// ---------------------------------------------------------------- facility
+
+// The provider reports one carpark at a time and a carpark can stay silent for
+// most of a day. A sum over only the carparks heard from is not a total, so it
+// must not be published at all.
+func TestFacilityTotalIsWithheldUntilEveryCarparkReports(t *testing.T) {
+	b := loadTestFixtures(t)
+
+	// 0601393 has three carparks in the fixture.
+	cats := facilityCategories("0601393")
+	require.Len(t, cats.CarparkIDs(), 3, "fixture changed; this test needs a multi-carpark facility")
+
+	feed(t, b, event(601393, 0, catTotal, 10, 150, "Totale"))
+	require.Empty(t, records(t, b, stationTypeParent),
+		"a facility total was published from one carpark out of three")
+
+	feed(t, b, event(601393, 1, catTotal, 20, 140, "Totale"))
+	require.Empty(t, records(t, b, stationTypeParent),
+		"a facility total was published from two carparks out of three")
+
+	feed(t, b, event(601393, 2, catTotal, 5, 70, "Totale"))
+	got := records(t, b, stationTypeParent)
+	require.Equal(t, 35, got["occupied"], "10 + 20 + 5")
+	require.Equal(t, 325, got["free"], "140 + 120 + 65")
+}
+
+func TestFacilityTotalNeedsEveryCarparkInTheCache(t *testing.T) {
 	c := NewCache()
-	c.Set("0600015_0", "free_short_stay", 80, 1)
-	c.Set("0600015_0", "free_subscribers", 40, 1)
-	// No cat 3 yet: categories are NOT summed (they can share physical
-	// slots), so there is no authoritative overall to publish.
-	_, ok := c.CarparkOverall("0600015_0", "free")
+	siblings := []string{"0601393_0", "0601393_1", "0601393_2"}
+
+	c.Set("0601393_0", "free", 100, 0)
+	_, ok := c.FacilityTotal(siblings, "free")
+	require.False(t, ok, "an incomplete sum was reported as complete")
+
+	c.Set("0601393_1", "free", 50, 0)
+	_, ok = c.FacilityTotal(siblings, "free")
 	require.False(t, ok)
 
-	// Once cat 3 (Totale) arrives it becomes the overall — and it is LESS
-	// than the 120 a naive category sum would have produced, because the
-	// categories overlap.
-	c.Set("0600015_0", "free", 90, 2)
-	v, ok := c.CarparkOverall("0600015_0", "free")
+	c.Set("0601393_2", "free", 25, 0)
+	v, ok := c.FacilityTotal(siblings, "free")
 	require.True(t, ok)
-	require.Equal(t, 90, v)
+	require.Equal(t, 175, v)
+
+	_, ok = c.FacilityTotal(nil, "free")
+	require.False(t, ok, "a facility with no known carparks has no total")
 }
 
-func TestFacilityAggregations(t *testing.T) {
-	c := NewCache()
-	// facility 0600015 has two carparks, _0 and _1
-	c.Set("0600015_0", "free", 120, 1)
-	c.Set("0600015_0", "free_short_stay", 80, 1)
-	c.Set("0600015_0", "occupied", 5, 1)
-	c.Set("0600015_1", "free", 50, 1)
-	c.Set("0600015_1", "free_short_stay", 30, 1)
-	c.Set("0600015_1", "occupied", 10, 1)
-	// foreign facility — must NOT be summed in
-	c.Set("0700000_0", "free", 999, 1)
+// A facility with an unknown carpark capacity still aggregates measurements —
+// capacity being unknown does not stop the counts from being real. But the
+// sentinel carpark publishes no free, so the facility free stays incomplete.
+func TestFacilityFreeStaysIncompleteWhenACarparkHasNoCapacity(t *testing.T) {
+	b := loadTestFixtures(t)
 
-	require.Equal(t, 170, c.FacilityOverall("0600015", "free"))
-	require.Equal(t, 15, c.FacilityOverall("0600015", "occupied"))
-	require.Equal(t, 110, c.FacilityPerCategory("0600015", "free_short_stay"))
+	cats := facilityCategories("0600858")
+	require.Len(t, cats.CarparkIDs(), 2, "fixture changed; this test needs a two-carpark facility")
+
+	feed(t, b, event(600858, 0, catTotal, 30, 222, "Totale"))
+	feed(t, b, event(600858, 1, catTotal, 12, sentinelCapacity, "Totale"))
+
+	got := records(t, b, stationTypeParent)
+	require.Equal(t, 42, got["occupied"], "occupied is known for both carparks")
+	require.NotContains(t, got, "free", "free was summed across a carpark that has none")
 }
 
-func TestAllDataTypeNames_Sorted(t *testing.T) {
-	c := CountingCategories{
-		{CountingCategoryId: 1, Name: "SostaBreve"},
-		{CountingCategoryId: 4, Name: "Autobus"},
-	}
-	names := allDataTypeNames(c)
-	// Always at least the standard trio (free/occupied + short_stay + subscribers)
-	require.Contains(t, names, "free")
-	require.Contains(t, names, "occupied")
-	require.Contains(t, names, "free_short_stay")
-	require.Contains(t, names, "free_subscribers")
-	require.Contains(t, names, "free_autobus")
-	require.Contains(t, names, "occupied_autobus")
-	// Sorted
-	prev := ""
-	for _, n := range names {
-		require.True(t, n > prev, "names not sorted: %q after %q", n, prev)
-		prev = n
-	}
+// ---------------------------------------------------------------- discovery
+
+func TestUnenrichedStationIsStillSynced(t *testing.T) {
+	b := loadTestFixtures(t)
+	// 0600015 (demo) is in the category fixture but not in the enrichment one.
+	feed(t, b, event(600015, 0, catTotal, 95, 245, "Totale"))
+
+	s, ok := stationByProviderID(t, b, "0600015_0")
+	require.True(t, ok, "an unenriched station was not published")
+	require.NotEmpty(t, s.Name, "the writer rejects a station with no name")
 }
 
-func TestDescriptorFor(t *testing.T) {
-	tests := []struct {
-		id           int
-		name         string
-		wantSuffix   string
-		wantFreeType string
-		wantMetaCap  string
-	}{
-		{1, "SostaBreve", "short_stay", "free_short_stay", "capacity_short_stay"},
-		{2, "Abbonati", "subscribers", "free_subscribers", "capacity_subscribers"},
-		{3, "Totale", "", "free", "capacity"},
-		{4, "Autobus", "autobus", "free_autobus", "capacity_autobus"},
-		{99, "Nobis Abo", "nobis_abo", "free_nobis_abo", "capacity_nobis_abo"},
+func TestUnchangedStationIsNotResynced(t *testing.T) {
+	b := loadTestFixtures(t)
+	feed(t, b, event(607242, 0, catTotal, 70, 245, "Totale"))
+	first := len(syncedStations_(t, b))
+	require.NotZero(t, first)
+
+	feed(t, b, event(607242, 0, catTotal, 71, 245, "Totale"))
+	require.Equal(t, first, len(syncedStations_(t, b)),
+		"a station was re-synced although only its measurement changed")
+}
+
+func TestEnrichmentChangeResyncsTheStation(t *testing.T) {
+	b := loadTestFixtures(t)
+	feed(t, b, event(404467, 0, catTotal, 10, 601, "Totale"))
+	before := len(syncedStations_(t, b))
+
+	static := refTable.(*reftable.Static[map[string]any])
+	rec, _ := static.Get("0404467_0")
+	rec["names"].(map[string]any)["it"] = "Parcheggio Rinominato"
+	static.Set("0404467_0", rec)
+
+	resyncAll(context.TODO(), b)
+
+	require.Greater(t, len(syncedStations_(t, b)), before, "an enrichment edit did not reach BDP")
+	s, ok := stationByProviderID(t, b, "0404467_0")
+	require.True(t, ok)
+	require.Equal(t, "Parcheggio Rinominato", s.MetaData["name_it"])
+}
+
+// Capacity comes from the provider, not from an operator. When the categories
+// change, the provider-derived half of the station has to be rebuilt — not just
+// re-merged with the enrichment.
+func TestCategoryChangeRebuildsCapacityAndResyncs(t *testing.T) {
+	b := loadTestFixtures(t)
+	// A non-total event registers the station without stating a total, so the
+	// categories are what the capacity comes from.
+	feed(t, b, event(607242, 0, catShortStay, 5, 160, "SostaBreve"))
+
+	s, ok := stationByProviderID(t, b, "0607242_0")
+	require.True(t, ok)
+	require.Equal(t, 245, metaInt(t, s, "capacity"))
+
+	static := catTable.(*reftable.Static[FacilityCategories])
+	static.Set("0607242", FacilityCategories{
+		{CarparkId: 0, CountingCategoryId: catTotal, Name: "Totale", Capacity: 300},
+	})
+
+	rebuildBases(context.TODO())
+	resyncAll(context.TODO(), b)
+
+	s, ok = stationByProviderID(t, b, "0607242_0")
+	require.True(t, ok)
+	require.Equal(t, 300, metaInt(t, s, "capacity"), "a provider capacity change did not reach BDP")
+}
+
+// Once the provider has stated a total in an event, a category table that
+// disagrees does not override it. The event is the live figure and it is what
+// free is computed from, so letting a refresh move the metadata away from it
+// would recreate free > capacity.
+func TestLiveCapacityIsNotOverriddenByTheCategoryTable(t *testing.T) {
+	b := loadTestFixtures(t)
+	feed(t, b, event(607242, 0, catTotal, 70, 245, "Totale"))
+
+	static := catTable.(*reftable.Static[FacilityCategories])
+	static.Set("0607242", FacilityCategories{
+		{CarparkId: 0, CountingCategoryId: catTotal, Name: "Totale", Capacity: 300},
+	})
+	rebuildBases(context.TODO())
+	resyncAll(context.TODO(), b)
+
+	s, ok := stationByProviderID(t, b, "0607242_0")
+	require.True(t, ok)
+	require.Equal(t, 245, metaInt(t, s, "capacity"),
+		"a stale category table overrode the capacity the provider just reported")
+}
+
+// A new carpark appearing in the topology changes the facility, even though no
+// event has been seen for it yet.
+func TestNewCarparkInTopologyWidensTheFacility(t *testing.T) {
+	b := loadTestFixtures(t)
+	feed(t, b, event(607242, 0, catTotal, 70, 245, "Totale"))
+
+	f, ok := stationByProviderID(t, b, "0607242")
+	require.True(t, ok)
+	require.Equal(t, 245, metaInt(t, f, "capacity"))
+
+	static := catTable.(*reftable.Static[FacilityCategories])
+	static.Set("0607242", FacilityCategories{
+		{CarparkId: 0, CountingCategoryId: catTotal, Name: "Totale", Capacity: 245},
+		{CarparkId: 1, CountingCategoryId: catTotal, Name: "Totale", Capacity: 60},
+	})
+	rebuildBases(context.TODO())
+	resyncAll(context.TODO(), b)
+
+	f, ok = stationByProviderID(t, b, "0607242")
+	require.True(t, ok)
+	require.Equal(t, 305, metaInt(t, f, "capacity"), "the new carpark did not widen the facility")
+}
+
+// A malformed message carries no facility. The old CSV station list filtered it
+// out; discovery has to refuse it explicitly or it publishes a station called
+// "0000000".
+func TestEventWithoutAFacilityIsDropped(t *testing.T) {
+	b := loadTestFixtures(t)
+	feed(t, b, ParkingEvent{Name: "", Level: 0, Capacity: 0, Carpark: Carpark{}})
+
+	require.Empty(t, syncedStations_(t, b), "a malformed event created a station")
+	require.Empty(t, records(t, b, stationType))
+}
+
+// ---------------------------------------------------------------- topology
+
+func TestCategoriesCarryTheTopology(t *testing.T) {
+	b := loadTestFixtures(t)
+	_ = b
+
+	cats := facilityCategories("0601393")
+	require.Equal(t, []int{0, 1, 2}, cats.CarparkIDs())
+
+	require.Nil(t, facilityCategories("0000000"), "an unknown facility must not invent a topology")
+}
+
+func TestURNIndexCoversFacilitiesAndCarparks(t *testing.T) {
+	b := loadTestFixtures(t)
+	_ = b
+
+	idx := buildURNIndex()
+	require.Equal(t, "0601393", idx[clib.GenerateID(ID_TEMPLATE, "0601393")])
+	require.Equal(t, "0601393_2", idx[clib.GenerateID(ID_TEMPLATE, "0601393_2")])
+}
+
+// ---------------------------------------------------------------- snapshot
+
+func TestTransform_Snapshot(t *testing.T) {
+	b := loadTestFixtures(t)
+
+	var in ParkingEvent
+	require.Nil(t, testsuite.LoadInputData(&in, "testdata/in1.json"))
+
+	timestamp, err := time.Parse("2006-01-02", "2025-01-01")
+	require.Nil(t, err)
+	raw := rdb.Raw[ParkingEvent]{Rawdata: in, Timestamp: timestamp}
+
+	require.Nil(t, syncDataTypes(b))
+	require.Nil(t, Transform(context.TODO(), b, &raw))
+
+	req := b.(*bdpmock.BdpMock).Requests()
+
+	var out bdpmock.BdpMockCalls
+	if err := testsuite.LoadOutput(&out, "testdata/out1.json"); err != nil {
+		t.Logf("No snapshot found, generating testdata/out1.json")
+		if werr := testsuite.WriteOutput(req, "testdata/out1.json"); werr != nil {
+			t.Fatalf("failed to write snapshot: %v", werr)
+		}
+		t.Log("Snapshot generated. Re-run the test to validate.")
+		return
 	}
-	for _, tc := range tests {
-		d := descriptorFor(tc.id, tc.name)
-		require.Equal(t, tc.wantSuffix, d.suffix, "id=%d", tc.id)
-		require.Equal(t, tc.wantFreeType, d.freeType(), "id=%d", tc.id)
-		require.Equal(t, tc.wantMetaCap, d.metaKey("capacity"), "id=%d", tc.id)
-	}
+	bdpmock.CompareBdpMockCalls(t, out, req)
 }

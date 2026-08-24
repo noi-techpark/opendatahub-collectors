@@ -4,7 +4,6 @@ on:
   push:
     paths:
       - "transformers/parking-skidata/src/**"
-      - "transformers/parking-skidata/resources/**.csv"
       - "transformers/parking-skidata/infrastructure/**"
       - ".github/workflows/tr-parking-skidata.yml"
 
@@ -44,7 +43,7 @@ jobs:
           docker-password: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-test:
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev/skidata'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev/skidata' || github.ref == 'refs/heads/feat/skidata-reftable-merge'
     needs: build
     runs-on: ubuntu-24.04
     concurrency: tr-parking-skidata-test

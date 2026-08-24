@@ -26,12 +26,30 @@ env:
 
   RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
 
+  # Operator-authored enrichment: names, coordinates and netex attributes,
+  # edited in the backoffice and collected into the lake. It lives in the
+  # skidata database alongside the provider's own collections — the enrichment
+  # describes skidata stations and nothing else, so scoping it to that vertical
+  # keeps one database per data source rather than a shared bucket everything
+  # has to agree on.
+  REFTABLE_DB: skidata
+  REFTABLE_COLLECTION: parking-enrichment
+  REFTABLE_KEY: key
+  REFTABLE_MQ_QUEUE: tr-parking-skidata-enrichment
+  REFTABLE_MQ_KEY: skidata.parking-enrichment
+
+  # Provider-derived reference flow: the facility->carpark topology and the
+  # total capacity, republished by the collector. Never merged with operator
+  # input — it is provider fact, not description.
+  CATEGORIES_DB: skidata
+  CATEGORIES_COLLECTION: counting-categories
+  CATEGORIES_KEY: facility
+  CATEGORIES_MQ_QUEUE: tr-parking-skidata-categories
+  CATEGORIES_MQ_KEY: skidata.counting-categories
+
   SERVICE_NAME: tr-parking-skidata
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 
-  # Production: load only the synced base CSVs. Set to "test" in lower
-  # environments to additionally load resources/*.dev.csv overlay rows.
-  RESOURCES_OVERLAY: ""
 
   # OpenDataHub time-series API used at startup to hydrate the in-memory
   # cache with the latest free/occupied per (carpark, category).

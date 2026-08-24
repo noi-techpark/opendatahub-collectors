@@ -45,7 +45,7 @@ jobs:
   deploy-test:
     if: >-
       (github.event_name == 'workflow_dispatch' && inputs.environment == 'test') ||
-      (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev/skidata'))
+      (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev/skidata' || github.ref == 'refs/heads/feat/skidata-reftable-merge'))
     needs: build
     runs-on: ubuntu-24.04
     concurrency: dc-rest-push-skidata-test

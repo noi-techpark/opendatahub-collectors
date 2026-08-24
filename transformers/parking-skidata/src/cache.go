@@ -5,7 +5,6 @@
 package main
 
 import (
-	"strings"
 	"sync"
 )
 
@@ -19,7 +18,7 @@ type LatestRecord struct {
 // Cache holds the most recent free/occupied measurement for every
 // (carpark provider id, datatype) pair. It is hydrated at startup from
 // BDP and updated on every Skidata push event. Aggregation methods
-// derive carpark- and facility-level totals from the cache contents.
+// derive facility-level totals from the cache contents.
 //
 // Cache key shape: data[childProviderID][datatypeName] -> LatestRecord
 // where childProviderID looks like "0600015_0" and datatypeName looks
@@ -56,68 +55,43 @@ func (c *Cache) Get(childID, datatype string) (LatestRecord, bool) {
 	return LatestRecord{}, false
 }
 
-// CarparkOverall returns the carpark's "overall" free/occupied value taken
-// solely from Skidata's category 3 (Totale / Gesamt) — the provider's
-// authoritative total. Per-category values are deliberately NOT summed:
-// categories frequently share the same physical slots (or use the 9999
-// "unlimited" sentinel), so summing them overcounts the real total. The
-// per-category measurements are still published for granularity, they just
-// don't feed the overall.
+// CarparkValue returns a single cached datatype value for a carpark.
 //
-// Returns ok=false until a cat-3 measurement has been seen for the carpark,
-// so we never publish a derived/guessed total.
-//
-// prefix is "free" or "occupied". The bare prefix (no suffix) is category 3.
-func (c *Cache) CarparkOverall(childID, prefix string) (int, bool) {
-	c.mu.RLock()
-	defer c.mu.RUnlock()
-	row, ok := c.data[childID]
-	if !ok {
-		return 0, false
-	}
-	rec, ok := row[prefix]
-	if !ok {
-		return 0, false
-	}
-	return rec.Value, true
+// The carpark's overall free/occupied is the provider's own category-3 figure
+// and nothing else. Per-category values are never summed into it: categories
+// share physical slots and repartition at runtime, so adding them up overcounts
+// a total the provider already states.
+func (c *Cache) CarparkValue(childID, datatype string) (int, bool) {
+	rec, ok := c.Get(childID, datatype)
+	return rec.Value, ok
 }
 
-// FacilityOverall returns the sum of CarparkOverall across every
-// carpark belonging to facilityID (its child IDs start with
-// facilityID + "_").
-func (c *Cache) FacilityOverall(facilityID, prefix string) int {
-	c.mu.RLock()
-	childIDs := make([]string, 0, len(c.data))
-	for k := range c.data {
-		if strings.HasPrefix(k, facilityID+"_") {
-			childIDs = append(childIDs, k)
-		}
+// FacilityTotal sums a datatype across exactly the carparks the facility is
+// known to contain, and reports whether the sum is complete.
+//
+// carparkIDs comes from the counting categories, not from whatever happens to
+// be in the cache. That distinction is the whole point: the provider reports
+// one carpark at a time and a carpark can stay silent for many hours, so
+// summing only what has been heard from produces a total that is quietly too
+// low. An incomplete sum is not published at all.
+func (c *Cache) FacilityTotal(carparkIDs []string, datatype string) (int, bool) {
+	if len(carparkIDs) == 0 {
+		return 0, false
 	}
-	c.mu.RUnlock()
-
-	sum := 0
-	for _, id := range childIDs {
-		if v, ok := c.CarparkOverall(id, prefix); ok {
-			sum += v
-		}
-	}
-	return sum
-}
-
-// FacilityPerCategory returns the sum of a specific datatype across all
-// carparks of the facility (e.g. all "free_short_stay" rows for facility
-// 0607242). Used to publish per-category facility totals.
-func (c *Cache) FacilityPerCategory(facilityID, datatype string) int {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
+
 	sum := 0
-	for k, row := range c.data {
-		if !strings.HasPrefix(k, facilityID+"_") {
-			continue
+	for _, id := range carparkIDs {
+		row, ok := c.data[id]
+		if !ok {
+			return 0, false
 		}
-		if rec, ok := row[datatype]; ok {
-			sum += rec.Value
+		rec, ok := row[datatype]
+		if !ok {
+			return 0, false
 		}
+		sum += rec.Value
 	}
-	return sum
+	return sum, true
 }

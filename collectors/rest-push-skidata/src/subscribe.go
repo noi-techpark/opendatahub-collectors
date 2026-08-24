@@ -6,6 +6,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -27,9 +28,12 @@ func init() {
 	httpClient = skidata.NewHTTPClient()
 }
 
-func SubscribeAll(creds []FacilityCredential) {
+func SubscribeAll(ctx context.Context, creds []FacilityCredential) {
 	for _, cred := range creds {
 		go manageFacility(cred)
+		// Publication of the categories is kept off the subscription loop on
+		// purpose — see refreshCategories.
+		go refreshCategories(ctx, cred)
 	}
 }
 

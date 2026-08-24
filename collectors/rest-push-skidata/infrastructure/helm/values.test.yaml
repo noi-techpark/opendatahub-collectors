@@ -44,6 +44,15 @@ env:
   MQ_CLIENT: "dc-rest-push-skidata"
   MQ_EXCHANGE: "ingress"
   SKIDATA_BASE_URL: "https://car.webhost.skidata.com"
+  # The counting categories are collected as a second flow under their own
+  # provider, so they land in their own collection and can be read back keyed
+  # by facility. The refresh is independent of resubscription, which only
+  # happens on a failed health check and can be days apart.
+  SKIDATA_CATEGORIES_PROVIDER: "skidata/counting-categories"
+  SKIDATA_CATEGORY_REFRESH: "1h"
+
+  # Raw payloads go to the HTTP raw writer, not the ingress queue.
+  RAW_WRITER_URL: "http://raw-writer-2.core.svc.cluster.local:8080"
   SERVICE_NAME: "dc-rest-push-skidata"
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 

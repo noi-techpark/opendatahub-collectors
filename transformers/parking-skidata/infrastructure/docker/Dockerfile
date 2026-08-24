@@ -2,12 +2,15 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
+# There is no resources/ directory any more: the counting categories that used
+# to be baked in as a CSV are collected into the raw data lake and read from
+# there at boot, so the image carries no data of its own.
+
 FROM golang:1.25-bookworm AS base
 
 FROM base AS build-env
 WORKDIR /app
 COPY src/. .
-COPY resources/. ./resources
 RUN go mod download
 RUN CGO_ENABLED=0 GOOS=linux go build -o main
 
@@ -15,7 +18,6 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o main
 FROM alpine:latest AS build
 WORKDIR /app
 COPY --from=build-env /app/main .
-COPY --from=build-env /app/resources /resources
 ENTRYPOINT [ "./main"]
 
 # LOCAL DEVELOPMENT
@@ -27,6 +29,5 @@ CMD ["go", "run", "."]
 FROM base AS test
 WORKDIR /code
 COPY src/. .
-COPY resources/. /resources
 RUN go mod download
 CMD ["go", "test", "./..."]

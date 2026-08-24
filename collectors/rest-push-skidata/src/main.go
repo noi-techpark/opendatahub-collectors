@@ -29,6 +29,12 @@ var env struct {
 
 	SKIDATA_BASE_URL         string `required:"true"`
 	SKIDATA_CREDENTIALS_JSON string `required:"true"`
+
+	// Counting categories are collected as a second flow under their own
+	// provider, so they land in their own collection and can be read back
+	// keyed by facility.
+	SKIDATA_CATEGORIES_PROVIDER string        `default:"skidata/counting-categories"`
+	SKIDATA_CATEGORY_REFRESH    time.Duration `default:"1h"`
 }
 
 var collector *dc.Dc[PushPayload]
@@ -48,15 +54,22 @@ func main() {
 	go func() {
 		defer tel.FlushOnPanic()
 		collector.Start(context.Background(), func(ctx context.Context, p PushPayload) (*rdb.RawAny, error) {
+			// Stated rather than left to the SDK default. The content type
+			// decides how the writer stores the payload — a text type is kept
+			// verbatim as a string, anything else becomes BSON binary — and the
+			// transformer decodes it as a string. Leaving that to a default
+			// somewhere else couples the two ends through a value neither of
+			// them declares.
 			return &rdb.RawAny{
-				Provider:  env.PROVIDER,
-				Timestamp: time.Now(),
-				Rawdata:   p.Body,
+				Provider:    env.PROVIDER,
+				Timestamp:   time.Now(),
+				Rawdata:     p.Body,
+				ContentType: "application/json",
 			}, nil
 		})
 	}()
 
-	SubscribeAll(creds)
+	SubscribeAll(context.Background(), creds)
 
 	serve(collector.GetInputChannel())
 }

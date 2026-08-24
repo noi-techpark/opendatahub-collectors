@@ -7,7 +7,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"sort"
 
 	"github.com/noi-techpark/go-timeseries-client/odhts"
 	"github.com/noi-techpark/opendatahub-go-sdk/tel/logger"
@@ -63,28 +62,4 @@ func hydrateCache(c *Cache, ts odhts.C, origin string, datatypes []string, urnTo
 		"skipped_unknown_scode", skipped,
 		"datatypes", len(datatypes))
 	return nil
-}
-
-// allDataTypeNames returns every datatype name the transformer
-// currently uses (free / occupied for the union of category suffixes
-// observed in the loaded counting_categories.csv, plus the canonical
-// short_stay/subscribers/total trio in case the CSV is sparse).
-// Output is sorted for deterministic logging/tests.
-func allDataTypeNames(cats CountingCategories) []string {
-	suffixes := map[string]bool{
-		"":            true, // total
-		"short_stay":  true,
-		"subscribers": true,
-	}
-	for _, cat := range cats {
-		d := descriptorFor(cat.CountingCategoryId, cat.Name)
-		suffixes[d.suffix] = true
-	}
-	out := make([]string, 0, 2*len(suffixes))
-	for s := range suffixes {
-		d := catDescriptor{suffix: s}
-		out = append(out, d.freeType(), d.occupiedType())
-	}
-	sort.Strings(out)
-	return out
 }
