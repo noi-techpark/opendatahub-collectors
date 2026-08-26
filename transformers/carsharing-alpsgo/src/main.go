@@ -163,6 +163,7 @@ func SyncDataTypes(bdp bdplib.Bdp) {
 	dataTypes = append(dataTypes, bdplib.CreateDataType(dataTypeVehicleFutureAvailability30, "", "Availability in 30 minutes ", "Instantaneous"))
 	dataTypes = append(dataTypes, bdplib.CreateDataType(dataTypeVehicleFutureAvailability60, "", "Availability in 60 minutes ", "Instantaneous"))
 	dataTypes = append(dataTypes, bdplib.CreateDataType(dataTypeVehicleFutureAvailability120, "", "Availability in 120 minutes ", "Instantaneous"))
+	dataTypes = append(dataTypes, bdplib.CreateDataType(dataTypeVehicleFutureAvailability180, "", "Availability in 180 minutes ", "Instantaneous"))
 	dataTypes = append(dataTypes, bdplib.CreateDataType(dataTypeVehicleFutureAvailability360, "", "Availability in 360 minutes ", "Instantaneous"))
 	dataTypes = append(dataTypes, bdplib.CreateDataType(dataTypeVehicleFutureAvailability720, "", "Availability in 720 minutes ", "Instantaneous"))
 	dataTypes = append(dataTypes, bdplib.CreateDataType(dataTypeVehicleFutureAvailability1440, "", "Availability in 1440 minutes ", "Instantaneous"))
