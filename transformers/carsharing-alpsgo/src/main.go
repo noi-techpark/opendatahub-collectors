@@ -191,8 +191,8 @@ func main() {
 
 	SyncDataTypes(b)
 
-	listener := tr.NewTr[Root](context.Background(), env)
-	err := listener.Start(context.Background(), TransformWithBdp(b))
+	listener := tr.NewTr[string](context.Background(), env)
+	err := listener.Start(context.Background(), tr.RawString2JsonMiddleware[Root](TransformWithBdp(b)))
 
 	ms.FailOnError(context.Background(), err, "error while listening to queue")
 }
