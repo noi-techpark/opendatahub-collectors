@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-FROM golang:1.24-bookworm AS base
+FROM golang:1.24.1-bookworm as base
 
 FROM base as build-env
 WORKDIR /app
@@ -14,6 +14,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o main
 FROM alpine:latest as build
 WORKDIR /app
 COPY --from=build-env /app/main .
+COPY --from=build-env /app/resources ./resources
 ENTRYPOINT [ "./main"]
 
 # LOCAL DEVELOPMENT
@@ -21,3 +22,7 @@ FROM base as dev
 WORKDIR /code
 CMD ["go", "run", "main.go"]
 
+# TESTS
+FROM base AS test
+WORKDIR /code
+CMD ["go", "test", "./..."]
