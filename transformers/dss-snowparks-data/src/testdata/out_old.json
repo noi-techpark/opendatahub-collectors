@@ -1,0 +1,235 @@
+{
+  "TotalResults": 3,
+  "TotalPages": 1,
+  "CurrentPage": 1,
+  "PreviousPage": null,
+  "NextPage": null,
+  "Seed": null,
+  "Items": [
+    {
+      "Id": "7CA6D68BF134495F865FDD47B94320C0",
+      "Self": "https://tourism.api.opendatahub.com/v1/Tag/7CA6D68BF134495F865FDD47B94320C0",
+      "Types": [
+        "tagsactivity"
+      ],
+      "_Meta": {
+        "Id": "7CA6D68BF134495F865FDD47B94320C0",
+        "Type": "tag",
+        "Source": "lts",
+        "Reduced": false,
+        "LastUpdate": "2026-05-25T22:01:39.8972782+00:00",
+        "UpdateInfo": {
+          "Revision": 91,
+          "UpdatedBy": "lts.tags.import",
+          "UpdateSource": "http://tourism.importer.opendatahub.com/LTS/ODHActivityPois/Tags",
+          "UpdateHistory": [
+            {
+              "UpdatedBy": "lts.tags.import",
+              "LastUpdate": "2026-05-25T22:01:39.8972782+00:00",
+              "UpdateSource": "http://tourism.importer.opendatahub.com/LTS/ODHActivityPois/Tags"
+            }
+          ]
+        }
+      },
+      "Active": true,
+      "Source": "lts",
+      "Mapping": {
+        "lts": {
+          "rid": "7CA6D68BF134495F865FDD47B94320C0",
+          "code": "A.035.020",
+          "level": "1",
+          "entityType": "activity",
+          "mainTagRid": "EB5D6F10C0CB4797A2A04818088CD6AB",
+          "properties": "",
+          "isSelectable": "True",
+          "parentTagRid": "EB5D6F10C0CB4797A2A04818088CD6AB"
+        }
+      },
+      "TagName": {
+        "cs": null,
+        "de": "Snowpark",
+        "en": "Snowpark",
+        "fr": null,
+        "it": "Snowpark",
+        "nl": null,
+        "pl": null,
+        "ru": null
+      },
+      "ODHTagIds": [
+        "snowpark"
+      ],
+      "Shortname": "Snowpark",
+      "LastChange": "2025-10-07T22:00:32.5173186+00:00",
+      "MainEntity": "odhactivitypoi",
+      "Description": {
+        "cs": null,
+        "de": "Snowpark",
+        "en": "Snowpark",
+        "fr": null,
+        "it": "Snowpark",
+        "nl": null,
+        "pl": null,
+        "ru": null
+      },
+      "FirstImport": "2024-11-15T13:39:51.8773978+00:00",
+      "LicenseInfo": {
+        "Author": "",
+        "License": "CC0",
+        "ClosedData": false,
+        "LicenseHolder": "https://lts.it"
+      },
+      "PublishedOn": [],
+      "MappedTagIds": null,
+      "LTSTaggingInfo": {
+        "LTSRID": "7CA6D68BF134495F865FDD47B94320C0",
+        "ParentLTSRID": "EB5D6F10C0CB4797A2A04818088CD6AB"
+      },
+      "ValidForEntity": [
+        "odhactivitypoi"
+      ],
+      "DisplayAsCategory": false,
+      "IDMCategoryMapping": null,
+      "PublishDataWithTagOn": null
+    },
+    {
+      "Id": "snowpark",
+      "Self": "https://tourism.api.opendatahub.com/v1/Tag/snowpark",
+      "Types": [
+        "ltscategory"
+      ],
+      "_Meta": {
+        "Id": "snowpark",
+        "Type": "tag",
+        "Source": "idm",
+        "Reduced": false,
+        "LastUpdate": "2026-01-22T10:27:40.1045348+00:00",
+        "UpdateInfo": {
+          "UpdatedBy": "76955a31-9dce-4d73-82cd-0827fd4edbfe",
+          "UpdateSource": "https://databrowser.opendatahub.com/",
+          "UpdateHistory": [
+            {
+              "UpdatedBy": "76955a31-9dce-4d73-82cd-0827fd4edbfe",
+              "LastUpdate": "2026-01-22T10:27:40.1045348+00:00",
+              "UpdateSource": "https://databrowser.opendatahub.com/"
+            }
+          ]
+        }
+      },
+      "Active": false,
+      "Source": "idm",
+      "Mapping": {
+        "idm": {
+          "id": "snow parks",
+          "parent_id": "winter"
+        },
+        "lts": {
+          "rid": "7CA6D68BF134495F865FDD47B94320C0",
+          "parent_id": "EB5D6F10C0CB4797A2A04818088CD6AB"
+        }
+      },
+      "TagName": {
+        "cs": "Snowpark",
+        "de": "Snowpark",
+        "en": "Snowpark",
+        "fr": "Snowpark",
+        "it": "Snowpark",
+        "nl": "Snowpark",
+        "pl": "Snow park"
+      },
+      "ODHTagIds": [
+        "snowpark"
+      ],
+      "Shortname": "Snowpark",
+      "LastChange": "2026-01-22T10:27:40.1045647+00:00",
+      "MainEntity": "smgpoi",
+      "Description": {
+
+      },
+      "FirstImport": "2021-08-10T11:21:36.0013037",
+      "LicenseInfo": null,
+      "PublishedOn": [
+        "idm-marketplace"
+      ],
+      "MappedTagIds": null,
+      "LTSTaggingInfo": {
+        "LTSRID": "7CA6D68BF134495F865FDD47B94320C0",
+        "ParentLTSRID": "EB5D6F10C0CB4797A2A04818088CD6AB"
+      },
+      "ValidForEntity": [
+        "winter",
+        "odhactivitypoi",
+        "smgpoi"
+      ],
+      "DisplayAsCategory": null,
+      "IDMCategoryMapping": {
+        "subtype": "Snowparks",
+        "maintype": "Winter"
+      },
+      "PublishDataWithTagOn": {
+
+      }
+    },
+    {
+      "Id": "snow parks",
+      "Self": "https://tourism.api.opendatahub.com/v1/Tag/snow parks",
+      "Types": [
+        "odhcategory"
+      ],
+      "_Meta": {
+        "Id": "snow parks",
+        "Type": "tag",
+        "Source": "idm",
+        "Reduced": false,
+        "LastUpdate": "2025-10-16T10:09:03.8002476+00:00",
+        "UpdateInfo": {
+          "UpdatedBy": null,
+          "UpdateSource": null,
+          "UpdateHistory": []
+        }
+      },
+      "Active": false,
+      "Source": "idm",
+      "Mapping": {
+        "odh": {
+          "parent_id": "Winter"
+        }
+      },
+      "TagName": {
+        "cs": "Snowparky",
+        "de": "Snowparks",
+        "en": "Snow parks",
+        "fr": "Snowparks",
+        "it": "Snowpark",
+        "nl": "Snowparks",
+        "pl": "Snowparki",
+        "ru": "Сноупарки"
+      },
+      "ODHTagIds": [
+        "snowparks"
+      ],
+      "Shortname": "Snowparks",
+      "LastChange": "2025-10-16T10:09:03.800249+00:00",
+      "MainEntity": "smgpoi",
+      "Description": {
+
+      },
+      "FirstImport": "2021-08-10T11:21:36.3803067",
+      "LicenseInfo": null,
+      "PublishedOn": [
+        "idm-marketplace"
+      ],
+      "MappedTagIds": null,
+      "LTSTaggingInfo": null,
+      "ValidForEntity": [
+        "winter",
+        "odhactivitypoi",
+        "smgpoi"
+      ],
+      "DisplayAsCategory": true,
+      "IDMCategoryMapping": {
+
+      },
+      "PublishDataWithTagOn": null
+    }
+  ]
+}
