@@ -31,6 +31,9 @@ service:
   enabled: false
   type: ""
   port: 80
+  # Opt-in second listener for cluster-internal callers, e.g. a backoffice
+  # pushing configuration. Unset means no extra port is rendered at all.
+  internalPort: 
   health:
     delay: 20
     path: /health

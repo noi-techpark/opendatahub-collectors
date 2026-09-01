@@ -12,6 +12,10 @@ service:
   enabled: true
   type: ClusterIP
   port: 8080
+  # The backoffice pushes credential changes here. A second port, deliberately
+  # not on the ingress: the port above is public because Skidata posts to it, so
+  # a path on it is one ingress rule away from being public too.
+  internalPort: 8091
   health:
     delay: 20
     path: /health
@@ -50,6 +54,7 @@ env:
   # happens on a failed health check and can be days apart.
   SKIDATA_CATEGORIES_PROVIDER: "skidata/counting-categories"
   SKIDATA_CATEGORY_REFRESH: "1h"
+  INTERNAL_PORT: "8091"
 
   # Raw payloads go to the HTTP raw writer, not the ingress queue.
   RAW_WRITER_URL: "http://raw-writer-2.core.svc.cluster.local"
@@ -69,3 +74,11 @@ envSecretRef:
   - name: BACKOFFICE_AUTH_PASS
     secret: opendatahub-parking-control-tower-internal
     key: APP_INTERNALAUTHPASS
+  # The other direction's pair, kept separate on purpose: rotating the one this
+  # pulls with must not also invalidate the one the backoffice pushes with.
+  - name: INTERNAL_AUTH_USER
+    secret: opendatahub-parking-control-tower-internal
+    key: APP_COLLECTORAUTHUSER
+  - name: INTERNAL_AUTH_PASS
+    secret: opendatahub-parking-control-tower-internal
+    key: APP_COLLECTORAUTHPASS

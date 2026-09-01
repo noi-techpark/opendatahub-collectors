@@ -50,6 +50,13 @@ var env struct {
 	// there is no push, so this interval is the worst case between an operator
 	// saving a credential and this collector using it (R9.8).
 	BACKOFFICE_REFRESH time.Duration `default:"60s"`
+
+	// The listener the backoffice pushes changes to, so a credential edit takes
+	// effect at once rather than within BACKOFFICE_REFRESH. Empty disables it;
+	// the pull alone is still correct.
+	INTERNAL_PORT      string `default:""`
+	INTERNAL_AUTH_USER string `default:""`
+	INTERNAL_AUTH_PASS string `default:""`
 }
 
 var collector *dc.Dc[PushPayload]
@@ -136,6 +143,11 @@ func main() {
 	slog.Info("Managing facilities", "count", added)
 
 	go refreshLoop(ctx, supervisor, source)
+	go serveInternal(ctx, func(creds []FacilityCredential) {
+		added, removed, restarted := supervisor.Apply(ctx, creds)
+		slog.Info("Credential set pushed",
+			"added", added, "removed", removed, "restarted", restarted, "total", len(creds))
+	})
 
 	serve(collector.GetInputChannel())
 }
