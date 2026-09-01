@@ -7,6 +7,7 @@ package main
 import (
 	"context"
 	"log/slog"
+	"sort"
 	"sync"
 )
 
@@ -33,13 +34,30 @@ func NewSupervisor(run func(context.Context, FacilityCredential)) *Supervisor {
 	return &Supervisor{running: map[string]*facilityRun{}, run: run}
 }
 
+// Reconciliation names what changed, not just how much.
+//
+// Counts alone made the logs useless for the question actually asked of them --
+// "did MY edit land?" -- because "restarted=1" is the same line whichever of a
+// thousand facilities it was.
+type Reconciliation struct {
+	Added     []string
+	Removed   []string
+	Restarted []string
+}
+
+// Changed reports whether anything happened, which is what decides if the
+// reconciliation is worth a log line at all.
+func (r Reconciliation) Changed() bool {
+	return len(r.Added)+len(r.Removed)+len(r.Restarted) > 0
+}
+
 // Apply reconciles the running set with the given credentials: added ones start,
 // removed ones stop, and a changed username or password restarts only that one.
 //
 // Untouched facilities are never restarted. That is the entire point: with
 // thousands of credentials, reacting to one edit by rebuilding every
 // subscription is indistinguishable from the redeploy this replaced.
-func (s *Supervisor) Apply(ctx context.Context, creds []FacilityCredential) (added, removed, restarted int) {
+func (s *Supervisor) Apply(ctx context.Context, creds []FacilityCredential) Reconciliation {
 	wanted := make(map[string]FacilityCredential, len(creds))
 	for _, c := range creds {
 		wanted[c.Facility] = c
@@ -50,6 +68,7 @@ func (s *Supervisor) Apply(ctx context.Context, creds []FacilityCredential) (add
 	// facility's in-flight HTTP call -- twenty seconds worst case -- and with
 	// thousands of facilities those waits would add up serially while every
 	// other reconciliation queued behind them.
+	out := Reconciliation{Added: []string{}, Removed: []string{}, Restarted: []string{}}
 	stopping := map[string]*facilityRun{}
 	starting := []FacilityCredential{}
 	for facility, current := range s.running {
@@ -59,7 +78,7 @@ func (s *Supervisor) Apply(ctx context.Context, creds []FacilityCredential) (add
 			current.cancel()
 			stopping[facility] = current
 			delete(s.running, facility)
-			removed++
+			out.Removed = append(out.Removed, facility)
 		case next != current.cred:
 			// Restart rather than mutate: the goroutine is mid-flight in a
 			// health check or a subscribe, and swapping the credential under it
@@ -68,14 +87,14 @@ func (s *Supervisor) Apply(ctx context.Context, creds []FacilityCredential) (add
 			stopping[facility] = current
 			delete(s.running, facility)
 			starting = append(starting, next)
-			restarted++
+			out.Restarted = append(out.Restarted, facility)
 		}
 	}
 	for facility, cred := range wanted {
 		if _, ok := s.running[facility]; !ok {
 			if _, beingRestarted := stopping[facility]; !beingRestarted {
 				starting = append(starting, cred)
-				added++
+				out.Added = append(out.Added, facility)
 			}
 		}
 	}
@@ -93,7 +112,13 @@ func (s *Supervisor) Apply(ctx context.Context, creds []FacilityCredential) (add
 		s.start(ctx, cred)
 	}
 	s.mu.Unlock()
-	return added, removed, restarted
+
+	// Sorted so the same reconciliation reads the same way twice; map iteration
+	// order would otherwise shuffle the names between identical deploys.
+	sort.Strings(out.Added)
+	sort.Strings(out.Removed)
+	sort.Strings(out.Restarted)
+	return out
 }
 
 // start assumes the lock is held.

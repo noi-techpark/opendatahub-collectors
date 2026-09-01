@@ -6,6 +6,7 @@ package main
 
 import (
 	"context"
+	"reflect"
 	"sync"
 	"testing"
 	"time"
@@ -86,11 +87,14 @@ func TestChangingOneCredentialRestartsOnlyThatFacility(t *testing.T) {
 		return r.isLive("A") && r.isLive("B") && r.isLive("C")
 	})
 
-	added, removed, restarted := s.Apply(ctx, []FacilityCredential{
-		cred("A", "1"), cred("B", "2"), cred("C", "1"),
-	})
-	if added != 0 || removed != 0 || restarted != 1 {
-		t.Fatalf("added=%d removed=%d restarted=%d, want 0/0/1", added, removed, restarted)
+	got := s.Apply(ctx, []FacilityCredential{cred("A", "1"), cred("B", "2"), cred("C", "1")})
+	// Named, not counted: "restarted=1" is the same line whichever facility it
+	// was, which is useless for confirming that one edit landed.
+	if !reflect.DeepEqual(got.Restarted, []string{"B"}) {
+		t.Fatalf("restarted %v, want [B]", got.Restarted)
+	}
+	if len(got.Added) != 0 || len(got.Removed) != 0 {
+		t.Fatalf("added=%v removed=%v, want neither", got.Added, got.Removed)
 	}
 	waitFor(t, "B to restart", func() bool { return r.startCount("B") == 2 })
 	for _, f := range []string{"A", "C"} {
@@ -112,10 +116,10 @@ func TestAddedAndRemovedFacilitiesStartAndStop(t *testing.T) {
 	s.Apply(ctx, []FacilityCredential{cred("A", "1"), cred("B", "1")})
 	waitFor(t, "A and B to start", func() bool { return r.isLive("A") && r.isLive("B") })
 
-	added, removed, restarted := s.Apply(ctx, []FacilityCredential{cred("A", "1"), cred("C", "1")})
+	got := s.Apply(ctx, []FacilityCredential{cred("A", "1"), cred("C", "1")})
 
-	if added != 1 || removed != 1 || restarted != 0 {
-		t.Fatalf("added=%d removed=%d restarted=%d, want 1/1/0", added, removed, restarted)
+	if !reflect.DeepEqual(got.Added, []string{"C"}) || !reflect.DeepEqual(got.Removed, []string{"B"}) {
+		t.Fatalf("added=%v removed=%v, want [C] and [B]", got.Added, got.Removed)
 	}
 	if r.isLive("B") {
 		t.Error("B is still running after being removed from the set")
@@ -137,8 +141,8 @@ func TestReapplyingAnUnchangedSetDoesNothing(t *testing.T) {
 	waitFor(t, "the set to start", func() bool { return r.isLive("A") && r.isLive("B") })
 
 	for i := 0; i < 5; i++ {
-		if a, rm, rs := s.Apply(ctx, set); a+rm+rs != 0 {
-			t.Fatalf("reapply %d changed something: %d/%d/%d", i, a, rm, rs)
+		if got := s.Apply(ctx, set); got.Changed() {
+			t.Fatalf("reapply %d changed something: %+v", i, got)
 		}
 	}
 	if n := r.startCount("A"); n != 1 {

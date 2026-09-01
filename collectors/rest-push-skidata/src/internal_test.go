@@ -96,7 +96,7 @@ func TestAPushThatChangesNothingRestartsNothing(t *testing.T) {
 	s.Apply(t.Context(), set)
 	waitFor(t, "the set to start", func() bool { return r.isLive("A") && r.isLive("B") })
 
-	if a, rm, rs := s.Apply(t.Context(), set); a+rm+rs != 0 {
-		t.Fatalf("a no-op push changed something: %d/%d/%d", a, rm, rs)
+	if got := s.Apply(t.Context(), set); got.Changed() {
+		t.Fatalf("a no-op push changed something: %+v", got)
 	}
 }

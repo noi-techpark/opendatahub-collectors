@@ -93,10 +93,9 @@ func refreshLoop(ctx context.Context, s *Supervisor, fetch func(context.Context)
 			slog.Error("Could not refresh credentials; keeping the current set", "err", err)
 			continue
 		}
-		added, removed, restarted := s.Apply(ctx, creds)
-		if added+removed+restarted > 0 {
+		if r := s.Apply(ctx, creds); r.Changed() {
 			slog.Info("Credential set changed",
-				"added", added, "removed", removed, "restarted", restarted, "total", len(creds))
+				"added", r.Added, "removed", r.Removed, "restarted", r.Restarted, "total", len(creds))
 		}
 	}
 }
@@ -139,14 +138,13 @@ func main() {
 
 	supervisor := NewSupervisor(runFacility)
 	defer supervisor.Stop()
-	added, _, _ := supervisor.Apply(ctx, creds)
-	slog.Info("Managing facilities", "count", added)
+	slog.Info("Managing facilities", "facilities", supervisor.Apply(ctx, creds).Added)
 
 	go refreshLoop(ctx, supervisor, source)
 	go serveInternal(ctx, func(creds []FacilityCredential) {
-		added, removed, restarted := supervisor.Apply(ctx, creds)
+		r := supervisor.Apply(ctx, creds)
 		slog.Info("Credential set pushed",
-			"added", added, "removed", removed, "restarted", restarted, "total", len(creds))
+			"added", r.Added, "removed", r.Removed, "restarted", r.Restarted, "total", len(creds))
 		if len(creds) == 0 {
 			slog.Warn("the credential set is now empty; this collector is subscribed to nothing")
 		}
