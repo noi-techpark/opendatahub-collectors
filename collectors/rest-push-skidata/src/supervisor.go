@@ -19,8 +19,22 @@ import (
 // startup, so a single edit meant redeploying a pod holding twenty-five live
 // subscriptions -- every one of them dropped and rebuilt to fix one.
 type Supervisor struct {
+	// Serialises whole reconciliations. Apply releases `mu` while it waits for
+	// cancelled goroutines to unwind -- it must not hold a lock across a
+	// facility's in-flight HTTP call -- and in that window a second Apply used
+	// to see the facility in neither the running set nor the stopping set, call
+	// it new, and start a duplicate whose cancel func the first one then
+	// overwrote. That goroutine became unreachable: no later Apply and no Stop
+	// could ever end it.
+	//
+	// Two callers race by construction: the refresh ticker and the pushed set.
+	reconcile sync.Mutex
+
 	mu      sync.Mutex
 	running map[string]*facilityRun
+	// Set by Stop, so a reconciliation already in flight cannot start
+	// goroutines that outlive it.
+	stopped bool
 	run     func(context.Context, FacilityCredential)
 }
 
@@ -58,6 +72,9 @@ func (r Reconciliation) Changed() bool {
 // thousands of credentials, reacting to one edit by rebuilding every
 // subscription is indistinguishable from the redeploy this replaced.
 func (s *Supervisor) Apply(ctx context.Context, creds []FacilityCredential) Reconciliation {
+	s.reconcile.Lock()
+	defer s.reconcile.Unlock()
+
 	wanted := make(map[string]FacilityCredential, len(creds))
 	for _, c := range creds {
 		wanted[c.Facility] = c
@@ -108,8 +125,10 @@ func (s *Supervisor) Apply(ctx context.Context, creds []FacilityCredential) Reco
 	}
 
 	s.mu.Lock()
-	for _, cred := range starting {
-		s.start(ctx, cred)
+	if !s.stopped {
+		for _, cred := range starting {
+			s.start(ctx, cred)
+		}
 	}
 	s.mu.Unlock()
 
@@ -145,7 +164,11 @@ func (s *Supervisor) Facilities() []string {
 
 // Stop cancels everything and waits for it to unwind.
 func (s *Supervisor) Stop() {
+	s.reconcile.Lock()
+	defer s.reconcile.Unlock()
+
 	s.mu.Lock()
+	s.stopped = true
 	stopping := s.running
 	s.running = map[string]*facilityRun{}
 	for _, r := range stopping {

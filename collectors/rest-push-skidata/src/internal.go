@@ -28,6 +28,14 @@ func serveInternal(ctx context.Context, apply func([]FacilityCredential)) {
 		slog.Info("no internal listener: INTERNAL_PORT is unset, credentials arrive on the refresh only")
 		return
 	}
+	// Refused rather than started open. Both halves default to empty, and
+	// comparing "" against "" succeeds -- so an unset pair would authenticate
+	// `Basic Og==` and let anything in the cluster replace the credential set.
+	if env.INTERNAL_AUTH_USER == "" || env.INTERNAL_AUTH_PASS == "" {
+		slog.Error("refusing to start the internal listener: INTERNAL_AUTH_USER or " +
+			"INTERNAL_AUTH_PASS is empty, which would accept an empty Basic header")
+		return
+	}
 
 	e := echo.New()
 	e.HideBanner, e.HidePort = true, true

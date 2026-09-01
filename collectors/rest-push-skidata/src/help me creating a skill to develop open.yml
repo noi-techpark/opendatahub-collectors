@@ -1,0 +1,35 @@
+help me creating a skill to develop open data hub platform's data ingestion pipeline.
+the pipelines are normaly composed by at least 2 components:
+collector which collects/receives data and pushes as it is into the raw data lake from the provider.
+tranformer which subscribes to rabbitmq channel and awaits for the raw data to perform some mapping and push it in the data silos.
+there are 2 main silos target:
+content, structured data and timeseries more unstructured stations + timeseries data.
+
+fot the collectors there are many "generic" collectors to listen/poll data and we should use them as much as possibile to reuse well maintained modules.
+
+there are plenty of example and i want the skill to explicitly state to use the official github.com/noi-techpark/opendatahub-go-sdk package.
+i will provide you with documentation as well and you MUST undestand the pipeline, the available generic collectors and when to use them, and the transformers pattern.
+
+the skill must also cover the deployment (helm, github workflow, docker build, yamlk configuration where needed) and the tests (using go-sdk).
+
+COLLECTOR EXAMPLES:
+/home/mroggia/git/opendatahub-collectors/collectors/api-crawler
+/home/mroggia/git/opendatahub-collectors/collectors/rest-poller
+/home/mroggia/git/opendatahub-collectors/collectors/rest-push
+/home/mroggia/git/opendatahub-collectors/collectors/s3-poller
+
+MOST CLEAN AND COMPLETE TRANSFORMERS:
+CONTENT TARGET
+/home/mroggia/git/opendatahub-collectors/transformers/traffic-event-a22
+/home/mroggia/git/opendatahub-collectors/transformers/traffic-event-a22-opendata
+TIMESERIES TARGET
+/home/mroggia/git/opendatahub-collectors/transformers/parking-skidata
+/home/mroggia/git/opendatahub-collectors/transformers/bike-boxes
+
+DOCUMENTATION FOLLOW LINKS:
+https://docs.opendatahub.com/data-ingestion/getting-started
+https://docs.opendatahub.com/data-ingestion/data-collector-from-scratch
+https://docs.opendatahub.com/data-ingestion/data-transformer-from-scratch
+https://docs.opendatahub.com/data-ingestion/category/data-collector-blueprints
+https://docs.opendatahub.com/data-ingestion/category/data-transformer-blueprints
+

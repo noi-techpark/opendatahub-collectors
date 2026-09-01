@@ -19,10 +19,6 @@ import (
 	"opendatahub.com/rest-push-skidata/skidata"
 )
 
-// CountingCategory is re-exported from the shared skidata package so existing
-// references in this package keep working.
-type CountingCategory = skidata.CountingCategory
-
 var httpClient *http.Client
 
 func init() {
