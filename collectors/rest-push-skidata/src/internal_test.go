@@ -21,9 +21,6 @@ func internalRequest(t *testing.T, user, pass, body string, apply func([]Facilit
 		if err := c.Bind(&creds); err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, "bad body")
 		}
-		if len(creds) == 0 {
-			return echo.NewHTTPError(http.StatusBadRequest, "refusing an empty credential set")
-		}
 		apply(creds)
 		return c.NoContent(http.StatusNoContent)
 	}, internalAuth)
@@ -58,18 +55,18 @@ func TestTheInternalListenerRefusesWrongCredentials(t *testing.T) {
 	}
 }
 
-// An empty set would unsubscribe every facility. The backoffice never sends
-// one, so it means a truncated body or a bug -- and acting on it would take the
-// whole collector down with nothing in the logs to say why.
-func TestTheInternalListenerRefusesAnEmptySet(t *testing.T) {
+// Deleting the last credential is a legitimate operation, and the refresh would
+// apply the same empty set a minute later. Refusing it here would only make the
+// two paths disagree.
+func TestAnEmptySetIsAppliedNotRefused(t *testing.T) {
 	env.INTERNAL_AUTH_USER, env.INTERNAL_AUTH_PASS = "collector", "right"
 	called := false
 	got := internalRequest(t, "collector", "right", `[]`, func([]FacilityCredential) { called = true })
-	if got != http.StatusBadRequest {
-		t.Errorf("status %d, want 400", got)
+	if got != http.StatusNoContent {
+		t.Errorf("status %d, want 204", got)
 	}
-	if called {
-		t.Error("an empty set reached the supervisor")
+	if !called {
+		t.Error("an empty set was dropped instead of applied")
 	}
 }
 

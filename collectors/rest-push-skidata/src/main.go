@@ -147,6 +147,9 @@ func main() {
 		added, removed, restarted := supervisor.Apply(ctx, creds)
 		slog.Info("Credential set pushed",
 			"added", added, "removed", removed, "restarted", restarted, "total", len(creds))
+		if len(creds) == 0 {
+			slog.Warn("the credential set is now empty; this collector is subscribed to nothing")
+		}
 	})
 
 	serve(collector.GetInputChannel())

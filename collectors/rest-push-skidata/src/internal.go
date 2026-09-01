@@ -31,6 +31,10 @@ func serveInternal(ctx context.Context, apply func([]FacilityCredential)) {
 
 	e := echo.New()
 	e.HideBanner, e.HidePort = true, true
+	// Logged like the public listener. Without this a rejected push -- wrong
+	// credentials, malformed body -- produced no line at all on this side, so
+	// the only evidence was a warning in the backoffice's own log.
+	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
 	e.PUT("/internal/credentials", func(c echo.Context) error {
@@ -38,12 +42,10 @@ func serveInternal(ctx context.Context, apply func([]FacilityCredential)) {
 		if err := c.Bind(&creds); err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, "expected [{facility, username, password}]")
 		}
-		// An empty set would unsubscribe every facility. The backoffice never
-		// sends one, so it means a bug or a truncated body, and acting on it
-		// would take the whole collector down silently.
-		if len(creds) == 0 {
-			return echo.NewHTTPError(http.StatusBadRequest, "refusing an empty credential set")
-		}
+		// An empty set is applied, not refused. It is valid data -- the last
+		// credential was deleted -- and a truncated body fails to decode above
+		// rather than arriving as []. Refusing it here would only disagree with
+		// the refresh, which applies the same empty set a minute later anyway.
 		apply(creds)
 		return c.NoContent(http.StatusNoContent)
 	}, internalAuth)
