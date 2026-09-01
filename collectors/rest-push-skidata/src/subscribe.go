@@ -12,6 +12,7 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/noi-techpark/opendatahub-go-sdk/tel"
@@ -28,33 +29,60 @@ func init() {
 	httpClient = skidata.NewHTTPClient()
 }
 
-func SubscribeAll(ctx context.Context, creds []FacilityCredential) {
-	for _, cred := range creds {
-		go manageFacility(cred)
-		// Publication of the categories is kept off the subscription loop on
-		// purpose — see refreshCategories.
-		go refreshCategories(ctx, cred)
+// runFacility is everything one facility needs running, under one context.
+//
+// The subscription and the category publication are deliberately separate loops
+// -- resubscription only happens when a health check fails, which can be days
+// apart, so hanging publication off it would let a capacity change sit
+// unpublished indefinitely. The supervisor cancels both together, and this
+// returns only once both have unwound, so a restarted facility never briefly
+// has two of either.
+func runFacility(ctx context.Context, cred FacilityCredential) {
+	var wg sync.WaitGroup
+	wg.Add(2)
+	go func() { defer wg.Done(); manageFacility(ctx, cred) }()
+	go func() { defer wg.Done(); refreshCategories(ctx, cred) }()
+	wg.Wait()
+}
+
+// pause sleeps unless ctx ends first, and reports whether to carry on.
+//
+// Every wait in this file goes through it. A bare time.Sleep is what made a
+// credential change require a pod restart: the goroutine could not be told to
+// stop, so the only way to stop it was to end the process.
+func pause(ctx context.Context, d time.Duration) bool {
+	t := time.NewTimer(d)
+	defer t.Stop()
+	select {
+	case <-ctx.Done():
+		return false
+	case <-t.C:
+		return true
 	}
 }
 
-func manageFacility(cred FacilityCredential) {
+func manageFacility(ctx context.Context, cred FacilityCredential) {
 	defer tel.FlushOnPanic()
 
 	backoff := time.Second
-	for {
-		err := healthCheck(cred)
+	for ctx.Err() == nil {
+		err := healthCheck(ctx, cred)
 		if err != nil {
 			slog.Error("Health check failed", "facility", cred.Facility, "err", err)
-			time.Sleep(backoff)
+			if !pause(ctx, backoff) {
+				return
+			}
 			backoff = min(backoff*2, 30*time.Second)
 			continue
 		}
 
 		backoff = time.Second
-		err = subscribeFacility(cred)
+		err = subscribeFacility(ctx, cred)
 		if err != nil {
 			slog.Error("Subscription failed", "facility", cred.Facility, "err", err)
-			time.Sleep(backoff)
+			if !pause(ctx, backoff) {
+				return
+			}
 			backoff = min(backoff*2, 30*time.Second)
 			continue
 		}
@@ -64,9 +92,10 @@ func manageFacility(cred FacilityCredential) {
 
 		// monitoring loop
 		for {
-			time.Sleep(30 * time.Second)
-			err = healthCheck(cred)
-			if err != nil {
+			if !pause(ctx, 30*time.Second) {
+				return
+			}
+			if err = healthCheck(ctx, cred); err != nil {
 				slog.Warn("Health check failed, re-subscribing", "facility", cred.Facility, "err", err)
 				break
 			}
@@ -74,10 +103,10 @@ func manageFacility(cred FacilityCredential) {
 	}
 }
 
-func healthCheck(cred FacilityCredential) error {
+func healthCheck(ctx context.Context, cred FacilityCredential) error {
 	url := skidata.ApiURL(env.SKIDATA_BASE_URL, "health")
 
-	req, err := http.NewRequest(http.MethodGet, url, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
@@ -96,7 +125,7 @@ func healthCheck(cred FacilityCredential) error {
 	return nil
 }
 
-func subscribeFacility(cred FacilityCredential) error {
+func subscribeFacility(ctx context.Context, cred FacilityCredential) error {
 	categories, err := skidata.GetCountingCategories(httpClient, env.SKIDATA_BASE_URL, cred)
 	if err != nil {
 		return fmt.Errorf("failed to get counting categories: %w", err)
@@ -113,14 +142,14 @@ func subscribeFacility(cred FacilityCredential) error {
 
 	slog.Info("Fetched counting categories", "facility", cred.Facility, "carparkIds", carparkIds)
 
-	err = enableNotifications(cred, carparkIds)
+	err = enableNotifications(ctx, cred, carparkIds)
 	if err != nil {
 		return fmt.Errorf("failed to enable notifications: %w", err)
 	}
 	return nil
 }
 
-func enableNotifications(cred FacilityCredential, carparkIds []int) error {
+func enableNotifications(ctx context.Context, cred FacilityCredential, carparkIds []int) error {
 	url := skidata.ApiURL(env.SKIDATA_BASE_URL, fmt.Sprintf("notifications/enable/%s", cred.Facility))
 
 	body, err := json.Marshal(carparkIds)
@@ -128,7 +157,7 @@ func enableNotifications(cred FacilityCredential, carparkIds []int) error {
 		return fmt.Errorf("failed to marshal carpark ids: %w", err)
 	}
 
-	req, err := http.NewRequest(http.MethodPut, url, bytes.NewReader(body))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPut, url, bytes.NewReader(body))
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
