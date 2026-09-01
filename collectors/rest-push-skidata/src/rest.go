@@ -34,9 +34,22 @@ var pushPaths = []string{
 	"/skidata/parking-stations",
 }
 
-func serve(inputCh chan<- dc.Input[PushPayload]) {
+// serve runs the public listener until ctx ends.
+//
+// It must observe ctx, and did not: registering a SIGTERM handler stops Go
+// terminating the process by default, so with this blocked forever in Start
+// nothing exited. Every pod delete then sat out the full grace period waiting
+// for SIGKILL, with the deferred supervisor shutdown never running while the
+// listener kept accepting pushes for facilities already cancelled.
+func serve(ctx context.Context, inputCh chan<- dc.Input[PushPayload]) {
 	e := newRouter(inputCh)
-	e.Logger.Fatal(e.Start(":8080"))
+	go func() {
+		<-ctx.Done()
+		e.Close()
+	}()
+	if err := e.Start(":8080"); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		slog.Error("the public listener stopped", "err", err)
+	}
 }
 
 func newRouter(inputCh chan<- dc.Input[PushPayload]) *echo.Echo {
@@ -85,16 +98,6 @@ const facilityKey = "facility"
 // maxProbeBody bounds how much of a possibly unauthenticated request body is
 // buffered while sniffing the facility id.
 const maxProbeBody = 1 << 20 // 1 MiB
-
-// FacilityFromContext returns the facility id extracted by facilityContext, or
-// "" when it could not be determined.
-func FacilityFromContext(ctx context.Context) string {
-	if ctx == nil {
-		return ""
-	}
-	s, _ := ctx.Value(facilityCtxKey).(string)
-	return s
-}
 
 // facilityContext sniffs the facility id out of the push payload, puts it on
 // the echo and request contexts, and logs the outcome of every request —

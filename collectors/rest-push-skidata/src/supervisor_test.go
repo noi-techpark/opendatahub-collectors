@@ -6,6 +6,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"reflect"
 	"sync"
 	"testing"
@@ -198,5 +199,99 @@ func TestPauseReturnsImmediatelyWhenCancelled(t *testing.T) {
 	}
 	if time.Since(start) > time.Second {
 		t.Error("pause waited for the timer instead of the cancellation")
+	}
+}
+
+// slowRecorder unwinds only after a delay, the way a facility mid-request does.
+// The bug needs that window: Apply drops its lock while cancelled goroutines
+// finish, and a goroutine that stops instantly closes it before anything can
+// race through.
+type slowRecorder struct {
+	mu     sync.Mutex
+	starts map[string]int
+	stops  map[string]int
+	unwind time.Duration
+}
+
+func newSlowRecorder(unwind time.Duration) *slowRecorder {
+	return &slowRecorder{starts: map[string]int{}, stops: map[string]int{}, unwind: unwind}
+}
+
+func (r *slowRecorder) run(ctx context.Context, cred FacilityCredential) {
+	r.mu.Lock()
+	r.starts[cred.Facility]++
+	r.mu.Unlock()
+
+	<-ctx.Done()
+	time.Sleep(r.unwind)
+
+	r.mu.Lock()
+	r.stops[cred.Facility]++
+	r.mu.Unlock()
+}
+
+// balance reports started-minus-stopped, which must be zero once everything has
+// been told to stop. A leaked goroutine shows up here and nowhere else: a map
+// keyed by facility cannot tell one live goroutine from two.
+func (r *slowRecorder) balance(facility string) int {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	return r.starts[facility] - r.stops[facility]
+}
+
+// Two callers reconcile concurrently by construction: the refresh ticker and a
+// pushed set. Apply releases its lock while cancelled goroutines unwind, and a
+// second Apply used to see the facility in neither the running nor the stopping
+// set, call it new, and start a duplicate -- whose cancel func the first Apply
+// then overwrote, leaving a goroutine nothing could ever stop.
+func TestConcurrentAppliesDoNotDuplicateAFacility(t *testing.T) {
+	for attempt := 0; attempt < 40; attempt++ {
+		r := newSlowRecorder(20 * time.Millisecond)
+		s := NewSupervisor(r.run)
+		ctx := context.Background()
+
+		s.Apply(ctx, []FacilityCredential{cred("A", "1")})
+		waitFor(t, "A to start", func() bool { return r.balance("A") == 1 })
+
+		var wg sync.WaitGroup
+		wg.Add(2)
+		for i := 2; i < 4; i++ {
+			go func(gen int) {
+				defer wg.Done()
+				s.Apply(ctx, []FacilityCredential{cred("A", fmt.Sprint(gen))})
+			}(i)
+		}
+		wg.Wait()
+		s.Stop()
+
+		if got := r.balance("A"); got != 0 {
+			t.Fatalf("attempt %d: %d goroutine(s) for A outlived Stop; a duplicate start "+
+				"overwrote the tracked cancel func", attempt, got)
+		}
+	}
+}
+
+// Stop clears the running set, then waits. A reconciliation already past its own
+// diff would start goroutines into the emptied map and outlive the shutdown.
+func TestApplyRacingStopLeavesNothingRunning(t *testing.T) {
+	for attempt := 0; attempt < 40; attempt++ {
+		r := newSlowRecorder(20 * time.Millisecond)
+		s := NewSupervisor(r.run)
+		ctx := context.Background()
+		s.Apply(ctx, []FacilityCredential{cred("A", "1"), cred("B", "1")})
+		waitFor(t, "the pair to start", func() bool { return r.balance("A") == 1 && r.balance("B") == 1 })
+
+		var wg sync.WaitGroup
+		wg.Add(2)
+		go func() { defer wg.Done(); s.Apply(ctx, []FacilityCredential{cred("A", "2"), cred("C", "1")}) }()
+		go func() { defer wg.Done(); s.Stop() }()
+		wg.Wait()
+
+		s.Stop()
+		for _, f := range []string{"A", "B", "C"} {
+			if got := r.balance(f); got != 0 {
+				t.Fatalf("attempt %d: %d goroutine(s) for %s outlived Stop", attempt, got, f)
+			}
+		}
 	}
 }

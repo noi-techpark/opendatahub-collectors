@@ -19,7 +19,7 @@ import (
 	"github.com/noi-techpark/opendatahub-go-sdk/tel"
 )
 
-// PushPayload carries the raw JSON body together with the facilityId from the URL.
+// PushPayload carries the raw JSON body of one vendor push.
 type PushPayload struct {
 	Body json.RawMessage
 }
@@ -150,5 +150,5 @@ func main() {
 		}
 	})
 
-	serve(collector.GetInputChannel())
+	serve(ctx, collector.GetInputChannel())
 }
