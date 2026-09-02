@@ -580,3 +580,53 @@ func TestTransform_Snapshot(t *testing.T) {
 	}
 	bdpmock.CompareBdpMockCalls(t, out, req)
 }
+
+// The registry used to fill only from incoming events, so an operator's
+// enrichment reached a car park that had been quiet since the last restart only
+// when it next reported — with nothing anywhere to say so.
+func TestSeedingMakesAQuietStationEnrichable(t *testing.T) {
+	b := loadTestFixtures(t)
+
+	seedRegistry(t.Context(), b, []stationRow{
+		{ProviderID: "0600015", FacilityID: "0600015", CarparkID: -1, Name: "Parcheggio Demo"},
+		{ProviderID: "0600015_0", FacilityID: "0600015", CarparkID: 0, Name: "Parcheggio Demo 1"},
+	})
+
+	regMu.Lock()
+	_, facility := registry["0600015"]
+	_, carpark := registry["0600015_0"]
+	regMu.Unlock()
+	if !facility || !carpark {
+		t.Fatal("seeding did not register the pair; enrichment would be inert until they report")
+	}
+
+	// No event has ever been handled, and the station still syncs.
+	syncChanged(t.Context(), b, []string{"0600015_0"})
+	if len(syncedStations_(t, b)) == 0 {
+		t.Error("a seeded station did not reach BDP without an event")
+	}
+}
+
+// The facility took the name of whichever carpark reported last, flipping
+// between them and syncing a station each time. Nothing the provider sends
+// names a facility.
+func TestAFacilityIsNotRenamedByItsCarparks(t *testing.T) {
+	b := loadTestFixtures(t)
+
+	regMu.Lock()
+	registerLocked(b, "0600015", -1, "First Carpark")
+	registerLocked(b, "0600015", 0, "First Carpark")
+	registerLocked(b, "0600015", 1, "Second Carpark")
+	// A later event from the second carpark, as observe would apply it.
+	registerLocked(b, "0600015", -1, "Second Carpark")
+	got := registry["0600015"].name
+	child := registry["0600015_1"].name
+	regMu.Unlock()
+
+	if got != "First Carpark" {
+		t.Errorf("facility name = %q; a carpark event renamed it", got)
+	}
+	if child != "Second Carpark" {
+		t.Errorf("carpark name = %q; a carpark still names itself", child)
+	}
+}

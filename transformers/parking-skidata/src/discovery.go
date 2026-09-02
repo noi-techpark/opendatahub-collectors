@@ -169,23 +169,60 @@ func observe(ctx context.Context, bdp bdplib.Bdp, ev ParkingEvent, facilityID st
 			delete(observedCapacity, childID)
 		}
 	}
-	registry[facilityID] = entry{
-		base:       baseFacility(bdp, facilityID, ev.Carpark.Name),
-		typ:        stationTypeParent,
-		facilityID: facilityID,
-		carparkID:  -1,
-		name:       ev.Carpark.Name,
-	}
-	registry[childID] = entry{
-		base:       baseCarpark(bdp, facilityID, carparkID, ev.Carpark.Name),
-		typ:        stationType,
-		facilityID: facilityID,
-		carparkID:  carparkID,
-		name:       ev.Carpark.Name,
-	}
+	// A carpark event carries only the carpark's own name. Using it for the
+	// facility too meant the facility took the name of whichever carpark
+	// reported last, flipping between them and syncing a station each time.
+	registerLocked(bdp, facilityID, -1, ev.Carpark.Name)
+	registerLocked(bdp, facilityID, carparkID, ev.Carpark.Name)
 	regMu.Unlock()
 
 	syncChanged(ctx, bdp, []string{facilityID, childID})
+}
+
+// registerLocked records one station, or refreshes the base of one already
+// known. Assumes regMu is held.
+//
+// A facility's name is set once and never rewritten: nothing the provider sends
+// names a facility, so a later event can only replace it with something equally
+// arbitrary. A carpark names itself, so its own event may update it. Enrichment
+// overrides both.
+func registerLocked(bdp bdplib.Bdp, facilityID string, carparkID int, name string) {
+	id, typ := facilityID, stationTypeParent
+	if carparkID >= 0 {
+		id, typ = carparkProviderID(facilityID, carparkID), stationType
+	}
+
+	e, known := registry[id]
+	if known && (carparkID < 0 || name == "") {
+		name = e.name
+	}
+	if carparkID < 0 {
+		e.base = baseFacility(bdp, facilityID, name)
+	} else {
+		e.base = baseCarpark(bdp, facilityID, carparkID, name)
+	}
+	e.typ, e.facilityID, e.carparkID, e.name = typ, facilityID, carparkID, name
+	registry[id] = e
+}
+
+// seedRegistry records stations this transformer has published before, so they
+// are known without waiting for one to report.
+//
+// The registry used to fill only from incoming events, which made it a side
+// effect of traffic: an operator's enrichment reached a car park that had been
+// quiet since the last restart only when it next reported, with nothing to say
+// so. Counting categories cover twelve facilities of the fleet, so they cannot
+// answer this; the timeseries holds every station ever published.
+func seedRegistry(ctx context.Context, bdp bdplib.Bdp, rows []stationRow) {
+	regMu.Lock()
+	defer regMu.Unlock()
+	for _, r := range rows {
+		if r.ProviderID == "" {
+			continue
+		}
+		registerLocked(bdp, r.FacilityID, r.CarparkID, r.Name)
+	}
+	logger.Get(ctx).Info("seeded stations from the timeseries", "stations", len(registry))
 }
 
 // rebuildBases regenerates the provider-derived half of every known station.

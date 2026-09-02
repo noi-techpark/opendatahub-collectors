@@ -89,14 +89,30 @@ func main() {
 	if env.TS_API_BASE_URL != "" {
 		ts := odhts.NewCustomClient(env.TS_API_BASE_URL, env.TS_API_TOKEN_URL, env.TS_API_REFERER)
 		ts.UseAuth(os.Getenv("ODH_CLIENT_ID"), os.Getenv("ODH_CLIENT_SECRET"))
+
+		// One read answers two questions: which stations exist, and how to map a
+		// URN back to a provider id. Both used to come from the counting
+		// categories, which cover twelve facilities of the fleet -- so a carpark
+		// without them was neither seeded nor hydrated.
+		rows, sErr := fetchStations(ts, os.Getenv("BDP_ORIGIN"))
+		if sErr != nil {
+			log.Warn("Station listing failed; enrichment reaches a station only once it reports", "err", sErr)
+		} else {
+			seedRegistry(ctx, b, rows)
+		}
+
+		index := buildURNIndex()
+		for _, r := range rows {
+			index[clib.GenerateID(ID_TEMPLATE, r.ProviderID)] = r.ProviderID
+		}
 		if hErr := hydrateCache(cache, ts, os.Getenv("BDP_ORIGIN"),
-			allDataTypeNames(), buildURNIndex()); hErr != nil {
+			allDataTypeNames(), index); hErr != nil {
 			// Best-effort: the cache self-corrects as carparks report. Until it
 			// does, facility figures are withheld rather than published wrong.
 			log.Warn("Cache hydration failed; facility totals stay unpublished until every carpark reports", "err", hErr)
 		}
 	} else {
-		log.Info("TS_API_BASE_URL unset; skipping cache hydration")
+		log.Info("TS_API_BASE_URL unset; skipping station seeding and cache hydration")
 	}
 
 	log.Info("Starting transformer listener...")
