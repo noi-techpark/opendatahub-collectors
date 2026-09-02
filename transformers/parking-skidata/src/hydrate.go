@@ -63,3 +63,66 @@ func hydrateCache(c *Cache, ts odhts.C, origin string, datatypes []string, urnTo
 		"datatypes", len(datatypes))
 	return nil
 }
+
+// stationRow is one station as the timeseries reports it, reduced to what the
+// registry needs.
+type stationRow struct {
+	ProviderID string
+	FacilityID string
+	CarparkID  int // -1 for a facility
+	Name       string
+}
+
+// fetchStations lists the stations this transformer has already published.
+//
+// The durable answer to "what exists": every station ever synced under this
+// origin, whether or not it is currently reporting and whether or not the
+// provider still returns counting categories for it. Twelve of the fleet's
+// facilities have categories; the demo facility has none, and it still has
+// stations.
+func fetchStations(ts odhts.C, origin string) ([]stationRow, error) {
+	if origin == "" {
+		return nil, fmt.Errorf("BDP_ORIGIN is empty; refusing to list stations without an origin filter")
+	}
+
+	req := odhts.DefaultRequest()
+	req.AddStationType(stationType)
+	req.AddStationType(stationTypeParent)
+	req.Where = fmt.Sprintf("sorigin.eq.%q", origin)
+	req.Select = "scode,sname,stype,smetadata"
+	req.Limit = -1
+	req.Shownull = true
+
+	var res odhts.Response[[]struct {
+		Scode     string         `json:"scode"`
+		Sname     string         `json:"sname"`
+		Stype     string         `json:"stype"`
+		Smetadata map[string]any `json:"smetadata"`
+	}]
+	if err := odhts.StationType(ts, req, &res); err != nil {
+		return nil, fmt.Errorf("listing stations: %w", err)
+	}
+
+	out := make([]stationRow, 0, len(res.Data))
+	for _, r := range res.Data {
+		m := r.Smetadata
+		providerID, _ := m["provider_id"].(string)
+		if providerID == "" {
+			// Published by something that is not this transformer, or from
+			// before provider_id was stamped. Nothing maps it back to a
+			// facility, so it cannot be enriched or re-synced from here.
+			continue
+		}
+		row := stationRow{ProviderID: providerID, Name: r.Sname, CarparkID: -1, FacilityID: providerID}
+		if r.Stype == stationType {
+			facility, _ := m["facility_id"].(string)
+			carpark, ok := m["carpark_id"].(float64) // JSON numbers decode as float64
+			if facility == "" || !ok {
+				continue
+			}
+			row.FacilityID, row.CarparkID = facility, int(carpark)
+		}
+		out = append(out, row)
+	}
+	return out, nil
+}
