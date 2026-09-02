@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/noi-techpark/go-timeseries-client/odhts"
+	"github.com/noi-techpark/go-timeseries-client/where"
 	"github.com/noi-techpark/opendatahub-go-sdk/tel/logger"
 )
 
@@ -34,7 +35,15 @@ func hydrateCache(c *Cache, ts odhts.C, origin string, datatypes []string, urnTo
 	for _, dt := range datatypes {
 		req.AddDataType(dt)
 	}
-	req.Origin = origin
+	// A where clause, not req.Origin: the client sends that as a top-level
+	// `origin` query parameter which ninja v2 ignores, so the request returned
+	// every ParkingStation in the system — 209 rows across 86 stations where
+	// this origin has 27 across 5 — and the surplus showed up as
+	// skipped_unknown_scode rather than as an error.
+	//
+	// Escaping is the library's rather than a hand-rolled %q: it also handles
+	// the backslash, comma and single quote that Go's quoting leaves alone.
+	req.Where = where.Eq("sorigin", where.Escape(origin))
 	// /latest gives one row per (station, datatype) combination already.
 	// The default limit is 200 which is too low for our ~22 carparks ×
 	// ~16 datatypes; bump generously.
@@ -88,7 +97,7 @@ func fetchStations(ts odhts.C, origin string) ([]stationRow, error) {
 	req := odhts.DefaultRequest()
 	req.AddStationType(stationType)
 	req.AddStationType(stationTypeParent)
-	req.Where = fmt.Sprintf("sorigin.eq.%q", origin)
+	req.Where = where.Eq("sorigin", where.Escape(origin))
 	req.Select = "scode,sname,stype,smetadata"
 	req.Limit = -1
 	req.Shownull = true

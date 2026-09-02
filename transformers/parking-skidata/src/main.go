@@ -99,6 +99,13 @@ func main() {
 			log.Warn("Station listing failed; enrichment reaches a station only once it reports", "err", sErr)
 		} else {
 			seedRegistry(ctx, b, rows)
+			// Reconcile once, here, rather than leaving it to whatever happens
+			// first. The change-detection cache is empty at startup, so the
+			// next reconciliation would treat every seeded station as changed
+			// -- and if that were an enrichment edit, one operator's change to
+			// one car park would sync the whole fleet. Paying it at boot keeps
+			// every later sync proportional to what actually changed.
+			syncChanged(ctx, b, nil)
 		}
 
 		index := buildURNIndex()

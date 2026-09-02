@@ -630,3 +630,29 @@ func TestAFacilityIsNotRenamedByItsCarparks(t *testing.T) {
 		t.Errorf("carpark name = %q; a carpark still names itself", child)
 	}
 }
+
+// Seeding fills the registry while the change-detection cache starts empty, so
+// the first reconciliation after startup treats every station as changed. Left
+// to chance that first reconciliation is an operator's enrichment edit, and one
+// car park's change syncs the whole fleet.
+func TestBootReconciliationLeavesLaterSyncsProportional(t *testing.T) {
+	b := loadTestFixtures(t)
+	rows := []stationRow{
+		{ProviderID: "0600015", FacilityID: "0600015", CarparkID: -1, Name: "Demo"},
+		{ProviderID: "0600015_0", FacilityID: "0600015", CarparkID: 0, Name: "Demo 1"},
+		{ProviderID: "0600015_1", FacilityID: "0600015", CarparkID: 1, Name: "Demo 2"},
+	}
+	seedRegistry(t.Context(), b, rows)
+	syncChanged(t.Context(), b, nil) // what main does at boot
+	afterBoot := len(syncedStations_(t, b))
+	if afterBoot == 0 {
+		t.Fatal("the boot reconciliation pushed nothing")
+	}
+
+	// An enrichment edit now touches only what it changed.
+	before := len(syncedStations_(t, b))
+	resyncAll(t.Context(), b)
+	if got := len(syncedStations_(t, b)); got != before {
+		t.Errorf("a no-op resync pushed %d more stations; the cache did not take", got-before)
+	}
+}
