@@ -54,3 +54,8 @@ go.work.sum
 main
 
 **/__debug_bin*
+# Compiled binaries built in place. `go build` in a service directory drops one
+# next to its sources, and a `git add <dir>` then sweeps 26 MB into a commit.
+/transformers/*/src/tr-*
+/collectors/*/src/dc-*
+/collectors/*/src/rest-push-skidata
