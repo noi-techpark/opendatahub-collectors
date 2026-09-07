@@ -1,17 +1,19 @@
-# SPDX-FileCopyrightText: 2025 NOI Techpark <digital@noi.bz.it>
+# SPDX-FileCopyrightText: 2026 NOI Techpark <digital@noi.bz.it>
 #
 # SPDX-License-Identifier: CC0-1.0
 
-name: CI/CD tr-bike-boxes
+name: CI/CD tr-bike-boxes-loewenbytes
 
-on: 
+on:
   push:
     paths:
       - "transformers/bike-boxes/**"
-      - ".github/workflows/tr-bike-boxes.yml"     
+      - "!transformers/bike-boxes/infrastructure/helm/*"
+      - "transformers/bike-boxes/infrastructure/helm/values.*.loewenbytes.yaml"
+      - ".github/workflows/tr-bike-boxes-loewenbytes.yml"
 
 env:
-  PROJECT_NAME: tr-bike-boxes
+  PROJECT_NAME: tr-bike-boxes-loewenbytes
   WORKING_DIRECTORY: transformers/bike-boxes
   DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/tr-bike-boxes
   DOCKER_TAG: ${{ github.sha }}
@@ -20,29 +22,29 @@ env:
 jobs:
   tests:
     runs-on: ubuntu-24.04
-    concurrency: tr-bike-boxes-tests
-    
+    concurrency: tr-bike-boxes-loewenbytes-tests
+
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-      
+
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: 1.23.4
-          
+          go-version: 1.26.0
+
       - name: Install Dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: cd src && go mod tidy
-        
+
       - name: Run Tests
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: cd src && go test -v ./...
 
   build:
     runs-on: ubuntu-24.04
-    concurrency: tr-bike-boxes-build
-    needs: 
+    concurrency: tr-bike-boxes-loewenbytes-build
+    needs:
       - tests
     steps:
     - name: Checkout source code
@@ -54,16 +56,16 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}/infrastructure
         docker-username: ${{ github.actor }}
         docker-password: ${{ secrets.GITHUB_TOKEN }}
-          
+
   deploy-test:
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/bike-boxes'
-    needs: 
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feat/bike-boxes-sta'
+    needs:
       - build
     runs-on: ubuntu-24.04
-    concurrency: tr-bike-boxes-deploy-test
+    concurrency: tr-bike-boxes-loewenbytes-deploy-test
     environment: test
     env:
-      VALUES_YAML: infrastructure/helm/values.test.yaml
+      VALUES_YAML: infrastructure/helm/values.test.loewenbytes.yaml
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -73,11 +75,11 @@ jobs:
         run: |
             yq -i '.image.repository = "${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML }}
             yq -i '.image.tag = "${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
-            yq -i '.image.pullPolicy = "IfNotPresent"' ${{ env.VALUES_YAML }}      
-            yq -i '.env.BDP_PROVENANCE_NAME="${{ env.PROJECT_NAME }}"' ${{ env.VALUES_YAML }}      
-            yq -i '.env.BDP_PROVENANCE_VERSION="${{github.sha}}"' ${{ env.VALUES_YAML }}      
+            yq -i '.image.pullPolicy = "IfNotPresent"' ${{ env.VALUES_YAML }}
+            yq -i '.env.BDP_PROVENANCE_NAME="${{ env.PROJECT_NAME }}"' ${{ env.VALUES_YAML }}
+            yq -i '.env.BDP_PROVENANCE_VERSION="${{github.sha}}"' ${{ env.VALUES_YAML }}
 
-      - name: Deploy on cluster  
+      - name: Deploy on cluster
         uses: noi-techpark/github-actions/helm-deploy@v2
         with:
           k8s-name: ${{ env.PROJECT_NAME }}
@@ -94,10 +96,10 @@ jobs:
     needs:
       - build
     runs-on: ubuntu-24.04
-    concurrency: tr-bike-boxes-deploy-prod
+    concurrency: tr-bike-boxes-loewenbytes-deploy-prod
     environment: prod
     env:
-      VALUES_YAML: infrastructure/helm/values.prod.yaml
+      VALUES_YAML: infrastructure/helm/values.prod.loewenbytes.yaml
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
