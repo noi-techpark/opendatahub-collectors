@@ -81,7 +81,13 @@ type customMock struct {
 func (m *customMock) Get(ctx context.Context, apiPath string, queryParams map[string]string, responseStruct interface{}) error {
 	// Call the underlying mock to record the call
 	_ = m.ContentMock.Get(ctx, apiPath, queryParams, responseStruct)
-	// Simulate 404 Not Found for everything so it creates new venues/events
+
+	if apiPath == "Venue" {
+		json.Unmarshal([]byte(`{"Items": []}`), responseStruct)
+		return nil
+	}
+
+	// Simulate 404 Not Found for everything else so it creates new venues
 	return os.ErrNotExist
 }
 

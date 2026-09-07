@@ -14,7 +14,7 @@ type EventLinked struct {
 	EventBooking         map[string]any               `json:"EventBooking,omitempty"`
 	EventDate            []EventDate                  `json:"EventDate,omitempty"`
 	EventProperty        map[string]any               `json:"EventProperty,omitempty"`
-	FirstImport          string                       `json:"FirstImport,omitempty"`
+	FirstImport          string                       `json:"FirstImport,omitempty" hash:"ignore"`
 	GpsInfo              []GpsInfo                    `json:"GpsInfo,omitempty"`
 	Id                   string                       `json:"Id"`
 	ImageGallery         []ImageGalleryItem           `json:"ImageGallery,omitempty"`
