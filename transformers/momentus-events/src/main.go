@@ -92,12 +92,24 @@ func main() {
 			return nil
 		}
 		
+		eventCache, err := clib.LoadExisting(ctx, t.contentClient, clib.LoadConfig[odhmodel.EventLinked]{
+			EntityType:  "Event",
+			QueryParams: map[string]string{"source": "momentus"},
+			IDFunc: func(e odhmodel.EventLinked) string {
+				return e.Id
+			},
+		})
+		if err != nil {
+			slog.Error("Failed to load existing events cache", "err", err)
+			return err
+		}
+
 		// Attempt to unmarshal as an array first (which is what the crawler currently sends)
 		var events []MomentusEvent
 		if err := json.Unmarshal([]byte(r.Rawdata), &events); err == nil {
 			var firstErr error
 			for _, event := range events {
-				err := processEvent(ctx, t, event)
+				err := processEvent(ctx, t, event, eventCache)
 				if err != nil && firstErr == nil {
 					firstErr = err
 				}
@@ -112,7 +124,7 @@ func main() {
 			return err
 		}
 		
-		return processEvent(ctx, t, event)
+		return processEvent(ctx, t, event, eventCache)
 	})
 
 	if err != nil {
@@ -121,7 +133,7 @@ func main() {
 	}
 }
 
-func processEvent(ctx context.Context, t *Transformer, event MomentusEvent) error {
+func processEvent(ctx context.Context, t *Transformer, event MomentusEvent, eventCache *clib.Cache[odhmodel.EventLinked]) error {
 	slog.Info("RECEIVED RAW EVENT IN TRANSFORMER", "id", event.Id)
 	if event.Id == "" {
 		slog.Warn("Received event without ID, skipping")
@@ -160,14 +172,23 @@ func processEvent(ctx context.Context, t *Transformer, event MomentusEvent) erro
 	// Fetch existing event from ODH to preserve manual fields
 	eventLinkedID := "urn:event:momentus:" + event.Id
 	var baseEvent *odhmodel.EventLinked
-	var existingEvent odhmodel.EventLinked
-	if err := t.contentClient.Get(ctx, "Event/" + eventLinkedID, nil, &existingEvent); err == nil {
-		baseEvent = &existingEvent
+	if cachedEntry, ok := eventCache.Get(eventLinkedID); ok {
+		baseEvent = &cachedEntry.Entity
 	}
 
 	eventLinked := ParseMomentusEvent(event, matchedVenue, baseEvent, true)
 	if eventLinked == nil {
 		slog.Info("Event skipped by parser (no languages)", "eventID", event.Id)
+		return nil
+	}
+
+	hash, changed, hashErr := eventCache.HasChanged(eventLinked.Id, *eventLinked)
+	if hashErr != nil {
+		slog.Error("Failed to hash event", "err", hashErr, "eventID", event.Id)
+		return hashErr
+	}
+
+	if !changed {
 		return nil
 	}
 
@@ -178,10 +199,15 @@ func processEvent(ctx context.Context, t *Transformer, event MomentusEvent) erro
 		if err != nil {
 			slog.Error("Failed to push Event to ODH Core API (both Put and Post failed)", "err", err, "eventID", event.Id)
 			return err
+		} else {
+			slog.Info("Successfully processed event and pushed to Core (Post)", "eventID", event.Id)
+			eventCache.Set(eventLinked.Id, *eventLinked, hash)
 		}
+	} else {
+		slog.Info("Successfully processed event and pushed to Core (Put)", "eventID", event.Id)
+		eventCache.Set(eventLinked.Id, *eventLinked, hash)
 	}
 
-	slog.Info("Successfully processed event and pushed to Core", "eventID", event.Id)
 	return nil
 }
 

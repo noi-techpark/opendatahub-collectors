@@ -100,10 +100,24 @@ func main() {
 			roomsByVenue[venueID] = append(roomsByVenue[venueID], room)
 		}
 
-		for venueID, groupedRooms := range roomsByVenue {
+		venueCache := clib.NewCache[map[string]interface{}]()
+		for venueID := range roomsByVenue {
 			var venueMap map[string]interface{}
 			err := t.contentClient.Get(ctx, "Venue/"+venueID, nil, &venueMap)
-			ms.FailOnError(ctx, err, "Fatal error: Configured Venue ID not found in ODH Content API", "venueID", venueID)
+			if err == nil {
+				hash, _, _ := venueCache.HasChanged(venueID, venueMap)
+				venueCache.Set(venueID, venueMap, hash)
+			} else {
+				ms.FailOnError(ctx, err, "Fatal error: Configured Venue ID not found in ODH Content API", "venueID", venueID)
+			}
+		}
+
+		for venueID, groupedRooms := range roomsByVenue {
+			entry, ok := venueCache.Get(venueID)
+			if !ok {
+				continue
+			}
+			venueMap := entry.Entity
 
 			// 1. Marshal back to JSON to unmarshal into VenueV2
 			venueBytes, _ := json.Marshal(venueMap)
@@ -123,14 +137,25 @@ func main() {
 			delete(venueMap, "_Meta")
 			delete(venueMap, "Self")
 
+			hash, changed, hashErr := venueCache.HasChanged(venueID, venueMap)
+			if hashErr != nil {
+				slog.Error("Failed to hash venue map", "err", hashErr, "venueID", venueID)
+				continue
+			}
+
+			if !changed {
+				continue
+			}
+
 			// 5. Send map to ODH API
-			err = t.contentClient.Put(ctx, "Venue", venueLinked.Id, &venueMap)
+			err := t.contentClient.Put(ctx, "Venue", venueLinked.Id, &venueMap)
 			if err != nil {
 				slog.Error("Failed to push Venue to ODH Core API", "err", err, "venueID", venueLinked.Id)
 				continue
 			}
 
 			slog.Info("Successfully processed grouped rooms and pushed to Core", "venueID", venueLinked.Id, "roomCount", len(groupedRooms))
+			venueCache.Set(venueID, venueMap, hash)
 		}
 		return nil
 	})
