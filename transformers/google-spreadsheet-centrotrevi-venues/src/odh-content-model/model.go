@@ -86,6 +86,7 @@ type VenueV2 struct {
 	ContactInfos    map[string]any               `json:"ContactInfos,omitempty"`
 	LocationInfo    map[string]any               `json:"LocationInfo,omitempty"`
 	GpsInfo         []map[string]any             `json:"GpsInfo,omitempty"`
+	PublishedOn     []string                     `json:"PublishedOn,omitempty"`
 }
 
 type VenueRoomDetailsV2 struct {

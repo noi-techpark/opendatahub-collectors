@@ -28,6 +28,7 @@ type EventLinked struct {
 	Source               string                       `json:"Source,omitempty"`
 	TagIds               []string                     `json:"TagIds,omitempty"`
 	Topics               []map[string]any             `json:"Topics,omitempty"`
+	TopicRIDs            []string                     `json:"TopicRIDs,omitempty"`
 	VenueIds             []string                     `json:"VenueIds,omitempty"`
 	Mapping              map[string]map[string]string `json:"Mapping,omitempty"`
 }

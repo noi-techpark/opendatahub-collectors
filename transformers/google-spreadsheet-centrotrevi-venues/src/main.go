@@ -343,6 +343,7 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 		if strings.Contains(strings.ToLower(pd.ID), "drin") {
 			venue.Source = "drin"
 		}
+		venue.PublishedOn = []string{"centro-trevi." + venue.Source}
 		venue.Detail = map[string]any{
 			"it": map[string]any{"Language": "it", "Title": pd.Names["it"], "BaseText": pd.Descriptions["it"]},
 			"de": map[string]any{"Language": "de", "Title": pd.Names["de"], "BaseText": pd.Descriptions["de"]},
@@ -354,8 +355,19 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 			"de": map[string]any{"Address": pd.Addresses["de"], "City": pd.Cities["de"], "Email": pd.Email, "Phonenumber": pd.Phone, "ZipCode": pd.ZipCode, "Language": "de"},
 			"en": map[string]any{"Address": pd.Addresses["en"], "City": pd.Cities["en"], "Email": pd.Email, "Phonenumber": pd.Phone, "ZipCode": pd.ZipCode, "Language": "en"},
 		}
-		venue.GpsInfo = []map[string]any{
-			{"Gpstype": "position", "Latitude": pd.Lat, "Longitude": pd.Lon},
+		// GpsInfo from place with fallbacks
+		lat, lon := pd.Lat, pd.Lon
+		if lat == 0 && lon == 0 {
+			if venue.Source == "trevilab" {
+				lat, lon = 46.49581, 11.352324
+			} else if venue.Source == "drin" {
+				lat, lon = 46.4975, 11.3555
+			}
+		}
+		if lat != 0 || lon != 0 {
+			venue.GpsInfo = []map[string]any{
+				{"Gpstype": "position", "Latitude": lat, "Longitude": lon},
+			}
 		}
 
 		// Attach rooms belonging to this place

@@ -509,6 +509,7 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 				event.Topics = []map[string]any{
 					{"TopicRID": topicRID, "TopicInfo": topicInfo},
 				}
+				event.TopicRIDs = []string{topicRID}
 				event.TagIds = []string{topicRID}
 
 				// EventProperty
