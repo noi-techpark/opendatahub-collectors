@@ -23,6 +23,7 @@ type EventLinked struct {
 	OdhActive            bool                         `json:"OdhActive,omitempty"`
 	OrganizerInfos       map[string]ContactInfos      `json:"OrganizerInfos,omitempty"`
 	OrgRID               string                       `json:"OrgRID,omitempty"`
+	PublishedOn          []string                     `json:"PublishedOn,omitempty"`
 	Shortname            string                       `json:"Shortname,omitempty"`
 	Source               string                       `json:"Source,omitempty"`
 	TagIds               []string                     `json:"TagIds,omitempty"`
@@ -44,6 +45,8 @@ type EventDate struct {
 	End                 string   `json:"End,omitempty"`
 	From                string   `json:"From,omitempty"`
 	To                  string   `json:"To,omitempty"`
+	MaxPersons          int      `json:"MaxPersons,omitempty"`
+	Ticket              bool     `json:"Ticket,omitempty"`
 	VenueRoomDetailsIds []string `json:"VenueRoomDetailsIds,omitempty"`
 }
 

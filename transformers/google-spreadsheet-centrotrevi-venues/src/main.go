@@ -61,23 +61,25 @@ type CellData struct {
 }
 
 type placeData struct {
-	ID        string
-	Names     map[string]string
-	Addresses map[string]string
-	Cities    map[string]string
-	Email     string
-	Phone     string
-	ZipCode   string
-	Province  string
-	Lat       float64
-	Lon       float64
+	ID           string
+	Names        map[string]string
+	Descriptions map[string]string
+	Addresses    map[string]string
+	Cities       map[string]string
+	Email        string
+	Phone        string
+	ZipCode      string
+	Province     string
+	Lat          float64
+	Lon          float64
 }
 
 type roomData struct {
-	ID       string
-	Names    map[string]string
-	MaxSeats int
-	PlaceID  string
+	ID           string
+	Names        map[string]string
+	Descriptions map[string]string
+	MaxSeats     int
+	PlaceID      string
 }
 
 func main() {
@@ -244,6 +246,11 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 						"de": firstNonEmpty(getValue(row, headers, "de:name"), id),
 						"en": firstNonEmpty(getValue(row, headers, "en:name"), id),
 					},
+					Descriptions: map[string]string{
+						"it": getValue(row, headers, "it:decription", "it:description"),
+						"de": getValue(row, headers, "de:decription", "de:description"),
+						"en": getValue(row, headers, "en:decription", "en:description"),
+					},
 					Addresses: map[string]string{
 						"it": getValue(row, headers, "it:address", "address"),
 						"de": getValue(row, headers, "de:address"),
@@ -298,6 +305,11 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 						"de": firstNonEmpty(getValue(row, headers, "de:name"), itName),
 						"en": firstNonEmpty(getValue(row, headers, "en:name"), itName),
 					},
+					Descriptions: map[string]string{
+						"it": getValue(row, headers, "it:decription", "it:description"),
+						"de": getValue(row, headers, "de:decription", "de:description"),
+						"en": getValue(row, headers, "en:decription", "en:description"),
+					},
 					MaxSeats: maxSeats,
 				}
 
@@ -332,9 +344,9 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 			venue.Source = "drin"
 		}
 		venue.Detail = map[string]any{
-			"it": map[string]any{"Language": "it", "Title": pd.Names["it"]},
-			"de": map[string]any{"Language": "de", "Title": pd.Names["de"]},
-			"en": map[string]any{"Language": "en", "Title": pd.Names["en"]},
+			"it": map[string]any{"Language": "it", "Title": pd.Names["it"], "BaseText": pd.Descriptions["it"]},
+			"de": map[string]any{"Language": "de", "Title": pd.Names["de"], "BaseText": pd.Descriptions["de"]},
+			"en": map[string]any{"Language": "en", "Title": pd.Names["en"], "BaseText": pd.Descriptions["en"]},
 		}
 		venue.LocationInfo = map[string]any{"Latitude": pd.Lat, "Longitude": pd.Lon}
 		venue.ContactInfos = map[string]any{
@@ -378,9 +390,9 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 
 			room.Shortname = rd.Names["it"]
 			room.Detail = map[string]odhmodel.DetailGeneric{
-				"it": {Language: "it", Title: rd.Names["it"]},
-				"de": {Language: "de", Title: rd.Names["de"]},
-				"en": {Language: "en", Title: rd.Names["en"]},
+				"it": {Language: "it", Title: rd.Names["it"], BaseText: rd.Descriptions["it"]},
+				"de": {Language: "de", Title: rd.Names["de"], BaseText: rd.Descriptions["de"]},
+				"en": {Language: "en", Title: rd.Names["en"], BaseText: rd.Descriptions["en"]},
 			}
 			if rd.MaxSeats > 0 {
 				room.MaxCapacity = &rd.MaxSeats

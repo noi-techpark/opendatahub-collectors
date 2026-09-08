@@ -101,6 +101,7 @@ type VenueRoomDetailsV2 struct {
 type DetailGeneric struct {
 	Title    string `json:"Title"`
 	Language string `json:"Language"`
+	BaseText string `json:"BaseText,omitempty"`
 }
 
 type VenueRoomProperties struct {

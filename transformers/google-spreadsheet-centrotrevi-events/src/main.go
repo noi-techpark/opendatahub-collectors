@@ -73,10 +73,13 @@ type placeData struct {
 }
 
 type roomData struct {
-	ID       string
-	Names    map[string]string
-	MaxSeats int
-	PlaceID  string
+	ID        string
+	Names     map[string]string
+	Addresses map[string]string
+	Cities    map[string]string
+	ZipCode   string
+	MaxSeats  int
+	PlaceID   string
 }
 
 func main() {
@@ -299,6 +302,17 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 						"de": firstNonEmpty(getValue(row, headers, "de:name"), itName),
 						"en": firstNonEmpty(getValue(row, headers, "en:name"), itName),
 					},
+					Addresses: map[string]string{
+						"it": getValue(row, headers, "it:address", "address"),
+						"de": getValue(row, headers, "de:address"),
+						"en": getValue(row, headers, "en:address"),
+					},
+					Cities: map[string]string{
+						"it": getValue(row, headers, "it:city", "city"),
+						"de": getValue(row, headers, "de:city"),
+						"en": getValue(row, headers, "en:city"),
+					},
+					ZipCode:  getValue(row, headers, "zipcode", "zip"),
 					MaxSeats: maxSeats,
 				}
 
@@ -369,6 +383,7 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 				}
 				event.Source = source
 				event.OrgRID = orgRID
+				event.PublishedOn = []string{"centro-trevi." + source}
 
 				// Detail
 				event.Detail = make(map[string]odhmodel.Detail)
@@ -397,13 +412,22 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 				fromISO := formatDateISO(beginDate)
 				toISO := formatDateISO(endDate)
 
+				ticket := getValue(row, headers, "ticket")
+				ticketRequired := strings.EqualFold(ticket, "yes") || strings.EqualFold(ticket, "true")
+				maxPersons := 0
+				if v, err := strconv.Atoi(getValue(row, headers, "number_of_seats")); err == nil {
+					maxPersons = v
+				}
+
 				event.EventDate = []odhmodel.EventDate{
 					{
-						Active: true,
-						From:   fromISO + "T00:00:00",
-						To:     toISO + "T00:00:00",
-						Begin:  beginTime + ":00",
-						End:    endTime + ":00",
+						Active:     true,
+						From:       fromISO + "T00:00:00",
+						To:         toISO + "T00:00:00",
+						Begin:      beginTime + ":00",
+						End:        endTime + ":00",
+						Ticket:     ticketRequired,
+						MaxPersons: maxPersons,
 					},
 				}
 				event.DateBegin = fromISO + "T" + beginTime + ":00"
@@ -419,15 +443,20 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 				pd := places[placeKey]
 				rd := rooms[strings.ToLower(roomRef)]
 
-				// ContactInfos — room name + room/place address
-				if rd != nil && pd != nil {
+				// ContactInfos — room name + address (room's own address wins, falls back to its place)
+				if rd != nil {
 					roomURN := "urn:room:centrotrevi-drin:" + normalizeID(rd.Names["it"])
 					event.EventDate[0].VenueRoomDetailsIds = []string{roomURN}
 
+					pdAddr, pdCity, pdZip := map[string]string{}, map[string]string{}, ""
+					if pd != nil {
+						pdAddr, pdCity, pdZip = pd.Addresses, pd.Cities, pd.ZipCode
+					}
+
 					event.ContactInfos = map[string]odhmodel.ContactInfos{
-						"it": {Language: "it", CompanyName: rd.Names["it"], Address: pd.Addresses["it"], City: pd.Cities["it"], ZipCode: pd.ZipCode, CountryCode: "IT"},
-						"de": {Language: "de", CompanyName: rd.Names["de"], Address: pd.Addresses["de"], City: pd.Cities["de"], ZipCode: pd.ZipCode, CountryCode: "IT"},
-						"en": {Language: "en", CompanyName: rd.Names["en"], Address: pd.Addresses["en"], City: pd.Cities["en"], ZipCode: pd.ZipCode, CountryCode: "IT"},
+						"it": {Language: "it", CompanyName: rd.Names["it"], Address: firstNonEmpty(rd.Addresses["it"], pdAddr["it"]), City: firstNonEmpty(rd.Cities["it"], pdCity["it"]), ZipCode: firstNonEmpty(rd.ZipCode, pdZip), CountryCode: "IT"},
+						"de": {Language: "de", CompanyName: rd.Names["de"], Address: firstNonEmpty(rd.Addresses["de"], pdAddr["de"]), City: firstNonEmpty(rd.Cities["de"], pdCity["de"]), ZipCode: firstNonEmpty(rd.ZipCode, pdZip), CountryCode: "IT"},
+						"en": {Language: "en", CompanyName: rd.Names["en"], Address: firstNonEmpty(rd.Addresses["en"], pdAddr["en"]), City: firstNonEmpty(rd.Cities["en"], pdCity["en"]), ZipCode: firstNonEmpty(rd.ZipCode, pdZip), CountryCode: "IT"},
 					}
 				}
 
@@ -440,12 +469,19 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 					}
 				}
 
-				// EventAdditionalInfos — room multilingual name as Location
-				if rd != nil {
-					event.EventAdditionalInfos = map[string]map[string]string{
-						"it": {"Language": "it", "Location": rd.Names["it"]},
-						"de": {"Language": "de", "Location": rd.Names["de"]},
-						"en": {"Language": "en", "Location": rd.Names["en"]},
+				// EventAdditionalInfos — room multilingual name as Location, ticket registration link
+				registrationLink := getValue(row, headers, "link_to_ticket_info")
+				if rd != nil || registrationLink != "" {
+					event.EventAdditionalInfos = map[string]map[string]string{}
+					for _, lang := range []string{"it", "de", "en"} {
+						info := map[string]string{"Language": lang}
+						if rd != nil {
+							info["Location"] = rd.Names[lang]
+						}
+						if registrationLink != "" {
+							info["Registration"] = registrationLink
+						}
+						event.EventAdditionalInfos[lang] = info
 					}
 				}
 
@@ -467,20 +503,15 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 					}
 				}
 
-				// Topics
-				eventTypeKey := getValue(row, headers, "event_type_key", "category", "type")
-				eventTypeIT := getValue(row, headers, "it:event_type")
-				if eventTypeKey != "" {
-					topic := map[string]any{"TopicRID": eventTypeKey}
-					if eventTypeIT != "" {
-						topic["TopicInfo"] = eventTypeIT
-					}
-					event.Topics = []map[string]any{topic}
+				// Topics + TagIds
+				eventTypeKey := getValue(row, headers, "event_type_key")
+				topicRID, topicInfo := getTopicByEventType(eventTypeKey)
+				event.Topics = []map[string]any{
+					{"TopicRID": topicRID, "TopicInfo": topicInfo},
 				}
+				event.TagIds = []string{topicRID}
 
 				// EventProperty
-				ticket := getValue(row, headers, "ticket")
-				ticketRequired := strings.EqualFold(ticket, "yes") || strings.EqualFold(ticket, "true")
 				event.EventProperty = map[string]any{
 					"TicketRequired":       ticketRequired,
 					"RegistrationRequired": false,
@@ -576,6 +607,44 @@ func formatDateISO(dateStr string) string {
 		return fmt.Sprintf("%s-%s-%s", year, month, day)
 	}
 	return dateStr
+}
+
+// getTopicByEventType maps the "Event_type_key" spreadsheet column to its fixed
+// Content API TopicRID and German TopicInfo label. Ported from the legacy C#
+// importer's GetTopicRid switch.
+// TODO: replace this hardcoded switch with the "Event_topicid_mapping" column
+// once it's added to the spreadsheet, looked up by Event_type_key.
+func getTopicByEventType(eventTypeIT string) (topicRID, topicInfo string) {
+	switch eventTypeIT {
+	case "Convegni/conferenze":
+		return "0D25868CC23242D6AC97AEB2973CB3D6", "Tagungen/Vorträge"
+	case "Sport":
+		return "162C0067811B477DA725D2F5F2D98398", "Sport"
+	case "Enogastronomia/prodotti":
+		return "252200A028C8449D9A6205369A6D0D36", "Gastronomie/Typische Produkte"
+	case "Artigianato/tradizioni":
+		return "33BDC54BD39946F4852B3394B00610AE", "Handwerk/Brauchtum"
+	case "Fiere/mercati":
+		return "4C4961D9FC5B48EEB73067BEB9D4402A", "Messen/Märkte"
+	case "Teatro/cinema":
+		return "6884FE362C88434B9F49725E3328112B", "Theater/Vorführungen"
+	case "Corsi/lezioni":
+		return "767F6F43FC394CE9A3C8A9725C6FF134", "Kurse/Bildung"
+	case "Musica/danza":
+		return "7E048074BA004EC58E29E330A9AA476B", "Musik/Tanz"
+	case "Sagre/feste":
+		return "9C3449EE278C4D94AA5A7C286729DEA0", "Volksfeste/Festivals"
+	case "Gite/escursioni":
+		return "ACE8B613F2074A7BB59C0B1DD40A43CD", "Wanderungen/Ausflüge"
+	case "Visite guidate":
+		return "B5467FEFE5C74FA5AD32B83793A76165", "Führungen/Besichtigungen"
+	case "Mostre/arte":
+		return "C72CE969B98947FABC99CBC7B033F28E", "Ausstellungen/Kunst"
+	case "Famiglia":
+		return "D98B49DF24C342D09A8161836435CF86", "Familie"
+	default:
+		return "C72CE969B98947FABC99CBC7B033F28E", "Ausstellungen/Kunst"
+	}
 }
 
 func firstNonEmpty(vals ...string) string {
