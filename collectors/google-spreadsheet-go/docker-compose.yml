@@ -1,0 +1,25 @@
+# SPDX-FileCopyrightText: 2026 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: infrastructure/docker/Dockerfile
+      target: dev
+    env_file:
+      - .env
+    volumes:
+      - ./src/:/code/
+    ports:
+      - 8082:8082
+    tty: true
+    networks:
+      - default
+      - ingestion
+
+networks:
+  ingestion:
+    name: ingestion
+    external: true

@@ -1,0 +1,667 @@
+{
+    "spreadsheetId": "1aJW6sEGo40hWeL_B2yK4N7CIGwRlmwVpAkwqxjF1ruA",
+    "sheets": [
+        {
+            "properties": {
+                "title": "Events",
+                "index": 0
+            },
+            "data": [
+                {
+                    "rowData": [
+                        {
+                            "values": [
+                                {
+                                    "formattedValue": "EVENT-ID"
+                                },
+                                {
+                                    "formattedValue": "Begin_Date"
+                                },
+                                {
+                                    "formattedValue": "End_Date"
+                                },
+                                {
+                                    "formattedValue": "Begin_Time"
+                                },
+                                {
+                                    "formattedValue": "End_Time"
+                                },
+                                {
+                                    "formattedValue": "Place"
+                                },
+                                {
+                                    "formattedValue": "Room"
+                                },
+                                {
+                                    "formattedValue": "it:Event_Type"
+                                },
+                                {
+                                    "formattedValue": "de:Event_Type"
+                                },
+                                {
+                                    "formattedValue": "en:Event_Type"
+                                },
+                                {
+                                    "formattedValue": "Event_type_key"
+                                },
+                                {
+                                    "formattedValue": "it:Title"
+                                },
+                                {
+                                    "formattedValue": "de:Title"
+                                },
+                                {
+                                    "formattedValue": "en:Title"
+                                },
+                                {
+                                    "formattedValue": "it:Decription"
+                                },
+                                {
+                                    "formattedValue": "de:Decription"
+                                },
+                                {
+                                    "formattedValue": "en:Decription"
+                                },
+                                {
+                                    "formattedValue": "Number_of_seats"
+                                },
+                                {
+                                    "formattedValue": "Link"
+                                },
+                                {
+                                    "formattedValue": "Ticket"
+                                },
+                                {
+                                    "formattedValue": "Price"
+                                },
+                                {
+                                    "formattedValue": "Link_to_ticket_info"
+                                },
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {}
+                            ]
+                        },
+                        {
+                            "values": [
+                                {
+                                    "formattedValue": "09022026-1500-09022026-1600-CentroMultilingue-CONV"
+                                },
+                                {
+                                    "formattedValue": "09/02/2026"
+                                },
+                                {
+                                    "formattedValue": "09/02/2026"
+                                },
+                                {
+                                    "formattedValue": "15:00"
+                                },
+                                {
+                                    "formattedValue": "16:00"
+                                },
+                                {
+                                    "formattedValue": "TreviLab"
+                                },
+                                {
+                                    "formattedValue": "Centro Multilingue"
+                                },
+                                {
+                                    "formattedValue": "Gruppo  di conversazione"
+                                },
+                                {
+                                    "formattedValue": "Konversation"
+                                },
+                                {
+                                    "formattedValue": "Conversation "
+                                },
+                                {
+                                    "formattedValue": "Corsi/lezioni"
+                                },
+                                {
+                                    "formattedValue": "CONVERSATION CLUB "
+                                },
+                                {
+                                    "formattedValue": "CONVERSATION CLUB "
+                                },
+                                {
+                                    "formattedValue": "CONVERSATION CLUB "
+                                },
+                                {
+                                    "formattedValue": "Incontro di conversazione in lingua inglese"
+                                },
+                                {
+                                    "formattedValue": "Incontro di conversazione in lingua inglese"
+                                },
+                                {
+                                    "formattedValue": "Incontro di conversazione in lingua inglese"
+                                },
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {}
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "properties": {
+                "title": "SuggestionOfTheDay",
+                "index": 1
+            },
+            "data": [
+                {
+                    "rowData": [
+                        {
+                            "values": [
+                                {
+                                    "formattedValue": "EVENT-ID"
+                                },
+                                {
+                                    "formattedValue": "Date"
+                                },
+                                {
+                                    "formattedValue": "Place"
+                                },
+                                {
+                                    "formattedValue": "Room"
+                                },
+                                {
+                                    "formattedValue": "it:Type"
+                                },
+                                {
+                                    "formattedValue": "de:Type"
+                                },
+                                {
+                                    "formattedValue": "en:Type"
+                                },
+                                {
+                                    "formattedValue": "it:Title"
+                                },
+                                {
+                                    "formattedValue": "de:Title"
+                                },
+                                {
+                                    "formattedValue": "en:Title"
+                                },
+                                {
+                                    "formattedValue": "it:Description"
+                                },
+                                {
+                                    "formattedValue": "de:Description"
+                                },
+                                {
+                                    "formattedValue": "en:Description"
+                                },
+                                {
+                                    "formattedValue": "Link"
+                                },
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {}
+                            ]
+                        },
+                        {
+                            "values": [
+                                {
+                                    "formattedValue": "44298-TreviLab-Libro-Autodesk AutoCAD 2020 : guida completa"
+                                },
+                                {
+                                    "formattedValue": "12/04/2021"
+                                },
+                                {
+                                    "formattedValue": "TreviLab"
+                                },
+                                {
+                                    "formattedValue": "Biblioteca C. Augusta"
+                                },
+                                {
+                                    "formattedValue": "Libro"
+                                },
+                                {
+                                    "formattedValue": "Buch"
+                                },
+                                {
+                                    "formattedValue": "Book"
+                                },
+                                {
+                                    "formattedValue": "Autodesk AutoCAD 2020 : guida completa"
+                                },
+                                {
+                                    "formattedValue": "Autodesk AutoCAD 2020 : guida completa"
+                                },
+                                {
+                                    "formattedValue": "Autodesk AutoCAD 2020 : guida completa"
+                                },
+                                {
+                                    "formattedValue": "Guida completa per architettura, meccanica e design : progettazione 2D, modellazione 3D, tavole tecniche, rendering, stampa 3D"
+                                },
+                                {
+                                    "formattedValue": "guida completa per architettura, meccanica e design : progettazione 2D, modellazione 3D, tavole tecniche, rendering, stampa 3D"
+                                },
+                                {
+                                    "formattedValue": "guida completa per architettura, meccanica e design : progettazione 2D, modellazione 3D, tavole tecniche, rendering, stampa 3D"
+                                },
+                                {
+                                    "formattedValue": "https://bolzano.hosted.exlibrisgroup.com/primo_library/libweb/action/display.do?tabs=detailsTab&ct=display&fn=search&doc=bolzano_aleph000730038&indx=2&recIds=bolzano_aleph000730038&recIdxs=1&elementId=1&renderMode=poppedOut&displayMode=full&frbrVersion=&frbg=&&dscnt=0&scp.scps=scope%3A%2839BPB%29&mode=Basic&vid=bolzano&srt=rank&tab=default_tab&vl(freeText0)=tecniche&dum=true&dstmp=1609234521148"
+                                },
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {}
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "properties": {
+                "title": "Rooms",
+                "index": 2
+            },
+            "data": [
+                {
+                    "rowData": [
+                        {
+                            "values": [
+                                {
+                                    "formattedValue": "ID"
+                                },
+                                {
+                                    "formattedValue": "it:Name"
+                                },
+                                {
+                                    "formattedValue": "de:Name"
+                                },
+                                {
+                                    "formattedValue": "en:Name"
+                                },
+                                {
+                                    "formattedValue": "it:Decription"
+                                },
+                                {
+                                    "formattedValue": "de:Decription"
+                                },
+                                {
+                                    "formattedValue": "en:Decription"
+                                },
+                                {
+                                    "formattedValue": "Max_seats"
+                                },
+                                {
+                                    "formattedValue": "Place"
+                                },
+                                {
+                                    "formattedValue": "it:Address"
+                                },
+                                {
+                                    "formattedValue": "de:Address"
+                                },
+                                {
+                                    "formattedValue": "en:Address"
+                                },
+                                {
+                                    "formattedValue": "en:City"
+                                },
+                                {
+                                    "formattedValue": "it:City"
+                                },
+                                {
+                                    "formattedValue": "de:City"
+                                },
+                                {
+                                    "formattedValue": "Zipcode"
+                                },
+                                {
+                                    "formattedValue": "Province"
+                                },
+                                {
+                                    "formattedValue": "Closing_time"
+                                },
+                                {
+                                    "formattedValue": "Closing_days"
+                                },
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {}
+                            ]
+                        },
+                        {
+                            "values": [
+                                {
+                                    "formattedValue": "Lab 1 - IT-TreviLab"
+                                },
+                                {
+                                    "formattedValue": "Lab 1 - IT"
+                                },
+                                {
+                                    "formattedValue": "Lab 1 - DE"
+                                },
+                                {
+                                    "formattedValue": "\nLab 1 - EN"
+                                },
+                                {
+                                    "formattedValue": "La sala pi\u00f9 grande e prestigiosa, che pu\u00f2 essere utilizzata sia per allestire mostre negli spazi perimetrali e nelle nicchie, che manifestazioni nello spazio centrale della sala. Luogo ideale per rassegne dedicate alla letteratura, presentazioni di libri, dibattiti e proiezioni."
+                                },
+                                {
+                                    "formattedValue": "Der gr\u00f6\u00dfte und repr\u00e4sentativste Ruam. Der Raum ist sowohl f\u00fcr Ausstellungen in den umlaufenden R\u00e4umen und Nischen, als auch f\u00fcr Veranstaltungen im zentralen Saal geeignet. Ein idealer Ort f\u00fcr Ausstellungen, die in der Literatur gewidmet sind, f\u00fcr Buchpresentationen, Diskussionen und Vorf\u00fchrungen."
+                                },
+                                {
+                                    "formattedValue": "Lab 1 - Description"
+                                },
+                                {
+                                    "formattedValue": "220"
+                                },
+                                {
+                                    "formattedValue": "TreviLab"
+                                },
+                                {
+                                    "formattedValue": "Via dei Cappuccini, 28, 39100 Bolzano BZ"
+                                },
+                                {
+                                    "formattedValue": "Kapuzinergasse 28, 39100 Bozen, BZ"
+                                },
+                                {
+                                    "formattedValue": "Cappuccini street, 28, 39100 Bolzano BZ"
+                                },
+                                {
+                                    "formattedValue": "Bozen/Bolzano"
+                                },
+                                {
+                                    "formattedValue": "Bolzano"
+                                },
+                                {
+                                    "formattedValue": "Bozen"
+                                },
+                                {
+                                    "formattedValue": "39100"
+                                },
+                                {
+                                    "formattedValue": "BZ"
+                                },
+                                {
+                                    "formattedValue": "20:00:00"
+                                },
+                                {
+                                    "formattedValue": "Sunday"
+                                },
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {}
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "properties": {
+                "title": "Places",
+                "index": 3
+            },
+            "data": [
+                {
+                    "rowData": [
+                        {
+                            "values": [
+                                {
+                                    "formattedValue": "ID"
+                                },
+                                {
+                                    "formattedValue": "it:Name"
+                                },
+                                {
+                                    "formattedValue": "de:Name"
+                                },
+                                {
+                                    "formattedValue": "en:Name"
+                                },
+                                {
+                                    "formattedValue": "it:Decription"
+                                },
+                                {
+                                    "formattedValue": "de:Decription"
+                                },
+                                {
+                                    "formattedValue": "en:Decription"
+                                },
+                                {
+                                    "formattedValue": "it:Address"
+                                },
+                                {
+                                    "formattedValue": "de:Address"
+                                },
+                                {
+                                    "formattedValue": "en:Address"
+                                },
+                                {
+                                    "formattedValue": "en:City"
+                                },
+                                {
+                                    "formattedValue": "it:City"
+                                },
+                                {
+                                    "formattedValue": "de:City"
+                                },
+                                {
+                                    "formattedValue": "Zipcode"
+                                },
+                                {
+                                    "formattedValue": "Province"
+                                },
+                                {
+                                    "formattedValue": "Email"
+                                },
+                                {
+                                    "formattedValue": "Phone"
+                                },
+                                {
+                                    "formattedValue": "Opening_time"
+                                },
+                                {
+                                    "formattedValue": "Closing_time"
+                                },
+                                {
+                                    "formattedValue": "Closing_days"
+                                },
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {}
+                            ]
+                        },
+                        {
+                            "values": [
+                                {
+                                    "formattedValue": "TreviLab"
+                                },
+                                {
+                                    "formattedValue": "TreviLab"
+                                },
+                                {
+                                    "formattedValue": "TreviLab"
+                                },
+                                {
+                                    "formattedValue": "TreviLab"
+                                },
+                                {
+                                    "formattedValue": "TreviLab. I laboratori della cultura. Spazio gratuito e aperto a tutti dove scoprire, apprendere, sperimentare con arte, cinema, lingue e libri."
+                                },
+                                {
+                                    "formattedValue": "Trevilab. Hier gibt es frei zug\u00e4nglichen Raum, der uns allen geh\u00f6rt; Raum f\u00fcr alle, die lernen und experimentieren wollen mit Kunst, Kino, Sprachen und B\u00fcchern."
+                                },
+                                {},
+                                {
+                                    "formattedValue": "Via dei Cappuccini 28, 39100 Bolzano BZ"
+                                },
+                                {
+                                    "formattedValue": "Kapuzinergasse 28, 39100 Bozen, BZ"
+                                },
+                                {
+                                    "formattedValue": "Via Cappuccini 28, 39100 Bolzano (BZ)"
+                                },
+                                {
+                                    "formattedValue": "Bozen/Bolzano"
+                                },
+                                {
+                                    "formattedValue": "Bolzano"
+                                },
+                                {
+                                    "formattedValue": "Bozen"
+                                },
+                                {
+                                    "formattedValue": "39100"
+                                },
+                                {
+                                    "formattedValue": "BZ"
+                                },
+                                {
+                                    "formattedValue": "trevilab@provincia.bz.it"
+                                },
+                                {
+                                    "formattedValue": "0471/300980"
+                                },
+                                {
+                                    "formattedValue": "09:00:00"
+                                },
+                                {
+                                    "formattedValue": "18:00:00"
+                                },
+                                {
+                                    "formattedValue": "Sunday"
+                                },
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {},
+                                {}
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "properties": {
+                "title": "Event_type_key",
+                "index": 4
+            },
+            "data": [
+                {
+                    "rowData": [
+                        {
+                            "values": [
+                                {
+                                    "formattedValue": "Event_type_key"
+                                }
+                            ]
+                        },
+                        {
+                            "values": [
+                                {
+                                    "formattedValue": "Convegni/conferenze"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
