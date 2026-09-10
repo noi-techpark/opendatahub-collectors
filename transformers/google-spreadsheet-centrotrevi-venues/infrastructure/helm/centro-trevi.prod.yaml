@@ -20,6 +20,7 @@ env:
   ODH_CORE_URL: https://tourism.api.opendatahub.com/v1/
   ODH_CORE_TOKEN_URL: https://auth.opendatahub.com/auth/realms/noi/protocol/openid-connect/token
   ODH_CORE_TOKEN_CLIENT_ID: odh-api-core-events-culture-serviceaccount
+  ODH_CORE_REFERER: https://importer.v2.opendatahub.com/centro-trevi.venues
 
   SERVICE_NAME: tr-google-spreadsheet-centrotrevi-venues
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317

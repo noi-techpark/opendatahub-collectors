@@ -31,6 +31,7 @@ var env struct {
 	OdhCoreTokenUrl          string `envconfig:"ODH_CORE_TOKEN_URL"`
 	OdhCoreTokenClientId     string `envconfig:"ODH_CORE_TOKEN_CLIENT_ID"`
 	OdhCoreTokenClientSecret string `envconfig:"ODH_CORE_TOKEN_CLIENT_SECRET"`
+	OdhCoreReferer           string `envconfig:"ODH_CORE_REFERER"`
 }
 
 type Spreadsheet struct {
@@ -93,7 +94,7 @@ func main() {
 		ClientID:     env.OdhCoreTokenClientId,
 		ClientSecret: env.OdhCoreTokenClientSecret,
 		DisableOAuth: env.OdhCoreTokenUrl == "",
-	})
+	}, clib.WithReferer(env.OdhCoreReferer))
 	ms.FailOnError(context.Background(), err, "failed to create content client")
 
 	listener := tr.NewTr[string](context.Background(), env.Env)
