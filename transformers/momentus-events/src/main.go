@@ -450,7 +450,7 @@ func determinePublishedOn(mevent MomentusEvent, bookedSpaces []MomentusBookedSpa
 
 	effectiveType := ""
 	for _, u := range spaceUsageNames {
-		if strings.Contains(u, "PUBLIC") {
+		if strings.Contains(u, "PUBLIC") || strings.Contains(u, "PUBBLICO") || strings.Contains(u, "ÖFFENTLICH") || strings.Contains(u, "OEEFFENTLICH") || strings.Contains(u, "OFFENTLICH") {
 			effectiveType = "PUBLIC"
 			break
 		}
@@ -465,7 +465,7 @@ func determinePublishedOn(mevent MomentusEvent, bookedSpaces []MomentusBookedSpa
 	}
 	if effectiveType == "" {
 		for _, u := range spaceUsageNames {
-			if strings.Contains(u, "ROOM") {
+			if strings.Contains(u, "ROOM") || strings.Contains(u, "SALA") || strings.Contains(u, "SAAL") {
 				effectiveType = "ROOM"
 				break
 			}
