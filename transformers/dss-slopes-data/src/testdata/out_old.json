@@ -1,0 +1,350 @@
+{
+  "Id": "dss_187043",
+  "Self": "https://tourism.api.opendatahub.com/v1/ODHActivityPoi/dss_187043",
+  "Tags": [
+    {
+      "Id": "activity",
+      "Name": "Activity",
+      "Self": "https://tourism.api.opendatahub.com/v1/Tag/activity",
+      "Type": "odhcategory",
+      "Source": "idm",
+      "TagEntry": null
+    },
+    {
+      "Id": "alpine skiing",
+      "Name": "Alpine skiing",
+      "Self": "https://tourism.api.opendatahub.com/v1/Tag/alpine skiing",
+      "Type": "odhcategory",
+      "Source": "idm",
+      "TagEntry": null
+    },
+    {
+      "Id": "marked ski paths slopes",
+      "Name": "Marked Ski Paths & Slopes",
+      "Self": "https://tourism.api.opendatahub.com/v1/Tag/marked ski paths slopes",
+      "Type": "odhcategory",
+      "Source": "idm",
+      "TagEntry": null
+    },
+    {
+      "Id": "other slopes",
+      "Name": "Other slopes",
+      "Self": "https://tourism.api.opendatahub.com/v1/Tag/other slopes",
+      "Type": "ltscategory",
+      "Source": "idm",
+      "TagEntry": null
+    },
+    {
+      "Id": "slope",
+      "Name": "Slope",
+      "Self": "https://tourism.api.opendatahub.com/v1/Tag/slope",
+      "Type": "odhcategory",
+      "Source": "idm",
+      "TagEntry": null
+    },
+    {
+      "Id": "slopes",
+      "Name": "Slopes",
+      "Self": "https://tourism.api.opendatahub.com/v1/Tag/slopes",
+      "Type": "ltscategory",
+      "Source": "idm",
+      "TagEntry": null
+    },
+    {
+      "Id": "winter",
+      "Name": "Winter",
+      "Self": "https://tourism.api.opendatahub.com/v1/Tag/winter",
+      "Type": "odhcategory",
+      "Source": "idm",
+      "TagEntry": null
+    }
+  ],
+  "Type": null,
+  "AgeTo": null,
+  "Areas": [],
+  "SmgId": null,
+  "_Meta": {
+    "Id": "dss_187043",
+    "Type": "odhactivitypoi",
+    "Source": "dss",
+    "Reduced": false,
+    "LastUpdate": "2026-05-26T08:09:44.0140689+00:00",
+    "UpdateInfo": {
+      "Revision": 545,
+      "UpdatedBy": "dss.slope.import",
+      "UpdateSource": "http://tourism.importer.opendatahub.com/DSS/slope",
+      "UpdateHistory": [
+        {
+          "UpdatedBy": "dss.slope.import",
+          "LastUpdate": "2026-05-26T08:09:44.0140689+00:00",
+          "UpdateSource": "http://tourism.importer.opendatahub.com/DSS/slope"
+        }
+      ]
+    }
+  },
+  "Active": true,
+  "AreaId": null,
+  "Detail": {
+    "de": {
+      "Title": "2000",
+      "Header": null,
+      "BaseText": null,
+      "Keywords": null,
+      "Language": "de",
+      "MetaDesc": null,
+      "AuthorTip": null,
+      "IntroText": null,
+      "MetaTitle": null,
+      "SubHeader": null,
+      "SafetyInfo": null,
+      "ParkingInfo": null,
+      "GetThereText": null,
+      "EquipmentInfo": null,
+      "AdditionalText": null,
+      "PublicTransportationInfo": null
+    },
+    "en": {
+      "Title": "2000",
+      "Header": null,
+      "BaseText": null,
+      "Keywords": null,
+      "Language": "en",
+      "MetaDesc": null,
+      "AuthorTip": null,
+      "IntroText": null,
+      "MetaTitle": null,
+      "SubHeader": null,
+      "SafetyInfo": null,
+      "ParkingInfo": null,
+      "GetThereText": null,
+      "EquipmentInfo": null,
+      "AdditionalText": null,
+      "PublicTransportationInfo": null
+    },
+    "it": {
+      "Title": "2000",
+      "Header": null,
+      "BaseText": null,
+      "Keywords": null,
+      "Language": "it",
+      "MetaDesc": null,
+      "AuthorTip": null,
+      "IntroText": null,
+      "MetaTitle": null,
+      "SubHeader": null,
+      "SafetyInfo": null,
+      "ParkingInfo": null,
+      "GetThereText": null,
+      "EquipmentInfo": null,
+      "AdditionalText": null,
+      "PublicTransportationInfo": null
+    }
+  },
+  "IsOpen": false,
+  "Number": "31",
+  "Source": "dss",
+  "TagIds": [
+    "activity",
+    "alpine skiing",
+    "marked ski paths slopes",
+    "other slopes",
+    "slope",
+    "slopes",
+    "winter"
+  ],
+  "AgeFrom": null,
+  "AreaIds": null,
+  "GpsInfo": [
+    {
+      "Default": null,
+      "Gpstype": "position",
+      "Altitude": 1520,
+      "Geometry": null,
+      "Latitude": 46.405995612431,
+      "Longitude": 12.085690498352,
+      "AltitudeUnitofMeasure": "m"
+    }
+  ],
+  "LTSTags": null,
+  "Mapping": {
+    "dss": {
+      "pid": "187043",
+      "rid": "10365",
+      "regionId": "12",
+      "skiresort_pid": "53",
+      "skiresort_rid": "173"
+    }
+  },
+  "ODHTags": [
+    {
+      "Id": "winter",
+      "Self": "https://tourism.api.opendatahub.com/v1/ODHTag/winter"
+    },
+    {
+      "Id": "skirundtouren pisten",
+      "Self": "https://tourism.api.opendatahub.com/v1/ODHTag/skirundtouren pisten"
+    },
+    {
+      "Id": "pisten",
+      "Self": "https://tourism.api.opendatahub.com/v1/ODHTag/pisten"
+    },
+    {
+      "Id": "ski alpin",
+      "Self": "https://tourism.api.opendatahub.com/v1/ODHTag/ski alpin"
+    },
+    {
+      "Id": "piste",
+      "Self": "https://tourism.api.opendatahub.com/v1/ODHTag/piste"
+    },
+    {
+      "Id": "weitere pisten",
+      "Self": "https://tourism.api.opendatahub.com/v1/ODHTag/weitere pisten"
+    },
+    {
+      "Id": "activity",
+      "Self": "https://tourism.api.opendatahub.com/v1/ODHTag/activity"
+    }
+  ],
+  "PoiType": null,
+  "Ratings": {
+    "Stamina": null,
+    "Landscape": null,
+    "Technique": null,
+    "Difficulty": "4",
+    "Experience": null
+  },
+  "SmgTags": [
+    "winter",
+    "skirundtouren pisten",
+    "pisten",
+    "ski alpin",
+    "piste",
+    "weitere pisten",
+    "activity"
+  ],
+  "SubType": null,
+  "CustomId": "10365",
+  "GpsTrack": [
+    {
+      "Id": null,
+      "Type": "detailed",
+      "Format": "kml",
+      "GpxTrackUrl": "https://www.dolomitisuperski.com/file/?uuidSlope=1fdddda3-e1ae-4891-bad9-c4292b766311",
+      "GpxTrackDesc": {}
+    }
+  ],
+  "OwnerRid": null,
+  "DishRates": null,
+  "FeetClimb": null,
+  "GpsPoints": {
+    "position": {
+      "Default": null,
+      "Gpstype": "position",
+      "Altitude": 1520,
+      "Geometry": null,
+      "Latitude": 46.405995612431,
+      "Longitude": 12.085690498352,
+      "AltitudeUnitofMeasure": "m"
+    }
+  },
+  "Highlight": null,
+  "OdhActive": true,
+  "Shortname": "2000",
+  "SmgActive": true,
+  "WayNumber": null,
+  "Difficulty": "4",
+  "DistrictId": null,
+  "Exposition": null,
+  "Facilities": null,
+  "HasRentals": null,
+  "IsPrepared": null,
+  "LastChange": "2026-03-30T08:09:39.2302299+00:00",
+  "VideoItems": null,
+  "ChildPoiIds": null,
+  "FirstImport": "2022-04-08T20:37:32.1369918+00:00",
+  "HasLanguage": ["de", "it", "en"],
+  "IsWithLigth": null,
+  "LicenseInfo": {
+    "Author": "",
+    "License": "CC0",
+    "ClosedData": false,
+    "LicenseHolder": "https://www.dolomitisuperski.com"
+  },
+  "PoiProperty": {},
+  "PoiServices": null,
+  "PublishedOn": [],
+  "RunToValley": null,
+  "ContactInfos": {},
+  "DistanceInfo": null,
+  "ImageGallery": null,
+  "LocationInfo": {
+    "TvInfo": null,
+    "AreaInfo": null,
+    "RegionInfo": null,
+    "DistrictInfo": null,
+    "MunicipalityInfo": null
+  },
+  "MasterPoiIds": null,
+  "AltitudeSumUp": null,
+  "BikeTransport": null,
+  "CategoryCodes": null,
+  "LiftAvailable": null,
+  "DistanceLength": 1989,
+  "RelatedContent": null,
+  "SyncUpdateMode": "Full",
+  "AltitudeSumDown": null,
+  "HasFreeEntrance": null,
+  "OutdooractiveID": null,
+  "CapacityCeremony": null,
+  "CopyrightChecked": null,
+  "DistanceDuration": 0.15,
+  "AdditionalContact": null,
+  "OperationSchedule": [
+    {
+      "Stop": "2026-03-29T00:00:00",
+      "Type": "1",
+      "Start": "2025-12-17T00:00:00",
+      "OperationScheduleTime": null,
+      "OperationscheduleName": {
+        "de": "Wintersaison",
+        "en": "winterseason",
+        "it": "stagioneinvernale"
+      }
+    }
+  ],
+  "AdditionalPoiInfos": {
+    "de": {
+      "Novelty": "",
+      "PoiType": null,
+      "SubType": null,
+      "Language": "de",
+      "MainType": null,
+      "Categories": ["Ski Alpin", "Skirundtouren & Pisten", "Pisten"]
+    },
+    "en": {
+      "Novelty": "",
+      "PoiType": null,
+      "SubType": null,
+      "Language": "en",
+      "MainType": null,
+      "Categories": ["Alpine skiing", "Marked Ski Paths & Slopes", "Slopes"]
+    },
+    "it": {
+      "Novelty": "",
+      "PoiType": null,
+      "SubType": null,
+      "Language": "it",
+      "MainType": null,
+      "Categories": ["sci alpino", "Piste e circuiti sciistici", "Piste"]
+    }
+  },
+  "AltitudeDifference": 390,
+  "MaxSeatingCapacity": null,
+  "AltitudeLowestPoint": 1910,
+  "ODHActivityPoiTypes": [],
+  "SyncSourceInterface": "dssslopebase",
+  "AdditionalProperties": {},
+  "AltitudeHighestPoint": 1520,
+  "TourismorganizationId": "5228229251CA11D18F1400A02427D15E",
+  "OutdooractiveElevationID": null
+}

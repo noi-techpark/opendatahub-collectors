@@ -1,0 +1,16 @@
+rootContext: {}
+stream: false
+
+steps:
+  # ── Snowparks ─────────────────────────────────────────────────────────────────
+  - type: request
+    name: "Fetch DSS Snowparks"
+    request:
+      url: "https://www.dolomitisuperski.com/jsonexport/export/snowparks"
+      method: GET
+      auth:
+        type: basic
+        username: "${DSS_USERNAME}"
+        password: "${DSS_PASSWORD}"
+    resultTransformer: "."
+    mergeOn: .dssSnowparks = $res

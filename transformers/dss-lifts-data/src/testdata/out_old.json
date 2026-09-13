@@ -1,0 +1,437 @@
+{
+  "Id": "dss_617",
+  "Self": "https://tourism.api.opendatahub.com/v1/ODHActivityPoi/dss_617",
+  "Tags": [
+    {
+      "Id": "activity",
+      "Name": "Activity",
+      "Self": "https://tourism.api.opendatahub.com/v1/Tag/activity",
+      "Type": "odhcategory",
+      "Source": "idm",
+      "TagEntry": null
+    },
+    {
+      "Id": "chairlift 6 persons",
+      "Name": "Chairlift 6 persons",
+      "Self": "https://tourism.api.opendatahub.com/v1/Tag/chairlift 6 persons",
+      "Type": "odhcategory",
+      "Source": "idm",
+      "TagEntry": null
+    },
+    {
+      "Id": "lifts",
+      "Name": "Lifts",
+      "Self": "https://tourism.api.opendatahub.com/v1/Tag/lifts",
+      "Type": "ltscategory",
+      "Source": "idm",
+      "TagEntry": null
+    },
+    {
+      "Id": "other",
+      "Name": "Other",
+      "Self": "https://tourism.api.opendatahub.com/v1/Tag/other",
+      "Type": "odhcategory",
+      "Source": "idm",
+      "TagEntry": null
+    },
+    {
+      "Id": "other lifts",
+      "Name": "Other Lifts",
+      "Self": "https://tourism.api.opendatahub.com/v1/Tag/other lifts",
+      "Type": "ltscategory",
+      "Source": "idm",
+      "TagEntry": null
+    }
+  ],
+  "Type": null,
+  "AgeTo": null,
+  "Areas": [
+    {
+      "Id": "EF8E6BFBEF72426AADBDBCA15E49450C",
+      "Self": "https://tourism.api.opendatahub.com/v1/Area/EF8E6BFBEF72426AADBDBCA15E49450C"
+    }
+  ],
+  "SmgId": null,
+  "_Meta": {
+    "Id": "dss_617",
+    "Type": "odhactivitypoi",
+    "Source": "dss",
+    "Reduced": false,
+    "LastUpdate": "2026-05-26T08:06:04.8335361+00:00",
+    "UpdateInfo": {
+      "Revision": 539,
+      "UpdatedBy": "dss.lift.import",
+      "UpdateSource": "http://tourism.importer.opendatahub.com/DSS/lift",
+      "UpdateHistory": [
+        {
+          "UpdatedBy": "dss.lift.import",
+          "LastUpdate": "2026-05-26T08:06:04.8335361+00:00",
+          "UpdateSource": "http://tourism.importer.opendatahub.com/DSS/lift"
+        }
+      ]
+    }
+  },
+  "Active": true,
+  "AreaId": ["EF8E6BFBEF72426AADBDBCA15E49450C"],
+  "Detail": {
+    "de": {
+      "Title": "Absam-Maierl",
+      "Header": null,
+      "BaseText": null,
+      "Keywords": null,
+      "Language": "de",
+      "MetaDesc": null,
+      "AuthorTip": null,
+      "IntroText": null,
+      "MetaTitle": null,
+      "SubHeader": null,
+      "SafetyInfo": null,
+      "ParkingInfo": null,
+      "GetThereText": null,
+      "EquipmentInfo": null,
+      "AdditionalText": null,
+      "PublicTransportationInfo": null
+    },
+    "en": {
+      "Title": "Absam-Maierl",
+      "Header": null,
+      "BaseText": null,
+      "Keywords": null,
+      "Language": "en",
+      "MetaDesc": null,
+      "AuthorTip": null,
+      "IntroText": null,
+      "MetaTitle": null,
+      "SubHeader": null,
+      "SafetyInfo": null,
+      "ParkingInfo": null,
+      "GetThereText": null,
+      "EquipmentInfo": null,
+      "AdditionalText": null,
+      "PublicTransportationInfo": null
+    },
+    "it": {
+      "Title": "Absam - Maierl",
+      "Header": null,
+      "BaseText": null,
+      "Keywords": null,
+      "Language": "it",
+      "MetaDesc": null,
+      "AuthorTip": null,
+      "IntroText": null,
+      "MetaTitle": null,
+      "SubHeader": null,
+      "SafetyInfo": null,
+      "ParkingInfo": null,
+      "GetThereText": null,
+      "EquipmentInfo": null,
+      "AdditionalText": null,
+      "PublicTransportationInfo": null
+    }
+  },
+  "IsOpen": false,
+  "Number": "21",
+  "Source": "dss",
+  "TagIds": [
+    "activity",
+    "chairlift 6 persons",
+    "lifts",
+    "other",
+    "other lifts"
+  ],
+  "AgeFrom": null,
+  "AreaIds": ["EF8E6BFBEF72426AADBDBCA15E49450C"],
+  "GpsInfo": [
+    {
+      "Default": null,
+      "Gpstype": "position",
+      "Altitude": 1732,
+      "Geometry": null,
+      "Latitude": 46.3668744066135,
+      "Longitude": 11.5306107508751,
+      "AltitudeUnitofMeasure": "m"
+    },
+    {
+      "Default": null,
+      "Gpstype": "valleystationpoint",
+      "Altitude": 1732,
+      "Geometry": null,
+      "Latitude": 46.3668744066135,
+      "Longitude": 11.5306107508751,
+      "AltitudeUnitofMeasure": "m"
+    },
+    {
+      "Default": null,
+      "Gpstype": "mountainstationpoint",
+      "Altitude": 2165,
+      "Geometry": null,
+      "Latitude": 46.5741624224603,
+      "Longitude": 11.6738881874024,
+      "AltitudeUnitofMeasure": "m"
+    }
+  ],
+  "LTSTags": null,
+  "Mapping": {
+    "dss": {
+      "pid": "617",
+      "rid": "3713",
+      "regionId": "8",
+      "skiresort_pid": "41",
+      "skiresort_rid": "160"
+    }
+  },
+  "ODHTags": [
+    {
+      "Id": "anderes",
+      "Self": "https://tourism.api.opendatahub.com/v1/ODHTag/anderes"
+    },
+    {
+      "Id": "aufstiegsanlagen",
+      "Self": "https://tourism.api.opendatahub.com/v1/ODHTag/aufstiegsanlagen"
+    },
+    {
+      "Id": "weitere aufstiegsanlagen",
+      "Self": "https://tourism.api.opendatahub.com/v1/ODHTag/weitere aufstiegsanlagen"
+    },
+    {
+      "Id": "6er sessellift kuppelbar",
+      "Self": "https://tourism.api.opendatahub.com/v1/ODHTag/6er sessellift kuppelbar"
+    },
+    {
+      "Id": "activity",
+      "Self": "https://tourism.api.opendatahub.com/v1/ODHTag/activity"
+    }
+  ],
+  "PoiType": null,
+  "Ratings": null,
+  "SmgTags": [
+    "anderes",
+    "aufstiegsanlagen",
+    "weitere aufstiegsanlagen",
+    "6er sessellift kuppelbar",
+    "activity"
+  ],
+  "SubType": null,
+  "CustomId": "3713",
+  "GpsTrack": [
+    {
+      "Id": null,
+      "Type": "detailed",
+      "Format": "kml",
+      "GpxTrackUrl": "https://www.dolomitisuperski.com/file/?uuidLift=6baa1145-39c7-48c1-8344-f53fd7e0353d",
+      "GpxTrackDesc": {}
+    }
+  ],
+  "OwnerRid": null,
+  "DishRates": null,
+  "FeetClimb": null,
+  "GpsPoints": {
+    "position": {
+      "Default": null,
+      "Gpstype": "position",
+      "Altitude": 1732,
+      "Geometry": null,
+      "Latitude": 46.3668744066135,
+      "Longitude": 11.5306107508751,
+      "AltitudeUnitofMeasure": "m"
+    },
+    "valleystationpoint": {
+      "Default": null,
+      "Gpstype": "valleystationpoint",
+      "Altitude": 1732,
+      "Geometry": null,
+      "Latitude": 46.3668744066135,
+      "Longitude": 11.5306107508751,
+      "AltitudeUnitofMeasure": "m"
+    },
+    "mountainstationpoint": {
+      "Default": null,
+      "Gpstype": "mountainstationpoint",
+      "Altitude": 2165,
+      "Geometry": null,
+      "Latitude": 46.5741624224603,
+      "Longitude": 11.6738881874024,
+      "AltitudeUnitofMeasure": "m"
+    }
+  },
+  "Highlight": null,
+  "OdhActive": true,
+  "Shortname": "Absam-Maierl",
+  "SmgActive": true,
+  "WayNumber": null,
+  "Difficulty": null,
+  "DistrictId": "1F2D6C32749344B99EB4404835E48F7E",
+  "Exposition": null,
+  "Facilities": null,
+  "HasRentals": null,
+  "IsPrepared": null,
+  "LastChange": "2026-04-12T16:05:59.5655078+00:00",
+  "VideoItems": null,
+  "ChildPoiIds": null,
+  "FirstImport": "2022-04-08T20:37:06.0326942+00:00",
+  "HasLanguage": ["de", "it", "en"],
+  "IsWithLigth": null,
+  "LicenseInfo": {
+    "Author": "",
+    "License": "CC0",
+    "ClosedData": false,
+    "LicenseHolder": "https://www.dolomitisuperski.com"
+  },
+  "PoiProperty": {},
+  "PoiServices": null,
+  "PublishedOn": [],
+  "RunToValley": null,
+  "ContactInfos": {},
+  "DistanceInfo": null,
+  "ImageGallery": null,
+  "LocationInfo": {
+    "TvInfo": {
+      "Id": "522822C751CA11D18F1400A02427D15E",
+      "Name": {
+        "cs": "Eggental Tourimus / Val d'Ega Turismo",
+        "de": "Eggental Tourismus",
+        "en": "Eggental Tourimus / Val d'Ega Turismo",
+        "fr": "Eggental Tourimus / Val d'Ega Turismo",
+        "it": "Val d'Ega Turismo",
+        "nl": "Eggental Tourimus / Val d'Ega Turismo",
+        "pl": "Eggental Tourimus / Val d'Ega Turismo",
+        "ru": "Дойчнофен - Оберегген/Nova Ponente"
+      },
+      "Self": "https://tourism.api.opendatahub.com/v1/TourismAssociation/522822C751CA11D18F1400A02427D15E"
+    },
+    "AreaInfo": {
+      "Id": "EF8E6BFBEF72426AADBDBCA15E49450C",
+      "Name": {
+        "cs": "Obereggen",
+        "de": "Obereggen",
+        "en": "Obereggen",
+        "fr": "Obereggen",
+        "it": "Obereggen",
+        "nl": "Obereggen",
+        "pl": "Obereggen",
+        "ru": "Obereggen"
+      },
+      "Self": "https://tourism.api.opendatahub.com/v1/Area/EF8E6BFBEF72426AADBDBCA15E49450C"
+    },
+    "RegionInfo": {
+      "Id": "D2633A21C24E11D18F1B006097B8970B",
+      "Name": {
+        "cs": "Oblast Eggental Dolomity",
+        "de": "Dolomitenregion Eggental",
+        "en": "Dolomites Region Eggental",
+        "fr": "Région des Dolomites Eggental",
+        "it": "Regione dolomitica Val d'Ega",
+        "nl": "Dolomietenregio Eggental",
+        "pl": "Region Eggental w Dolomitach",
+        "ru": "регион Эггенталь, Доломиты"
+      },
+      "Self": "https://tourism.api.opendatahub.com/v1/Region/D2633A21C24E11D18F1B006097B8970B"
+    },
+    "DistrictInfo": {
+      "Id": "1F2D6C32749344B99EB4404835E48F7E",
+      "Name": {
+        "cs": "Obereggen/Obereggen",
+        "de": "Obereggen",
+        "en": "Obereggen/Obereggen",
+        "fr": "Obereggen/Obereggen",
+        "it": "Obereggen",
+        "nl": "Obereggen/Obereggen",
+        "pl": "Obereggen/Obereggen",
+        "ru": "Оберегген"
+      },
+      "Self": "https://tourism.api.opendatahub.com/v1/District/1F2D6C32749344B99EB4404835E48F7E"
+    },
+    "MunicipalityInfo": {
+      "Id": "7D76788DFB264AE6A8FF8F4A064ADDE4",
+      "Name": {
+        "cs": "Deutschnofen/Nova Ponente",
+        "de": "Deutschnofen",
+        "en": "Deutschnofen/Nova Ponente",
+        "fr": "Deutschnofen/Nova Ponente",
+        "it": "Nova Ponente",
+        "nl": "Deutschnofen/Nova Ponente",
+        "pl": "Deutschnofen/Nova Ponente",
+        "ru": "Дойчнофен/Nova Ponente"
+      },
+      "Self": "https://tourism.api.opendatahub.com/v1/Municipality/7D76788DFB264AE6A8FF8F4A064ADDE4"
+    }
+  },
+  "MasterPoiIds": null,
+  "AltitudeSumUp": null,
+  "BikeTransport": false,
+  "CategoryCodes": null,
+  "LiftAvailable": null,
+  "DistanceLength": 271,
+  "RelatedContent": null,
+  "SyncUpdateMode": "Full",
+  "AltitudeSumDown": null,
+  "HasFreeEntrance": null,
+  "OutdooractiveID": null,
+  "CapacityCeremony": null,
+  "CopyrightChecked": null,
+  "DistanceDuration": 0.1,
+  "AdditionalContact": null,
+  "OperationSchedule": [
+    {
+      "Stop": "2026-04-12T00:00:00",
+      "Type": "1",
+      "Start": "2025-11-28T00:00:00",
+      "OperationScheduleTime": [
+        {
+          "End": "16:30:00",
+          "Start": "08:30:00",
+          "State": 0,
+          "Friday": true,
+          "Monday": true,
+          "Sunday": true,
+          "Tuesday": true,
+          "Saturday": true,
+          "Thursday": true,
+          "Timecode": 1,
+          "Thuresday": true,
+          "Wednesday": true
+        }
+      ],
+      "OperationscheduleName": {
+        "de": "Wintersaison",
+        "en": "winterseason",
+        "it": "stagioneinvernale"
+      }
+    }
+  ],
+  "AdditionalPoiInfos": {
+    "de": {
+      "Novelty": "",
+      "PoiType": null,
+      "SubType": null,
+      "Language": "de",
+      "MainType": null,
+      "Categories": ["Aufstiegsanlagen"]
+    },
+    "en": {
+      "Novelty": "",
+      "PoiType": null,
+      "SubType": null,
+      "Language": "en",
+      "MainType": null,
+      "Categories": ["Lifts"]
+    },
+    "it": {
+      "Novelty": "",
+      "PoiType": null,
+      "SubType": null,
+      "Language": "it",
+      "MainType": null,
+      "Categories": ["Impianti di risalita"]
+    }
+  },
+  "AltitudeDifference": 433,
+  "MaxSeatingCapacity": null,
+  "AltitudeLowestPoint": 1732,
+  "ODHActivityPoiTypes": [],
+  "SyncSourceInterface": "dssliftbase",
+  "AdditionalProperties": {},
+  "AltitudeHighestPoint": 2165,
+  "TourismorganizationId": "522822C751CA11D18F1400A02427D15E",
+  "OutdooractiveElevationID": null
+}
