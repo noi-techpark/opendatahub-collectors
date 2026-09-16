@@ -45,6 +45,8 @@ steps:
             start: '{{ now | dateModify "-1d" | date "2006-01-02" }}'
             end: '{{ now | dateModify "+1y" | date "2006-01-02" }}'
             includeBookedSpaces: true
+            venueIds:
+              - "venue-1-A"
             roomIds:
               - '{{ .room.id }}'
 
