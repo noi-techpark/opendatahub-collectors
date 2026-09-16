@@ -26,19 +26,7 @@ services:
       - bdp
     networks:
       - ingestion
-    environment:
-      - MQ_URI=${MQ_URI}
-      - MQ_CLIENT=${MQ_CLIENT}
-      - MQ_EXCHANGE=${MQ_EXCHANGE}
-      - MQ_QUEUE=${MQ_QUEUE}
-      - MQ_KEY=${MQ_KEY}
-      - ODH_VENUE_API=${ODH_VENUE_API}
-      - ODH_VENUE_NOI_ID=${ODH_VENUE_NOI_ID}
-      - ODH_VENUE_EURAC_ID=${ODH_VENUE_EURAC_ID}
-      - SKIP_SSL_VERIFY=${SKIP_SSL_VERIFY}
-      - INSECURE_SKIP_VERIFY=${INSECURE_SKIP_VERIFY}
-      - SERVICE_NAME=${SERVICE_NAME}
-      - LOG_LEVEL=${LOG_LEVEL}
+
 
 volumes:
   pkg:

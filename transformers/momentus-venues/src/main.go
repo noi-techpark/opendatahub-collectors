@@ -17,11 +17,14 @@ import (
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
 	"github.com/noi-techpark/opendatahub-go-sdk/tel"
+	"github.com/noi-techpark/opendatahub-go-sdk/qmill"
+	"github.com/ThreeDotsLabs/watermill"
 	odhmodel "opendatahub.com/momentus-venues/odh-content-model"
 )
 
 var env struct {
 	tr.Env
+	Provider                 string `envconfig:"PROVIDER"`
 	VenueMapping             string `envconfig:"VENUE_MAPPING" default:"{\"NOI TECHPARK\":\"urn:venue:noi:6b3f0a14-3c5b-5d09-81f3-3ebe5b7885ea\",\"EURAC RESEARCH HQ\":\"urn:venue:eurac:df155f71-5cea-5a29-9ebc-213fad6ac1eb\"}"`
 	OdhCoreUrl               string `envconfig:"ODH_CORE_URL"`
 	OdhCoreTokenUrl          string `envconfig:"ODH_CORE_TOKEN_URL"`
@@ -60,16 +63,38 @@ func main() {
 		venueMapping:  venueMap,
 	}
 
-	listener := tr.NewTr[string](context.Background(), env.Env)
-	err = listener.Start(context.Background(), func(ctx context.Context, r *rdb.Raw[string]) error {
+	sub, err := qmill.NewSubscriberQmill(context.Background(), env.MQ_URI, env.MQ_CLIENT,
+		qmill.WithQueue(env.MQ_QUEUE, true),
+		qmill.WithBind(env.MQ_EXCHANGE, env.MQ_KEY),
+		qmill.WithLogger(watermill.NewSlogLogger(slog.Default())),
+	)
+	ms.FailOnError(context.Background(), err, "failed to initialize qmill subscriber")
+
+	for msg := range sub.Sub() {
+		ctx := msg.Context()
+		var r rdb.Raw[string]
+		if err := json.Unmarshal(msg.Payload, &r); err != nil {
+			slog.Error("Failed to unmarshal raw venue message", "err", err)
+			msg.Ack()
+			continue
+		}
+
+		if r.Provider != env.Provider {
+			slog.Debug("Skipping message from different provider", "provider", r.Provider, "expected", env.Provider)
+			msg.Ack()
+			continue
+		}
+
 		if r.Rawdata == "[]" {
 			slog.Debug("Received empty array payload (end of stream), skipping")
-			return nil
+			msg.Ack()
+			continue
 		}
 		var rooms []odhmodel.MomentusRoom
 		if err := json.Unmarshal([]byte(r.Rawdata), &rooms); err != nil {
-			slog.Error("Failed to unmarshal raw venue string", "err", err, "rawdata", r.Rawdata)
-			return err
+			slog.Error("Failed to unmarshal raw venue string (likely wrong payload type)", "err", err)
+			msg.Ack()
+			continue
 		}
 		
 		// Group rooms by venue
@@ -112,6 +137,7 @@ func main() {
 			}
 		}
 
+		var firstErr error
 		for venueID, groupedRooms := range roomsByVenue {
 			entry, ok := venueCache.Get(venueID)
 			if !ok {
@@ -140,6 +166,9 @@ func main() {
 			hash, changed, hashErr := venueCache.HasChanged(venueID, venueMap)
 			if hashErr != nil {
 				slog.Error("Failed to hash venue map", "err", hashErr, "venueID", venueID)
+				if firstErr == nil {
+					firstErr = hashErr
+				}
 				continue
 			}
 
@@ -151,14 +180,22 @@ func main() {
 			err := t.contentClient.Put(ctx, "Venue", venueLinked.Id, &venueMap)
 			if err != nil {
 				slog.Error("Failed to push Venue to ODH Core API", "err", err, "venueID", venueLinked.Id)
+				if firstErr == nil {
+					firstErr = err
+				}
 				continue
 			}
 
 			slog.Info("Successfully processed grouped rooms and pushed to Core", "venueID", venueLinked.Id, "roomCount", len(groupedRooms))
 			venueCache.Set(venueID, venueMap, hash)
 		}
-		return nil
-	})
+		
+		if firstErr == nil {
+			msg.Ack()
+		} else {
+			msg.Nack()
+		}
+	}
 
 	if err != nil {
 		slog.Error("error while listening to queue", "err", err)
