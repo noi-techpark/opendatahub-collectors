@@ -25,6 +25,7 @@ import (
 
 var env struct {
 	tr.Env
+	Provider                 string `envconfig:"PROVIDER"`
 	VenueMapping             string `envconfig:"VENUE_MAPPING" default:"{\"NOI TECHPARK\":\"urn:venue:noi:6b3f0a14-3c5b-5d09-81f3-3ebe5b7885ea\",\"EURAC RESEARCH HQ\":\"urn:venue:eurac:df155f71-5cea-5a29-9ebc-213fad6ac1eb\"}"`
 	OdhCoreUrl               string `envconfig:"ODH_CORE_URL"`
 	OdhCoreTokenUrl          string `envconfig:"ODH_CORE_TOKEN_URL"`
@@ -105,6 +106,12 @@ func main() {
 			continue
 		}
 
+		if rawMsg.Provider != env.Provider {
+			slog.Debug("Skipping message from different provider", "provider", rawMsg.Provider, "expected", env.Provider)
+			msg.Ack()
+			continue
+		}
+
 		if rawMsg.Rawdata == "[]" {
 			slog.Debug("Received empty array payload (end of stream), skipping")
 			msg.Ack()
@@ -124,11 +131,26 @@ func main() {
 			continue
 		}
 
-		// Attempt to unmarshal as an array first (which is what the crawler currently sends)
-		var events []MomentusEvent
+		// Attempt to unmarshal as a raw array first, flattening any nested arrays
+		var rawArray []json.RawMessage
 		processedIDs := make(map[string]bool)
 
-		if err := json.Unmarshal([]byte(rawMsg.Rawdata), &events); err == nil {
+		if err := json.Unmarshal([]byte(rawMsg.Rawdata), &rawArray); err == nil {
+			var events []MomentusEvent
+			for _, raw := range rawArray {
+				var e MomentusEvent
+				if err := json.Unmarshal(raw, &e); err == nil && e.Id != "" {
+					events = append(events, e)
+				} else {
+					var nested []MomentusEvent
+					if err := json.Unmarshal(raw, &nested); err == nil {
+						events = append(events, nested...)
+					}
+				}
+			}
+
+			slog.Info("Flattened events", "count", len(events))
+			
 			var firstErr error
 			for _, event := range events {
 				if event.Id != "" {
@@ -147,12 +169,14 @@ func main() {
 				msg.Nack()
 			}
 			continue
+		} else {
+			slog.Debug("Failed to unmarshal as raw array (falling back to single object)", "err", err)
 		}
 
 		// Fallback to unmarshal as a single event
 		var event MomentusEvent
 		if err := json.Unmarshal([]byte(rawMsg.Rawdata), &event); err != nil {
-			slog.Error("Failed to unmarshal raw event string", "err", err, "rawdata", rawMsg.Rawdata)
+			slog.Error("Failed to unmarshal raw event string (likely wrong payload type)", "err", err)
 			msg.Nack()
 			continue
 		}

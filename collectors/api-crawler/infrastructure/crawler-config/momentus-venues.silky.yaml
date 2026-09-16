@@ -1,5 +1,5 @@
 options:
-  streamRootArray: true
+  stream: false
 
 rootContext: []
 
