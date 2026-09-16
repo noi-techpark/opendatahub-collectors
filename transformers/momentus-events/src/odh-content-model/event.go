@@ -12,9 +12,9 @@ type EventLinked struct {
 	ClassificationRID     string                            `json:"ClassificationRID,omitempty"`
 	ContactInfos          map[string]ContactInfos           `json:"ContactInfos,omitempty"`
 	DateBegin             string                            `json:"DateBegin,omitempty"`
-	DateBeginUTC          int64                             `json:"DateBeginUTC,omitempty"`
+	DateBeginUTC          float64                           `json:"DateBeginUTC,omitempty"`
 	DateEnd               string                            `json:"DateEnd,omitempty"`
-	DateEndUTC            int64                             `json:"DateEndUTC,omitempty"`
+	DateEndUTC            float64                           `json:"DateEndUTC,omitempty"`
 	Detail                map[string]Detail                 `json:"Detail,omitempty"`
 	DistanceInfo          map[string]any                    `json:"DistanceInfo"`
 	DistrictId            string                            `json:"DistrictId,omitempty"`

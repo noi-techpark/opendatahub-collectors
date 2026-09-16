@@ -13,10 +13,12 @@ import (
 	"sync"
 	"time"
 
+	"github.com/ThreeDotsLabs/watermill"
 	"github.com/noi-techpark/opendatahub-go-sdk/clib"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
+	"github.com/noi-techpark/opendatahub-go-sdk/qmill"
 	"github.com/noi-techpark/opendatahub-go-sdk/tel"
 	odhmodel "opendatahub.com/momentus-events/odh-content-model"
 )
@@ -61,7 +63,7 @@ func (t *Transformer) getVenues(ctx context.Context) []*ODHVenue {
 
 func main() {
 	ms.InitWithEnv(context.Background(), "", &env)
-	slog.Info("Starting Momentus Events Transformer...")
+	slog.Info("Starting Momentus Events Transformer...", "MQ_URI", env.MQ_URI)
 
 	defer tel.FlushOnPanic()
 
@@ -85,11 +87,28 @@ func main() {
 		venueMapping:  venueMap,
 	}
 
-	listener := tr.NewTr[string](context.Background(), env.Env)
-	err = listener.Start(context.Background(), func(ctx context.Context, r *rdb.Raw[string]) error {
-		if r.Rawdata == "[]" {
+	sub, err := qmill.NewSubscriberQmill(context.Background(), env.MQ_URI, env.MQ_CLIENT,
+		qmill.WithQueue(env.MQ_QUEUE, true),
+		qmill.WithBind(env.MQ_EXCHANGE, env.MQ_KEY),
+		qmill.WithNoRequeueOnNack(true),
+		qmill.WithLogger(watermill.NewSlogLogger(slog.Default())),
+	)
+	ms.FailOnError(context.Background(), err, "failed to initialize qmill subscriber")
+
+	for msg := range sub.Sub() {
+		ctx := msg.Context()
+
+		var rawMsg rdb.Raw[string]
+		if err := json.Unmarshal(msg.Payload, &rawMsg); err != nil {
+			slog.Error("Failed to unmarshal Raw message", "err", err)
+			msg.Nack()
+			continue
+		}
+
+		if rawMsg.Rawdata == "[]" {
 			slog.Debug("Received empty array payload (end of stream), skipping")
-			return nil
+			msg.Ack()
+			continue
 		}
 		
 		eventCache, err := clib.LoadExisting(ctx, t.contentClient, clib.LoadConfig[odhmodel.EventLinked]{
@@ -101,35 +120,84 @@ func main() {
 		})
 		if err != nil {
 			slog.Error("Failed to load existing events cache", "err", err)
-			return err
+			msg.Nack()
+			continue
 		}
 
 		// Attempt to unmarshal as an array first (which is what the crawler currently sends)
 		var events []MomentusEvent
-		if err := json.Unmarshal([]byte(r.Rawdata), &events); err == nil {
+		processedIDs := make(map[string]bool)
+
+		if err := json.Unmarshal([]byte(rawMsg.Rawdata), &events); err == nil {
 			var firstErr error
 			for _, event := range events {
+				if event.Id != "" {
+					processedIDs["urn:event:momentus:"+event.Id] = true
+				}
 				err := processEvent(ctx, t, event, eventCache)
 				if err != nil && firstErr == nil {
 					firstErr = err
 				}
 			}
-			return firstErr
+			
+			if firstErr == nil {
+				deactivateMissingEvents(ctx, t, eventCache, processedIDs)
+				msg.Ack()
+			} else {
+				msg.Nack()
+			}
+			continue
 		}
 
 		// Fallback to unmarshal as a single event
 		var event MomentusEvent
-		if err := json.Unmarshal([]byte(r.Rawdata), &event); err != nil {
-			slog.Error("Failed to unmarshal raw event string", "err", err, "rawdata", r.Rawdata)
-			return err
+		if err := json.Unmarshal([]byte(rawMsg.Rawdata), &event); err != nil {
+			slog.Error("Failed to unmarshal raw event string", "err", err, "rawdata", rawMsg.Rawdata)
+			msg.Nack()
+			continue
 		}
 		
-		return processEvent(ctx, t, event, eventCache)
-	})
+		if event.Id != "" {
+			processedIDs["urn:event:momentus:"+event.Id] = true
+		}
+		err = processEvent(ctx, t, event, eventCache)
+		if err == nil {
+			deactivateMissingEvents(ctx, t, eventCache, processedIDs)
+			msg.Ack()
+		} else {
+			msg.Nack()
+		}
+	}
 
 	if err != nil {
 		slog.Error("error while listening to queue", "err", err)
 		os.Exit(1)
+	}
+}
+
+func deactivateMissingEvents(ctx context.Context, t *Transformer, eventCache *clib.Cache[odhmodel.EventLinked], processedIDs map[string]bool) {
+	slog.Info("Running deactivation loop for missing events")
+	for id, entry := range eventCache.Entries() {
+		if !processedIDs[id] && entry.Entity.Active {
+			slog.Info("Deactivating event no longer present in payload", "eventID", id)
+			
+			eventLinked := entry.Entity
+			eventLinked.Active = false
+			eventLinked.LastChange = time.Now().Format(time.RFC3339)
+			
+			err := t.contentClient.Put(ctx, "Event", eventLinked.Id, &eventLinked)
+			if err != nil {
+				slog.Debug("Put failed during deactivation, attempting Post as fallback", "err", err, "eventID", eventLinked.Id)
+				err = t.contentClient.Post(ctx, "Event", map[string]string{"generateid": "false"}, &eventLinked)
+				if err != nil {
+					slog.Error("Failed to deactivate Event in ODH Core API", "err", err, "eventID", eventLinked.Id)
+				} else {
+					slog.Info("Successfully deactivated event (Post)", "eventID", eventLinked.Id)
+				}
+			} else {
+				slog.Info("Successfully deactivated event (Put)", "eventID", eventLinked.Id)
+			}
+		}
 	}
 }
 
@@ -387,21 +455,25 @@ func buildDetailFromFunctions(functions []MomentusFunction, description string, 
 		}
 	}
 
-	// Restore existing BaseTexts from the base event if they are not empty
+	// Restore existing BaseTexts, Titles, and SubHeaders from the base event if they are not empty
 	if base != nil && base.Detail != nil {
 		for lang, baseDetail := range base.Detail {
-			if baseDetail.BaseText != "" {
-				d, ok := details[lang]
-				if ok {
-					d.BaseText = baseDetail.BaseText
-					details[lang] = d
-				} else {
-					details[lang] = odhmodel.Detail{
-						Language: lang,
-						BaseText: baseDetail.BaseText,
-					}
-				}
+			d, ok := details[lang]
+			if !ok {
+				d = odhmodel.Detail{Language: lang}
 			}
+			
+			if baseDetail.BaseText != "" && d.BaseText == "" {
+				d.BaseText = baseDetail.BaseText
+			}
+			if baseDetail.Title != "" && d.Title == "" {
+				d.Title = baseDetail.Title
+			}
+			if baseDetail.SubHeader != "" && d.SubHeader == "" {
+				d.SubHeader = baseDetail.SubHeader
+			}
+			
+			details[lang] = d
 		}
 	}
 
