@@ -1,5 +1,4 @@
-options:
-  stream: false
+stream: false
 
 rootContext: []
 
@@ -77,7 +76,6 @@ steps:
     steps:
       - type: forEach
         name: "Fetch Event Details"
-        noopMerge: true
         path: .
         as: event
         steps:

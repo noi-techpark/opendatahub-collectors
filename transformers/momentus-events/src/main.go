@@ -64,7 +64,7 @@ func (t *Transformer) getVenues(ctx context.Context) []*ODHVenue {
 
 func main() {
 	ms.InitWithEnv(context.Background(), "", &env)
-	slog.Info("Starting Momentus Events Transformer...", "MQ_URI", env.MQ_URI)
+	slog.Info("Starting Momentus Events Transformer...")
 
 	defer tel.FlushOnPanic()
 
@@ -91,7 +91,6 @@ func main() {
 	sub, err := qmill.NewSubscriberQmill(context.Background(), env.MQ_URI, env.MQ_CLIENT,
 		qmill.WithQueue(env.MQ_QUEUE, true),
 		qmill.WithBind(env.MQ_EXCHANGE, env.MQ_KEY),
-		qmill.WithNoRequeueOnNack(true),
 		qmill.WithLogger(watermill.NewSlogLogger(slog.Default())),
 	)
 	ms.FailOnError(context.Background(), err, "failed to initialize qmill subscriber")
@@ -102,7 +101,7 @@ func main() {
 		var rawMsg rdb.Raw[string]
 		if err := json.Unmarshal(msg.Payload, &rawMsg); err != nil {
 			slog.Error("Failed to unmarshal Raw message", "err", err)
-			msg.Nack()
+			msg.Ack()
 			continue
 		}
 
@@ -113,9 +112,9 @@ func main() {
 		}
 
 		if rawMsg.Rawdata == "[]" {
-			slog.Debug("Received empty array payload (end of stream), skipping")
-			msg.Ack()
-			continue
+			slog.Info("Received empty array payload, deactivating all events")
+			// We still need to process this as a full authoritative snapshot (which happens to be empty)
+			// so we continue to cache loading and deactivation.
 		}
 		
 		eventCache, err := clib.LoadExisting(ctx, t.contentClient, clib.LoadConfig[odhmodel.EventLinked]{
@@ -137,6 +136,7 @@ func main() {
 
 		if err := json.Unmarshal([]byte(rawMsg.Rawdata), &rawArray); err == nil {
 			var events []MomentusEvent
+			hasMalformed := false
 			for _, raw := range rawArray {
 				var e MomentusEvent
 				if err := json.Unmarshal(raw, &e); err == nil && e.Id != "" {
@@ -145,8 +145,17 @@ func main() {
 					var nested []MomentusEvent
 					if err := json.Unmarshal(raw, &nested); err == nil {
 						events = append(events, nested...)
+					} else {
+						slog.Error("Failed to parse element in snapshot array", "err", err)
+						hasMalformed = true
 					}
 				}
+			}
+
+			if hasMalformed {
+				slog.Error("Snapshot contains malformed elements; rejecting to avoid incorrect deactivations")
+				msg.Ack() // Reject permanently since payload is fundamentally malformed
+				continue
 			}
 
 			slog.Info("Flattened events", "count", len(events))
@@ -163,8 +172,11 @@ func main() {
 			}
 			
 			if firstErr == nil {
-				deactivateMissingEvents(ctx, t, eventCache, processedIDs)
-				msg.Ack()
+				if err := deactivateMissingEvents(ctx, t, eventCache, processedIDs); err != nil {
+					msg.Nack()
+				} else {
+					msg.Ack()
+				}
 			} else {
 				msg.Nack()
 			}
@@ -177,7 +189,7 @@ func main() {
 		var event MomentusEvent
 		if err := json.Unmarshal([]byte(rawMsg.Rawdata), &event); err != nil {
 			slog.Error("Failed to unmarshal raw event string (likely wrong payload type)", "err", err)
-			msg.Nack()
+			msg.Ack()
 			continue
 		}
 		
@@ -186,7 +198,7 @@ func main() {
 		}
 		err = processEvent(ctx, t, event, eventCache)
 		if err == nil {
-			deactivateMissingEvents(ctx, t, eventCache, processedIDs)
+			// DO NOT call deactivateMissingEvents for a single event update payload
 			msg.Ack()
 		} else {
 			msg.Nack()
@@ -199,14 +211,16 @@ func main() {
 	}
 }
 
-func deactivateMissingEvents(ctx context.Context, t *Transformer, eventCache *clib.Cache[odhmodel.EventLinked], processedIDs map[string]bool) {
+func deactivateMissingEvents(ctx context.Context, t *Transformer, eventCache *clib.Cache[odhmodel.EventLinked], processedIDs map[string]bool) error {
 	slog.Info("Running deactivation loop for missing events")
+	var firstErr error
 	for id, entry := range eventCache.Entries() {
 		if !processedIDs[id] && entry.Entity.Active {
 			slog.Info("Deactivating event no longer present in payload", "eventID", id)
 			
 			eventLinked := entry.Entity
 			eventLinked.Active = false
+			eventLinked.PublishedOn = []string{}
 			eventLinked.LastChange = time.Now().Format(time.RFC3339)
 			
 			err := t.contentClient.Put(ctx, "Event", eventLinked.Id, &eventLinked)
@@ -215,6 +229,9 @@ func deactivateMissingEvents(ctx context.Context, t *Transformer, eventCache *cl
 				err = t.contentClient.Post(ctx, "Event", map[string]string{"generateid": "false"}, &eventLinked)
 				if err != nil {
 					slog.Error("Failed to deactivate Event in ODH Core API", "err", err, "eventID", eventLinked.Id)
+					if firstErr == nil {
+						firstErr = err
+					}
 				} else {
 					slog.Info("Successfully deactivated event (Post)", "eventID", eventLinked.Id)
 				}
@@ -223,6 +240,7 @@ func deactivateMissingEvents(ctx context.Context, t *Transformer, eventCache *cl
 			}
 		}
 	}
+	return firstErr
 }
 
 func processEvent(ctx context.Context, t *Transformer, event MomentusEvent, eventCache *clib.Cache[odhmodel.EventLinked]) error {

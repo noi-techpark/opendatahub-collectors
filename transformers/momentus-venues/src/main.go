@@ -66,7 +66,6 @@ func main() {
 	sub, err := qmill.NewSubscriberQmill(context.Background(), env.MQ_URI, env.MQ_CLIENT,
 		qmill.WithQueue(env.MQ_QUEUE, true),
 		qmill.WithBind(env.MQ_EXCHANGE, env.MQ_KEY),
-		qmill.WithNoRequeueOnNack(true),
 		qmill.WithLogger(watermill.NewSlogLogger(slog.Default())),
 	)
 	ms.FailOnError(context.Background(), err, "failed to initialize qmill subscriber")
@@ -76,7 +75,7 @@ func main() {
 		var r rdb.Raw[string]
 		if err := json.Unmarshal(msg.Payload, &r); err != nil {
 			slog.Error("Failed to unmarshal raw venue message", "err", err)
-			msg.Nack()
+			msg.Ack()
 			continue
 		}
 
@@ -94,7 +93,7 @@ func main() {
 		var rooms []odhmodel.MomentusRoom
 		if err := json.Unmarshal([]byte(r.Rawdata), &rooms); err != nil {
 			slog.Error("Failed to unmarshal raw venue string (likely wrong payload type)", "err", err)
-			msg.Nack()
+			msg.Ack()
 			continue
 		}
 		
@@ -138,6 +137,7 @@ func main() {
 			}
 		}
 
+		var firstErr error
 		for venueID, groupedRooms := range roomsByVenue {
 			entry, ok := venueCache.Get(venueID)
 			if !ok {
@@ -166,6 +166,9 @@ func main() {
 			hash, changed, hashErr := venueCache.HasChanged(venueID, venueMap)
 			if hashErr != nil {
 				slog.Error("Failed to hash venue map", "err", hashErr, "venueID", venueID)
+				if firstErr == nil {
+					firstErr = hashErr
+				}
 				continue
 			}
 
@@ -177,13 +180,21 @@ func main() {
 			err := t.contentClient.Put(ctx, "Venue", venueLinked.Id, &venueMap)
 			if err != nil {
 				slog.Error("Failed to push Venue to ODH Core API", "err", err, "venueID", venueLinked.Id)
+				if firstErr == nil {
+					firstErr = err
+				}
 				continue
 			}
 
 			slog.Info("Successfully processed grouped rooms and pushed to Core", "venueID", venueLinked.Id, "roomCount", len(groupedRooms))
 			venueCache.Set(venueID, venueMap, hash)
 		}
-		msg.Ack()
+		
+		if firstErr == nil {
+			msg.Ack()
+		} else {
+			msg.Nack()
+		}
 	}
 
 	if err != nil {
