@@ -3,11 +3,10 @@ module opendatahub.com/tr-parking-skidata
 go 1.25.0
 
 require (
-	github.com/gocarina/gocsv v0.0.0-20240520201108-78e41c74b4b1
 	github.com/noi-techpark/go-bdp-client v1.5.2
 	github.com/noi-techpark/go-timeseries-client v0.0.0-20250822084439-8aae699d91e0
 	github.com/noi-techpark/opendatahub-go-sdk/clib v0.0.1
-	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.1.1-0.20260909090646-7c0a9f0b76d9
+	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.1.1
 	github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0
 	github.com/noi-techpark/opendatahub-go-sdk/testsuite v1.1.1
 	github.com/stretchr/testify v1.10.0
