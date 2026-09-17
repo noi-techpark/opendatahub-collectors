@@ -134,7 +134,18 @@ func main() {
 		var rawArray []json.RawMessage
 		processedIDs := make(map[string]bool)
 
-		if err := json.Unmarshal([]byte(rawMsg.Rawdata), &rawArray); err == nil {
+		unmarshalErr := json.Unmarshal([]byte(rawMsg.Rawdata), &rawArray)
+		if unmarshalErr != nil {
+			var wrapper struct {
+				Rooms []json.RawMessage `json:"rooms"`
+			}
+			if errWrap := json.Unmarshal([]byte(rawMsg.Rawdata), &wrapper); errWrap == nil && wrapper.Rooms != nil {
+				rawArray = wrapper.Rooms
+				unmarshalErr = nil
+			}
+		}
+
+		if unmarshalErr == nil {
 			var events []MomentusEvent
 			hasMalformed := false
 			for _, raw := range rawArray {
@@ -182,7 +193,7 @@ func main() {
 			}
 			continue
 		} else {
-			slog.Debug("Failed to unmarshal as raw array (falling back to single object)", "err", err)
+			slog.Debug("Failed to unmarshal as raw array (falling back to single object)", "err", unmarshalErr)
 		}
 
 		// Fallback to unmarshal as a single event
