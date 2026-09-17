@@ -12,8 +12,7 @@ env:
   MQ_QUEUE: events.momentus
   MQ_EXCHANGE: routed
   MQ_KEY: events.momentus
-  MQ_CLIENT: tr-momentus-events-prod
-  PROVIDER: events/momentus
+  MQ_CLIENT: tr-momentus-events-prod  
 
   RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
 

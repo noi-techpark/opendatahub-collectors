@@ -13,8 +13,7 @@ env:
   MQ_EXCHANGE: routed
   MQ_KEY: venues.momentus
   MQ_CLIENT: tr-momentus-venues-prod
-  PROVIDER: venues/momentus
-
+  
   RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
 
   ODH_VENUE_API: https://tourism.api.opendatahub.com/v1
