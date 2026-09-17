@@ -1,0 +1,1476 @@
+{
+  "0404467": {
+    "gps": {
+      "lat": 46.71602,
+      "lon": 11.6521
+    },
+    "municipality": "Bressanone - Brixen",
+    "names": {
+      "de": "Parkplatz Dantestrasse",
+      "en": "Parking Dante Street",
+      "it": "Parcheggio Via Dante"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "covered",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Via Dante"
+  },
+  "0404467_0": {
+    "gps": {
+      "lat": 46.71602,
+      "lon": 11.6521
+    },
+    "municipality": "Bressanone - Brixen",
+    "names": {
+      "de": "Parkplatz Dantestrasse",
+      "en": "Parking Dante Street",
+      "it": "Parcheggio Via Dante"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "covered",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Via Dante"
+  },
+  "0406009": {
+    "gps": {
+      "lat": 46.50013,
+      "lon": 11.36476
+    },
+    "municipality": "Bolzano - Bozen",
+    "names": {
+      "de": "Parkplatz Ribo Skyline",
+      "en": "Parking Ribo Skyline",
+      "it": "Parcheggio Ribo Skyline"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "multistorey",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Ribo Skyline"
+  },
+  "0406009_0": {
+    "gps": {
+      "lat": 46.50013,
+      "lon": 11.36476
+    },
+    "municipality": "Bolzano - Bozen",
+    "names": {
+      "de": "Parkplatz Ribo Skyline",
+      "en": "Parking Ribo Skyline",
+      "it": "Parcheggio Ribo Skyline"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "multistorey",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Ribo Skyline"
+  },
+  "0600015": {
+    "gps": {
+      "lat": 46.49067,
+      "lon": 11.33982
+    },
+    "municipality": "Bolzano - Bozen",
+    "names": {
+      "de": "Demo",
+      "en": "Demo",
+      "it": "Demo"
+    },
+    "netex": {
+      "charging": true,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Demo"
+  },
+  "0600015_0": {
+    "gps": {
+      "lat": 46.49067,
+      "lon": 11.33982
+    },
+    "municipality": "Bolzano - Bozen",
+    "names": {
+      "de": "Demo 1",
+      "en": "Demo 1",
+      "it": "Demo 1"
+    },
+    "netex": {
+      "charging": true,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Demo 1"
+  },
+  "0600056": {
+    "gps": {
+      "lat": 46.4961991501228,
+      "lon": 11.3392009458585
+    },
+    "municipality": "Bolzano - Bozen",
+    "names": {
+      "de": "Parkplatz Habitat Adrian",
+      "en": "Parking Habitat Adrian",
+      "it": "Parcheggio Habitat Adriano"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Habitat Adriano"
+  },
+  "0600056_0": {
+    "gps": {
+      "lat": 46.4961991501228,
+      "lon": 11.3392009458585
+    },
+    "municipality": "Bolzano - Bozen",
+    "names": {
+      "de": "Parkplatz Habitat Adrian",
+      "en": "Parking Habitat Adrian",
+      "it": "Parcheggio Habitat Adriano"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Habitat Adriano"
+  },
+  "0600056_1": {
+    "gps": {
+      "lat": 46.498401,
+      "lon": 11.338456
+    },
+    "municipality": "Bolzano - Bozen",
+    "names": {
+      "de": "Parkplatz Direzional",
+      "en": "Parking Direzional ",
+      "it": "Parcheggio Direzional"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Direzional"
+  },
+  "0600056_2": {
+    "gps": {
+      "lat": 46.498401,
+      "lon": 11.338456
+    },
+    "municipality": "Bolzano - Bozen",
+    "names": {
+      "de": "Parkplatz Centro Europa 2",
+      "en": "Parking Centro Europa 2",
+      "it": "Parcheggio Centro Europa 2"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Centro Europa 2"
+  },
+  "0600858": {
+    "gps": {
+      "lat": 46.5756462588735,
+      "lon": 11.6693330913345
+    },
+    "municipality": "Ortisei - St. Ulrich",
+    "names": {
+      "de": "Parkplatz Urtijei - St. Ulrich Bahnhof",
+      "en": "Parking Urtijei - St. Ulrich Bahnhof",
+      "it": "Parcheggio Urtijei - Stazione di Ortisei"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Urtijei - Stazione di Ortisei"
+  },
+  "0600858_0": {
+    "gps": {
+      "lat": 46.5756462588735,
+      "lon": 11.6693330913345
+    },
+    "municipality": "Ortisei - St. Ulrich",
+    "names": {
+      "de": "Parkplatz Urtijei - St. Ulrich Bahnhof",
+      "en": "Parking Urtijei - St. Ulrich Bahnhof",
+      "it": "Parcheggio Urtijei - Stazione di Ortisei"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Urtijei - Stazione di Ortisei"
+  },
+  "0600858_1": {
+    "gps": {
+      "lat": 46.5756462588735,
+      "lon": 11.6693330913345
+    },
+    "municipality": "Ortisei - St. Ulrich",
+    "names": {
+      "de": "Parkplatz Urtijei - St. Ulrich Bahnhof Privat",
+      "en": "Parking Urtijei - St. Ulrich Bahnhof Private",
+      "it": "Parcheggio Urtijei - Stazione di Ortisei Privato"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Urtijei - Stazione di Ortisei Privato"
+  },
+  "0601336": {
+    "gps": {
+      "lat": 46.7967,
+      "lon": 11.9374
+    },
+    "municipality": "Brunico - Bruneck",
+    "names": {
+      "de": "Parkpl\u00e4tze Bruneck",
+      "en": "Parking Bruneck",
+      "it": "Parcheggi Brunico"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggi Brunico"
+  },
+  "0601336_0": {
+    "gps": {
+      "lat": 46.796646240605,
+      "lon": 11.9362327360543
+    },
+    "municipality": "Brunico - Bruneck",
+    "names": {
+      "de": "Parkplatz Zentrum",
+      "en": "Parking City Center",
+      "it": "Parcheggio Centro Citt\u00e0"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Centro Citt\u00e0"
+  },
+  "0601336_1": {
+    "gps": {
+      "lat": 46.7972153536251,
+      "lon": 11.9338589593329
+    },
+    "municipality": "Brunico - Bruneck",
+    "names": {
+      "de": "Parkplatz Nobis",
+      "en": "Parking Nobis",
+      "it": "Parcheggio Nobis"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Nobis"
+  },
+  "0601336_2": {
+    "gps": {
+      "lat": 46.7972153536251,
+      "lon": 11.9338589593329
+    },
+    "municipality": "Brunico - Bruneck",
+    "names": {
+      "de": "Parkplatz Nobis Privat",
+      "en": "Parking Nobis Private",
+      "it": "Parcheggio Nobis Privato"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Nobis Privato"
+  },
+  "0601393": {
+    "gps": {
+      "lat": 46.41276,
+      "lon": 11.246
+    },
+    "municipality": "Caldaro - Kaltern",
+    "names": {
+      "de": "Parkpl\u00e4tze Kaltern",
+      "en": "Parking Kaltern",
+      "it": "Parcheggi Caldaro"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "undefined",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggi Caldaro"
+  },
+  "0601393_0": {
+    "gps": {
+      "lat": 46.4113441420548,
+      "lon": 11.2463504282556
+    },
+    "municipality": "Caldaro - Kaltern",
+    "names": {
+      "de": "Parkplatz Trutsch (abgedeckter Bereich)",
+      "en": "Parking Trutsch (covered area)",
+      "it": "Parcheggio Trutsch (area coperta)"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "covered",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Trutsch (area coperta)"
+  },
+  "0601393_1": {
+    "gps": {
+      "lat": 46.4113441420548,
+      "lon": 11.2463504282556
+    },
+    "municipality": "Caldaro - Kaltern",
+    "names": {
+      "de": "Parkplatz Trutsch (offener Bereich)",
+      "en": "Parking Trutsch (uncovered area)",
+      "it": "Parcheggio Trutsch (area scoperta)"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Trutsch (area scoperta)"
+  },
+  "0601393_2": {
+    "gps": {
+      "lat": 46.4154334392025,
+      "lon": 11.2442175720898
+    },
+    "municipality": "Caldaro - Kaltern",
+    "names": {
+      "de": "Parkplatz Maria Theresia",
+      "en": "Parking Maria Theresia",
+      "it": "Parcheggio Maria Theresia"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Maria Theresia"
+  },
+  "0602581": {
+    "gps": {
+      "lat": 46.6729,
+      "lon": 11.15313
+    },
+    "municipality": "Merano - Meran",
+    "names": {
+      "de": "Parkpl\u00e4tze Meranarena",
+      "en": "Parking Meranarena",
+      "it": "Parcheggi Meranarena"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggi Meranarena"
+  },
+  "0602581_0": {
+    "gps": {
+      "lat": 46.6639166178188,
+      "lon": 11.1584324458103
+    },
+    "municipality": "Merano - Meran",
+    "names": {
+      "de": "Parkplatz Meranarena Tennis Camping",
+      "en": "Parking Meranarena Tennis Camping",
+      "it": "Parcheggio Meranarena Tennis Camping"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Meranarena Tennis Camping"
+  },
+  "0602581_1": {
+    "gps": {
+      "lat": 46.6595060554709,
+      "lon": 11.1537422728643
+    },
+    "municipality": "Merano - Meran",
+    "names": {
+      "de": "Parkplatz Meranarena Pferderennplatz",
+      "en": "Parking Meranarena Pferderennplatz",
+      "it": "Parcheggio Meranarena Ippodromo"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Meranarena Ippodromo"
+  },
+  "0603001": {
+    "gps": {
+      "lat": 46.5029283148253,
+      "lon": 11.3517818215059
+    },
+    "municipality": "Bolzano - Bozen",
+    "names": {
+      "de": "Parkplatz Maretsch",
+      "en": "Parking Maretsch",
+      "it": "Parcheggio Mareccio"
+    },
+    "netex": {
+      "charging": true,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Mareccio"
+  },
+  "0603001_0": {
+    "gps": {
+      "lat": 46.5029283148253,
+      "lon": 11.3517818215059
+    },
+    "municipality": "Bolzano - Bozen",
+    "names": {
+      "de": "Parkplatz Maretsch",
+      "en": "Parking Maretsch",
+      "it": "Parcheggio Mareccio"
+    },
+    "netex": {
+      "charging": true,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Mareccio"
+  },
+  "0603589": {
+    "gps": {
+      "lat": 46.7997391018076,
+      "lon": 11.9382457801183
+    },
+    "municipality": "Brunico - Bruneck",
+    "names": {
+      "de": "Parkplatz Bruneck Krankenhaus",
+      "en": "Parking Bruneck Krankenhaus",
+      "it": "Parcheggio Ospedale di Brunico"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Ospedale di Brunico"
+  },
+  "0603589_0": {
+    "gps": {
+      "lat": 46.7997391018076,
+      "lon": 11.9382457801183
+    },
+    "municipality": "Brunico - Bruneck",
+    "names": {
+      "de": "Parkplatz Bruneck Krankenhaus",
+      "en": "Parking Bruneck Krankenhaus",
+      "it": "Parcheggio Ospedale di Brunico"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Ospedale di Brunico"
+  },
+  "0604454": {
+    "gps": {
+      "lat": 46.567877423579,
+      "lon": 11.5612821714432
+    },
+    "municipality": "Castelrotto - Kastelruth",
+    "names": {
+      "de": "Parkplatz Albin Gross Zentrum Garage",
+      "en": "Parking Albin Gross Zentrum Garage",
+      "it": "Parcheggio Albin Gross Zentrum Garage"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Albin Gross Zentrum Garage"
+  },
+  "0604454_0": {
+    "gps": {
+      "lat": 46.567877423579,
+      "lon": 11.5612821714432
+    },
+    "municipality": "Castelrotto - Kastelruth",
+    "names": {
+      "de": "Parkplatz Albin Gross Zentrum Garage",
+      "en": "Parking Albin Gross Zentrum Garage",
+      "it": "Parcheggio Albin Gross Zentrum Garage"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Albin Gross Zentrum Garage"
+  },
+  "0604504": {
+    "gps": {
+      "lat": 46.566636809019,
+      "lon": 11.5595257562373
+    },
+    "municipality": "Castelrotto - Kastelruth",
+    "names": {
+      "de": "Parkplatz Centralpark - Garage Dorf",
+      "en": "Parking Centralpark - Garage Dorf",
+      "it": "Parceggio Centralpark - Garage Paese"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parceggio Centralpark - Garage Paese"
+  },
+  "0604504_0": {
+    "gps": {
+      "lat": 46.566636809019,
+      "lon": 11.5595257562373
+    },
+    "municipality": "Castelrotto - Kastelruth",
+    "names": {
+      "de": "Parkplatz Centralpark - Garage Dorf",
+      "en": "Parking Centralpark - Garage Dorf",
+      "it": "Parceggio Centralpark - Garage Paese"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parceggio Centralpark - Garage Paese"
+  },
+  "0604611": {
+    "gps": {
+      "lat": 46.864287776058,
+      "lon": 11.3088532446188
+    },
+    "municipality": "Racines - Ratschings",
+    "names": {
+      "de": "Parkpl\u00e4tze Ratschings Jaufen",
+      "en": "Parking Ratschings Jaufen",
+      "it": "Parcheggi impianti risalita Racines"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "parkingZone",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggi impianti risalita Racines"
+  },
+  "0604611_0": {
+    "gps": {
+      "lat": 46.864287776058,
+      "lon": 11.3088532446188
+    },
+    "municipality": "Racines - Ratschings",
+    "names": {
+      "de": "Parkpl\u00e4tze Ratschings Jaufen (Zone 1)",
+      "en": "Parking Ratschings Jaufen (Zone 1)",
+      "it": "Parcheggi impianti risalita Racines (zona 1)"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "parkingZone",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggi impianti risalita Racines (zona 1)"
+  },
+  "0604611_1": {
+    "gps": {
+      "lat": 46.864287776058,
+      "lon": 11.3088532446188
+    },
+    "municipality": "Racines - Ratschings",
+    "names": {
+      "de": "Parkpl\u00e4tze Ratschings Jaufen (Zone 2)",
+      "en": "Parking Ratschings Jaufen (Zone 2)",
+      "it": "Parcheggi impianti risalita Racines (zona 2)"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "parkingZone",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggi impianti risalita Racines (zona 2)"
+  },
+  "0605261": {
+    "gps": {
+      "lat": 46.5522402365192,
+      "lon": 11.7633767495807
+    },
+    "municipality": "Selva di Val Gardena - Wolkenstein in Gr\u00f6den",
+    "names": {
+      "de": "Parkplatz Chairlift Costabella Hotel Stella",
+      "en": "Parking Chairlift Costabella Hotel Stella",
+      "it": "Parcheggio Seggovia Costabella Hotel Stella"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "parkingZone",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Seggovia Costabella Hotel Stella"
+  },
+  "0605261_0": {
+    "gps": {
+      "lat": 46.5522402365192,
+      "lon": 11.7633767495807
+    },
+    "municipality": "Selva di Val Gardena - Wolkenstein in Gr\u00f6den",
+    "names": {
+      "de": "Parkplatz Chairlift Costabella Hotel Stella (Zone 1)",
+      "en": "Parking Chairlift Costabella Hotel Stella (Zone 1)",
+      "it": "Parcheggio Seggovia Costabella Hotel Stella (zona 1)"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "parkingZone",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Seggovia Costabella Hotel Stella"
+  },
+  "0605261_1": {
+    "gps": {
+      "lat": 46.5522402365192,
+      "lon": 11.7633767495807
+    },
+    "municipality": "Selva di Val Gardena - Wolkenstein in Gr\u00f6den",
+    "names": {
+      "de": "Parkplatz Chairlift Costabella Hotel Stella (Zone 2)",
+      "en": "Parking Chairlift Costabella Hotel Stella (Zone 2)",
+      "it": "Parcheggio Seggovia Costabella Hotel Stella (zona 2)"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "parkingZone",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Seggovia Costabella Hotel Stella"
+  },
+  "0607242": {
+    "gps": {
+      "lat": 46.4795666759812,
+      "lon": 11.3308001147679
+    },
+    "municipality": "Bolzano - Bozen",
+    "names": {
+      "de": "Parkplatz NOI Techpark",
+      "en": "Parking NOI Techpark",
+      "it": "Parcheggio NOI Techpark"
+    },
+    "netex": {
+      "charging": true,
+      "hazard_prohibited": true,
+      "layout": "multistorey",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio NOI Techpark"
+  },
+  "0607242_0": {
+    "gps": {
+      "lat": 46.4795666759812,
+      "lon": 11.3308001147679
+    },
+    "municipality": "Bolzano - Bozen",
+    "names": {
+      "de": "Parkplatz NOI Techpark",
+      "en": "Parking NOI Techpark",
+      "it": "Parcheggio NOI Techpark"
+    },
+    "netex": {
+      "charging": true,
+      "hazard_prohibited": true,
+      "layout": "multistorey",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio NOI Techpark"
+  },
+  "0607440": {
+    "gps": {
+      "lat": 46.71116,
+      "lon": 11.65217
+    },
+    "municipality": "Bressanone - Brixen",
+    "names": {
+      "de": "Parkpl\u00e4tze Brixen",
+      "en": "Parking Brixen",
+      "it": "Parcheggi Bressanone"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggi Bressanone"
+  },
+  "0607440_0": {
+    "gps": {
+      "lat": 46.7136332098684,
+      "lon": 11.6504764478829
+    },
+    "municipality": "Bressanone - Brixen",
+    "names": {
+      "de": "Parkplatz Mobilit\u00e4tszentrum Brixen",
+      "en": "Parking Mobilit\u00e4tszentrum Brixen",
+      "it": "Parcheggio Centro Mobilit\u00e0 Bressanone"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Centro Mobilit\u00e0 Bressanone"
+  },
+  "0607440_1": {
+    "gps": {
+      "lat": 46.7205684127695,
+      "lon": 11.6570903904947
+    },
+    "municipality": "Bressanone - Brixen",
+    "names": {
+      "de": "Parkplatz Priel",
+      "en": "Parking Priel",
+      "it": "Parcheggio Priel"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Priel"
+  },
+  "0607440_2": {
+    "gps": {
+      "lat": 46.7219292651473,
+      "lon": 11.6508966561547
+    },
+    "municipality": "Bressanone - Brixen",
+    "names": {
+      "de": "Parkplatz Rosslauf",
+      "en": "Parking Rosslauf",
+      "it": "Parcheggio Rosslauf"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Rosslauf"
+  },
+  "0607861": {
+    "gps": {
+      "lat": 46.8226778341635,
+      "lon": 10.5095065399487
+    },
+    "municipality": "Curon Venosta - Graun im Vinschgau",
+    "names": {
+      "de": "Parkplatz Sch\u00f6neben",
+      "en": "Parking Sch\u00f6neben",
+      "it": "Parcheggio Sch\u00f6neben"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "parkingZone",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Sch\u00f6neben"
+  },
+  "0607861_0": {
+    "gps": {
+      "lat": 46.8226778341635,
+      "lon": 10.5095065399487
+    },
+    "municipality": "Curon Venosta - Graun im Vinschgau",
+    "names": {
+      "de": "Parkplatz Sch\u00f6neben",
+      "en": "Parking Sch\u00f6neben",
+      "it": "Parcheggio Sch\u00f6neben"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "parkingZone",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Sch\u00f6neben"
+  },
+  "0608034": {
+    "gps": {
+      "lat": 46.9054617600371,
+      "lon": 11.4299724132561
+    },
+    "municipality": "Vipiteno - Sterzing",
+    "names": {
+      "de": "Parkplatz Seilbahn Rosskopf",
+      "en": "Parking Seilbahn Rosskopf",
+      "it": "Parcheggio Funivia Montecavallo"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "parkingZone",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Funivia Montecavallo"
+  },
+  "0608034_0": {
+    "gps": {
+      "lat": 46.9054617600371,
+      "lon": 11.4299724132561
+    },
+    "municipality": "Vipiteno - Sterzing",
+    "names": {
+      "de": "Parkplatz Seilbahn Rosskopf",
+      "en": "Parking Seilbahn Rosskopf",
+      "it": "Parcheggio Funivia Montecavallo"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "parkingZone",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Funivia Montecavallo"
+  },
+  "0608224": {
+    "gps": {
+      "lat": 46.6676144039872,
+      "lon": 11.1640178825061
+    },
+    "municipality": "Merano - Meran",
+    "names": {
+      "de": "Parkplatz Pflegeheim S.Josef Meran",
+      "en": "Parking Pflegeheim S.Josef Meran",
+      "it": "Parcheggio Casa riposo S.Josef Merano"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Casa riposo S.Josef Merano"
+  },
+  "0608224_0": {
+    "gps": {
+      "lat": 46.6676144039872,
+      "lon": 11.1640178825061
+    },
+    "municipality": "Merano - Meran",
+    "names": {
+      "de": "Parkplatz Pflegeheim S.Josef Meran",
+      "en": "Parking Pflegeheim S.Josef Meran",
+      "it": "Parcheggio Casa riposo S.Josef Merano"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Casa riposo S.Josef Merano"
+  },
+  "0608448": {
+    "gps": {
+      "lat": 46.5030418184004,
+      "lon": 11.3335372597038
+    },
+    "municipality": "Bolzano - Bozen",
+    "names": {
+      "de": "Parkplatz Hotel Berger Post Gries",
+      "en": "Parking Hotel Berger Post Gries",
+      "it": "Parcheggio Hotel Berger Post Gries"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Hotel Berger Post Gries"
+  },
+  "0608448_0": {
+    "gps": {
+      "lat": 46.5030418184004,
+      "lon": 11.3335372597038
+    },
+    "municipality": "Bolzano - Bozen",
+    "names": {
+      "de": "Parkplatz Hotel Berger Post Gries",
+      "en": "Parking Hotel Berger Post Gries",
+      "it": "Parcheggio Hotel Berger Post Gries"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Hotel Berger Post Gries"
+  },
+  "0608935": {
+    "gps": {
+      "lat": 46.6646229948925,
+      "lon": 11.2396944754261
+    },
+    "municipality": "Avelengo - Hafling",
+    "names": {
+      "de": "Parkplatz Falzeben - Merano 2000",
+      "en": "Parking Falzeben - Merano 2000",
+      "it": "Parcheggio Falzeben - Merano 2000"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "parkingZone",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Falzeben - Merano 2000"
+  },
+  "0608935_0": {
+    "gps": {
+      "lat": 46.6646229948925,
+      "lon": 11.2396944754261
+    },
+    "municipality": "Avelengo - Hafling",
+    "names": {
+      "de": "Parkplatz Falzeben - Merano 2000",
+      "en": "Parking Falzeben - Merano 2000",
+      "it": "Parcheggio Falzeben - Merano 2000"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "parkingZone",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Falzeben - Merano 2000"
+  },
+  "0609008": {
+    "gps": {
+      "lat": 46.75701,
+      "lon": 10.78257
+    },
+    "municipality": "Senales - Schnals",
+    "names": {
+      "de": "Parkpl\u00e4tze Schnals",
+      "en": "Parking Schnals",
+      "it": "Parcheggi Senales"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "parkingZone",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggi Senales"
+  },
+  "0609008_0": {
+    "gps": {
+      "lat": 46.753994841727,
+      "lon": 10.7836701766645
+    },
+    "municipality": "Senales - Schnals",
+    "names": {
+      "de": "Parkplatz Caravanpark Schnals",
+      "en": "Parking Caravanpark Schnals",
+      "it": "Parcheggio Caravanpark Senales"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "parkingZone",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Caravanpark Senales"
+  },
+  "0609008_1": {
+    "gps": {
+      "lat": 46.757591344518,
+      "lon": 10.7826286287433
+    },
+    "municipality": "Senales - Schnals",
+    "names": {
+      "de": "Parkplatz P4 Senales",
+      "en": "Parking P4 Senales",
+      "it": "Parcheggio P4 Senales"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "parkingZone",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio P4 Senales"
+  },
+  "0609420": {
+    "gps": {
+      "lat": 46.4634140554141,
+      "lon": 11.3299719263301
+    },
+    "municipality": "Bolzano - Bozen",
+    "names": {
+      "de": "Parkplatz Flughafen Bozen",
+      "en": "Parking Flughafen Bozen",
+      "it": "Parcheggio Aeroporto Bolzano"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "parkAndRide",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Aeroporto Bolzano"
+  },
+  "0609420_0": {
+    "gps": {
+      "lat": 46.4634140554141,
+      "lon": 11.3299719263301
+    },
+    "municipality": "Bolzano - Bozen",
+    "names": {
+      "de": "Parkplatz Flughafen Bozen",
+      "en": "Parking Flughafen Bozen",
+      "it": "Parcheggio Aeroporto Bolzano"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "parkAndRide",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Aeroporto Bolzano"
+  },
+  "0609420_1": {
+    "gps": {
+      "lat": 46.4634140554141,
+      "lon": 11.3299719263301
+    },
+    "municipality": "Bolzano - Bozen",
+    "names": {
+      "de": "Parkplatz Flughafen Bozen Privat",
+      "en": "Parking Flughafen Bozen Privat",
+      "it": "Parcheggio Aeroporto Bolzano Privato"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "parkAndRide",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Aeroporto Bolzano Privato"
+  },
+  "0609636": {
+    "gps": {
+      "lat": 46.6650255348354,
+      "lon": 11.0676335096125
+    },
+    "municipality": "Lagundo - Algund",
+    "names": {
+      "de": "Parkplatz Seilbahn Aschbach",
+      "en": "Parking Seilbahn Aschbach",
+      "it": "Parcheggio Funivia Aschbach"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "parkAndRide",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Funivia Aschbach"
+  },
+  "0609636_0": {
+    "gps": {
+      "lat": 46.6650255348354,
+      "lon": 11.0676335096125
+    },
+    "municipality": "Lagundo - Algund",
+    "names": {
+      "de": "Parkplatz Seilbahn Aschbach",
+      "en": "Parking Seilbahn Aschbach",
+      "it": "Parcheggio Funivia Aschbach"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "parkAndRide",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Funivia Aschbach"
+  },
+  "0609701": {
+    "gps": {
+      "lat": 46.5999481153565,
+      "lon": 11.5320658113469
+    },
+    "municipality": "Laion - Lajen",
+    "names": {
+      "de": "Parkplatz Bahnhof Waidbruck - Lajen",
+      "en": "Parking Bahnhof Waidbruck - Lajen",
+      "it": "Parcheggio Stazione Ponte Gardena - Laion"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "parkAndRide",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Stazione Ponte Gardena - Laion"
+  },
+  "0609701_0": {
+    "gps": {
+      "lat": 46.5999481153565,
+      "lon": 11.5320658113469
+    },
+    "municipality": "Laion - Lajen",
+    "names": {
+      "de": "Parkplatz Bahnhof Waidbruck - Lajen",
+      "en": "Parking Bahnhof Waidbruck - Lajen",
+      "it": "Parcheggio Stazione Ponte Gardena - Laion"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "parkAndRide",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Stazione Ponte Gardena - Laion"
+  },
+  "0609818": {
+    "gps": {
+      "lat": 46.5005269813134,
+      "lon": 11.3581556556995
+    },
+    "municipality": "Bolzano - Bozen",
+    "names": {
+      "de": "Parkplatz My Mondschein",
+      "en": "Parking My Mondschein",
+      "it": "Parcheggio My Mondschein"
+    },
+    "netex": {
+      "charging": true,
+      "hazard_prohibited": true,
+      "layout": "covered",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio My Mondschein"
+  },
+  "0609818_0": {
+    "gps": {
+      "lat": 46.5005269813134,
+      "lon": 11.3581556556995
+    },
+    "municipality": "Bolzano - Bozen",
+    "names": {
+      "de": "Parkplatz My Mondschein",
+      "en": "Parking My Mondschein",
+      "it": "Parcheggio My Mondschein"
+    },
+    "netex": {
+      "charging": true,
+      "hazard_prohibited": true,
+      "layout": "covered",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio My Mondschein"
+  },
+  "0609818_1": {
+    "gps": {
+      "lat": 46.5005269813134,
+      "lon": 11.3581556556995
+    },
+    "municipality": "Bolzano - Bozen",
+    "names": {
+      "de": "Parkplatz My Mondschein Privat",
+      "en": "Parking My Mondschein Private",
+      "it": "Parcheggio My Mondschein Privato"
+    },
+    "netex": {
+      "charging": true,
+      "hazard_prohibited": true,
+      "layout": "covered",
+      "reservation": "noReservations",
+      "surveillance": false,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio My Mondschein Privato"
+  }
+}

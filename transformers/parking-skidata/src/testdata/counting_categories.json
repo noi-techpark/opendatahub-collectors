@@ -1,0 +1,1158 @@
+{
+  "0404467": [
+    {
+      "capacity": 451,
+      "carparkId": 0,
+      "countingCategoryId": 1,
+      "freeLimit": 450,
+      "name": "Kurzparker",
+      "occupancyLimit": 451
+    },
+    {
+      "capacity": 150,
+      "carparkId": 0,
+      "countingCategoryId": 2,
+      "freeLimit": 150,
+      "name": "Dauerparker",
+      "occupancyLimit": 150
+    },
+    {
+      "capacity": 601,
+      "carparkId": 0,
+      "countingCategoryId": 3,
+      "freeLimit": 600,
+      "name": "Gesamt",
+      "occupancyLimit": 601
+    }
+  ],
+  "0406009": [
+    {
+      "capacity": 110,
+      "carparkId": 0,
+      "countingCategoryId": 1,
+      "freeLimit": 108,
+      "name": "Kurzparker",
+      "occupancyLimit": 109
+    },
+    {
+      "capacity": 110,
+      "carparkId": 0,
+      "countingCategoryId": 2,
+      "freeLimit": 9999,
+      "name": "Dauerparker",
+      "occupancyLimit": 9999
+    },
+    {
+      "capacity": 150,
+      "carparkId": 0,
+      "countingCategoryId": 3,
+      "freeLimit": 148,
+      "name": "Gesamt",
+      "occupancyLimit": 149
+    }
+  ],
+  "0600015": [
+    {
+      "capacity": 104,
+      "carparkId": 0,
+      "countingCategoryId": 1,
+      "freeLimit": 103,
+      "name": "SostaBreve",
+      "occupancyLimit": 104
+    },
+    {
+      "capacity": 141,
+      "carparkId": 0,
+      "countingCategoryId": 2,
+      "freeLimit": 140,
+      "name": "Abbonati",
+      "occupancyLimit": 141
+    },
+    {
+      "capacity": 245,
+      "carparkId": 0,
+      "countingCategoryId": 3,
+      "freeLimit": 244,
+      "name": "Totale",
+      "occupancyLimit": 245
+    }
+  ],
+  "0600056": [
+    {
+      "capacity": 572,
+      "carparkId": 0,
+      "countingCategoryId": 1,
+      "freeLimit": 571,
+      "name": "SostaBreve",
+      "occupancyLimit": 572
+    },
+    {
+      "capacity": 400,
+      "carparkId": 0,
+      "countingCategoryId": 2,
+      "freeLimit": 399,
+      "name": "Abbonati",
+      "occupancyLimit": 400
+    },
+    {
+      "capacity": 972,
+      "carparkId": 0,
+      "countingCategoryId": 3,
+      "freeLimit": 970,
+      "name": "Totale",
+      "occupancyLimit": 972
+    },
+    {
+      "capacity": 160,
+      "carparkId": 1,
+      "countingCategoryId": 1,
+      "freeLimit": 159,
+      "name": "SostaBreve",
+      "occupancyLimit": 160
+    },
+    {
+      "capacity": 340,
+      "carparkId": 1,
+      "countingCategoryId": 2,
+      "freeLimit": 339,
+      "name": "Abbonati",
+      "occupancyLimit": 340
+    },
+    {
+      "capacity": 500,
+      "carparkId": 1,
+      "countingCategoryId": 3,
+      "freeLimit": 499,
+      "name": "Totale",
+      "occupancyLimit": 500
+    },
+    {
+      "capacity": 500,
+      "carparkId": 2,
+      "countingCategoryId": 1,
+      "freeLimit": 499,
+      "name": "SostaBreve",
+      "occupancyLimit": 500
+    },
+    {
+      "capacity": 500,
+      "carparkId": 2,
+      "countingCategoryId": 2,
+      "freeLimit": 499,
+      "name": "Abbonati",
+      "occupancyLimit": 500
+    },
+    {
+      "capacity": 500,
+      "carparkId": 2,
+      "countingCategoryId": 3,
+      "freeLimit": 499,
+      "name": "Totale",
+      "occupancyLimit": 500
+    }
+  ],
+  "0600858": [
+    {
+      "capacity": 141,
+      "carparkId": 0,
+      "countingCategoryId": 1,
+      "freeLimit": 141,
+      "name": "Sosta Breve",
+      "occupancyLimit": 141
+    },
+    {
+      "capacity": 80,
+      "carparkId": 0,
+      "countingCategoryId": 2,
+      "freeLimit": 80,
+      "name": "Abbonati",
+      "occupancyLimit": 80
+    },
+    {
+      "capacity": 222,
+      "carparkId": 0,
+      "countingCategoryId": 3,
+      "freeLimit": 222,
+      "name": "Totale",
+      "occupancyLimit": 222
+    },
+    {
+      "capacity": 9999,
+      "carparkId": 1,
+      "countingCategoryId": 1,
+      "freeLimit": 9999,
+      "name": "Sosta Breve",
+      "occupancyLimit": 9999
+    },
+    {
+      "capacity": 9999,
+      "carparkId": 1,
+      "countingCategoryId": 2,
+      "freeLimit": 9999,
+      "name": "Abbonati",
+      "occupancyLimit": 9999
+    },
+    {
+      "capacity": 9999,
+      "carparkId": 1,
+      "countingCategoryId": 3,
+      "freeLimit": 9999,
+      "name": "Totale",
+      "occupancyLimit": 9999
+    }
+  ],
+  "0601336": [
+    {
+      "capacity": 191,
+      "carparkId": 0,
+      "countingCategoryId": 1,
+      "freeLimit": 191,
+      "name": "SostaBreve",
+      "occupancyLimit": 193
+    },
+    {
+      "capacity": 150,
+      "carparkId": 0,
+      "countingCategoryId": 2,
+      "freeLimit": 150,
+      "name": "Abbonati",
+      "occupancyLimit": 151
+    },
+    {
+      "capacity": 361,
+      "carparkId": 0,
+      "countingCategoryId": 3,
+      "freeLimit": 361,
+      "name": "Totale",
+      "occupancyLimit": 361
+    },
+    {
+      "capacity": 21,
+      "carparkId": 0,
+      "countingCategoryId": 4,
+      "freeLimit": 20,
+      "name": "Meusburger",
+      "occupancyLimit": 21
+    },
+    {
+      "capacity": 0,
+      "carparkId": 0,
+      "countingCategoryId": 5,
+      "freeLimit": 0,
+      "name": "Nobis Privat",
+      "occupancyLimit": 0
+    },
+    {
+      "capacity": 0,
+      "carparkId": 0,
+      "countingCategoryId": 6,
+      "freeLimit": 0,
+      "name": "Nobis Abo",
+      "occupancyLimit": 0
+    },
+    {
+      "capacity": 266,
+      "carparkId": 1,
+      "countingCategoryId": 1,
+      "freeLimit": 265,
+      "name": "SostaBreve",
+      "occupancyLimit": 266
+    },
+    {
+      "capacity": 0,
+      "carparkId": 1,
+      "countingCategoryId": 2,
+      "freeLimit": 0,
+      "name": "Abbonati",
+      "occupancyLimit": 0
+    },
+    {
+      "capacity": 372,
+      "carparkId": 1,
+      "countingCategoryId": 3,
+      "freeLimit": 369,
+      "name": "Totale",
+      "occupancyLimit": 372
+    },
+    {
+      "capacity": 0,
+      "carparkId": 1,
+      "countingCategoryId": 4,
+      "freeLimit": 0,
+      "name": "Meusburger",
+      "occupancyLimit": 0
+    },
+    {
+      "capacity": 85,
+      "carparkId": 1,
+      "countingCategoryId": 5,
+      "freeLimit": 84,
+      "name": "Nobis Privat",
+      "occupancyLimit": 85
+    },
+    {
+      "capacity": 21,
+      "carparkId": 1,
+      "countingCategoryId": 6,
+      "freeLimit": 20,
+      "name": "Nobis Abo",
+      "occupancyLimit": 21
+    },
+    {
+      "capacity": 0,
+      "carparkId": 2,
+      "countingCategoryId": 1,
+      "freeLimit": 0,
+      "name": "SostaBreve",
+      "occupancyLimit": 0
+    },
+    {
+      "capacity": 0,
+      "carparkId": 2,
+      "countingCategoryId": 2,
+      "freeLimit": 0,
+      "name": "Abbonati",
+      "occupancyLimit": 0
+    },
+    {
+      "capacity": 85,
+      "carparkId": 2,
+      "countingCategoryId": 3,
+      "freeLimit": 84,
+      "name": "Totale",
+      "occupancyLimit": 85
+    },
+    {
+      "capacity": 0,
+      "carparkId": 2,
+      "countingCategoryId": 4,
+      "freeLimit": 0,
+      "name": "Meusburger",
+      "occupancyLimit": 0
+    },
+    {
+      "capacity": 85,
+      "carparkId": 2,
+      "countingCategoryId": 5,
+      "freeLimit": 84,
+      "name": "Nobis Privat",
+      "occupancyLimit": 85
+    },
+    {
+      "capacity": 0,
+      "carparkId": 2,
+      "countingCategoryId": 6,
+      "freeLimit": 0,
+      "name": "Nobis Abo",
+      "occupancyLimit": 0
+    }
+  ],
+  "0601393": [
+    {
+      "capacity": 100,
+      "carparkId": 0,
+      "countingCategoryId": 1,
+      "freeLimit": 99,
+      "name": "Sosta Breve",
+      "occupancyLimit": 100
+    },
+    {
+      "capacity": 50,
+      "carparkId": 0,
+      "countingCategoryId": 2,
+      "freeLimit": 49,
+      "name": "Abbonati",
+      "occupancyLimit": 50
+    },
+    {
+      "capacity": 150,
+      "carparkId": 0,
+      "countingCategoryId": 3,
+      "freeLimit": 149,
+      "name": "Totale",
+      "occupancyLimit": 149
+    },
+    {
+      "capacity": 100,
+      "carparkId": 1,
+      "countingCategoryId": 1,
+      "freeLimit": 99,
+      "name": "Sosta Breve",
+      "occupancyLimit": 100
+    },
+    {
+      "capacity": 40,
+      "carparkId": 1,
+      "countingCategoryId": 2,
+      "freeLimit": 39,
+      "name": "Abbonati",
+      "occupancyLimit": 40
+    },
+    {
+      "capacity": 140,
+      "carparkId": 1,
+      "countingCategoryId": 3,
+      "freeLimit": 139,
+      "name": "Totale",
+      "occupancyLimit": 140
+    },
+    {
+      "capacity": 45,
+      "carparkId": 2,
+      "countingCategoryId": 1,
+      "freeLimit": 44,
+      "name": "Sosta Breve",
+      "occupancyLimit": 44
+    },
+    {
+      "capacity": 25,
+      "carparkId": 2,
+      "countingCategoryId": 2,
+      "freeLimit": 24,
+      "name": "Abbonati",
+      "occupancyLimit": 24
+    },
+    {
+      "capacity": 70,
+      "carparkId": 2,
+      "countingCategoryId": 3,
+      "freeLimit": 69,
+      "name": "Totale",
+      "occupancyLimit": 69
+    }
+  ],
+  "0602581": [
+    {
+      "capacity": 9999,
+      "carparkId": 0,
+      "countingCategoryId": 1,
+      "freeLimit": 9999,
+      "name": "Sosta Breve",
+      "occupancyLimit": 9999
+    },
+    {
+      "capacity": 9999,
+      "carparkId": 0,
+      "countingCategoryId": 2,
+      "freeLimit": 9999,
+      "name": "Abbonati",
+      "occupancyLimit": 9999
+    },
+    {
+      "capacity": 9999,
+      "carparkId": 0,
+      "countingCategoryId": 3,
+      "freeLimit": 9999,
+      "name": "Totale",
+      "occupancyLimit": 9999
+    },
+    {
+      "capacity": 9999,
+      "carparkId": 0,
+      "countingCategoryId": 4,
+      "freeLimit": 9999,
+      "name": "Autobus",
+      "occupancyLimit": 9999
+    },
+    {
+      "capacity": 9999,
+      "carparkId": 0,
+      "countingCategoryId": 5,
+      "freeLimit": 9999,
+      "name": "Camper",
+      "occupancyLimit": 9999
+    },
+    {
+      "capacity": 9999,
+      "carparkId": 1,
+      "countingCategoryId": 1,
+      "freeLimit": 9999,
+      "name": "Sosta Breve",
+      "occupancyLimit": 9999
+    },
+    {
+      "capacity": 9999,
+      "carparkId": 1,
+      "countingCategoryId": 2,
+      "freeLimit": 9999,
+      "name": "Abbonati",
+      "occupancyLimit": 9999
+    },
+    {
+      "capacity": 9999,
+      "carparkId": 1,
+      "countingCategoryId": 3,
+      "freeLimit": 9999,
+      "name": "Totale",
+      "occupancyLimit": 9999
+    },
+    {
+      "capacity": 9999,
+      "carparkId": 1,
+      "countingCategoryId": 4,
+      "freeLimit": 9999,
+      "name": "Autobus",
+      "occupancyLimit": 9999
+    },
+    {
+      "capacity": 9999,
+      "carparkId": 1,
+      "countingCategoryId": 5,
+      "freeLimit": 9999,
+      "name": "Camper",
+      "occupancyLimit": 9999
+    }
+  ],
+  "0603001": [
+    {
+      "capacity": 145,
+      "carparkId": 0,
+      "countingCategoryId": 1,
+      "freeLimit": 144,
+      "name": "Sosta Breve",
+      "occupancyLimit": 145
+    },
+    {
+      "capacity": 0,
+      "carparkId": 0,
+      "countingCategoryId": 2,
+      "freeLimit": 0,
+      "name": "Abbonati",
+      "occupancyLimit": 0
+    },
+    {
+      "capacity": 155,
+      "carparkId": 0,
+      "countingCategoryId": 3,
+      "freeLimit": 154,
+      "name": "Totale",
+      "occupancyLimit": 155
+    }
+  ],
+  "0603589": [
+    {
+      "capacity": 179,
+      "carparkId": 0,
+      "countingCategoryId": 1,
+      "freeLimit": 178,
+      "name": "Kurzparker",
+      "occupancyLimit": 179
+    },
+    {
+      "capacity": 30,
+      "carparkId": 0,
+      "countingCategoryId": 2,
+      "freeLimit": 29,
+      "name": "Dauerparker",
+      "occupancyLimit": 30
+    },
+    {
+      "capacity": 208,
+      "carparkId": 0,
+      "countingCategoryId": 3,
+      "freeLimit": 207,
+      "name": "Gesamt",
+      "occupancyLimit": 208
+    }
+  ],
+  "0604454": [
+    {
+      "capacity": 97,
+      "carparkId": 0,
+      "countingCategoryId": 1,
+      "freeLimit": 96,
+      "name": "Kurzparker",
+      "occupancyLimit": 97
+    },
+    {
+      "capacity": 40,
+      "carparkId": 0,
+      "countingCategoryId": 2,
+      "freeLimit": 4,
+      "name": "Dauerparker",
+      "occupancyLimit": 40
+    },
+    {
+      "capacity": 97,
+      "carparkId": 0,
+      "countingCategoryId": 3,
+      "freeLimit": 96,
+      "name": "Gesamt",
+      "occupancyLimit": 97
+    }
+  ],
+  "0604504": [
+    {
+      "capacity": 91,
+      "carparkId": 0,
+      "countingCategoryId": 1,
+      "freeLimit": 90,
+      "name": "SostaBreve",
+      "occupancyLimit": 91
+    },
+    {
+      "capacity": 127,
+      "carparkId": 0,
+      "countingCategoryId": 2,
+      "freeLimit": 126,
+      "name": "Abbonati",
+      "occupancyLimit": 127
+    },
+    {
+      "capacity": 218,
+      "carparkId": 0,
+      "countingCategoryId": 3,
+      "freeLimit": 217,
+      "name": "Totale",
+      "occupancyLimit": 218
+    }
+  ],
+  "0604611": [
+    {
+      "capacity": 202,
+      "carparkId": 0,
+      "countingCategoryId": 1,
+      "freeLimit": 200,
+      "name": "SostaBreve",
+      "occupancyLimit": 202
+    },
+    {
+      "capacity": 20,
+      "carparkId": 0,
+      "countingCategoryId": 2,
+      "freeLimit": 18,
+      "name": "Abbonati",
+      "occupancyLimit": 19
+    },
+    {
+      "capacity": 222,
+      "carparkId": 0,
+      "countingCategoryId": 3,
+      "freeLimit": 219,
+      "name": "Totale",
+      "occupancyLimit": 220
+    },
+    {
+      "capacity": 60,
+      "carparkId": 1,
+      "countingCategoryId": 1,
+      "freeLimit": 59,
+      "name": "SostaBreve",
+      "occupancyLimit": 60
+    },
+    {
+      "capacity": 0,
+      "carparkId": 1,
+      "countingCategoryId": 2,
+      "freeLimit": 0,
+      "name": "Abbonati",
+      "occupancyLimit": 0
+    },
+    {
+      "capacity": 60,
+      "carparkId": 1,
+      "countingCategoryId": 3,
+      "freeLimit": 59,
+      "name": "Totale",
+      "occupancyLimit": 60
+    }
+  ],
+  "0605261": [
+    {
+      "capacity": 20,
+      "carparkId": 0,
+      "countingCategoryId": 1,
+      "freeLimit": 19,
+      "name": "SostaBreve",
+      "occupancyLimit": 20
+    },
+    {
+      "capacity": 0,
+      "carparkId": 0,
+      "countingCategoryId": 2,
+      "freeLimit": 0,
+      "name": "Abbonati",
+      "occupancyLimit": 0
+    },
+    {
+      "capacity": 20,
+      "carparkId": 0,
+      "countingCategoryId": 3,
+      "freeLimit": 19,
+      "name": "Totale",
+      "occupancyLimit": 20
+    },
+    {
+      "capacity": 46,
+      "carparkId": 1,
+      "countingCategoryId": 1,
+      "freeLimit": 45,
+      "name": "SostaBreve",
+      "occupancyLimit": 46
+    },
+    {
+      "capacity": 4,
+      "carparkId": 1,
+      "countingCategoryId": 2,
+      "freeLimit": 3,
+      "name": "Abbonati",
+      "occupancyLimit": 4
+    },
+    {
+      "capacity": 50,
+      "carparkId": 1,
+      "countingCategoryId": 3,
+      "freeLimit": 49,
+      "name": "Totale",
+      "occupancyLimit": 50
+    }
+  ],
+  "0607242": [
+    {
+      "capacity": 125,
+      "carparkId": 0,
+      "countingCategoryId": 1,
+      "freeLimit": 124,
+      "name": "SostaBreve",
+      "occupancyLimit": 125
+    },
+    {
+      "capacity": 120,
+      "carparkId": 0,
+      "countingCategoryId": 2,
+      "freeLimit": 119,
+      "name": "Abbonati",
+      "occupancyLimit": 120
+    },
+    {
+      "capacity": 245,
+      "carparkId": 0,
+      "countingCategoryId": 3,
+      "freeLimit": 244,
+      "name": "Totale",
+      "occupancyLimit": 245
+    }
+  ],
+  "0607440": [
+    {
+      "capacity": 198,
+      "carparkId": 0,
+      "countingCategoryId": 1,
+      "freeLimit": 198,
+      "name": "SostaBreve",
+      "occupancyLimit": 198
+    },
+    {
+      "capacity": 1,
+      "carparkId": 0,
+      "countingCategoryId": 2,
+      "freeLimit": 1,
+      "name": "Abbonati",
+      "occupancyLimit": 1
+    },
+    {
+      "capacity": 199,
+      "carparkId": 0,
+      "countingCategoryId": 3,
+      "freeLimit": 199,
+      "name": "Totale",
+      "occupancyLimit": 199
+    },
+    {
+      "capacity": 30,
+      "carparkId": 1,
+      "countingCategoryId": 1,
+      "freeLimit": 29,
+      "name": "SostaBreve",
+      "occupancyLimit": 30
+    },
+    {
+      "capacity": 60,
+      "carparkId": 1,
+      "countingCategoryId": 2,
+      "freeLimit": 59,
+      "name": "Abbonati",
+      "occupancyLimit": 60
+    },
+    {
+      "capacity": 90,
+      "carparkId": 1,
+      "countingCategoryId": 3,
+      "freeLimit": 89,
+      "name": "Totale",
+      "occupancyLimit": 90
+    },
+    {
+      "capacity": 176,
+      "carparkId": 2,
+      "countingCategoryId": 1,
+      "freeLimit": 175,
+      "name": "SostaBreve",
+      "occupancyLimit": 176
+    },
+    {
+      "capacity": 15,
+      "carparkId": 2,
+      "countingCategoryId": 2,
+      "freeLimit": 15,
+      "name": "Abbonati",
+      "occupancyLimit": 15
+    },
+    {
+      "capacity": 191,
+      "carparkId": 2,
+      "countingCategoryId": 3,
+      "freeLimit": 190,
+      "name": "Totale",
+      "occupancyLimit": 191
+    }
+  ],
+  "0607861": [
+    {
+      "capacity": 9999,
+      "carparkId": 0,
+      "countingCategoryId": 1,
+      "freeLimit": 9999,
+      "name": "Kurzparker",
+      "occupancyLimit": 9999
+    },
+    {
+      "capacity": 9999,
+      "carparkId": 0,
+      "countingCategoryId": 2,
+      "freeLimit": 9999,
+      "name": "Dauerparker",
+      "occupancyLimit": 9999
+    },
+    {
+      "capacity": 9999,
+      "carparkId": 0,
+      "countingCategoryId": 3,
+      "freeLimit": 9999,
+      "name": "Gesamt",
+      "occupancyLimit": 9999
+    }
+  ],
+  "0608034": [
+    {
+      "capacity": 240,
+      "carparkId": 0,
+      "countingCategoryId": 1,
+      "freeLimit": 239,
+      "name": "Kurzparker",
+      "occupancyLimit": 239
+    },
+    {
+      "capacity": 240,
+      "carparkId": 0,
+      "countingCategoryId": 2,
+      "freeLimit": 239,
+      "name": "Dauerparker",
+      "occupancyLimit": 239
+    },
+    {
+      "capacity": 240,
+      "carparkId": 0,
+      "countingCategoryId": 3,
+      "freeLimit": 239,
+      "name": "Gesamt",
+      "occupancyLimit": 239
+    }
+  ],
+  "0608224": [
+    {
+      "capacity": 132,
+      "carparkId": 0,
+      "countingCategoryId": 1,
+      "freeLimit": 131,
+      "name": "SostaBreve",
+      "occupancyLimit": 132
+    },
+    {
+      "capacity": 132,
+      "carparkId": 0,
+      "countingCategoryId": 2,
+      "freeLimit": 131,
+      "name": "Abbonati",
+      "occupancyLimit": 132
+    },
+    {
+      "capacity": 132,
+      "carparkId": 0,
+      "countingCategoryId": 3,
+      "freeLimit": 131,
+      "name": "Totale",
+      "occupancyLimit": 132
+    }
+  ],
+  "0608448": [
+    {
+      "capacity": 75,
+      "carparkId": 0,
+      "countingCategoryId": 1,
+      "freeLimit": 74,
+      "name": "Sosta Breve",
+      "occupancyLimit": 75
+    },
+    {
+      "capacity": 75,
+      "carparkId": 0,
+      "countingCategoryId": 2,
+      "freeLimit": 74,
+      "name": "Abbonati",
+      "occupancyLimit": 75
+    },
+    {
+      "capacity": 75,
+      "carparkId": 0,
+      "countingCategoryId": 3,
+      "freeLimit": 74,
+      "name": "Totale",
+      "occupancyLimit": 75
+    }
+  ],
+  "0608935": [
+    {
+      "capacity": 520,
+      "carparkId": 0,
+      "countingCategoryId": 1,
+      "freeLimit": 449,
+      "name": "Sosta Breve",
+      "occupancyLimit": 520
+    },
+    {
+      "capacity": 0,
+      "carparkId": 0,
+      "countingCategoryId": 2,
+      "freeLimit": 0,
+      "name": "Abbonati",
+      "occupancyLimit": 0
+    },
+    {
+      "capacity": 520,
+      "carparkId": 0,
+      "countingCategoryId": 3,
+      "freeLimit": 449,
+      "name": "Totale",
+      "occupancyLimit": 520
+    }
+  ],
+  "0609008": [
+    {
+      "capacity": 60,
+      "carparkId": 0,
+      "countingCategoryId": 1,
+      "freeLimit": 59,
+      "name": "Sosta Breve",
+      "occupancyLimit": 60
+    },
+    {
+      "capacity": 1000,
+      "carparkId": 0,
+      "countingCategoryId": 2,
+      "freeLimit": 999,
+      "name": "Abbonati",
+      "occupancyLimit": 1000
+    },
+    {
+      "capacity": 120,
+      "carparkId": 0,
+      "countingCategoryId": 3,
+      "freeLimit": 119,
+      "name": "Totale",
+      "occupancyLimit": 120
+    },
+    {
+      "capacity": 42,
+      "carparkId": 1,
+      "countingCategoryId": 1,
+      "freeLimit": 41,
+      "name": "Sosta Breve",
+      "occupancyLimit": 42
+    },
+    {
+      "capacity": 0,
+      "carparkId": 1,
+      "countingCategoryId": 2,
+      "freeLimit": 0,
+      "name": "Abbonati",
+      "occupancyLimit": 0
+    },
+    {
+      "capacity": 42,
+      "carparkId": 1,
+      "countingCategoryId": 3,
+      "freeLimit": 41,
+      "name": "Totale",
+      "occupancyLimit": 41
+    }
+  ],
+  "0609420": [
+    {
+      "capacity": 9999,
+      "carparkId": 0,
+      "countingCategoryId": 1,
+      "freeLimit": 9999,
+      "name": "Sosta Breve",
+      "occupancyLimit": 9999
+    },
+    {
+      "capacity": 9999,
+      "carparkId": 0,
+      "countingCategoryId": 2,
+      "freeLimit": 9999,
+      "name": "Abbonati",
+      "occupancyLimit": 9999
+    },
+    {
+      "capacity": 9999,
+      "carparkId": 0,
+      "countingCategoryId": 3,
+      "freeLimit": 9999,
+      "name": "Totale",
+      "occupancyLimit": 9999
+    },
+    {
+      "capacity": 9999,
+      "carparkId": 1,
+      "countingCategoryId": 1,
+      "freeLimit": 9999,
+      "name": "Sosta Breve",
+      "occupancyLimit": 9999
+    },
+    {
+      "capacity": 9999,
+      "carparkId": 1,
+      "countingCategoryId": 2,
+      "freeLimit": 9999,
+      "name": "Abbonati",
+      "occupancyLimit": 9999
+    },
+    {
+      "capacity": 9999,
+      "carparkId": 1,
+      "countingCategoryId": 3,
+      "freeLimit": 9999,
+      "name": "Totale",
+      "occupancyLimit": 9999
+    }
+  ],
+  "0609636": [
+    {
+      "capacity": 55,
+      "carparkId": 0,
+      "countingCategoryId": 1,
+      "freeLimit": 54,
+      "name": "Sosta Breve",
+      "occupancyLimit": 54
+    },
+    {
+      "capacity": 0,
+      "carparkId": 0,
+      "countingCategoryId": 2,
+      "freeLimit": 0,
+      "name": "Abbonati",
+      "occupancyLimit": 0
+    },
+    {
+      "capacity": 55,
+      "carparkId": 0,
+      "countingCategoryId": 3,
+      "freeLimit": 54,
+      "name": "Totale",
+      "occupancyLimit": 54
+    }
+  ],
+  "0609701": [
+    {
+      "capacity": 48,
+      "carparkId": 0,
+      "countingCategoryId": 1,
+      "freeLimit": 47,
+      "name": "Sosta Breve",
+      "occupancyLimit": 48
+    },
+    {
+      "capacity": 0,
+      "carparkId": 0,
+      "countingCategoryId": 2,
+      "freeLimit": 0,
+      "name": "Abbonati",
+      "occupancyLimit": 0
+    },
+    {
+      "capacity": 48,
+      "carparkId": 0,
+      "countingCategoryId": 3,
+      "freeLimit": 47,
+      "name": "Totale",
+      "occupancyLimit": 48
+    }
+  ],
+  "0609818": [
+    {
+      "capacity": 138,
+      "carparkId": 0,
+      "countingCategoryId": 1,
+      "freeLimit": 137,
+      "name": "Sosta Breve",
+      "occupancyLimit": 138
+    },
+    {
+      "capacity": 0,
+      "carparkId": 0,
+      "countingCategoryId": 2,
+      "freeLimit": 0,
+      "name": "Abbonati",
+      "occupancyLimit": 0
+    },
+    {
+      "capacity": 138,
+      "carparkId": 0,
+      "countingCategoryId": 3,
+      "freeLimit": 137,
+      "name": "Totale",
+      "occupancyLimit": 138
+    },
+    {
+      "capacity": 0,
+      "carparkId": 0,
+      "countingCategoryId": 4,
+      "freeLimit": 0,
+      "name": "QRCode",
+      "occupancyLimit": 0
+    },
+    {
+      "capacity": 9999,
+      "carparkId": 1,
+      "countingCategoryId": 1,
+      "freeLimit": 9999,
+      "name": "Sosta Breve",
+      "occupancyLimit": 9999
+    },
+    {
+      "capacity": 9999,
+      "carparkId": 1,
+      "countingCategoryId": 2,
+      "freeLimit": 9999,
+      "name": "Abbonati",
+      "occupancyLimit": 9999
+    },
+    {
+      "capacity": 9999,
+      "carparkId": 1,
+      "countingCategoryId": 3,
+      "freeLimit": 9999,
+      "name": "Totale",
+      "occupancyLimit": 9999
+    },
+    {
+      "capacity": 8,
+      "carparkId": 1,
+      "countingCategoryId": 4,
+      "freeLimit": 7,
+      "name": "QRCode",
+      "occupancyLimit": 8
+    }
+  ]
+}

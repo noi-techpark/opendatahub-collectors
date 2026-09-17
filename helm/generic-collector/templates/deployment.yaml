@@ -62,6 +62,15 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+            {{- if .Values.service.internalPort }}
+            # A second listener for cluster-internal callers. Opt-in and unset
+            # everywhere by default, so a collector that does not ask for one is
+            # rendered exactly as before. It is never added to the ingress: that
+            # is what publishes a port to the internet.
+            - name: internal
+              containerPort: {{ .Values.service.internalPort }}
+              protocol: TCP
+            {{- end }}
           livenessProbe:
             httpGet:
               path: {{ .Values.service.health.path }}

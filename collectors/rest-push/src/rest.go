@@ -49,7 +49,7 @@ func serve(send chan<- restMsg) {
 		return c.Blob(http.StatusOK, "application/yaml; charset=utf-8", apispec)
 	})
 
-	e.Logger.Fatal(e.Start(":8080"))
+	e.Logger.Fatal(e.Start(":" + Config.ServerPort))
 }
 
 func loadApispec(file string, authUrl string) []byte {
