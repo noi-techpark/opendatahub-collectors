@@ -13,7 +13,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ThreeDotsLabs/watermill"
 	"github.com/noi-techpark/opendatahub-go-sdk/clib"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
@@ -91,7 +90,6 @@ func main() {
 	sub, err := qmill.NewSubscriberQmill(context.Background(), env.MQ_URI, env.MQ_CLIENT,
 		qmill.WithQueue(env.MQ_QUEUE, true),
 		qmill.WithBind(env.MQ_EXCHANGE, env.MQ_KEY),
-		qmill.WithLogger(watermill.NewSlogLogger(slog.Default())),
 	)
 	ms.FailOnError(context.Background(), err, "failed to initialize qmill subscriber")
 

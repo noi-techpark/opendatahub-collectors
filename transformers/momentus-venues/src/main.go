@@ -18,7 +18,6 @@ import (
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
 	"github.com/noi-techpark/opendatahub-go-sdk/tel"
 	"github.com/noi-techpark/opendatahub-go-sdk/qmill"
-	"github.com/ThreeDotsLabs/watermill"
 	odhmodel "opendatahub.com/momentus-venues/odh-content-model"
 )
 
@@ -66,7 +65,6 @@ func main() {
 	sub, err := qmill.NewSubscriberQmill(context.Background(), env.MQ_URI, env.MQ_CLIENT,
 		qmill.WithQueue(env.MQ_QUEUE, true),
 		qmill.WithBind(env.MQ_EXCHANGE, env.MQ_KEY),
-		qmill.WithLogger(watermill.NewSlogLogger(slog.Default())),
 	)
 	ms.FailOnError(context.Background(), err, "failed to initialize qmill subscriber")
 
