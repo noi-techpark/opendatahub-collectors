@@ -7,9 +7,9 @@ package main
 import (
 	"context"
 	"fmt"
-	"sort"
 
 	"github.com/noi-techpark/go-timeseries-client/odhts"
+	"github.com/noi-techpark/go-timeseries-client/where"
 	"github.com/noi-techpark/opendatahub-go-sdk/tel/logger"
 )
 
@@ -35,7 +35,15 @@ func hydrateCache(c *Cache, ts odhts.C, origin string, datatypes []string, urnTo
 	for _, dt := range datatypes {
 		req.AddDataType(dt)
 	}
-	req.Origin = origin
+	// A where clause, not req.Origin: the client sends that as a top-level
+	// `origin` query parameter which ninja v2 ignores, so the request returned
+	// every ParkingStation in the system — 209 rows across 86 stations where
+	// this origin has 27 across 5 — and the surplus showed up as
+	// skipped_unknown_scode rather than as an error.
+	//
+	// Escaping is the library's rather than a hand-rolled %q: it also handles
+	// the backslash, comma and single quote that Go's quoting leaves alone.
+	req.Where = where.Eq("sorigin", where.Escape(origin))
 	// /latest gives one row per (station, datatype) combination already.
 	// The default limit is 200 which is too low for our ~22 carparks ×
 	// ~16 datatypes; bump generously.
@@ -65,26 +73,65 @@ func hydrateCache(c *Cache, ts odhts.C, origin string, datatypes []string, urnTo
 	return nil
 }
 
-// allDataTypeNames returns every datatype name the transformer
-// currently uses (free / occupied for the union of category suffixes
-// observed in the loaded counting_categories.csv, plus the canonical
-// short_stay/subscribers/total trio in case the CSV is sparse).
-// Output is sorted for deterministic logging/tests.
-func allDataTypeNames(cats CountingCategories) []string {
-	suffixes := map[string]bool{
-		"":            true, // total
-		"short_stay":  true,
-		"subscribers": true,
+// stationRow is one station as the timeseries reports it, reduced to what the
+// registry needs.
+type stationRow struct {
+	ProviderID string
+	FacilityID string
+	CarparkID  int // -1 for a facility
+	Name       string
+}
+
+// fetchStations lists the stations this transformer has already published.
+//
+// The durable answer to "what exists": every station ever synced under this
+// origin, whether or not it is currently reporting and whether or not the
+// provider still returns counting categories for it. Twelve of the fleet's
+// facilities have categories; the demo facility has none, and it still has
+// stations.
+func fetchStations(ts odhts.C, origin string) ([]stationRow, error) {
+	if origin == "" {
+		return nil, fmt.Errorf("BDP_ORIGIN is empty; refusing to list stations without an origin filter")
 	}
-	for _, cat := range cats {
-		d := descriptorFor(cat.CountingCategoryId, cat.Name)
-		suffixes[d.suffix] = true
+
+	req := odhts.DefaultRequest()
+	req.AddStationType(stationType)
+	req.AddStationType(stationTypeParent)
+	req.Where = where.Eq("sorigin", where.Escape(origin))
+	req.Select = "scode,sname,stype,smetadata"
+	req.Limit = -1
+	req.Shownull = true
+
+	var res odhts.Response[[]struct {
+		Scode     string         `json:"scode"`
+		Sname     string         `json:"sname"`
+		Stype     string         `json:"stype"`
+		Smetadata map[string]any `json:"smetadata"`
+	}]
+	if err := odhts.StationType(ts, req, &res); err != nil {
+		return nil, fmt.Errorf("listing stations: %w", err)
 	}
-	out := make([]string, 0, 2*len(suffixes))
-	for s := range suffixes {
-		d := catDescriptor{suffix: s}
-		out = append(out, d.freeType(), d.occupiedType())
+
+	out := make([]stationRow, 0, len(res.Data))
+	for _, r := range res.Data {
+		m := r.Smetadata
+		providerID, _ := m["provider_id"].(string)
+		if providerID == "" {
+			// Published by something that is not this transformer, or from
+			// before provider_id was stamped. Nothing maps it back to a
+			// facility, so it cannot be enriched or re-synced from here.
+			continue
+		}
+		row := stationRow{ProviderID: providerID, Name: r.Sname, CarparkID: -1, FacilityID: providerID}
+		if r.Stype == stationType {
+			facility, _ := m["facility_id"].(string)
+			carpark, ok := m["carpark_id"].(float64) // JSON numbers decode as float64
+			if facility == "" || !ok {
+				continue
+			}
+			row.FacilityID, row.CarparkID = facility, int(carpark)
+		}
+		out = append(out, row)
 	}
-	sort.Strings(out)
-	return out
+	return out, nil
 }
