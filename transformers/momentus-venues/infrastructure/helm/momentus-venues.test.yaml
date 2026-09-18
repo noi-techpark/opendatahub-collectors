@@ -9,9 +9,9 @@ image:
 
 env:
   LOG_LEVEL: "DEBUG"
-  MQ_QUEUE: venues.momentus
+  MQ_QUEUE: venues-momentus
   MQ_EXCHANGE: routed
-  MQ_KEY: venues.momentus
+  MQ_KEY: venues-momentus
   MQ_CLIENT: tr-momentus-venues-test
   
   RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
