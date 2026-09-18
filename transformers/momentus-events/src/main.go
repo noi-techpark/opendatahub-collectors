@@ -8,17 +8,14 @@ import (
 	"context"
 	"encoding/json"
 	"log/slog"
-	"os"
 	"strings"
 	"sync"
 	"time"
 
-	"github.com/ThreeDotsLabs/watermill"
 	"github.com/noi-techpark/opendatahub-go-sdk/clib"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
-	"github.com/noi-techpark/opendatahub-go-sdk/qmill"
 	"github.com/noi-techpark/opendatahub-go-sdk/tel"
 	odhmodel "opendatahub.com/momentus-events/odh-content-model"
 )
@@ -87,28 +84,11 @@ func main() {
 		venuesCache:   make(map[string]*ODHVenue),
 		venueMapping:  venueMap,
 	}
-
-	sub, err := qmill.NewSubscriberQmill(context.Background(), env.MQ_URI, env.MQ_CLIENT,
-		qmill.WithQueue(env.MQ_QUEUE, true),
-		qmill.WithBind(env.MQ_EXCHANGE, env.MQ_KEY),
-		qmill.WithLogger(watermill.NewSlogLogger(slog.Default())),
-	)
-	ms.FailOnError(context.Background(), err, "failed to initialize qmill subscriber")
-
-	for msg := range sub.Sub() {
-		ctx := msg.Context()
-
-		var rawMsg rdb.Raw[string]
-		if err := json.Unmarshal(msg.Payload, &rawMsg); err != nil {
-			slog.Error("Failed to unmarshal Raw message", "err", err)
-			msg.Ack()
-			continue
-		}
-
+	listener := tr.NewTr[string](context.Background(), env.Env)
+	err = listener.Start(context.Background(), func(ctx context.Context, rawMsg *rdb.Raw[string]) error {
 		if rawMsg.Provider != env.Provider {
 			slog.Debug("Skipping message from different provider", "provider", rawMsg.Provider, "expected", env.Provider)
-			msg.Ack()
-			continue
+			return nil
 		}
 
 		if rawMsg.Rawdata == "[]" {
@@ -126,15 +106,25 @@ func main() {
 		})
 		if err != nil {
 			slog.Error("Failed to load existing events cache", "err", err)
-			msg.Nack()
-			continue
+			return err
 		}
 
 		// Attempt to unmarshal as a raw array first, flattening any nested arrays
 		var rawArray []json.RawMessage
 		processedIDs := make(map[string]bool)
 
-		if err := json.Unmarshal([]byte(rawMsg.Rawdata), &rawArray); err == nil {
+		unmarshalErr := json.Unmarshal([]byte(rawMsg.Rawdata), &rawArray)
+		if unmarshalErr != nil {
+			var wrapper struct {
+				Rooms []json.RawMessage `json:"rooms"`
+			}
+			if errWrap := json.Unmarshal([]byte(rawMsg.Rawdata), &wrapper); errWrap == nil && wrapper.Rooms != nil {
+				rawArray = wrapper.Rooms
+				unmarshalErr = nil
+			}
+		}
+
+		if unmarshalErr == nil {
 			var events []MomentusEvent
 			hasMalformed := false
 			for _, raw := range rawArray {
@@ -154,8 +144,7 @@ func main() {
 
 			if hasMalformed {
 				slog.Error("Snapshot contains malformed elements; rejecting to avoid incorrect deactivations")
-				msg.Ack() // Reject permanently since payload is fundamentally malformed
-				continue
+				return nil // Reject permanently since payload is fundamentally malformed
 			}
 
 			slog.Info("Flattened events", "count", len(events))
@@ -173,42 +162,30 @@ func main() {
 			
 			if firstErr == nil {
 				if err := deactivateMissingEvents(ctx, t, eventCache, processedIDs); err != nil {
-					msg.Nack()
-				} else {
-					msg.Ack()
+					return err
 				}
-			} else {
-				msg.Nack()
+				return nil
 			}
-			continue
+			return firstErr
 		} else {
-			slog.Debug("Failed to unmarshal as raw array (falling back to single object)", "err", err)
+			slog.Debug("Failed to unmarshal as raw array (falling back to single object)", "err", unmarshalErr)
 		}
 
 		// Fallback to unmarshal as a single event
 		var event MomentusEvent
 		if err := json.Unmarshal([]byte(rawMsg.Rawdata), &event); err != nil {
 			slog.Error("Failed to unmarshal raw event string (likely wrong payload type)", "err", err)
-			msg.Ack()
-			continue
+			return nil
 		}
 		
 		if event.Id != "" {
 			processedIDs["urn:event:momentus:"+event.Id] = true
 		}
 		err = processEvent(ctx, t, event, eventCache)
-		if err == nil {
-			// DO NOT call deactivateMissingEvents for a single event update payload
-			msg.Ack()
-		} else {
-			msg.Nack()
-		}
-	}
+		return err
+	})
 
-	if err != nil {
-		slog.Error("error while listening to queue", "err", err)
-		os.Exit(1)
-	}
+	ms.FailOnError(context.Background(), err, "error while listening to queue")
 }
 
 func deactivateMissingEvents(ctx context.Context, t *Transformer, eventCache *clib.Cache[odhmodel.EventLinked], processedIDs map[string]bool) error {
