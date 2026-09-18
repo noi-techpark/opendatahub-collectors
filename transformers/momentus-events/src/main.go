@@ -22,7 +22,6 @@ import (
 
 var env struct {
 	tr.Env
-	Provider                 string `envconfig:"PROVIDER"`
 	VenueMapping             string `envconfig:"VENUE_MAPPING" default:"{\"NOI TECHPARK\":\"urn:venue:noi:6b3f0a14-3c5b-5d09-81f3-3ebe5b7885ea\",\"EURAC RESEARCH HQ\":\"urn:venue:eurac:df155f71-5cea-5a29-9ebc-213fad6ac1eb\"}"`
 	OdhCoreUrl               string `envconfig:"ODH_CORE_URL"`
 	OdhCoreTokenUrl          string `envconfig:"ODH_CORE_TOKEN_URL"`
@@ -48,11 +47,11 @@ func (t *Transformer) getVenues(ctx context.Context) []*ODHVenue {
 			venues = append(venues, v)
 			continue
 		}
-		
+
 		var venue ODHVenue
 		err := t.contentClient.Get(ctx, "Venue/"+venueID, nil, &venue)
 		ms.FailOnError(ctx, err, "Fatal error: Configured Venue ID not found in ODH Content API", "venueID", venueID)
-		
+
 		t.venuesCache[venueID] = &venue
 		venues = append(venues, &venue)
 	}
@@ -86,17 +85,12 @@ func main() {
 	}
 	listener := tr.NewTr[string](context.Background(), env.Env)
 	err = listener.Start(context.Background(), tr.RawString2JsonMiddleware(func(ctx context.Context, rawMsg *rdb.Raw[json.RawMessage]) error {
-		if rawMsg.Provider != env.Provider {
-			slog.Debug("Skipping message from different provider", "provider", rawMsg.Provider, "expected", env.Provider)
-			return nil
-		}
-
 		if string(rawMsg.Rawdata) == "[]" {
 			slog.Info("Received empty array payload, deactivating all events")
 			// We still need to process this as a full authoritative snapshot (which happens to be empty)
 			// so we continue to cache loading and deactivation.
 		}
-		
+
 		eventCache, err := clib.LoadExisting(ctx, t.contentClient, clib.LoadConfig[odhmodel.EventLinked]{
 			EntityType:  "Event",
 			QueryParams: map[string]string{"source": "momentus"},
@@ -148,7 +142,7 @@ func main() {
 			}
 
 			slog.Info("Flattened events", "count", len(events))
-			
+
 			var firstErr error
 			for _, event := range events {
 				if event.Id != "" {
@@ -159,7 +153,7 @@ func main() {
 					firstErr = err
 				}
 			}
-			
+
 			if firstErr == nil {
 				if err := deactivateMissingEvents(ctx, t, eventCache, processedIDs); err != nil {
 					return err
@@ -177,7 +171,7 @@ func main() {
 			slog.Error("Failed to unmarshal raw event string (likely wrong payload type)", "err", err)
 			return nil
 		}
-		
+
 		if event.Id != "" {
 			processedIDs["urn:event:momentus:"+event.Id] = true
 		}
@@ -194,12 +188,12 @@ func deactivateMissingEvents(ctx context.Context, t *Transformer, eventCache *cl
 	for id, entry := range eventCache.Entries() {
 		if !processedIDs[id] && entry.Entity.Active {
 			slog.Info("Deactivating event no longer present in payload", "eventID", id)
-			
+
 			eventLinked := entry.Entity
 			eventLinked.Active = false
 			eventLinked.PublishedOn = []string{}
 			eventLinked.LastChange = time.Now().Format(time.RFC3339)
-			
+
 			err := t.contentClient.Put(ctx, "Event", eventLinked.Id, &eventLinked)
 			if err != nil {
 				slog.Debug("Put failed during deactivation, attempting Post as fallback", "err", err, "eventID", eventLinked.Id)
@@ -228,7 +222,7 @@ func processEvent(ctx context.Context, t *Transformer, event MomentusEvent, even
 	}
 
 	venues := t.getVenues(ctx)
-	
+
 	// Determine the correct venue by looking at the event's booked spaces' room IDs
 	var matchedVenue *ODHVenue
 	for _, space := range event.BookedSpaces {
@@ -297,7 +291,6 @@ func processEvent(ctx context.Context, t *Transformer, event MomentusEvent, even
 
 	return nil
 }
-
 
 // ----------------------------------------------------------------------------
 // PARSER LOGIC
@@ -463,8 +456,6 @@ func buildDetailFromFunctions(functions []MomentusFunction, description string, 
 		}
 	}
 
-
-
 	if description != "" {
 		for lang, d := range details {
 			if d.BaseText == "" {
@@ -481,7 +472,7 @@ func buildDetailFromFunctions(functions []MomentusFunction, description string, 
 			if !ok {
 				d = odhmodel.Detail{Language: lang}
 			}
-			
+
 			if baseDetail.BaseText != "" && d.BaseText == "" {
 				d.BaseText = baseDetail.BaseText
 			}
@@ -491,7 +482,7 @@ func buildDetailFromFunctions(functions []MomentusFunction, description string, 
 			if baseDetail.SubHeader != "" && d.SubHeader == "" {
 				d.SubHeader = baseDetail.SubHeader
 			}
-			
+
 			details[lang] = d
 		}
 	}

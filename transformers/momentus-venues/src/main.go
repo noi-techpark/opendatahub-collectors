@@ -21,7 +21,6 @@ import (
 
 var env struct {
 	tr.Env
-	Provider                 string `envconfig:"PROVIDER"`
 	VenueMapping             string `envconfig:"VENUE_MAPPING" default:"{\"NOI TECHPARK\":\"urn:venue:noi:6b3f0a14-3c5b-5d09-81f3-3ebe5b7885ea\",\"EURAC RESEARCH HQ\":\"urn:venue:eurac:df155f71-5cea-5a29-9ebc-213fad6ac1eb\"}"`
 	OdhCoreUrl               string `envconfig:"ODH_CORE_URL"`
 	OdhCoreTokenUrl          string `envconfig:"ODH_CORE_TOKEN_URL"`
@@ -62,11 +61,6 @@ func main() {
 
 	listener := tr.NewTr[string](context.Background(), env.Env)
 	err = listener.Start(context.Background(), tr.RawString2JsonMiddleware(func(ctx context.Context, r *rdb.Raw[[]odhmodel.MomentusRoom]) error {
-		if r.Provider != env.Provider {
-			slog.Debug("Skipping message from different provider", "provider", r.Provider, "expected", env.Provider)
-			return nil
-		}
-
 		if len(r.Rawdata) == 0 {
 			slog.Debug("Received empty array payload (end of stream), skipping")
 			return nil
@@ -85,7 +79,7 @@ func main() {
 			// Determine Venue ID based on group mapping
 			var venueID string
 			groupUpper := strings.ToUpper(room.Group)
-			
+
 			for mapKey, mapVal := range t.venueMapping {
 				if strings.Contains(groupUpper, mapKey) {
 					venueID = mapVal
@@ -165,7 +159,7 @@ func main() {
 			slog.Info("Successfully processed grouped rooms and pushed to Core", "venueID", venueLinked.Id, "roomCount", len(groupedRooms))
 			venueCache.Set(venueID, venueMap, hash)
 		}
-		
+
 		return firstErr
 	}))
 
