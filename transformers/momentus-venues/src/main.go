@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
-	"os"
 	"strings"
 
 	"github.com/noi-techpark/opendatahub-go-sdk/clib"
@@ -17,7 +16,6 @@ import (
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
 	"github.com/noi-techpark/opendatahub-go-sdk/tel"
-	"github.com/noi-techpark/opendatahub-go-sdk/qmill"
 	odhmodel "opendatahub.com/momentus-venues/odh-content-model"
 )
 
@@ -62,37 +60,21 @@ func main() {
 		venueMapping:  venueMap,
 	}
 
-	sub, err := qmill.NewSubscriberQmill(context.Background(), env.MQ_URI, env.MQ_CLIENT,
-		qmill.WithQueue(env.MQ_QUEUE, true),
-		qmill.WithBind(env.MQ_EXCHANGE, env.MQ_KEY),
-	)
-	ms.FailOnError(context.Background(), err, "failed to initialize qmill subscriber")
-
-	for msg := range sub.Sub() {
-		ctx := msg.Context()
-		var r rdb.Raw[string]
-		if err := json.Unmarshal(msg.Payload, &r); err != nil {
-			slog.Error("Failed to unmarshal raw venue message", "err", err)
-			msg.Ack()
-			continue
-		}
-
+	listener := tr.NewTr[string](context.Background(), env.Env)
+	err = listener.Start(context.Background(), func(ctx context.Context, r *rdb.Raw[string]) error {
 		if r.Provider != env.Provider {
 			slog.Debug("Skipping message from different provider", "provider", r.Provider, "expected", env.Provider)
-			msg.Ack()
-			continue
+			return nil
 		}
 
 		if r.Rawdata == "[]" {
 			slog.Debug("Received empty array payload (end of stream), skipping")
-			msg.Ack()
-			continue
+			return nil
 		}
 		var rooms []odhmodel.MomentusRoom
 		if err := json.Unmarshal([]byte(r.Rawdata), &rooms); err != nil {
 			slog.Error("Failed to unmarshal raw venue string (likely wrong payload type)", "err", err)
-			msg.Ack()
-			continue
+			return nil
 		}
 		
 		// Group rooms by venue
@@ -188,17 +170,10 @@ func main() {
 			venueCache.Set(venueID, venueMap, hash)
 		}
 		
-		if firstErr == nil {
-			msg.Ack()
-		} else {
-			msg.Nack()
-		}
-	}
+		return firstErr
+	})
 
-	if err != nil {
-		slog.Error("error while listening to queue", "err", err)
-		os.Exit(1)
-	}
+	ms.FailOnError(context.Background(), err, "error while listening to queue")
 }
 
 // ----------------------------------------------------------------------------
