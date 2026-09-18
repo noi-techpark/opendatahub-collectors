@@ -9,9 +9,9 @@ image:
 
 env:
   LOG_LEVEL: "INFO"
-  MQ_QUEUE: venues-momentus
+  MQ_QUEUE: api-crawler.venues-momentus
   MQ_EXCHANGE: routed
-  MQ_KEY: venues-momentus
+  MQ_KEY: api-crawler.venues-momentus
   MQ_CLIENT: tr-momentus-venues-prod
   
   RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000

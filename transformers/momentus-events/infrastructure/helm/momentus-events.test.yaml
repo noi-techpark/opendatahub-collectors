@@ -9,9 +9,9 @@ image:
 
 env:
   LOG_LEVEL: "DEBUG"
-  MQ_QUEUE: events-momentus
+  MQ_QUEUE: api-crawler.events-momentus
   MQ_EXCHANGE: routed
-  MQ_KEY: events-momentus
+  MQ_KEY: api-crawler.events-momentus
   MQ_CLIENT: tr-momentus-events-test
   
   RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
