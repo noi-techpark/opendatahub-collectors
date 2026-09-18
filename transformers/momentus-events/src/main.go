@@ -85,13 +85,13 @@ func main() {
 		venueMapping:  venueMap,
 	}
 	listener := tr.NewTr[string](context.Background(), env.Env)
-	err = listener.Start(context.Background(), func(ctx context.Context, rawMsg *rdb.Raw[string]) error {
+	err = listener.Start(context.Background(), tr.RawString2JsonMiddleware(func(ctx context.Context, rawMsg *rdb.Raw[json.RawMessage]) error {
 		if rawMsg.Provider != env.Provider {
 			slog.Debug("Skipping message from different provider", "provider", rawMsg.Provider, "expected", env.Provider)
 			return nil
 		}
 
-		if rawMsg.Rawdata == "[]" {
+		if string(rawMsg.Rawdata) == "[]" {
 			slog.Info("Received empty array payload, deactivating all events")
 			// We still need to process this as a full authoritative snapshot (which happens to be empty)
 			// so we continue to cache loading and deactivation.
@@ -183,7 +183,7 @@ func main() {
 		}
 		err = processEvent(ctx, t, event, eventCache)
 		return err
-	})
+	}))
 
 	ms.FailOnError(context.Background(), err, "error while listening to queue")
 }

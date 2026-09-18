@@ -61,22 +61,18 @@ func main() {
 	}
 
 	listener := tr.NewTr[string](context.Background(), env.Env)
-	err = listener.Start(context.Background(), func(ctx context.Context, r *rdb.Raw[string]) error {
+	err = listener.Start(context.Background(), tr.RawString2JsonMiddleware(func(ctx context.Context, r *rdb.Raw[[]odhmodel.MomentusRoom]) error {
 		if r.Provider != env.Provider {
 			slog.Debug("Skipping message from different provider", "provider", r.Provider, "expected", env.Provider)
 			return nil
 		}
 
-		if r.Rawdata == "[]" {
+		if len(r.Rawdata) == 0 {
 			slog.Debug("Received empty array payload (end of stream), skipping")
 			return nil
 		}
-		var rooms []odhmodel.MomentusRoom
-		if err := json.Unmarshal([]byte(r.Rawdata), &rooms); err != nil {
-			slog.Error("Failed to unmarshal raw venue string (likely wrong payload type)", "err", err)
-			return nil
-		}
-		
+		rooms := r.Rawdata
+
 		// Group rooms by venue
 		roomsByVenue := make(map[string][]odhmodel.MomentusRoom)
 
@@ -171,7 +167,7 @@ func main() {
 		}
 		
 		return firstErr
-	})
+	}))
 
 	ms.FailOnError(context.Background(), err, "error while listening to queue")
 }
