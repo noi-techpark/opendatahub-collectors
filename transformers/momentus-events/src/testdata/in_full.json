@@ -42,15 +42,28 @@
   "functions": [
     {
       "functionTypeName": "EN Title",
-      "name": "English Title"
+      "name": "English Title",
+      "isEventWide": true
     },
     {
       "functionTypeName": "DE Title",
-      "name": "German Title"
+      "name": "German Title",
+      "isEventWide": true
     },
     {
       "functionTypeName": "IT Title",
-      "name": "Italian Title"
+      "name": "Italian Title",
+      "isEventWide": true
+    },
+    {
+      "functionTypeName": "EN SUBtitle",
+      "name": "English Date Subtitle",
+      "isEventWide": false,
+      "startDate": "2026-06-25T10:00:00Z",
+      "endDate": "2026-06-25T12:00:00Z",
+      "startTime": "10:00",
+      "endTime": "12:00",
+      "roomId": "room1"
     }
   ],
   "bookedSpacesDetails": [

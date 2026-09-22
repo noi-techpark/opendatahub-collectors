@@ -74,12 +74,15 @@ type Detail struct {
 }
 
 type EventDate struct {
-	Active              bool     `json:"Active"`
-	Begin               string   `json:"Begin,omitempty"`
-	End                 string   `json:"End,omitempty"`
-	From                string   `json:"From,omitempty"`
-	To                  string   `json:"To,omitempty"`
-	VenueRoomDetailsIds []string `json:"VenueRoomDetailsIds,omitempty"`
+	Active              bool                         `json:"Active"`
+	Begin               string                       `json:"Begin,omitempty"`
+	Detail              map[string]Detail            `json:"Detail,omitempty"`
+	End                 string                       `json:"End,omitempty"`
+	From                string                       `json:"From,omitempty"`
+	Mapping             map[string]map[string]string `json:"Mapping,omitempty"`
+	PublishedOn         []string                     `json:"PublishedOn"`
+	To                  string                       `json:"To,omitempty"`
+	VenueRoomDetailsIds []string                     `json:"VenueRoomDetailsIds,omitempty"`
 }
 
 type EventUrl struct {

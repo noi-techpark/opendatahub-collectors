@@ -44,8 +44,24 @@
     {
       "Active": true,
       "Begin": "10:00",
+      "Detail": {
+        "en": {
+          "Language": "en",
+          "Title": "English Date Subtitle"
+        }
+      },
       "End": "12:00",
       "From": "2026-06-25T10:00:00Z",
+      "Mapping": {
+        "momentus": {
+          "roomId": "room1",
+          "spaceUsageName": "Event PUBLIC"
+        }
+      },
+      "PublishedOn": [
+        "noi-totem",
+        "today.noi.bz.it"
+      ],
       "To": "2026-06-25T12:00:00Z",
       "VenueRoomDetailsIds": [
         "urn:room:noi:1"

@@ -343,7 +343,13 @@ func ParseMomentusEvent(mevent MomentusEvent, venue *ODHVenue, base *odhmodel.Ev
 		eventLinked.VenueIds = []string{venue.Id}
 	}
 
-	eventLinked.EventDate = buildEventDates(mevent, venue, mevent.BookedSpacesDetails)
+	var venueEventLocation string
+	if venue != nil && venue.Mapping.Tag != nil {
+		venueEventLocation = venue.Mapping.Tag["eventlocation"]
+	}
+
+	eventLinked.EventDate = buildEventDates(mevent, venue, mevent.BookedSpacesDetails, venueEventLocation)
+	eventLinked.EventDate = buildDetailFromFunctionsForEventDates(mevent.Functions, eventLinked.EventDate)
 
 	if optimizedays {
 		refineRootDatesFromEventDates(eventLinked)
@@ -389,11 +395,6 @@ func ParseMomentusEvent(mevent MomentusEvent, venue *ODHVenue, base *odhmodel.Ev
 		}
 	}
 
-	var venueEventLocation string
-	if venue != nil && venue.Mapping.Tag != nil {
-		venueEventLocation = venue.Mapping.Tag["eventlocation"]
-	}
-
 	eventLinked.PublishedOn = determinePublishedOn(mevent, mevent.BookedSpacesDetails, venueEventLocation)
 
 	var tagIds []string
@@ -422,6 +423,10 @@ func buildDetailFromFunctions(functions []MomentusFunction, description string, 
 	details := make(map[string]odhmodel.Detail)
 
 	for _, fn := range functions {
+		if !fn.IsEventWide {
+			continue
+		}
+
 		fnType := strings.TrimSpace(fn.FunctionTypeName)
 		name := fn.Name
 		lang := ""
@@ -490,6 +495,61 @@ func buildDetailFromFunctions(functions []MomentusFunction, description string, 
 	return details
 }
 
+// buildDetailFromFunctionsForEventDates assigns the per-date SUBtitle functions
+// (isEventWide: false) to the Detail of the matching EventDate. The matching
+// EventDate is found by date, time and room, since a non-event-wide SUBtitle
+// function only applies to one specific booked space.
+func buildDetailFromFunctionsForEventDates(functions []MomentusFunction, eventDates []odhmodel.EventDate) []odhmodel.EventDate {
+	for _, fn := range functions {
+		if fn.IsEventWide {
+			continue
+		}
+
+		fnType := strings.TrimSpace(fn.FunctionTypeName)
+		lang := ""
+		if fnType == "EN SUBtitle" {
+			lang = "en"
+		} else if fnType == "DE SUBtitle" {
+			lang = "de"
+		} else if fnType == "IT SUBtitle" {
+			lang = "it"
+		}
+		if lang == "" {
+			continue
+		}
+
+		if fn.StartDate == "" || fn.EndDate == "" || fn.StartTime == "" || fn.EndTime == "" || fn.RoomId == "" {
+			continue
+		}
+
+		for i := range eventDates {
+			ed := &eventDates[i]
+			if ed.From != fn.StartDate || ed.To != fn.EndDate || ed.Begin != fn.StartTime || ed.End != fn.EndTime {
+				continue
+			}
+
+			roomId := ""
+			if mm, ok := ed.Mapping["momentus"]; ok {
+				roomId = mm["roomId"]
+			}
+			if roomId != fn.RoomId {
+				continue
+			}
+
+			if ed.Detail == nil {
+				ed.Detail = make(map[string]odhmodel.Detail)
+			}
+			d := ed.Detail[lang]
+			d.Language = lang
+			d.Title = fn.Name
+			ed.Detail[lang] = d
+			break
+		}
+	}
+
+	return eventDates
+}
+
 func determinePublishedOn(mevent MomentusEvent, bookedSpaces []MomentusBookedSpace, venueEventLocation string) []string {
 	eventSpaceIds := make(map[string]bool)
 
@@ -532,7 +592,7 @@ func determinePublishedOn(mevent MomentusEvent, bookedSpaces []MomentusBookedSpa
 
 	effectiveType := ""
 	for _, u := range spaceUsageNames {
-		if strings.Contains(u, "PUBLIC") || strings.Contains(u, "PUBBLICO") || strings.Contains(u, "ÖFFENTLICH") || strings.Contains(u, "OEEFFENTLICH") || strings.Contains(u, "OFFENTLICH") {
+		if strings.Contains(u, "PUBLIC") {
 			effectiveType = "PUBLIC"
 			break
 		}
@@ -547,7 +607,7 @@ func determinePublishedOn(mevent MomentusEvent, bookedSpaces []MomentusBookedSpa
 	}
 	if effectiveType == "" {
 		for _, u := range spaceUsageNames {
-			if strings.Contains(u, "ROOM") || strings.Contains(u, "SALA") || strings.Contains(u, "SAAL") {
+			if strings.Contains(u, "ROOM") {
 				effectiveType = "ROOM"
 				break
 			}
@@ -588,7 +648,59 @@ func determinePublishedOn(mevent MomentusEvent, bookedSpaces []MomentusBookedSpa
 	return publishers
 }
 
-func buildEventDates(mevent MomentusEvent, venue *ODHVenue, bookedSpaces []MomentusBookedSpace) []odhmodel.EventDate {
+// determineEventDatePublishedOn applies the same publisher rules as
+// determinePublishedOn, but for the usage name of a single event date's
+// booked space rather than the aggregated usage names of the whole event.
+func determineEventDatePublishedOn(usageName string, venueEventLocation string) []string {
+	usage := strings.ToUpper(strings.TrimSpace(usageName))
+	if usage == "" || strings.Contains(usage, "PRIVATE") {
+		return []string{}
+	}
+
+	effectiveType := ""
+	if strings.Contains(usage, "PUBLIC") {
+		effectiveType = "PUBLIC"
+	} else if strings.Contains(usage, "VIDEOWALL") {
+		effectiveType = "VIDEOWALL"
+	} else if strings.Contains(usage, "ROOM") {
+		effectiveType = "ROOM"
+	}
+
+	if effectiveType == "" {
+		return []string{}
+	}
+
+	isEurac := strings.EqualFold(venueEventLocation, "ec")
+	isNoi := strings.EqualFold(venueEventLocation, "noi")
+	var publishers []string
+
+	if effectiveType == "PUBLIC" {
+		if isEurac {
+			publishers = append(publishers, "eurac-videowall", "eurac-seminarroom")
+		}
+		if isNoi {
+			publishers = append(publishers, "noi-totem", "today.noi.bz.it")
+		}
+	} else if effectiveType == "VIDEOWALL" {
+		if isEurac {
+			publishers = append(publishers, "eurac-videowall")
+		}
+		if isNoi {
+			publishers = append(publishers, "today.noi.bz.it")
+		}
+	} else if effectiveType == "ROOM" {
+		if isEurac {
+			publishers = append(publishers, "eurac-seminarroom")
+		}
+		if isNoi {
+			publishers = append(publishers, "noi-totem")
+		}
+	}
+
+	return publishers
+}
+
+func buildEventDates(mevent MomentusEvent, venue *ODHVenue, bookedSpaces []MomentusBookedSpace, venueEventLocation string) []odhmodel.EventDate {
 	var eventDates []odhmodel.EventDate
 
 	for _, space := range mevent.BookedSpaces {
@@ -615,6 +727,19 @@ func buildEventDates(mevent MomentusEvent, venue *ODHVenue, bookedSpaces []Momen
 			To:     space.EndDate,
 			Active: !isPrivate,
 		}
+
+		momentusMapping := map[string]string{}
+		if usageName != "" {
+			momentusMapping["spaceUsageName"] = usageName
+		}
+		if space.RoomId != "" {
+			momentusMapping["roomId"] = space.RoomId
+		}
+		if len(momentusMapping) > 0 {
+			ed.Mapping = map[string]map[string]string{"momentus": momentusMapping}
+		}
+
+		ed.PublishedOn = determineEventDatePublishedOn(usageName, venueEventLocation)
 
 		if space.StartTime != "" {
 			ed.Begin = space.StartTime

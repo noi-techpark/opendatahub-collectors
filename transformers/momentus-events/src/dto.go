@@ -56,6 +56,12 @@ type MomentusBookedSpace struct {
 type MomentusFunction struct {
 	FunctionTypeName string `json:"functionTypeName"`
 	Name             string `json:"name"`
+	IsEventWide      bool   `json:"isEventWide"`
+	StartDate        string `json:"startDate"`
+	EndDate          string `json:"endDate"`
+	StartTime        string `json:"startTime"`
+	EndTime          string `json:"endTime"`
+	RoomId           string `json:"roomId"`
 }
 
 // MomentusEventMessage is the wrapper received from the crawler
