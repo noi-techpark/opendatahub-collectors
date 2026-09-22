@@ -1,0 +1,61 @@
+# SPDX-FileCopyrightText: 2026 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+# FAMAS traffic API (webservices.trafficopab.famassystem.it), migrated from
+# the legacy Java traffic-provBZ collector. Plain HTTP Basic Auth -
+# credentials injected by the deploy workflow (yq) before this file is
+# mounted as a configMap - never commit them.
+#
+# Traffic sensor (DatiAggregatiSuPostazioni) data only. The legacy collector
+# also synced bluetooth passage data (DatiPassaggiSuPostazioni) into a
+# separate BluetoothStation station type - deliberately left out of this
+# migration for now (not currently a relevant part of the pipeline; revisit
+# if/when it becomes one). See git history for a prior version of this
+# pipeline that included it, plus notes on why it should stay a separate
+# collector deployment if it comes back (go-silky aborts an entire crawl on
+# any single request failure, and DatiPassaggiSuPostazioni was observed to
+# fail independently of this endpoint).
+#
+# Stateless sliding window: unlike the legacy collector (which persisted a
+# last-synced-per-station cursor in memory), each cron run just asks FAMAS
+# for a fixed relative window covering the last WINDOW_MINUTES, so a couple
+# of consecutive runs always overlap. BDP writes are idempotent on
+# (station, datatype, timestamp), so the overlap is harmless.
+rootContext: {}
+stream: false
+
+auth:
+  type: basic
+  username:
+  password:
+
+steps:
+  - type: request
+    name: stations
+    request:
+      url: "${FAMAS_BASE_URL:-https://webservices.trafficopab.famassystem.it/api/v1}/AnagrafichePostazioni"
+      method: GET
+      headers:
+        Accept: application/json
+    mergeOn: .stations = $res
+
+    steps:
+      - type: forEach
+        name: per-station-data
+        path: .
+        as: station
+        steps:
+          - type: request
+            name: aggregated
+            request:
+              url: "${FAMAS_BASE_URL:-https://webservices.trafficopab.famassystem.it/api/v1}/DatiAggregatiSuPostazioni"
+              method: POST
+              headers:
+                Content-Type: application/json
+              body:
+                IdPostazioni:
+                  - "{{ .station.id }}"
+                InizioPeriodo: "{{ dateInZone \"2006-01-02T15:04:05Z\" (now | dateModify \"-${WINDOW_MINUTES:-30}m\") \"UTC\" }}"
+                FinePeriodo: "{{ dateInZone \"2006-01-02T15:04:05Z\" now \"UTC\" }}"
+            mergeOn: .aggregatedData = $res

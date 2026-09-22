@@ -1,0 +1,3885 @@
+{
+  "stations": [
+    {
+      "id": 3,
+      "nome": "3",
+      "geoInfo": {
+        "latitudine": 46.4497009548582,
+        "longitudine": 11.3448734664564,
+        "regione": "Trentino-Alto Adige",
+        "provincia": "Bolzano",
+        "comune": "Laives/Leifers"
+      },
+      "stradaInfo": {
+        "nome": "SS 12 dell'Abetone e del Brennero",
+        "chilometrica": 432.69000000000000000000000000
+      },
+      "direzioni": [
+        {
+          "tipo": "ascendente",
+          "descrizione": "Verso Bolzano"
+        },
+        {
+          "tipo": "discendente",
+          "descrizione": "Verso Trento"
+        }
+      ],
+      "schemaDiClassificazione": 1,
+      "numeroCorsie": 2,
+      "corsieInfo": [
+        {
+          "id": 1,
+          "descrizione": "Marcia (verso Bolzano)",
+          "sensoDiMarcia": "ascendente"
+        },
+        {
+          "id": 2,
+          "descrizione": "Marcia (verso Trento)",
+          "sensoDiMarcia": "discendente"
+        }
+      ],
+      "aggregatedData": [
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:15:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 15,
+          "totaliPerClasseVeicolare": {
+            "2": 10,
+            "4": 3,
+            "1": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 82.2,
+          "headwayMedioSecondi": 18.89,
+          "varianzaHeadwayMedioSecondi": 200.58,
+          "gapMedioSecondi": 18.59,
+          "varianzaGapMedioSecondi": 201.53
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:15:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:15:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:15:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 10,
+          "totaliPerClasseVeicolare": {
+            "2": 6,
+            "1": 4
+          },
+          "mediaArmonicaVelocita": 80.6,
+          "headwayMedioSecondi": 29.88,
+          "varianzaHeadwayMedioSecondi": 597.09,
+          "gapMedioSecondi": 29.7,
+          "varianzaGapMedioSecondi": 597.84
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:20:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 25,
+          "totaliPerClasseVeicolare": {
+            "2": 19,
+            "1": 4,
+            "4": 2
+          },
+          "mediaArmonicaVelocita": 78.8,
+          "headwayMedioSecondi": 12.54,
+          "varianzaHeadwayMedioSecondi": 176.74,
+          "gapMedioSecondi": 12.32,
+          "varianzaGapMedioSecondi": 177.04
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:20:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:20:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:20:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 10,
+          "totaliPerClasseVeicolare": {
+            "2": 7,
+            "3": 1,
+            "4": 1,
+            "5": 1
+          },
+          "mediaArmonicaVelocita": 77.6,
+          "headwayMedioSecondi": 26.04,
+          "varianzaHeadwayMedioSecondi": 811.8,
+          "gapMedioSecondi": 25.79,
+          "varianzaGapMedioSecondi": 813.29
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:25:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 27,
+          "totaliPerClasseVeicolare": {
+            "2": 24,
+            "1": 1,
+            "4": 1,
+            "7": 1
+          },
+          "mediaArmonicaVelocita": 76.8,
+          "headwayMedioSecondi": 9.59,
+          "varianzaHeadwayMedioSecondi": 125.44,
+          "gapMedioSecondi": 9.29,
+          "varianzaGapMedioSecondi": 126.21
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:25:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:25:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:25:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 15,
+          "totaliPerClasseVeicolare": {
+            "2": 13,
+            "1": 1,
+            "4": 1
+          },
+          "mediaArmonicaVelocita": 82.9,
+          "headwayMedioSecondi": 23.13,
+          "varianzaHeadwayMedioSecondi": 579.75,
+          "gapMedioSecondi": 22.89,
+          "varianzaGapMedioSecondi": 578.12
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:30:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 26,
+          "totaliPerClasseVeicolare": {
+            "2": 20,
+            "4": 4,
+            "6": 2
+          },
+          "mediaArmonicaVelocita": 78.9,
+          "headwayMedioSecondi": 13.11,
+          "varianzaHeadwayMedioSecondi": 229.99,
+          "gapMedioSecondi": 12.82,
+          "varianzaGapMedioSecondi": 230.25
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:30:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:30:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:30:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 12,
+          "totaliPerClasseVeicolare": {
+            "2": 10,
+            "1": 1,
+            "10": 1
+          },
+          "mediaArmonicaVelocita": 81.4,
+          "headwayMedioSecondi": 21.31,
+          "varianzaHeadwayMedioSecondi": 335.91,
+          "gapMedioSecondi": 21.07,
+          "varianzaGapMedioSecondi": 336.25
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:35:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 39,
+          "totaliPerClasseVeicolare": {
+            "2": 30,
+            "1": 3,
+            "4": 3,
+            "3": 1,
+            "6": 1,
+            "8": 1
+          },
+          "mediaArmonicaVelocita": 80.1,
+          "headwayMedioSecondi": 7.83,
+          "varianzaHeadwayMedioSecondi": 107.99,
+          "gapMedioSecondi": 7.54,
+          "varianzaGapMedioSecondi": 108.46
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:35:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:35:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:35:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 12,
+          "totaliPerClasseVeicolare": {
+            "2": 10,
+            "1": 2
+          },
+          "mediaArmonicaVelocita": 83.4,
+          "headwayMedioSecondi": 26.98,
+          "varianzaHeadwayMedioSecondi": 1207.46,
+          "gapMedioSecondi": 26.81,
+          "varianzaGapMedioSecondi": 1204.78
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:40:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 35,
+          "totaliPerClasseVeicolare": {
+            "2": 23,
+            "1": 4,
+            "5": 3,
+            "4": 2,
+            "3": 1,
+            "6": 1,
+            "8": 1
+          },
+          "mediaArmonicaVelocita": 79.8,
+          "headwayMedioSecondi": 8.53,
+          "varianzaHeadwayMedioSecondi": 96.93,
+          "gapMedioSecondi": 8.24,
+          "varianzaGapMedioSecondi": 97.48
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:40:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:40:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:40:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 17,
+          "totaliPerClasseVeicolare": {
+            "2": 14,
+            "1": 1,
+            "6": 1,
+            "8": 1
+          },
+          "mediaArmonicaVelocita": 87.3,
+          "headwayMedioSecondi": 17.25,
+          "varianzaHeadwayMedioSecondi": 692.9,
+          "gapMedioSecondi": 17.01,
+          "varianzaGapMedioSecondi": 694.67
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:45:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 27,
+          "totaliPerClasseVeicolare": {
+            "2": 18,
+            "4": 5,
+            "8": 2,
+            "1": 1,
+            "5": 1
+          },
+          "mediaArmonicaVelocita": 78.4,
+          "headwayMedioSecondi": 10.01,
+          "varianzaHeadwayMedioSecondi": 167.3,
+          "gapMedioSecondi": 9.7,
+          "varianzaGapMedioSecondi": 168.88
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:45:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:45:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:45:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 14,
+          "totaliPerClasseVeicolare": {
+            "2": 11,
+            "1": 2,
+            "10": 1
+          },
+          "mediaArmonicaVelocita": 77.8,
+          "headwayMedioSecondi": 18.07,
+          "varianzaHeadwayMedioSecondi": 562.48,
+          "gapMedioSecondi": 17.84,
+          "varianzaGapMedioSecondi": 562.86
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:50:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 28,
+          "totaliPerClasseVeicolare": {
+            "2": 22,
+            "1": 4,
+            "6": 1,
+            "8": 1
+          },
+          "mediaArmonicaVelocita": 84.6,
+          "headwayMedioSecondi": 11.67,
+          "varianzaHeadwayMedioSecondi": 170.47,
+          "gapMedioSecondi": 11.41,
+          "varianzaGapMedioSecondi": 170.86
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:50:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:50:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:50:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 15,
+          "totaliPerClasseVeicolare": {
+            "2": 12,
+            "4": 1,
+            "5": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 75.8,
+          "headwayMedioSecondi": 24.89,
+          "varianzaHeadwayMedioSecondi": 683.97,
+          "gapMedioSecondi": 24.59,
+          "varianzaGapMedioSecondi": 682.36
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:55:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 44,
+          "totaliPerClasseVeicolare": {
+            "2": 33,
+            "4": 5,
+            "1": 3,
+            "6": 2,
+            "3": 1
+          },
+          "mediaArmonicaVelocita": 78.0,
+          "headwayMedioSecondi": 6.82,
+          "varianzaHeadwayMedioSecondi": 107.21,
+          "gapMedioSecondi": 6.56,
+          "varianzaGapMedioSecondi": 107.39
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:55:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:55:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T03:55:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 9,
+          "totaliPerClasseVeicolare": {
+            "2": 6,
+            "4": 1,
+            "8": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 81.8,
+          "headwayMedioSecondi": 28.98,
+          "varianzaHeadwayMedioSecondi": 810.65,
+          "gapMedioSecondi": 28.63,
+          "varianzaGapMedioSecondi": 807.76
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:00:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 41,
+          "totaliPerClasseVeicolare": {
+            "2": 31,
+            "4": 4,
+            "1": 2,
+            "8": 2,
+            "6": 1,
+            "7": 1
+          },
+          "mediaArmonicaVelocita": 78.2,
+          "headwayMedioSecondi": 7.37,
+          "varianzaHeadwayMedioSecondi": 39.03,
+          "gapMedioSecondi": 7.05,
+          "varianzaGapMedioSecondi": 39.32
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:00:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:00:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:00:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 15,
+          "totaliPerClasseVeicolare": {
+            "2": 12,
+            "1": 1,
+            "4": 1,
+            "7": 1
+          },
+          "mediaArmonicaVelocita": 79.6,
+          "headwayMedioSecondi": 20.87,
+          "varianzaHeadwayMedioSecondi": 1867.35,
+          "gapMedioSecondi": 20.55,
+          "varianzaGapMedioSecondi": 1870.3
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:05:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 58,
+          "totaliPerClasseVeicolare": {
+            "2": 39,
+            "4": 6,
+            "8": 5,
+            "1": 3,
+            "7": 3,
+            "6": 1,
+            "10": 1
+          },
+          "mediaArmonicaVelocita": 74.6,
+          "headwayMedioSecondi": 5.07,
+          "varianzaHeadwayMedioSecondi": 62.05,
+          "gapMedioSecondi": 4.72,
+          "varianzaGapMedioSecondi": 61.98
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:05:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:05:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:05:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 24,
+          "totaliPerClasseVeicolare": {
+            "2": 16,
+            "1": 3,
+            "4": 2,
+            "6": 2,
+            "3": 1
+          },
+          "mediaArmonicaVelocita": 80.7,
+          "headwayMedioSecondi": 13.05,
+          "varianzaHeadwayMedioSecondi": 222.01,
+          "gapMedioSecondi": 12.78,
+          "varianzaGapMedioSecondi": 222.03
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:10:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 56,
+          "totaliPerClasseVeicolare": {
+            "2": 43,
+            "1": 4,
+            "4": 3,
+            "6": 2,
+            "8": 2,
+            "3": 1,
+            "5": 1
+          },
+          "mediaArmonicaVelocita": 75.2,
+          "headwayMedioSecondi": 5.5,
+          "varianzaHeadwayMedioSecondi": 44.97,
+          "gapMedioSecondi": 5.2,
+          "varianzaGapMedioSecondi": 45.34
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:10:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:10:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:10:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 19,
+          "totaliPerClasseVeicolare": {
+            "2": 15,
+            "4": 2,
+            "1": 1,
+            "7": 1
+          },
+          "mediaArmonicaVelocita": 76.4,
+          "headwayMedioSecondi": 15.72,
+          "varianzaHeadwayMedioSecondi": 207.82,
+          "gapMedioSecondi": 15.44,
+          "varianzaGapMedioSecondi": 208.93
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:15:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 43,
+          "totaliPerClasseVeicolare": {
+            "2": 26,
+            "4": 10,
+            "1": 4,
+            "7": 2,
+            "8": 1
+          },
+          "mediaArmonicaVelocita": 76.9,
+          "headwayMedioSecondi": 6.88,
+          "varianzaHeadwayMedioSecondi": 58.72,
+          "gapMedioSecondi": 6.57,
+          "varianzaGapMedioSecondi": 58.75
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:15:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:15:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:15:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 27,
+          "totaliPerClasseVeicolare": {
+            "2": 23,
+            "1": 3,
+            "4": 1
+          },
+          "mediaArmonicaVelocita": 81.7,
+          "headwayMedioSecondi": 10.91,
+          "varianzaHeadwayMedioSecondi": 95.79,
+          "gapMedioSecondi": 10.67,
+          "varianzaGapMedioSecondi": 95.58
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:20:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 73,
+          "totaliPerClasseVeicolare": {
+            "2": 58,
+            "4": 6,
+            "1": 5,
+            "8": 2,
+            "3": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 74.4,
+          "headwayMedioSecondi": 4.17,
+          "varianzaHeadwayMedioSecondi": 19.81,
+          "gapMedioSecondi": 3.89,
+          "varianzaGapMedioSecondi": 19.94
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:20:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:20:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:20:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 24,
+          "totaliPerClasseVeicolare": {
+            "2": 18,
+            "4": 2,
+            "8": 2,
+            "1": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 76.4,
+          "headwayMedioSecondi": 13.42,
+          "varianzaHeadwayMedioSecondi": 224.9,
+          "gapMedioSecondi": 13.1,
+          "varianzaGapMedioSecondi": 225.94
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:25:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 67,
+          "totaliPerClasseVeicolare": {
+            "2": 43,
+            "1": 8,
+            "4": 6,
+            "6": 4,
+            "8": 3,
+            "3": 1,
+            "7": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 67.5,
+          "headwayMedioSecondi": 4.49,
+          "varianzaHeadwayMedioSecondi": 49.03,
+          "gapMedioSecondi": 4.14,
+          "varianzaGapMedioSecondi": 49.62
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:25:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:25:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:25:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 31,
+          "totaliPerClasseVeicolare": {
+            "2": 25,
+            "4": 4,
+            "1": 2
+          },
+          "mediaArmonicaVelocita": 78.9,
+          "headwayMedioSecondi": 9.67,
+          "varianzaHeadwayMedioSecondi": 124.91,
+          "gapMedioSecondi": 9.42,
+          "varianzaGapMedioSecondi": 124.85
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:30:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 95,
+          "totaliPerClasseVeicolare": {
+            "2": 68,
+            "1": 12,
+            "4": 6,
+            "8": 5,
+            "6": 3,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 65.2,
+          "headwayMedioSecondi": 3.15,
+          "varianzaHeadwayMedioSecondi": 14.84,
+          "gapMedioSecondi": 2.81,
+          "varianzaGapMedioSecondi": 15.16
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:30:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:30:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:30:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 23,
+          "totaliPerClasseVeicolare": {
+            "2": 13,
+            "4": 5,
+            "8": 2,
+            "9": 2,
+            "1": 1
+          },
+          "mediaArmonicaVelocita": 71.8,
+          "headwayMedioSecondi": 11.36,
+          "varianzaHeadwayMedioSecondi": 231.8,
+          "gapMedioSecondi": 11.0,
+          "varianzaGapMedioSecondi": 233.52
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:35:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 97,
+          "totaliPerClasseVeicolare": {
+            "2": 75,
+            "1": 11,
+            "4": 7,
+            "8": 2,
+            "5": 1,
+            "6": 1
+          },
+          "mediaArmonicaVelocita": 71.2,
+          "headwayMedioSecondi": 2.98,
+          "varianzaHeadwayMedioSecondi": 10.37,
+          "gapMedioSecondi": 2.69,
+          "varianzaGapMedioSecondi": 10.46
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:35:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:35:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:35:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 29,
+          "totaliPerClasseVeicolare": {
+            "2": 19,
+            "1": 4,
+            "3": 2,
+            "4": 2,
+            "8": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 67.4,
+          "headwayMedioSecondi": 11.16,
+          "varianzaHeadwayMedioSecondi": 700.47,
+          "gapMedioSecondi": 10.81,
+          "varianzaGapMedioSecondi": 702.68
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:40:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 106,
+          "totaliPerClasseVeicolare": {
+            "2": 78,
+            "1": 15,
+            "4": 8,
+            "8": 3,
+            "3": 1,
+            "6": 1
+          },
+          "mediaArmonicaVelocita": 69.2,
+          "headwayMedioSecondi": 2.94,
+          "varianzaHeadwayMedioSecondi": 14.43,
+          "gapMedioSecondi": 2.65,
+          "varianzaGapMedioSecondi": 14.54
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:40:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:40:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:40:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 44,
+          "totaliPerClasseVeicolare": {
+            "2": 31,
+            "4": 6,
+            "1": 3,
+            "8": 2,
+            "6": 1,
+            "7": 1
+          },
+          "mediaArmonicaVelocita": 74.3,
+          "headwayMedioSecondi": 7.1,
+          "varianzaHeadwayMedioSecondi": 121.07,
+          "gapMedioSecondi": 6.79,
+          "varianzaGapMedioSecondi": 121.78
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:45:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 89,
+          "totaliPerClasseVeicolare": {
+            "2": 74,
+            "4": 6,
+            "1": 4,
+            "5": 2,
+            "6": 2,
+            "8": 1
+          },
+          "mediaArmonicaVelocita": 71.7,
+          "headwayMedioSecondi": 3.37,
+          "varianzaHeadwayMedioSecondi": 12.09,
+          "gapMedioSecondi": 3.08,
+          "varianzaGapMedioSecondi": 12.15
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:45:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:45:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:45:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 39,
+          "totaliPerClasseVeicolare": {
+            "2": 26,
+            "4": 7,
+            "9": 3,
+            "1": 1,
+            "5": 1,
+            "6": 1
+          },
+          "mediaArmonicaVelocita": 71.9,
+          "headwayMedioSecondi": 7.48,
+          "varianzaHeadwayMedioSecondi": 94.55,
+          "gapMedioSecondi": 7.12,
+          "varianzaGapMedioSecondi": 95.51
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:50:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 98,
+          "totaliPerClasseVeicolare": {
+            "2": 79,
+            "1": 9,
+            "4": 7,
+            "8": 2,
+            "3": 1
+          },
+          "mediaArmonicaVelocita": 72.4,
+          "headwayMedioSecondi": 2.96,
+          "varianzaHeadwayMedioSecondi": 8.22,
+          "gapMedioSecondi": 2.67,
+          "varianzaGapMedioSecondi": 8.26
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:50:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:50:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:50:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 41,
+          "totaliPerClasseVeicolare": {
+            "2": 25,
+            "4": 8,
+            "1": 5,
+            "9": 2,
+            "8": 1
+          },
+          "mediaArmonicaVelocita": 71.2,
+          "headwayMedioSecondi": 7.25,
+          "varianzaHeadwayMedioSecondi": 72.77,
+          "gapMedioSecondi": 6.93,
+          "varianzaGapMedioSecondi": 72.91
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:55:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 81,
+          "totaliPerClasseVeicolare": {
+            "2": 65,
+            "1": 5,
+            "4": 5,
+            "8": 2,
+            "3": 1,
+            "5": 1,
+            "6": 1,
+            "7": 1
+          },
+          "mediaArmonicaVelocita": 70.8,
+          "headwayMedioSecondi": 3.84,
+          "varianzaHeadwayMedioSecondi": 22.48,
+          "gapMedioSecondi": 3.52,
+          "varianzaGapMedioSecondi": 22.65
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:55:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:55:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T04:55:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 53,
+          "totaliPerClasseVeicolare": {
+            "2": 44,
+            "4": 4,
+            "8": 3,
+            "6": 2
+          },
+          "mediaArmonicaVelocita": 70.7,
+          "headwayMedioSecondi": 5.92,
+          "varianzaHeadwayMedioSecondi": 114.66,
+          "gapMedioSecondi": 5.59,
+          "varianzaGapMedioSecondi": 115.09
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:00:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 99,
+          "totaliPerClasseVeicolare": {
+            "2": 81,
+            "4": 7,
+            "1": 4,
+            "8": 3,
+            "3": 1,
+            "5": 1,
+            "6": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 65.7,
+          "headwayMedioSecondi": 6.59,
+          "varianzaHeadwayMedioSecondi": 1256.84,
+          "gapMedioSecondi": 6.27,
+          "varianzaGapMedioSecondi": 1257.12
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:00:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:00:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:00:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 50,
+          "totaliPerClasseVeicolare": {
+            "2": 38,
+            "4": 4,
+            "1": 3,
+            "3": 2,
+            "5": 1,
+            "7": 1,
+            "8": 1
+          },
+          "mediaArmonicaVelocita": 68.9,
+          "headwayMedioSecondi": 5.96,
+          "varianzaHeadwayMedioSecondi": 115.4,
+          "gapMedioSecondi": 5.63,
+          "varianzaGapMedioSecondi": 115.84
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:05:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 145,
+          "totaliPerClasseVeicolare": {
+            "2": 114,
+            "4": 11,
+            "1": 10,
+            "8": 4,
+            "5": 2,
+            "6": 2,
+            "9": 2
+          },
+          "mediaArmonicaVelocita": 57.5,
+          "headwayMedioSecondi": 2.07,
+          "varianzaHeadwayMedioSecondi": 3.05,
+          "gapMedioSecondi": 1.69,
+          "varianzaGapMedioSecondi": 3.05
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:05:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:05:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:05:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 46,
+          "totaliPerClasseVeicolare": {
+            "2": 32,
+            "1": 4,
+            "4": 4,
+            "5": 3,
+            "6": 2,
+            "8": 1
+          },
+          "mediaArmonicaVelocita": 68.7,
+          "headwayMedioSecondi": 6.55,
+          "varianzaHeadwayMedioSecondi": 111.06,
+          "gapMedioSecondi": 6.23,
+          "varianzaGapMedioSecondi": 112.12
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:10:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 149,
+          "totaliPerClasseVeicolare": {
+            "2": 120,
+            "1": 12,
+            "4": 9,
+            "8": 5,
+            "7": 1,
+            "9": 1,
+            "10": 1
+          },
+          "mediaArmonicaVelocita": 62.4,
+          "headwayMedioSecondi": 2.01,
+          "varianzaHeadwayMedioSecondi": 1.63,
+          "gapMedioSecondi": 1.69,
+          "varianzaGapMedioSecondi": 1.62
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:10:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:10:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:10:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 41,
+          "totaliPerClasseVeicolare": {
+            "2": 30,
+            "4": 6,
+            "6": 2,
+            "8": 2,
+            "1": 1
+          },
+          "mediaArmonicaVelocita": 67.4,
+          "headwayMedioSecondi": 7.31,
+          "varianzaHeadwayMedioSecondi": 135.99,
+          "gapMedioSecondi": 6.97,
+          "varianzaGapMedioSecondi": 136.87
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:15:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 139,
+          "totaliPerClasseVeicolare": {
+            "2": 124,
+            "4": 10,
+            "1": 4,
+            "6": 1
+          },
+          "mediaArmonicaVelocita": 43.4,
+          "headwayMedioSecondi": 2.14,
+          "varianzaHeadwayMedioSecondi": 1.36,
+          "gapMedioSecondi": 1.68,
+          "varianzaGapMedioSecondi": 1.37
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:15:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:15:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:15:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 71,
+          "totaliPerClasseVeicolare": {
+            "2": 54,
+            "4": 8,
+            "1": 7,
+            "3": 1,
+            "5": 1
+          },
+          "mediaArmonicaVelocita": 65.3,
+          "headwayMedioSecondi": 4.14,
+          "varianzaHeadwayMedioSecondi": 55.22,
+          "gapMedioSecondi": 3.83,
+          "varianzaGapMedioSecondi": 55.67
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:20:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 62,
+          "totaliPerClasseVeicolare": {
+            "2": 48,
+            "4": 8,
+            "5": 3,
+            "8": 2,
+            "1": 1
+          },
+          "mediaArmonicaVelocita": 15.3,
+          "headwayMedioSecondi": 4.75,
+          "varianzaHeadwayMedioSecondi": 27.6,
+          "gapMedioSecondi": 2.54,
+          "varianzaGapMedioSecondi": 1.87
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:20:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:20:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:20:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 62,
+          "totaliPerClasseVeicolare": {
+            "2": 48,
+            "4": 6,
+            "1": 3,
+            "6": 3,
+            "8": 2
+          },
+          "mediaArmonicaVelocita": 63.2,
+          "headwayMedioSecondi": 5.03,
+          "varianzaHeadwayMedioSecondi": 80.83,
+          "gapMedioSecondi": 4.67,
+          "varianzaGapMedioSecondi": 81.2
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:25:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 131,
+          "totaliPerClasseVeicolare": {
+            "2": 108,
+            "4": 12,
+            "1": 7,
+            "6": 2,
+            "5": 1,
+            "8": 1
+          },
+          "mediaArmonicaVelocita": 45.8,
+          "headwayMedioSecondi": 7.63,
+          "varianzaHeadwayMedioSecondi": 3697.82,
+          "gapMedioSecondi": 7.19,
+          "varianzaGapMedioSecondi": 3701.35
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:25:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:25:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:25:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 66,
+          "totaliPerClasseVeicolare": {
+            "2": 56,
+            "1": 4,
+            "4": 4,
+            "6": 1,
+            "8": 1
+          },
+          "mediaArmonicaVelocita": 67.9,
+          "headwayMedioSecondi": 4.31,
+          "varianzaHeadwayMedioSecondi": 43.19,
+          "gapMedioSecondi": 4.02,
+          "varianzaGapMedioSecondi": 43.12
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:30:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 143,
+          "totaliPerClasseVeicolare": {
+            "2": 118,
+            "1": 13,
+            "4": 5,
+            "8": 4,
+            "5": 2,
+            "3": 1
+          },
+          "mediaArmonicaVelocita": 52.3,
+          "headwayMedioSecondi": 2.09,
+          "varianzaHeadwayMedioSecondi": 1.63,
+          "gapMedioSecondi": 1.7,
+          "varianzaGapMedioSecondi": 1.62
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:30:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:30:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:30:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 87,
+          "totaliPerClasseVeicolare": {
+            "2": 68,
+            "1": 6,
+            "4": 5,
+            "6": 4,
+            "5": 2,
+            "8": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 65.0,
+          "headwayMedioSecondi": 3.64,
+          "varianzaHeadwayMedioSecondi": 25.57,
+          "gapMedioSecondi": 3.32,
+          "varianzaGapMedioSecondi": 25.86
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:35:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 143,
+          "totaliPerClasseVeicolare": {
+            "2": 125,
+            "4": 9,
+            "1": 6,
+            "8": 2,
+            "6": 1
+          },
+          "mediaArmonicaVelocita": 50.7,
+          "headwayMedioSecondi": 2.06,
+          "varianzaHeadwayMedioSecondi": 1.27,
+          "gapMedioSecondi": 1.67,
+          "varianzaGapMedioSecondi": 1.27
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:35:00",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 1,
+          "totaliPerClasseVeicolare": {
+            "1": 1
+          },
+          "mediaArmonicaVelocita": 7.0,
+          "headwayMedioSecondi": 3.6,
+          "varianzaHeadwayMedioSecondi": 0.0,
+          "gapMedioSecondi": 3.3,
+          "varianzaGapMedioSecondi": 0.0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:35:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:35:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 70,
+          "totaliPerClasseVeicolare": {
+            "2": 51,
+            "4": 7,
+            "1": 5,
+            "5": 3,
+            "8": 2,
+            "6": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 62.6,
+          "headwayMedioSecondi": 4.12,
+          "varianzaHeadwayMedioSecondi": 52.85,
+          "gapMedioSecondi": 3.78,
+          "varianzaGapMedioSecondi": 52.94
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:40:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 149,
+          "totaliPerClasseVeicolare": {
+            "2": 124,
+            "1": 14,
+            "4": 10,
+            "8": 1
+          },
+          "mediaArmonicaVelocita": 51.8,
+          "headwayMedioSecondi": 2.02,
+          "varianzaHeadwayMedioSecondi": 1.62,
+          "gapMedioSecondi": 1.65,
+          "varianzaGapMedioSecondi": 1.6
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:40:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:40:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:40:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 54,
+          "totaliPerClasseVeicolare": {
+            "2": 44,
+            "8": 5,
+            "1": 2,
+            "4": 1,
+            "5": 1,
+            "6": 1
+          },
+          "mediaArmonicaVelocita": 70.2,
+          "headwayMedioSecondi": 5.7,
+          "varianzaHeadwayMedioSecondi": 70.6,
+          "gapMedioSecondi": 5.35,
+          "varianzaGapMedioSecondi": 70.48
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:45:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 137,
+          "totaliPerClasseVeicolare": {
+            "2": 123,
+            "4": 8,
+            "1": 6
+          },
+          "mediaArmonicaVelocita": 55.2,
+          "headwayMedioSecondi": 2.19,
+          "varianzaHeadwayMedioSecondi": 1.7,
+          "gapMedioSecondi": 1.83,
+          "varianzaGapMedioSecondi": 1.72
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:45:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:45:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:45:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 65,
+          "totaliPerClasseVeicolare": {
+            "2": 51,
+            "4": 6,
+            "1": 3,
+            "8": 3,
+            "6": 1,
+            "10": 1
+          },
+          "mediaArmonicaVelocita": 67.2,
+          "headwayMedioSecondi": 4.66,
+          "varianzaHeadwayMedioSecondi": 65.73,
+          "gapMedioSecondi": 4.34,
+          "varianzaGapMedioSecondi": 65.81
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:50:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 135,
+          "totaliPerClasseVeicolare": {
+            "2": 114,
+            "1": 10,
+            "4": 6,
+            "7": 2,
+            "5": 1,
+            "6": 1,
+            "8": 1
+          },
+          "mediaArmonicaVelocita": 51.3,
+          "headwayMedioSecondi": 2.21,
+          "varianzaHeadwayMedioSecondi": 1.88,
+          "gapMedioSecondi": 1.8,
+          "varianzaGapMedioSecondi": 1.92
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:50:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:50:00",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 1,
+          "totaliPerClasseVeicolare": {
+            "1": 1
+          },
+          "mediaArmonicaVelocita": 79.0,
+          "headwayMedioSecondi": 5.6,
+          "varianzaHeadwayMedioSecondi": 0.0,
+          "gapMedioSecondi": 5.3,
+          "varianzaGapMedioSecondi": 0.0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:50:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 37,
+          "totaliPerClasseVeicolare": {
+            "2": 27,
+            "4": 5,
+            "1": 3,
+            "5": 1,
+            "8": 1
+          },
+          "mediaArmonicaVelocita": 66.5,
+          "headwayMedioSecondi": 7.78,
+          "varianzaHeadwayMedioSecondi": 169.08,
+          "gapMedioSecondi": 7.48,
+          "varianzaGapMedioSecondi": 169.76
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:55:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 131,
+          "totaliPerClasseVeicolare": {
+            "2": 108,
+            "4": 11,
+            "1": 4,
+            "8": 3,
+            "5": 2,
+            "6": 1,
+            "9": 1,
+            "10": 1
+          },
+          "mediaArmonicaVelocita": 46.5,
+          "headwayMedioSecondi": 2.3,
+          "varianzaHeadwayMedioSecondi": 2.49,
+          "gapMedioSecondi": 1.84,
+          "varianzaGapMedioSecondi": 2.49
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:55:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:55:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T05:55:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 54,
+          "totaliPerClasseVeicolare": {
+            "2": 43,
+            "1": 4,
+            "5": 3,
+            "8": 2,
+            "3": 1,
+            "4": 1
+          },
+          "mediaArmonicaVelocita": 69.1,
+          "headwayMedioSecondi": 5.67,
+          "varianzaHeadwayMedioSecondi": 73.48,
+          "gapMedioSecondi": 5.35,
+          "varianzaGapMedioSecondi": 74.23
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:00:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 108,
+          "totaliPerClasseVeicolare": {
+            "2": 82,
+            "1": 13,
+            "8": 4,
+            "4": 3,
+            "6": 3,
+            "3": 2,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 54.8,
+          "headwayMedioSecondi": 2.74,
+          "varianzaHeadwayMedioSecondi": 8.18,
+          "gapMedioSecondi": 2.35,
+          "varianzaGapMedioSecondi": 8.39
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:00:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:00:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:00:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 56,
+          "totaliPerClasseVeicolare": {
+            "2": 40,
+            "4": 7,
+            "1": 4,
+            "5": 2,
+            "6": 1,
+            "8": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 68.6,
+          "headwayMedioSecondi": 5.38,
+          "varianzaHeadwayMedioSecondi": 83.11,
+          "gapMedioSecondi": 5.07,
+          "varianzaGapMedioSecondi": 83.34
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:05:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 105,
+          "totaliPerClasseVeicolare": {
+            "2": 88,
+            "1": 7,
+            "4": 3,
+            "5": 2,
+            "8": 2,
+            "9": 2,
+            "6": 1
+          },
+          "mediaArmonicaVelocita": 61.7,
+          "headwayMedioSecondi": 2.9,
+          "varianzaHeadwayMedioSecondi": 10.54,
+          "gapMedioSecondi": 2.57,
+          "varianzaGapMedioSecondi": 10.75
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:05:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:05:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:05:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 54,
+          "totaliPerClasseVeicolare": {
+            "2": 44,
+            "1": 2,
+            "6": 2,
+            "7": 2,
+            "9": 2,
+            "10": 2
+          },
+          "mediaArmonicaVelocita": 67.5,
+          "headwayMedioSecondi": 5.47,
+          "varianzaHeadwayMedioSecondi": 62.02,
+          "gapMedioSecondi": 5.12,
+          "varianzaGapMedioSecondi": 62.78
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:10:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 64,
+          "totaliPerClasseVeicolare": {
+            "2": 54,
+            "4": 4,
+            "1": 2,
+            "6": 2,
+            "3": 1,
+            "5": 1
+          },
+          "mediaArmonicaVelocita": 20.2,
+          "headwayMedioSecondi": 4.47,
+          "varianzaHeadwayMedioSecondi": 29.75,
+          "gapMedioSecondi": 3.21,
+          "varianzaGapMedioSecondi": 15.43
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:10:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:10:00",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 2,
+          "totaliPerClasseVeicolare": {
+            "1": 2
+          },
+          "mediaArmonicaVelocita": 55.4,
+          "headwayMedioSecondi": 8.85,
+          "varianzaHeadwayMedioSecondi": 10.56,
+          "gapMedioSecondi": 8.65,
+          "varianzaGapMedioSecondi": 11.22
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:10:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 62,
+          "totaliPerClasseVeicolare": {
+            "2": 51,
+            "4": 5,
+            "8": 3,
+            "5": 2,
+            "1": 1
+          },
+          "mediaArmonicaVelocita": 61.7,
+          "headwayMedioSecondi": 4.59,
+          "varianzaHeadwayMedioSecondi": 98.46,
+          "gapMedioSecondi": 4.23,
+          "varianzaGapMedioSecondi": 98.76
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:15:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 107,
+          "totaliPerClasseVeicolare": {
+            "2": 92,
+            "4": 7,
+            "1": 4,
+            "7": 1,
+            "8": 1,
+            "9": 1,
+            "10": 1
+          },
+          "mediaArmonicaVelocita": 34.6,
+          "headwayMedioSecondi": 2.8,
+          "varianzaHeadwayMedioSecondi": 2.54,
+          "gapMedioSecondi": 2.21,
+          "varianzaGapMedioSecondi": 2.48
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:15:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:15:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:15:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 54,
+          "totaliPerClasseVeicolare": {
+            "2": 44,
+            "8": 3,
+            "1": 2,
+            "3": 2,
+            "4": 2,
+            "6": 1
+          },
+          "mediaArmonicaVelocita": 65.6,
+          "headwayMedioSecondi": 5.51,
+          "varianzaHeadwayMedioSecondi": 97.48,
+          "gapMedioSecondi": 5.18,
+          "varianzaGapMedioSecondi": 97.99
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:20:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 97,
+          "totaliPerClasseVeicolare": {
+            "2": 74,
+            "1": 9,
+            "6": 6,
+            "4": 3,
+            "8": 2,
+            "9": 2,
+            "10": 1
+          },
+          "mediaArmonicaVelocita": 62.6,
+          "headwayMedioSecondi": 3.04,
+          "varianzaHeadwayMedioSecondi": 10.32,
+          "gapMedioSecondi": 2.7,
+          "varianzaGapMedioSecondi": 10.4
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:20:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:20:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:20:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 46,
+          "totaliPerClasseVeicolare": {
+            "2": 33,
+            "1": 3,
+            "4": 3,
+            "9": 3,
+            "8": 2,
+            "6": 1,
+            "7": 1
+          },
+          "mediaArmonicaVelocita": 71.1,
+          "headwayMedioSecondi": 6.59,
+          "varianzaHeadwayMedioSecondi": 92.19,
+          "gapMedioSecondi": 6.24,
+          "varianzaGapMedioSecondi": 92.69
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:25:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 85,
+          "totaliPerClasseVeicolare": {
+            "2": 70,
+            "1": 6,
+            "4": 3,
+            "8": 3,
+            "5": 2,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 70.4,
+          "headwayMedioSecondi": 3.6,
+          "varianzaHeadwayMedioSecondi": 17.87,
+          "gapMedioSecondi": 3.29,
+          "varianzaGapMedioSecondi": 17.99
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:25:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:25:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:25:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 55,
+          "totaliPerClasseVeicolare": {
+            "2": 42,
+            "8": 6,
+            "4": 3,
+            "1": 1,
+            "5": 1,
+            "6": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 68.2,
+          "headwayMedioSecondi": 5.48,
+          "varianzaHeadwayMedioSecondi": 64.69,
+          "gapMedioSecondi": 5.08,
+          "varianzaGapMedioSecondi": 65.28
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:30:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 83,
+          "totaliPerClasseVeicolare": {
+            "2": 72,
+            "4": 4,
+            "1": 3,
+            "8": 2,
+            "5": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 68.3,
+          "headwayMedioSecondi": 3.49,
+          "varianzaHeadwayMedioSecondi": 35.69,
+          "gapMedioSecondi": 3.17,
+          "varianzaGapMedioSecondi": 35.69
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:30:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:30:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:30:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 54,
+          "totaliPerClasseVeicolare": {
+            "2": 42,
+            "4": 7,
+            "8": 2,
+            "1": 1,
+            "6": 1,
+            "7": 1
+          },
+          "mediaArmonicaVelocita": 67.9,
+          "headwayMedioSecondi": 5.38,
+          "varianzaHeadwayMedioSecondi": 77.96,
+          "gapMedioSecondi": 5.06,
+          "varianzaGapMedioSecondi": 78.49
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:35:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 74,
+          "totaliPerClasseVeicolare": {
+            "2": 58,
+            "1": 5,
+            "4": 5,
+            "6": 3,
+            "8": 2,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 64.2,
+          "headwayMedioSecondi": 4.19,
+          "varianzaHeadwayMedioSecondi": 29.24,
+          "gapMedioSecondi": 3.85,
+          "varianzaGapMedioSecondi": 29.65
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:35:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:35:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:35:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 45,
+          "totaliPerClasseVeicolare": {
+            "2": 28,
+            "4": 7,
+            "8": 3,
+            "6": 2,
+            "1": 1,
+            "3": 1,
+            "5": 1,
+            "9": 1,
+            "10": 1
+          },
+          "mediaArmonicaVelocita": 67.9,
+          "headwayMedioSecondi": 6.86,
+          "varianzaHeadwayMedioSecondi": 183.18,
+          "gapMedioSecondi": 6.46,
+          "varianzaGapMedioSecondi": 183.94
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:40:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 85,
+          "totaliPerClasseVeicolare": {
+            "2": 67,
+            "4": 8,
+            "1": 7,
+            "5": 1,
+            "6": 1,
+            "8": 1
+          },
+          "mediaArmonicaVelocita": 67.5,
+          "headwayMedioSecondi": 3.54,
+          "varianzaHeadwayMedioSecondi": 14.55,
+          "gapMedioSecondi": 3.25,
+          "varianzaGapMedioSecondi": 14.65
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:40:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:40:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:40:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 54,
+          "totaliPerClasseVeicolare": {
+            "2": 44,
+            "4": 7,
+            "6": 2,
+            "1": 1
+          },
+          "mediaArmonicaVelocita": 64.0,
+          "headwayMedioSecondi": 5.55,
+          "varianzaHeadwayMedioSecondi": 93.56,
+          "gapMedioSecondi": 5.22,
+          "varianzaGapMedioSecondi": 93.69
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:45:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 72,
+          "totaliPerClasseVeicolare": {
+            "2": 60,
+            "1": 5,
+            "6": 3,
+            "4": 1,
+            "5": 1,
+            "7": 1,
+            "8": 1
+          },
+          "mediaArmonicaVelocita": 68.4,
+          "headwayMedioSecondi": 4.0,
+          "varianzaHeadwayMedioSecondi": 27.13,
+          "gapMedioSecondi": 3.69,
+          "varianzaGapMedioSecondi": 27.37
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:45:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:45:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:45:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 50,
+          "totaliPerClasseVeicolare": {
+            "2": 33,
+            "4": 7,
+            "8": 5,
+            "1": 2,
+            "6": 2,
+            "7": 1
+          },
+          "mediaArmonicaVelocita": 69.8,
+          "headwayMedioSecondi": 6.0,
+          "varianzaHeadwayMedioSecondi": 97.09,
+          "gapMedioSecondi": 5.62,
+          "varianzaGapMedioSecondi": 97.78
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:50:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 87,
+          "totaliPerClasseVeicolare": {
+            "2": 70,
+            "4": 6,
+            "1": 5,
+            "3": 1,
+            "5": 1,
+            "6": 1,
+            "7": 1,
+            "8": 1,
+            "10": 1
+          },
+          "mediaArmonicaVelocita": 69.0,
+          "headwayMedioSecondi": 3.53,
+          "varianzaHeadwayMedioSecondi": 14.93,
+          "gapMedioSecondi": 3.22,
+          "varianzaGapMedioSecondi": 15.07
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:50:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:50:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:50:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 32,
+          "totaliPerClasseVeicolare": {
+            "2": 21,
+            "1": 4,
+            "4": 4,
+            "8": 2,
+            "6": 1
+          },
+          "mediaArmonicaVelocita": 70.5,
+          "headwayMedioSecondi": 9.37,
+          "varianzaHeadwayMedioSecondi": 153.48,
+          "gapMedioSecondi": 9.08,
+          "varianzaGapMedioSecondi": 155.0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:55:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 49,
+          "totaliPerClasseVeicolare": {
+            "2": 41,
+            "4": 3,
+            "1": 2,
+            "8": 2,
+            "10": 1
+          },
+          "mediaArmonicaVelocita": 71.7,
+          "headwayMedioSecondi": 6.2,
+          "varianzaHeadwayMedioSecondi": 58.49,
+          "gapMedioSecondi": 5.9,
+          "varianzaGapMedioSecondi": 58.66
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:55:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:55:00",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 1,
+          "totaliPerClasseVeicolare": {
+            "4": 1
+          },
+          "mediaArmonicaVelocita": 66.0,
+          "headwayMedioSecondi": 25.1,
+          "varianzaHeadwayMedioSecondi": 0.0,
+          "gapMedioSecondi": 24.8,
+          "varianzaGapMedioSecondi": 0.0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T06:55:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 47,
+          "totaliPerClasseVeicolare": {
+            "2": 33,
+            "4": 7,
+            "1": 3,
+            "8": 2,
+            "6": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 71.2,
+          "headwayMedioSecondi": 5.78,
+          "varianzaHeadwayMedioSecondi": 54.0,
+          "gapMedioSecondi": 5.46,
+          "varianzaGapMedioSecondi": 54.55
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:00:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 60,
+          "totaliPerClasseVeicolare": {
+            "2": 42,
+            "1": 6,
+            "4": 4,
+            "8": 3,
+            "5": 2,
+            "3": 1,
+            "6": 1,
+            "7": 1
+          },
+          "mediaArmonicaVelocita": 69.8,
+          "headwayMedioSecondi": 5.0,
+          "varianzaHeadwayMedioSecondi": 40.95,
+          "gapMedioSecondi": 4.66,
+          "varianzaGapMedioSecondi": 41.15
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:00:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:00:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:00:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 36,
+          "totaliPerClasseVeicolare": {
+            "2": 24,
+            "4": 5,
+            "1": 2,
+            "6": 2,
+            "8": 2,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 69.8,
+          "headwayMedioSecondi": 8.16,
+          "varianzaHeadwayMedioSecondi": 101.31,
+          "gapMedioSecondi": 7.8,
+          "varianzaGapMedioSecondi": 101.99
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:05:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 52,
+          "totaliPerClasseVeicolare": {
+            "2": 36,
+            "4": 7,
+            "1": 2,
+            "6": 2,
+            "7": 2,
+            "8": 2,
+            "3": 1
+          },
+          "mediaArmonicaVelocita": 69.5,
+          "headwayMedioSecondi": 5.55,
+          "varianzaHeadwayMedioSecondi": 35.07,
+          "gapMedioSecondi": 5.17,
+          "varianzaGapMedioSecondi": 35.51
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:05:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:05:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:05:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 45,
+          "totaliPerClasseVeicolare": {
+            "2": 30,
+            "1": 5,
+            "8": 4,
+            "6": 3,
+            "3": 1,
+            "4": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 74.9,
+          "headwayMedioSecondi": 6.78,
+          "varianzaHeadwayMedioSecondi": 90.56,
+          "gapMedioSecondi": 6.44,
+          "varianzaGapMedioSecondi": 91.53
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:10:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 62,
+          "totaliPerClasseVeicolare": {
+            "2": 49,
+            "8": 7,
+            "1": 2,
+            "3": 1,
+            "4": 1,
+            "6": 1,
+            "7": 1
+          },
+          "mediaArmonicaVelocita": 70.9,
+          "headwayMedioSecondi": 4.74,
+          "varianzaHeadwayMedioSecondi": 21.92,
+          "gapMedioSecondi": 4.37,
+          "varianzaGapMedioSecondi": 22.19
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:10:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:10:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:10:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 51,
+          "totaliPerClasseVeicolare": {
+            "2": 34,
+            "4": 10,
+            "3": 2,
+            "1": 1,
+            "6": 1,
+            "8": 1,
+            "9": 1,
+            "10": 1
+          },
+          "mediaArmonicaVelocita": 64.5,
+          "headwayMedioSecondi": 5.82,
+          "varianzaHeadwayMedioSecondi": 94.39,
+          "gapMedioSecondi": 5.47,
+          "varianzaGapMedioSecondi": 95.26
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:15:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 68,
+          "totaliPerClasseVeicolare": {
+            "2": 50,
+            "4": 10,
+            "1": 4,
+            "3": 2,
+            "6": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 70.0,
+          "headwayMedioSecondi": 4.69,
+          "varianzaHeadwayMedioSecondi": 35.97,
+          "gapMedioSecondi": 4.39,
+          "varianzaGapMedioSecondi": 36.32
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:15:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:15:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:15:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 40,
+          "totaliPerClasseVeicolare": {
+            "2": 28,
+            "4": 4,
+            "8": 4,
+            "1": 2,
+            "5": 1,
+            "6": 1
+          },
+          "mediaArmonicaVelocita": 66.8,
+          "headwayMedioSecondi": 7.43,
+          "varianzaHeadwayMedioSecondi": 110.6,
+          "gapMedioSecondi": 7.06,
+          "varianzaGapMedioSecondi": 111.18
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:20:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 63,
+          "totaliPerClasseVeicolare": {
+            "2": 46,
+            "4": 8,
+            "6": 4,
+            "1": 2,
+            "8": 2,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 69.3,
+          "headwayMedioSecondi": 4.57,
+          "varianzaHeadwayMedioSecondi": 46.05,
+          "gapMedioSecondi": 4.24,
+          "varianzaGapMedioSecondi": 45.93
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:20:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:20:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:20:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 36,
+          "totaliPerClasseVeicolare": {
+            "2": 20,
+            "8": 6,
+            "4": 4,
+            "1": 3,
+            "3": 1,
+            "6": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 69.7,
+          "headwayMedioSecondi": 8.49,
+          "varianzaHeadwayMedioSecondi": 190.72,
+          "gapMedioSecondi": 8.07,
+          "varianzaGapMedioSecondi": 191.08
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:25:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 64,
+          "totaliPerClasseVeicolare": {
+            "2": 51,
+            "4": 7,
+            "1": 3,
+            "8": 2,
+            "5": 1
+          },
+          "mediaArmonicaVelocita": 69.7,
+          "headwayMedioSecondi": 4.63,
+          "varianzaHeadwayMedioSecondi": 27.46,
+          "gapMedioSecondi": 4.33,
+          "varianzaGapMedioSecondi": 27.63
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:25:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:25:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:25:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 42,
+          "totaliPerClasseVeicolare": {
+            "2": 26,
+            "1": 4,
+            "6": 3,
+            "8": 3,
+            "4": 2,
+            "9": 2,
+            "3": 1,
+            "10": 1
+          },
+          "mediaArmonicaVelocita": 67.7,
+          "headwayMedioSecondi": 6.7,
+          "varianzaHeadwayMedioSecondi": 82.77,
+          "gapMedioSecondi": 6.32,
+          "varianzaGapMedioSecondi": 83.72
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:30:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 80,
+          "totaliPerClasseVeicolare": {
+            "2": 59,
+            "4": 9,
+            "1": 7,
+            "6": 3,
+            "5": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 66.7,
+          "headwayMedioSecondi": 3.83,
+          "varianzaHeadwayMedioSecondi": 25.82,
+          "gapMedioSecondi": 3.51,
+          "varianzaGapMedioSecondi": 26.16
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:30:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:30:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:30:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 49,
+          "totaliPerClasseVeicolare": {
+            "2": 37,
+            "8": 4,
+            "4": 3,
+            "1": 2,
+            "6": 2,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 63.6,
+          "headwayMedioSecondi": 6.62,
+          "varianzaHeadwayMedioSecondi": 187.92,
+          "gapMedioSecondi": 6.22,
+          "varianzaGapMedioSecondi": 188.7
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:35:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 46,
+          "totaliPerClasseVeicolare": {
+            "2": 34,
+            "4": 4,
+            "8": 4,
+            "6": 3,
+            "5": 1
+          },
+          "mediaArmonicaVelocita": 74.6,
+          "headwayMedioSecondi": 6.38,
+          "varianzaHeadwayMedioSecondi": 53.01,
+          "gapMedioSecondi": 6.04,
+          "varianzaGapMedioSecondi": 53.47
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:35:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:35:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:35:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 38,
+          "totaliPerClasseVeicolare": {
+            "2": 25,
+            "8": 6,
+            "4": 3,
+            "1": 1,
+            "3": 1,
+            "5": 1,
+            "6": 1
+          },
+          "mediaArmonicaVelocita": 65.5,
+          "headwayMedioSecondi": 7.63,
+          "varianzaHeadwayMedioSecondi": 185.69,
+          "gapMedioSecondi": 7.21,
+          "varianzaGapMedioSecondi": 186.75
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:40:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 61,
+          "totaliPerClasseVeicolare": {
+            "2": 43,
+            "8": 7,
+            "4": 6,
+            "1": 3,
+            "6": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 70.8,
+          "headwayMedioSecondi": 5.15,
+          "varianzaHeadwayMedioSecondi": 56.34,
+          "gapMedioSecondi": 4.78,
+          "varianzaGapMedioSecondi": 56.37
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:40:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:40:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:40:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 32,
+          "totaliPerClasseVeicolare": {
+            "2": 19,
+            "4": 5,
+            "1": 3,
+            "5": 3,
+            "6": 1,
+            "8": 1
+          },
+          "mediaArmonicaVelocita": 66.4,
+          "headwayMedioSecondi": 9.56,
+          "varianzaHeadwayMedioSecondi": 213.43,
+          "gapMedioSecondi": 9.22,
+          "varianzaGapMedioSecondi": 214.76
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:45:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 66,
+          "totaliPerClasseVeicolare": {
+            "2": 42,
+            "1": 12,
+            "4": 6,
+            "8": 3,
+            "6": 2,
+            "3": 1
+          },
+          "mediaArmonicaVelocita": 73.2,
+          "headwayMedioSecondi": 4.52,
+          "varianzaHeadwayMedioSecondi": 21.95,
+          "gapMedioSecondi": 4.23,
+          "varianzaGapMedioSecondi": 21.89
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:45:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:45:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:45:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 20,
+          "totaliPerClasseVeicolare": {
+            "2": 11,
+            "4": 3,
+            "5": 2,
+            "8": 2,
+            "1": 1,
+            "7": 1
+          },
+          "mediaArmonicaVelocita": 67.8,
+          "headwayMedioSecondi": 12.06,
+          "varianzaHeadwayMedioSecondi": 238.29,
+          "gapMedioSecondi": 11.63,
+          "varianzaGapMedioSecondi": 240.06
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:50:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 66,
+          "totaliPerClasseVeicolare": {
+            "2": 50,
+            "4": 7,
+            "8": 4,
+            "1": 2,
+            "6": 2,
+            "7": 1
+          },
+          "mediaArmonicaVelocita": 71.3,
+          "headwayMedioSecondi": 4.59,
+          "varianzaHeadwayMedioSecondi": 25.91,
+          "gapMedioSecondi": 4.26,
+          "varianzaGapMedioSecondi": 25.77
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:50:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:50:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:50:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 67,
+          "totaliPerClasseVeicolare": {
+            "2": 48,
+            "4": 9,
+            "6": 3,
+            "1": 2,
+            "9": 2,
+            "5": 1,
+            "7": 1,
+            "8": 1
+          },
+          "mediaArmonicaVelocita": 38.8,
+          "headwayMedioSecondi": 5.41,
+          "varianzaHeadwayMedioSecondi": 306.92,
+          "gapMedioSecondi": 4.83,
+          "varianzaGapMedioSecondi": 308.4
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:55:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 57,
+          "totaliPerClasseVeicolare": {
+            "2": 42,
+            "4": 6,
+            "1": 4,
+            "6": 2,
+            "8": 2,
+            "5": 1
+          },
+          "mediaArmonicaVelocita": 69.5,
+          "headwayMedioSecondi": 19.69,
+          "varianzaHeadwayMedioSecondi": 11586.74,
+          "gapMedioSecondi": 19.37,
+          "varianzaGapMedioSecondi": 11584.47
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:55:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:55:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T07:55:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 51,
+          "totaliPerClasseVeicolare": {
+            "2": 32,
+            "4": 7,
+            "1": 5,
+            "8": 3,
+            "5": 2,
+            "6": 2
+          },
+          "mediaArmonicaVelocita": 69.7,
+          "headwayMedioSecondi": 5.53,
+          "varianzaHeadwayMedioSecondi": 71.63,
+          "gapMedioSecondi": 5.19,
+          "varianzaGapMedioSecondi": 71.96
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:00:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 61,
+          "totaliPerClasseVeicolare": {
+            "2": 48,
+            "6": 3,
+            "1": 2,
+            "3": 2,
+            "4": 2,
+            "8": 2,
+            "7": 1,
+            "10": 1
+          },
+          "mediaArmonicaVelocita": 71.8,
+          "headwayMedioSecondi": 4.95,
+          "varianzaHeadwayMedioSecondi": 41.79,
+          "gapMedioSecondi": 4.61,
+          "varianzaGapMedioSecondi": 41.84
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:00:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:00:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:00:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 39,
+          "totaliPerClasseVeicolare": {
+            "2": 25,
+            "4": 7,
+            "8": 3,
+            "6": 2,
+            "5": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 64.2,
+          "headwayMedioSecondi": 8.19,
+          "varianzaHeadwayMedioSecondi": 176.79,
+          "gapMedioSecondi": 7.78,
+          "varianzaGapMedioSecondi": 177.27
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:05:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 51,
+          "totaliPerClasseVeicolare": {
+            "2": 31,
+            "1": 6,
+            "4": 5,
+            "8": 5,
+            "5": 2,
+            "3": 1,
+            "6": 1
+          },
+          "mediaArmonicaVelocita": 74.2,
+          "headwayMedioSecondi": 5.87,
+          "varianzaHeadwayMedioSecondi": 40.12,
+          "gapMedioSecondi": 5.53,
+          "varianzaGapMedioSecondi": 40.23
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:05:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:05:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:05:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 44,
+          "totaliPerClasseVeicolare": {
+            "2": 31,
+            "4": 6,
+            "1": 2,
+            "6": 2,
+            "8": 2,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 67.8,
+          "headwayMedioSecondi": 6.82,
+          "varianzaHeadwayMedioSecondi": 119.4,
+          "gapMedioSecondi": 6.48,
+          "varianzaGapMedioSecondi": 120.16
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:10:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 68,
+          "totaliPerClasseVeicolare": {
+            "2": 53,
+            "1": 5,
+            "4": 5,
+            "5": 3,
+            "7": 1,
+            "8": 1
+          },
+          "mediaArmonicaVelocita": 73.4,
+          "headwayMedioSecondi": 4.12,
+          "varianzaHeadwayMedioSecondi": 12.21,
+          "gapMedioSecondi": 3.83,
+          "varianzaGapMedioSecondi": 12.21
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:10:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:10:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:10:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 45,
+          "totaliPerClasseVeicolare": {
+            "2": 36,
+            "4": 4,
+            "6": 2,
+            "1": 1,
+            "5": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 67.9,
+          "headwayMedioSecondi": 6.62,
+          "varianzaHeadwayMedioSecondi": 135.66,
+          "gapMedioSecondi": 6.3,
+          "varianzaGapMedioSecondi": 136.19
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:15:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 56,
+          "totaliPerClasseVeicolare": {
+            "2": 41,
+            "4": 6,
+            "8": 4,
+            "1": 3,
+            "6": 2
+          },
+          "mediaArmonicaVelocita": 69.7,
+          "headwayMedioSecondi": 5.72,
+          "varianzaHeadwayMedioSecondi": 59.81,
+          "gapMedioSecondi": 5.37,
+          "varianzaGapMedioSecondi": 60.24
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:15:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:15:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:15:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 43,
+          "totaliPerClasseVeicolare": {
+            "2": 23,
+            "4": 8,
+            "1": 5,
+            "6": 3,
+            "3": 1,
+            "5": 1,
+            "7": 1,
+            "8": 1
+          },
+          "mediaArmonicaVelocita": 66.0,
+          "headwayMedioSecondi": 7.0,
+          "varianzaHeadwayMedioSecondi": 122.06,
+          "gapMedioSecondi": 6.66,
+          "varianzaGapMedioSecondi": 122.51
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:20:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 62,
+          "totaliPerClasseVeicolare": {
+            "2": 43,
+            "4": 11,
+            "1": 4,
+            "5": 1,
+            "6": 1,
+            "8": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 70.9,
+          "headwayMedioSecondi": 4.64,
+          "varianzaHeadwayMedioSecondi": 39.0,
+          "gapMedioSecondi": 4.33,
+          "varianzaGapMedioSecondi": 39.0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:20:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:20:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:20:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 60,
+          "totaliPerClasseVeicolare": {
+            "2": 48,
+            "4": 5,
+            "8": 3,
+            "1": 2,
+            "5": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 65.8,
+          "headwayMedioSecondi": 4.51,
+          "varianzaHeadwayMedioSecondi": 29.82,
+          "gapMedioSecondi": 4.17,
+          "varianzaGapMedioSecondi": 30.05
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:25:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 54,
+          "totaliPerClasseVeicolare": {
+            "2": 36,
+            "4": 8,
+            "1": 4,
+            "6": 2,
+            "8": 2,
+            "5": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 75.0,
+          "headwayMedioSecondi": 5.76,
+          "varianzaHeadwayMedioSecondi": 34.66,
+          "gapMedioSecondi": 5.45,
+          "varianzaGapMedioSecondi": 34.81
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:25:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:25:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:25:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 54,
+          "totaliPerClasseVeicolare": {
+            "2": 40,
+            "4": 7,
+            "8": 3,
+            "1": 1,
+            "5": 1,
+            "6": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 66.7,
+          "headwayMedioSecondi": 4.84,
+          "varianzaHeadwayMedioSecondi": 49.64,
+          "gapMedioSecondi": 4.48,
+          "varianzaGapMedioSecondi": 49.16
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:30:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 59,
+          "totaliPerClasseVeicolare": {
+            "2": 50,
+            "4": 6,
+            "8": 3
+          },
+          "mediaArmonicaVelocita": 61.1,
+          "headwayMedioSecondi": 4.9,
+          "varianzaHeadwayMedioSecondi": 58.36,
+          "gapMedioSecondi": 4.53,
+          "varianzaGapMedioSecondi": 58.53
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:30:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:30:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:30:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 55,
+          "totaliPerClasseVeicolare": {
+            "2": 41,
+            "6": 4,
+            "8": 4,
+            "4": 3,
+            "3": 1,
+            "5": 1,
+            "7": 1
+          },
+          "mediaArmonicaVelocita": 63.1,
+          "headwayMedioSecondi": 6.54,
+          "varianzaHeadwayMedioSecondi": 197.84,
+          "gapMedioSecondi": 6.13,
+          "varianzaGapMedioSecondi": 198.35
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:35:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 59,
+          "totaliPerClasseVeicolare": {
+            "2": 47,
+            "4": 7,
+            "5": 2,
+            "8": 2,
+            "6": 1
+          },
+          "mediaArmonicaVelocita": 67.9,
+          "headwayMedioSecondi": 4.99,
+          "varianzaHeadwayMedioSecondi": 46.66,
+          "gapMedioSecondi": 4.66,
+          "varianzaGapMedioSecondi": 47.02
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:35:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:35:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:35:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 45,
+          "totaliPerClasseVeicolare": {
+            "2": 31,
+            "4": 9,
+            "6": 2,
+            "1": 1,
+            "3": 1,
+            "7": 1
+          },
+          "mediaArmonicaVelocita": 62.0,
+          "headwayMedioSecondi": 6.36,
+          "varianzaHeadwayMedioSecondi": 121.15,
+          "gapMedioSecondi": 5.98,
+          "varianzaGapMedioSecondi": 121.91
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:40:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 67,
+          "totaliPerClasseVeicolare": {
+            "2": 53,
+            "4": 5,
+            "1": 4,
+            "6": 3,
+            "5": 1,
+            "8": 1
+          },
+          "mediaArmonicaVelocita": 70.3,
+          "headwayMedioSecondi": 4.58,
+          "varianzaHeadwayMedioSecondi": 26.72,
+          "gapMedioSecondi": 4.28,
+          "varianzaGapMedioSecondi": 26.84
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:40:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:40:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:40:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 59,
+          "totaliPerClasseVeicolare": {
+            "2": 44,
+            "4": 7,
+            "1": 2,
+            "5": 2,
+            "3": 1,
+            "6": 1,
+            "8": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 67.5,
+          "headwayMedioSecondi": 5.05,
+          "varianzaHeadwayMedioSecondi": 65.78,
+          "gapMedioSecondi": 4.72,
+          "varianzaGapMedioSecondi": 66.03
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:45:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 69,
+          "totaliPerClasseVeicolare": {
+            "2": 55,
+            "4": 5,
+            "6": 3,
+            "3": 2,
+            "9": 2,
+            "1": 1,
+            "5": 1
+          },
+          "mediaArmonicaVelocita": 71.8,
+          "headwayMedioSecondi": 4.51,
+          "varianzaHeadwayMedioSecondi": 30.6,
+          "gapMedioSecondi": 4.19,
+          "varianzaGapMedioSecondi": 30.81
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:45:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:45:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:45:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 55,
+          "totaliPerClasseVeicolare": {
+            "2": 39,
+            "4": 9,
+            "1": 2,
+            "8": 2,
+            "5": 1,
+            "6": 1,
+            "10": 1
+          },
+          "mediaArmonicaVelocita": 66.2,
+          "headwayMedioSecondi": 5.85,
+          "varianzaHeadwayMedioSecondi": 102.79,
+          "gapMedioSecondi": 5.52,
+          "varianzaGapMedioSecondi": 103.31
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:50:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 53,
+          "totaliPerClasseVeicolare": {
+            "2": 42,
+            "4": 6,
+            "8": 3,
+            "1": 2
+          },
+          "mediaArmonicaVelocita": 67.7,
+          "headwayMedioSecondi": 5.24,
+          "varianzaHeadwayMedioSecondi": 24.37,
+          "gapMedioSecondi": 4.89,
+          "varianzaGapMedioSecondi": 24.83
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:50:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:50:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:50:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 45,
+          "totaliPerClasseVeicolare": {
+            "2": 37,
+            "1": 4,
+            "4": 3,
+            "5": 1
+          },
+          "mediaArmonicaVelocita": 71.1,
+          "headwayMedioSecondi": 5.99,
+          "varianzaHeadwayMedioSecondi": 75.81,
+          "gapMedioSecondi": 5.73,
+          "varianzaGapMedioSecondi": 75.87
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:55:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 66,
+          "totaliPerClasseVeicolare": {
+            "2": 44,
+            "4": 8,
+            "6": 5,
+            "8": 4,
+            "1": 3,
+            "3": 1,
+            "5": 1
+          },
+          "mediaArmonicaVelocita": 71.7,
+          "headwayMedioSecondi": 4.53,
+          "varianzaHeadwayMedioSecondi": 29.57,
+          "gapMedioSecondi": 4.17,
+          "varianzaGapMedioSecondi": 29.62
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:55:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:55:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T08:55:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 52,
+          "totaliPerClasseVeicolare": {
+            "2": 37,
+            "4": 5,
+            "7": 3,
+            "8": 3,
+            "1": 2,
+            "5": 1,
+            "6": 1
+          },
+          "mediaArmonicaVelocita": 66.9,
+          "headwayMedioSecondi": 6.41,
+          "varianzaHeadwayMedioSecondi": 89.15,
+          "gapMedioSecondi": 6.03,
+          "varianzaGapMedioSecondi": 89.86
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T09:00:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 56,
+          "totaliPerClasseVeicolare": {
+            "2": 39,
+            "4": 9,
+            "1": 4,
+            "5": 1,
+            "6": 1,
+            "8": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 75.7,
+          "headwayMedioSecondi": 5.64,
+          "varianzaHeadwayMedioSecondi": 36.96,
+          "gapMedioSecondi": 5.35,
+          "varianzaGapMedioSecondi": 37.41
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T09:00:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T09:00:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T09:00:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 44,
+          "totaliPerClasseVeicolare": {
+            "2": 29,
+            "4": 6,
+            "1": 3,
+            "8": 3,
+            "3": 1,
+            "6": 1,
+            "10": 1
+          },
+          "mediaArmonicaVelocita": 68.0,
+          "headwayMedioSecondi": 6.49,
+          "varianzaHeadwayMedioSecondi": 65.38,
+          "gapMedioSecondi": 6.14,
+          "varianzaGapMedioSecondi": 65.7
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T09:05:00",
+          "corsia": 0,
+          "direzione": "ascendente",
+          "totaleVeicoli": 50,
+          "totaliPerClasseVeicolare": {
+            "2": 36,
+            "4": 7,
+            "8": 3,
+            "1": 2,
+            "6": 1,
+            "9": 1
+          },
+          "mediaArmonicaVelocita": 73.1,
+          "headwayMedioSecondi": 5.91,
+          "varianzaHeadwayMedioSecondi": 40.43,
+          "gapMedioSecondi": 5.58,
+          "varianzaGapMedioSecondi": 40.59
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T09:05:00Z",
+          "corsia": 0,
+          "direzione": "discendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T09:05:00Z",
+          "corsia": 1,
+          "direzione": "ascendente",
+          "totaleVeicoli": 0
+        },
+        {
+          "idPostazione": 3,
+          "data": "2026-09-22T09:05:00",
+          "corsia": 1,
+          "direzione": "discendente",
+          "totaleVeicoli": 59,
+          "totaliPerClasseVeicolare": {
+            "2": 40,
+            "4": 10,
+            "1": 4,
+            "3": 2,
+            "8": 2,
+            "5": 1
+          },
+          "mediaArmonicaVelocita": 67.3,
+          "headwayMedioSecondi": 5.16,
+          "varianzaHeadwayMedioSecondi": 73.69,
+          "gapMedioSecondi": 4.83,
+          "varianzaGapMedioSecondi": 74.01
+        }
+      ]
+    }
+  ]
+}

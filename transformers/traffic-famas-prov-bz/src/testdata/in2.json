@@ -1,0 +1,1338 @@
+{
+  "stations": [
+    {
+      "aggregatedData": [
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:25:00",
+          "direzione": "ascendente",
+          "gapMedioSecondi": 5.01,
+          "headwayMedioSecondi": 5.32,
+          "idPostazione": 3,
+          "mediaArmonicaVelocita": 69.6,
+          "totaleVeicoli": 57,
+          "totaliPerClasseVeicolare": {
+            "1": 4,
+            "2": 39,
+            "4": 9,
+            "5": 1,
+            "6": 1,
+            "8": 2,
+            "9": 1
+          },
+          "varianzaGapMedioSecondi": 57.7,
+          "varianzaHeadwayMedioSecondi": 57.54
+        },
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:25:00Z",
+          "direzione": "discendente",
+          "idPostazione": 3,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:25:00Z",
+          "direzione": "ascendente",
+          "idPostazione": 3,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:25:00",
+          "direzione": "discendente",
+          "gapMedioSecondi": 4.79,
+          "headwayMedioSecondi": 5.1,
+          "idPostazione": 3,
+          "mediaArmonicaVelocita": 67.5,
+          "totaleVeicoli": 59,
+          "totaliPerClasseVeicolare": {
+            "1": 6,
+            "2": 47,
+            "3": 1,
+            "4": 1,
+            "5": 1,
+            "7": 1,
+            "8": 2
+          },
+          "varianzaGapMedioSecondi": 71.29,
+          "varianzaHeadwayMedioSecondi": 70.94
+        },
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:30:00",
+          "direzione": "ascendente",
+          "gapMedioSecondi": 4.55,
+          "headwayMedioSecondi": 4.83,
+          "idPostazione": 3,
+          "mediaArmonicaVelocita": 72.8,
+          "totaleVeicoli": 61,
+          "totaliPerClasseVeicolare": {
+            "1": 6,
+            "2": 46,
+            "3": 1,
+            "4": 5,
+            "5": 2,
+            "9": 1
+          },
+          "varianzaGapMedioSecondi": 40.56,
+          "varianzaHeadwayMedioSecondi": 40.59
+        },
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:30:00Z",
+          "direzione": "discendente",
+          "idPostazione": 3,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:30:00Z",
+          "direzione": "ascendente",
+          "idPostazione": 3,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:30:00",
+          "direzione": "discendente",
+          "gapMedioSecondi": 3.78,
+          "headwayMedioSecondi": 4.13,
+          "idPostazione": 3,
+          "mediaArmonicaVelocita": 65.3,
+          "totaleVeicoli": 67,
+          "totaliPerClasseVeicolare": {
+            "1": 3,
+            "2": 53,
+            "4": 5,
+            "5": 2,
+            "7": 1,
+            "8": 3
+          },
+          "varianzaGapMedioSecondi": 64.81,
+          "varianzaHeadwayMedioSecondi": 64.38
+        }
+      ],
+      "corsieInfo": [
+        {
+          "descrizione": "Marcia (verso Bolzano)",
+          "id": 1,
+          "sensoDiMarcia": "ascendente"
+        },
+        {
+          "descrizione": "Marcia (verso Trento)",
+          "id": 2,
+          "sensoDiMarcia": "discendente"
+        }
+      ],
+      "direzioni": [
+        {
+          "descrizione": "Verso Bolzano",
+          "tipo": "ascendente"
+        },
+        {
+          "descrizione": "Verso Trento",
+          "tipo": "discendente"
+        }
+      ],
+      "geoInfo": {
+        "comune": "Laives/Leifers",
+        "latitudine": 46.4497009548582,
+        "longitudine": 11.3448734664564,
+        "provincia": "Bolzano",
+        "regione": "Trentino-Alto Adige"
+      },
+      "id": 3,
+      "nome": "3",
+      "numeroCorsie": 2,
+      "schemaDiClassificazione": 1,
+      "stradaInfo": {
+        "chilometrica": 432.69,
+        "nome": "SS 12 dell'Abetone e del Brennero"
+      }
+    },
+    {
+      "aggregatedData": [
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:25:00",
+          "direzione": "ascendente",
+          "gapMedioSecondi": 5.41,
+          "headwayMedioSecondi": 5.8,
+          "idPostazione": 4,
+          "mediaArmonicaVelocita": 62.7,
+          "totaleVeicoli": 50,
+          "totaliPerClasseVeicolare": {
+            "1": 2,
+            "2": 37,
+            "4": 5,
+            "5": 3,
+            "6": 1,
+            "7": 1,
+            "8": 1
+          },
+          "varianzaGapMedioSecondi": 31.19,
+          "varianzaHeadwayMedioSecondi": 30.98
+        },
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:25:00Z",
+          "direzione": "discendente",
+          "idPostazione": 4,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:25:00Z",
+          "direzione": "ascendente",
+          "idPostazione": 4,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:25:00",
+          "direzione": "discendente",
+          "gapMedioSecondi": 5.44,
+          "headwayMedioSecondi": 5.87,
+          "idPostazione": 4,
+          "mediaArmonicaVelocita": 52,
+          "totaleVeicoli": 51,
+          "totaliPerClasseVeicolare": {
+            "1": 4,
+            "2": 39,
+            "4": 3,
+            "5": 2,
+            "6": 2,
+            "9": 1
+          },
+          "varianzaGapMedioSecondi": 83.81,
+          "varianzaHeadwayMedioSecondi": 83.29
+        },
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:30:00",
+          "direzione": "ascendente",
+          "gapMedioSecondi": 5.58,
+          "headwayMedioSecondi": 5.91,
+          "idPostazione": 4,
+          "mediaArmonicaVelocita": 61.8,
+          "totaleVeicoli": 52,
+          "totaliPerClasseVeicolare": {
+            "1": 5,
+            "2": 39,
+            "4": 7,
+            "5": 1
+          },
+          "varianzaGapMedioSecondi": 66.91,
+          "varianzaHeadwayMedioSecondi": 66.85
+        },
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:30:00Z",
+          "direzione": "discendente",
+          "idPostazione": 4,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:30:00Z",
+          "direzione": "ascendente",
+          "idPostazione": 4,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:30:00",
+          "direzione": "discendente",
+          "gapMedioSecondi": 3.53,
+          "headwayMedioSecondi": 4.15,
+          "idPostazione": 4,
+          "mediaArmonicaVelocita": 36.8,
+          "totaleVeicoli": 67,
+          "totaliPerClasseVeicolare": {
+            "1": 5,
+            "2": 45,
+            "4": 14,
+            "5": 1,
+            "8": 1,
+            "9": 1
+          },
+          "varianzaGapMedioSecondi": 32.15,
+          "varianzaHeadwayMedioSecondi": 31.84
+        }
+      ],
+      "corsieInfo": [
+        {
+          "descrizione": "Marcia (verso Brennero)",
+          "id": 1,
+          "sensoDiMarcia": "ascendente"
+        },
+        {
+          "descrizione": "Marcia (verso Bolzano)",
+          "id": 2,
+          "sensoDiMarcia": "discendente"
+        }
+      ],
+      "direzioni": [
+        {
+          "descrizione": "Verso Brennero",
+          "tipo": "ascendente"
+        },
+        {
+          "descrizione": "Verso Bolzano",
+          "tipo": "discendente"
+        }
+      ],
+      "geoInfo": {
+        "comune": "Cornedo all'Isarco/Karneid",
+        "latitudine": 46.4933369069905,
+        "longitudine": 11.4048027067281,
+        "provincia": "Bolzano",
+        "regione": "Trentino-Alto Adige"
+      },
+      "id": 4,
+      "nome": "4",
+      "numeroCorsie": 2,
+      "schemaDiClassificazione": 1,
+      "stradaInfo": {
+        "chilometrica": 442.35,
+        "nome": "SS 12 dell'Abetone e del Brennero"
+      }
+    },
+    {
+      "aggregatedData": [
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:25:00",
+          "direzione": "ascendente",
+          "gapMedioSecondi": 30.03,
+          "headwayMedioSecondi": 30.4,
+          "idPostazione": 16,
+          "mediaArmonicaVelocita": 53.6,
+          "totaleVeicoli": 10,
+          "totaliPerClasseVeicolare": {
+            "2": 10
+          },
+          "varianzaGapMedioSecondi": 407.97,
+          "varianzaHeadwayMedioSecondi": 408.85
+        },
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:25:00Z",
+          "direzione": "discendente",
+          "idPostazione": 16,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:25:00Z",
+          "direzione": "ascendente",
+          "idPostazione": 16,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:25:00",
+          "direzione": "discendente",
+          "gapMedioSecondi": 12.26,
+          "headwayMedioSecondi": 12.67,
+          "idPostazione": 16,
+          "mediaArmonicaVelocita": 53.6,
+          "totaleVeicoli": 26,
+          "totaliPerClasseVeicolare": {
+            "1": 2,
+            "2": 20,
+            "4": 1,
+            "5": 1,
+            "8": 1,
+            "9": 1
+          },
+          "varianzaGapMedioSecondi": 128.2,
+          "varianzaHeadwayMedioSecondi": 129.51
+        },
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:30:00",
+          "direzione": "ascendente",
+          "gapMedioSecondi": 9.86,
+          "headwayMedioSecondi": 10.27,
+          "idPostazione": 16,
+          "mediaArmonicaVelocita": 53.9,
+          "totaleVeicoli": 28,
+          "totaliPerClasseVeicolare": {
+            "1": 2,
+            "2": 20,
+            "4": 2,
+            "5": 2,
+            "6": 1,
+            "9": 1
+          },
+          "varianzaGapMedioSecondi": 104.14,
+          "varianzaHeadwayMedioSecondi": 102.99
+        },
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:30:00Z",
+          "direzione": "discendente",
+          "idPostazione": 16,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:30:00Z",
+          "direzione": "ascendente",
+          "idPostazione": 16,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:30:00",
+          "direzione": "discendente",
+          "gapMedioSecondi": 13.86,
+          "headwayMedioSecondi": 14.3,
+          "idPostazione": 16,
+          "mediaArmonicaVelocita": 52.8,
+          "totaleVeicoli": 20,
+          "totaliPerClasseVeicolare": {
+            "1": 2,
+            "2": 15,
+            "3": 1,
+            "4": 1,
+            "9": 1
+          },
+          "varianzaGapMedioSecondi": 298.24,
+          "varianzaHeadwayMedioSecondi": 296.32
+        }
+      ],
+      "corsieInfo": [
+        {
+          "descrizione": "Marcia (verso Bolzano)",
+          "id": 1,
+          "sensoDiMarcia": "ascendente"
+        },
+        {
+          "descrizione": "Marcia (verso Merano)",
+          "id": 2,
+          "sensoDiMarcia": "discendente"
+        }
+      ],
+      "direzioni": [
+        {
+          "descrizione": "Verso Bolzano",
+          "tipo": "ascendente"
+        },
+        {
+          "descrizione": "Verso Merano",
+          "tipo": "discendente"
+        }
+      ],
+      "geoInfo": {
+        "comune": "Bolzano/Bozen",
+        "latitudine": 46.5069066468319,
+        "longitudine": 11.2881661647771,
+        "provincia": "Bolzano",
+        "regione": "Trentino-Alto Adige"
+      },
+      "id": 16,
+      "nome": "16",
+      "numeroCorsie": 2,
+      "schemaDiClassificazione": 1,
+      "stradaInfo": {
+        "chilometrica": 222,
+        "nome": "SP 165 dello Stelvio"
+      }
+    },
+    {
+      "aggregatedData": [
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:25:00",
+          "direzione": "ascendente",
+          "gapMedioSecondi": 4.85,
+          "headwayMedioSecondi": 5.44,
+          "idPostazione": 20,
+          "mediaArmonicaVelocita": 35.3,
+          "totaleVeicoli": 59,
+          "totaliPerClasseVeicolare": {
+            "1": 3,
+            "10": 1,
+            "2": 48,
+            "4": 3,
+            "5": 1,
+            "6": 1,
+            "8": 2
+          },
+          "varianzaGapMedioSecondi": 71.68,
+          "varianzaHeadwayMedioSecondi": 71.53
+        },
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:25:00Z",
+          "direzione": "discendente",
+          "idPostazione": 20,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:25:00Z",
+          "direzione": "ascendente",
+          "idPostazione": 20,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:25:00",
+          "direzione": "discendente",
+          "gapMedioSecondi": 3.67,
+          "headwayMedioSecondi": 4.23,
+          "idPostazione": 20,
+          "mediaArmonicaVelocita": 35.7,
+          "totaleVeicoli": 64,
+          "totaliPerClasseVeicolare": {
+            "1": 5,
+            "2": 50,
+            "3": 2,
+            "4": 3,
+            "5": 2,
+            "6": 1,
+            "9": 1
+          },
+          "varianzaGapMedioSecondi": 31.19,
+          "varianzaHeadwayMedioSecondi": 30.79
+        },
+        {
+          "corsia": 2,
+          "data": "2026-09-22T11:25:00",
+          "direzione": "ascendente",
+          "gapMedioSecondi": 237.6,
+          "headwayMedioSecondi": 237.7,
+          "idPostazione": 20,
+          "mediaArmonicaVelocita": 56,
+          "totaleVeicoli": 1,
+          "totaliPerClasseVeicolare": {
+            "9": 1
+          },
+          "varianzaGapMedioSecondi": 0,
+          "varianzaHeadwayMedioSecondi": 0
+        },
+        {
+          "corsia": 2,
+          "data": "2026-09-22T11:25:00Z",
+          "direzione": "discendente",
+          "idPostazione": 20,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:30:00",
+          "direzione": "ascendente",
+          "gapMedioSecondi": 6.72,
+          "headwayMedioSecondi": 7.22,
+          "idPostazione": 20,
+          "mediaArmonicaVelocita": 38,
+          "totaleVeicoli": 42,
+          "totaliPerClasseVeicolare": {
+            "1": 3,
+            "2": 35,
+            "4": 3,
+            "5": 1
+          },
+          "varianzaGapMedioSecondi": 43.74,
+          "varianzaHeadwayMedioSecondi": 44.7
+        },
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:30:00Z",
+          "direzione": "discendente",
+          "idPostazione": 20,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:30:00Z",
+          "direzione": "ascendente",
+          "idPostazione": 20,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:30:00",
+          "direzione": "discendente",
+          "gapMedioSecondi": 4.18,
+          "headwayMedioSecondi": 4.68,
+          "idPostazione": 20,
+          "mediaArmonicaVelocita": 42.7,
+          "totaleVeicoli": 70,
+          "totaliPerClasseVeicolare": {
+            "1": 4,
+            "2": 57,
+            "3": 1,
+            "4": 3,
+            "5": 1,
+            "6": 1,
+            "9": 3
+          },
+          "varianzaGapMedioSecondi": 58.46,
+          "varianzaHeadwayMedioSecondi": 58.42
+        },
+        {
+          "corsia": 2,
+          "data": "2026-09-22T11:30:00",
+          "direzione": "ascendente",
+          "gapMedioSecondi": 181.5,
+          "headwayMedioSecondi": 182.1,
+          "idPostazione": 20,
+          "mediaArmonicaVelocita": 49.3,
+          "totaleVeicoli": 2,
+          "totaliPerClasseVeicolare": {
+            "2": 1,
+            "4": 1
+          },
+          "varianzaGapMedioSecondi": 0.01,
+          "varianzaHeadwayMedioSecondi": 0.04
+        },
+        {
+          "corsia": 2,
+          "data": "2026-09-22T11:30:00Z",
+          "direzione": "discendente",
+          "idPostazione": 20,
+          "totaleVeicoli": 0
+        }
+      ],
+      "corsieInfo": [
+        {
+          "descrizione": "Marcia (verso Bolzano)",
+          "id": 1,
+          "sensoDiMarcia": "ascendente"
+        },
+        {
+          "descrizione": "Marcia (verso Passo Mendola)",
+          "id": 2,
+          "sensoDiMarcia": "discendente"
+        },
+        {
+          "descrizione": "Marcia (verso Bolzano - Bus)",
+          "id": 3,
+          "sensoDiMarcia": "ascendente"
+        }
+      ],
+      "direzioni": [
+        {
+          "descrizione": "Verso Bolzano",
+          "tipo": "ascendente"
+        },
+        {
+          "descrizione": "Verso Passo Mendola",
+          "tipo": "discendente"
+        }
+      ],
+      "geoInfo": {
+        "comune": "Bolzano/Bozen",
+        "latitudine": 46.4895828498813,
+        "longitudine": 11.3043086532643,
+        "provincia": "Bolzano",
+        "regione": "Trentino-Alto Adige"
+      },
+      "id": 20,
+      "nome": "20",
+      "numeroCorsie": 3,
+      "schemaDiClassificazione": 1,
+      "stradaInfo": {
+        "chilometrica": 241.16,
+        "nome": "SS 42 del Tonale e della Mendola"
+      }
+    },
+    {
+      "aggregatedData": [
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:25:00",
+          "direzione": "ascendente",
+          "gapMedioSecondi": 3.79,
+          "headwayMedioSecondi": 4.12,
+          "idPostazione": 64,
+          "mediaArmonicaVelocita": 79.5,
+          "totaleVeicoli": 73,
+          "totaliPerClasseVeicolare": {
+            "10": 1,
+            "2": 48,
+            "3": 4,
+            "4": 10,
+            "5": 5,
+            "8": 4,
+            "9": 1
+          },
+          "varianzaGapMedioSecondi": 6.45,
+          "varianzaHeadwayMedioSecondi": 6.61
+        },
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:25:00Z",
+          "direzione": "discendente",
+          "idPostazione": 64,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:25:00Z",
+          "direzione": "ascendente",
+          "idPostazione": 64,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:25:00Z",
+          "direzione": "discendente",
+          "idPostazione": 64,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 2,
+          "data": "2026-09-22T11:25:00Z",
+          "direzione": "ascendente",
+          "idPostazione": 64,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 2,
+          "data": "2026-09-22T11:25:00",
+          "direzione": "discendente",
+          "gapMedioSecondi": 3.46,
+          "headwayMedioSecondi": 3.75,
+          "idPostazione": 64,
+          "mediaArmonicaVelocita": 81.1,
+          "totaleVeicoli": 80,
+          "totaliPerClasseVeicolare": {
+            "1": 7,
+            "2": 59,
+            "3": 2,
+            "4": 6,
+            "6": 1,
+            "7": 1,
+            "8": 3,
+            "9": 1
+          },
+          "varianzaGapMedioSecondi": 6.81,
+          "varianzaHeadwayMedioSecondi": 6.75
+        },
+        {
+          "corsia": 3,
+          "data": "2026-09-22T11:25:00Z",
+          "direzione": "ascendente",
+          "idPostazione": 64,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 3,
+          "data": "2026-09-22T11:25:00",
+          "direzione": "discendente",
+          "gapMedioSecondi": 6.19,
+          "headwayMedioSecondi": 6.39,
+          "idPostazione": 64,
+          "mediaArmonicaVelocita": 100.5,
+          "totaleVeicoli": 47,
+          "totaliPerClasseVeicolare": {
+            "1": 2,
+            "2": 41,
+            "4": 4
+          },
+          "varianzaGapMedioSecondi": 45.37,
+          "varianzaHeadwayMedioSecondi": 45.36
+        },
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:30:00",
+          "direzione": "ascendente",
+          "gapMedioSecondi": 3.63,
+          "headwayMedioSecondi": 3.94,
+          "idPostazione": 64,
+          "mediaArmonicaVelocita": 78.9,
+          "totaleVeicoli": 76,
+          "totaliPerClasseVeicolare": {
+            "1": 5,
+            "2": 50,
+            "4": 9,
+            "5": 5,
+            "8": 6,
+            "9": 1
+          },
+          "varianzaGapMedioSecondi": 5.76,
+          "varianzaHeadwayMedioSecondi": 5.7
+        },
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:30:00Z",
+          "direzione": "discendente",
+          "idPostazione": 64,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:30:00",
+          "direzione": "ascendente",
+          "gapMedioSecondi": 9.4,
+          "headwayMedioSecondi": 9.6,
+          "idPostazione": 64,
+          "mediaArmonicaVelocita": 92.4,
+          "totaleVeicoli": 62,
+          "totaliPerClasseVeicolare": {
+            "1": 2,
+            "2": 54,
+            "4": 6
+          },
+          "varianzaGapMedioSecondi": 1570.75,
+          "varianzaHeadwayMedioSecondi": 1571.85
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:30:00Z",
+          "direzione": "discendente",
+          "idPostazione": 64,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 2,
+          "data": "2026-09-22T11:30:00Z",
+          "direzione": "ascendente",
+          "idPostazione": 64,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 2,
+          "data": "2026-09-22T11:30:00",
+          "direzione": "discendente",
+          "gapMedioSecondi": 3.77,
+          "headwayMedioSecondi": 4.05,
+          "idPostazione": 64,
+          "mediaArmonicaVelocita": 77,
+          "totaleVeicoli": 74,
+          "totaliPerClasseVeicolare": {
+            "1": 3,
+            "2": 56,
+            "3": 2,
+            "4": 4,
+            "5": 6,
+            "6": 2,
+            "8": 1
+          },
+          "varianzaGapMedioSecondi": 12.48,
+          "varianzaHeadwayMedioSecondi": 12.47
+        },
+        {
+          "corsia": 3,
+          "data": "2026-09-22T11:30:00Z",
+          "direzione": "ascendente",
+          "idPostazione": 64,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 3,
+          "data": "2026-09-22T11:30:00",
+          "direzione": "discendente",
+          "gapMedioSecondi": 7.21,
+          "headwayMedioSecondi": 7.4,
+          "idPostazione": 64,
+          "mediaArmonicaVelocita": 95.3,
+          "totaleVeicoli": 40,
+          "totaliPerClasseVeicolare": {
+            "1": 3,
+            "2": 36,
+            "4": 1
+          },
+          "varianzaGapMedioSecondi": 53.75,
+          "varianzaHeadwayMedioSecondi": 53.48
+        }
+      ],
+      "corsieInfo": [
+        {
+          "descrizione": "Marcia (marcia verso Bolzano)",
+          "id": 1,
+          "sensoDiMarcia": "ascendente"
+        },
+        {
+          "descrizione": "Sorpasso (sorpasso verso Bolzano)",
+          "id": 2,
+          "sensoDiMarcia": "ascendente"
+        },
+        {
+          "descrizione": "Marcia (marcia verso Merano)",
+          "id": 3,
+          "sensoDiMarcia": "discendente"
+        },
+        {
+          "descrizione": "Sorpasso (sorpasso verso Merano)",
+          "id": 4,
+          "sensoDiMarcia": "discendente"
+        }
+      ],
+      "direzioni": [
+        {
+          "descrizione": "Verso Bolzano",
+          "tipo": "ascendente"
+        },
+        {
+          "descrizione": "Verso Merano",
+          "tipo": "discendente"
+        }
+      ],
+      "geoInfo": {
+        "comune": "Appiano sulla strada del vino/Eppan an der Weinstraße",
+        "latitudine": 46.4831521898679,
+        "longitudine": 11.2969907693307,
+        "provincia": "Bolzano",
+        "regione": "Trentino-Alto Adige"
+      },
+      "id": 64,
+      "nome": "65",
+      "numeroCorsie": 4,
+      "schemaDiClassificazione": 1,
+      "stradaInfo": {
+        "chilometrica": 223.2,
+        "nome": "SS 38 dello Stelvio"
+      }
+    },
+    {
+      "aggregatedData": [
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:25:00",
+          "direzione": "ascendente",
+          "gapMedioSecondi": 3.53,
+          "headwayMedioSecondi": 3.98,
+          "idPostazione": 67,
+          "mediaArmonicaVelocita": 49.3,
+          "totaleVeicoli": 77,
+          "totaliPerClasseVeicolare": {
+            "1": 4,
+            "2": 49,
+            "4": 18,
+            "5": 2,
+            "6": 2,
+            "8": 1,
+            "9": 1
+          },
+          "varianzaGapMedioSecondi": 20.34,
+          "varianzaHeadwayMedioSecondi": 20.55
+        },
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:25:00Z",
+          "direzione": "discendente",
+          "idPostazione": 67,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:25:00Z",
+          "direzione": "ascendente",
+          "idPostazione": 67,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:25:00",
+          "direzione": "discendente",
+          "gapMedioSecondi": 4.17,
+          "headwayMedioSecondi": 4.61,
+          "idPostazione": 67,
+          "mediaArmonicaVelocita": 45.2,
+          "totaleVeicoli": 68,
+          "totaliPerClasseVeicolare": {
+            "1": 7,
+            "10": 1,
+            "2": 53,
+            "4": 2,
+            "5": 2,
+            "8": 1,
+            "9": 2
+          },
+          "varianzaGapMedioSecondi": 25.21,
+          "varianzaHeadwayMedioSecondi": 24.98
+        },
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:30:00",
+          "direzione": "ascendente",
+          "gapMedioSecondi": 3.61,
+          "headwayMedioSecondi": 4,
+          "idPostazione": 67,
+          "mediaArmonicaVelocita": 52.4,
+          "totaleVeicoli": 77,
+          "totaliPerClasseVeicolare": {
+            "1": 10,
+            "2": 48,
+            "4": 16,
+            "6": 2,
+            "9": 1
+          },
+          "varianzaGapMedioSecondi": 21.49,
+          "varianzaHeadwayMedioSecondi": 21.71
+        },
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:30:00Z",
+          "direzione": "discendente",
+          "idPostazione": 67,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:30:00Z",
+          "direzione": "ascendente",
+          "idPostazione": 67,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:30:00",
+          "direzione": "discendente",
+          "gapMedioSecondi": 3.08,
+          "headwayMedioSecondi": 3.59,
+          "idPostazione": 67,
+          "mediaArmonicaVelocita": 39.5,
+          "totaleVeicoli": 84,
+          "totaliPerClasseVeicolare": {
+            "1": 4,
+            "2": 71,
+            "4": 3,
+            "5": 4,
+            "6": 2
+          },
+          "varianzaGapMedioSecondi": 21.97,
+          "varianzaHeadwayMedioSecondi": 21.7
+        }
+      ],
+      "corsieInfo": [
+        {
+          "descrizione": "Marcia (verso Bolzano)",
+          "id": 1,
+          "sensoDiMarcia": "ascendente"
+        },
+        {
+          "descrizione": "Marcia (verso Passo Mendola)",
+          "id": 2,
+          "sensoDiMarcia": "discendente"
+        }
+      ],
+      "direzioni": [
+        {
+          "descrizione": "Verso Bolzano",
+          "tipo": "ascendente"
+        },
+        {
+          "descrizione": "Verso Passo Mendola",
+          "tipo": "discendente"
+        }
+      ],
+      "geoInfo": {
+        "comune": "Appiano sulla strada del vino/Eppan an der Weinstraße",
+        "latitudine": 46.4790350875062,
+        "longitudine": 11.2831309058342,
+        "provincia": "Bolzano",
+        "regione": "Trentino-Alto Adige"
+      },
+      "id": 67,
+      "nome": "68",
+      "numeroCorsie": 2,
+      "schemaDiClassificazione": 1,
+      "stradaInfo": {
+        "chilometrica": 238.9,
+        "nome": "SS 42 del Tonale e della Mendola"
+      }
+    },
+    {
+      "aggregatedData": [
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:25:00",
+          "direzione": "ascendente",
+          "gapMedioSecondi": 29.25,
+          "headwayMedioSecondi": 29.58,
+          "idPostazione": 73,
+          "mediaArmonicaVelocita": 50.4,
+          "totaleVeicoli": 10,
+          "totaliPerClasseVeicolare": {
+            "2": 10
+          },
+          "varianzaGapMedioSecondi": 683.17,
+          "varianzaHeadwayMedioSecondi": 682.46
+        },
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:25:00Z",
+          "direzione": "discendente",
+          "idPostazione": 73,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:25:00",
+          "direzione": "ascendente",
+          "gapMedioSecondi": 9,
+          "headwayMedioSecondi": 9.3,
+          "idPostazione": 73,
+          "mediaArmonicaVelocita": 68.3,
+          "totaleVeicoli": 2,
+          "totaliPerClasseVeicolare": {
+            "2": 2
+          },
+          "varianzaGapMedioSecondi": 6.25,
+          "varianzaHeadwayMedioSecondi": 6.25
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:25:00",
+          "direzione": "discendente",
+          "gapMedioSecondi": 35.07,
+          "headwayMedioSecondi": 35.34,
+          "idPostazione": 73,
+          "mediaArmonicaVelocita": 70.1,
+          "totaleVeicoli": 7,
+          "totaliPerClasseVeicolare": {
+            "1": 2,
+            "2": 5
+          },
+          "varianzaGapMedioSecondi": 722.37,
+          "varianzaHeadwayMedioSecondi": 722.45
+        },
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:30:00",
+          "direzione": "ascendente",
+          "gapMedioSecondi": 35.51,
+          "headwayMedioSecondi": 35.84,
+          "idPostazione": 73,
+          "mediaArmonicaVelocita": 57.8,
+          "totaleVeicoli": 8,
+          "totaliPerClasseVeicolare": {
+            "10": 1,
+            "2": 6,
+            "4": 1
+          },
+          "varianzaGapMedioSecondi": 959.58,
+          "varianzaHeadwayMedioSecondi": 959.44
+        },
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:30:00",
+          "direzione": "discendente",
+          "gapMedioSecondi": 18.9,
+          "headwayMedioSecondi": 19.2,
+          "idPostazione": 73,
+          "mediaArmonicaVelocita": 127,
+          "totaleVeicoli": 1,
+          "totaliPerClasseVeicolare": {
+            "4": 1
+          },
+          "varianzaGapMedioSecondi": 0,
+          "varianzaHeadwayMedioSecondi": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:30:00",
+          "direzione": "ascendente",
+          "gapMedioSecondi": 14.37,
+          "headwayMedioSecondi": 14.57,
+          "idPostazione": 73,
+          "mediaArmonicaVelocita": 96.6,
+          "totaleVeicoli": 3,
+          "totaliPerClasseVeicolare": {
+            "1": 2,
+            "2": 1
+          },
+          "varianzaGapMedioSecondi": 212.76,
+          "varianzaHeadwayMedioSecondi": 213.1
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:30:00",
+          "direzione": "discendente",
+          "gapMedioSecondi": 18.18,
+          "headwayMedioSecondi": 18.47,
+          "idPostazione": 73,
+          "mediaArmonicaVelocita": 64.9,
+          "totaleVeicoli": 12,
+          "totaliPerClasseVeicolare": {
+            "2": 11,
+            "6": 1
+          },
+          "varianzaGapMedioSecondi": 191.92,
+          "varianzaHeadwayMedioSecondi": 191.38
+        }
+      ],
+      "corsieInfo": [
+        {
+          "descrizione": "Marcia (verso Renon)",
+          "id": 1,
+          "sensoDiMarcia": "ascendente"
+        },
+        {
+          "descrizione": "Marcia (verso Bolzano)",
+          "id": 2,
+          "sensoDiMarcia": "discendente"
+        }
+      ],
+      "direzioni": [
+        {
+          "descrizione": "Verso Renon",
+          "tipo": "ascendente"
+        },
+        {
+          "descrizione": "Verso Bolzano",
+          "tipo": "discendente"
+        }
+      ],
+      "geoInfo": {
+        "comune": "Bolzano/Bozen",
+        "latitudine": 46.4993231961065,
+        "longitudine": 11.4089679205094,
+        "provincia": "Bolzano",
+        "regione": "Trentino-Alto Adige"
+      },
+      "id": 73,
+      "nome": "74",
+      "numeroCorsie": 2,
+      "schemaDiClassificazione": 1,
+      "stradaInfo": {
+        "chilometrica": 3.51,
+        "nome": "SP 73 Renon"
+      }
+    },
+    {
+      "aggregatedData": [
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:25:00",
+          "direzione": "ascendente",
+          "gapMedioSecondi": 58.21,
+          "headwayMedioSecondi": 58.49,
+          "idPostazione": 74,
+          "mediaArmonicaVelocita": 57.9,
+          "totaleVeicoli": 7,
+          "totaliPerClasseVeicolare": {
+            "1": 1,
+            "2": 6
+          },
+          "varianzaGapMedioSecondi": 1493.47,
+          "varianzaHeadwayMedioSecondi": 1493.4
+        },
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:25:00Z",
+          "direzione": "discendente",
+          "idPostazione": 74,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:25:00Z",
+          "direzione": "ascendente",
+          "idPostazione": 74,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:25:00",
+          "direzione": "discendente",
+          "gapMedioSecondi": 45.13,
+          "headwayMedioSecondi": 45.47,
+          "idPostazione": 74,
+          "mediaArmonicaVelocita": 56.4,
+          "totaleVeicoli": 7,
+          "totaliPerClasseVeicolare": {
+            "1": 1,
+            "2": 5,
+            "4": 1
+          },
+          "varianzaGapMedioSecondi": 1052.6,
+          "varianzaHeadwayMedioSecondi": 1056.92
+        },
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:30:00",
+          "direzione": "ascendente",
+          "gapMedioSecondi": 16.6,
+          "headwayMedioSecondi": 17.02,
+          "idPostazione": 74,
+          "mediaArmonicaVelocita": 42.8,
+          "totaleVeicoli": 18,
+          "totaliPerClasseVeicolare": {
+            "1": 3,
+            "2": 13,
+            "5": 1,
+            "6": 1
+          },
+          "varianzaGapMedioSecondi": 624.54,
+          "varianzaHeadwayMedioSecondi": 622.2
+        },
+        {
+          "corsia": 0,
+          "data": "2026-09-22T11:30:00Z",
+          "direzione": "discendente",
+          "idPostazione": 74,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:30:00Z",
+          "direzione": "ascendente",
+          "idPostazione": 74,
+          "totaleVeicoli": 0
+        },
+        {
+          "corsia": 1,
+          "data": "2026-09-22T11:30:00",
+          "direzione": "discendente",
+          "gapMedioSecondi": 27.06,
+          "headwayMedioSecondi": 27.31,
+          "idPostazione": 74,
+          "mediaArmonicaVelocita": 62.8,
+          "totaleVeicoli": 9,
+          "totaliPerClasseVeicolare": {
+            "1": 2,
+            "2": 7
+          },
+          "varianzaGapMedioSecondi": 677.28,
+          "varianzaHeadwayMedioSecondi": 678.24
+        }
+      ],
+      "corsieInfo": [
+        {
+          "descrizione": "Marcia (verso San Genesio)",
+          "id": 1,
+          "sensoDiMarcia": "ascendente"
+        },
+        {
+          "descrizione": "Marcia (verso Bolzano)",
+          "id": 2,
+          "sensoDiMarcia": "discendente"
+        }
+      ],
+      "direzioni": [
+        {
+          "descrizione": "Verso San Genesio",
+          "tipo": "ascendente"
+        },
+        {
+          "descrizione": "Verso Bolzano",
+          "tipo": "discendente"
+        }
+      ],
+      "geoInfo": {
+        "comune": "Bolzano/Bozen",
+        "latitudine": 46.5123935601123,
+        "longitudine": 11.3350930479705,
+        "provincia": "Bolzano",
+        "regione": "Trentino-Alto Adige"
+      },
+      "id": 74,
+      "nome": "75",
+      "numeroCorsie": 2,
+      "schemaDiClassificazione": 1,
+      "stradaInfo": {
+        "chilometrica": 3.35,
+        "nome": "SP 99 S. Genesio"
+      }
+    }
+  ]
+}

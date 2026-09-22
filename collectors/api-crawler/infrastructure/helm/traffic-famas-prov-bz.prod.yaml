@@ -1,0 +1,33 @@
+# SPDX-FileCopyrightText: 2026 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/api-crawler
+  pullPolicy: IfNotPresent
+  tag: "0.2.0" # Set this when upgrading chart with --set-value
+
+env:
+  LOG_LEVEL: "INFO"
+  MQ_CLIENT: dc-api-crawler-traffic-famas-prov-bz
+  PROVIDER: api-crawler/traffic-famas-prov-bz
+
+  # Every 15 minutes; WINDOW_MINUTES below stays wider than the cron period
+  # so consecutive runs overlap (BDP writes are idempotent on
+  # station/datatype/timestamp - see traffic-famas-prov-bz.silky.yaml).
+  CRON: "0 0/15 * * * *"
+  CONFIG_PATH: "/config/config.yaml"
+  FAMAS_BASE_URL: "https://webservices.trafficopab.famassystem.it/api/v1"
+  WINDOW_MINUTES: "30"
+
+  SERVICE_NAME: dc-api-crawler-traffic-famas-prov-bz
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
+
+configMap:
+  mountPath: "/config/"
+  files: {}
