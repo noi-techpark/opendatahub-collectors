@@ -47,7 +47,7 @@ jobs:
               - host: ${{ vars.G_SHEETS_CALLBACK_HOST }}
                 paths: 
                   - path: "/${{inputs.name}}/(.*)"
-                    pathType: Prefix
+                    pathType: ImplementationSpecific
           env:
             SPREADSHEET_NOTIFICATION_URL: "https://${{ vars.G_SHEETS_CALLBACK_HOST }}/${{inputs.name}}/trigger"
           envSecret:
