@@ -2,27 +2,25 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-name: CI/CD dc-google-spreadsheet centro-trevi
+name: CI/CD tr-google-spreadsheet-centrotrevi-events
 
 on:
   push:
     paths:
-      - "collectors/google-spreadsheet-go/**"
-      - ".github/workflows/dc-google-spreadsheet-centro-trevi.yml"
-      - "!collectors/google-spreadsheet-go/infrastructure/helm/*.yaml"
-      - "collectors/google-spreadsheet-go/infrastructure/helm/centro-trevi.yaml"
+      - "transformers/google-spreadsheet-centrotrevi-events/**"
+      - ".github/workflows/tr-google-spreadsheet-centrotrevi-events.yml"
 
 env:
-  PROJECT_NAME: dc-google-spreadsheet-centro-trevi
-  WORKING_DIRECTORY: collectors/google-spreadsheet-go
-  DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/dc-google-spreadsheet-go
+  PROJECT_NAME: tr-google-spreadsheet-centrotrevi-events
+  WORKING_DIRECTORY: transformers/google-spreadsheet-centrotrevi-events
+  DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/tr-google-spreadsheet-centrotrevi-events
   DOCKER_TAG: ${{ github.sha }}
   KUBERNETES_NAMESPACE: collector
 
 jobs:
   tests:
     runs-on: ubuntu-24.04
-    concurrency: dc-google-spreadsheet-centro-trevi-tests
+    concurrency: tr-google-spreadsheet-centrotrevi-events-tests
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -38,7 +36,7 @@ jobs:
 
   build:
     runs-on: ubuntu-24.04
-    concurrency: dc-google-spreadsheet-centro-trevi-build
+    concurrency: tr-google-spreadsheet-centrotrevi-events-build
     permissions:
       contents: read
       packages: write
@@ -60,10 +58,10 @@ jobs:
     needs:
       - build
     runs-on: ubuntu-24.04
-    concurrency: dc-google-spreadsheet-centro-trevi-deploy-test
+    concurrency: tr-google-spreadsheet-centrotrevi-events-deploy-test
     environment: test
     env:
-      VALUES_YAML: infrastructure/helm/centro-trevi.yaml
+      VALUES_YAML: infrastructure/helm/centro-trevi.test.yaml
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -74,13 +72,7 @@ jobs:
           yq -i '.image.repository = "${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML }}
           yq -i '.image.tag = "${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
           yq -i '.image.pullPolicy = "IfNotPresent"' ${{ env.VALUES_YAML }}
-          yq -i '.ingress.tls[0].hosts[0] = "${{ vars.G_SHEETS_CALLBACK_HOST }}"' ${{ env.VALUES_YAML }}
-          yq -i '.ingress.hosts[0].host = "${{ vars.G_SHEETS_CALLBACK_HOST }}"' ${{ env.VALUES_YAML }}
-          yq -i '.env.SPREADSHEET_NOTIFICATION_URL = "https://${{ vars.G_SHEETS_CALLBACK_HOST }}/centro-trevi/trigger"' ${{ env.VALUES_YAML }}
-          yq -i '.envSecret.SHEETS_CLIENT_ID = "${{ secrets.G_SHEETS_CLIENT_ID }}"' ${{ env.VALUES_YAML }}
-          yq -i '.envSecret.SHEETS_CLIENT_SECRET = "${{ secrets.G_SHEETS_CLIENT_SECRET }}"' ${{ env.VALUES_YAML }}
-          yq -i '.envSecret.SHEETS_REFRESH_TOKEN = "${{ secrets.G_SHEETS_REFRESH_TOKEN }}"' ${{ env.VALUES_YAML }}
-          yq -i '.envSecret.SPREADSHEET_ID = "${{ secrets.G_SHEETS_CENTRO_TREVI_ID }}"' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.ODH_CORE_TOKEN_CLIENT_SECRET = "${{ secrets.ODH_CORE_EVENTS_CULTURE_SECRET_TEST }}"' ${{ env.VALUES_YAML }}
 
       - name: Deploy on cluster
         uses: noi-techpark/github-actions/helm-deploy@v2
@@ -99,10 +91,10 @@ jobs:
     needs:
       - build
     runs-on: ubuntu-24.04
-    concurrency: dc-google-spreadsheet-centro-trevi-deploy-prod
+    concurrency: tr-google-spreadsheet-centrotrevi-events-deploy-prod
     environment: prod
     env:
-      VALUES_YAML: infrastructure/helm/centro-trevi.yaml
+      VALUES_YAML: infrastructure/helm/centro-trevi.prod.yaml
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -113,13 +105,7 @@ jobs:
           yq -i '.image.repository = "${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML }}
           yq -i '.image.tag = "${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
           yq -i '.image.pullPolicy = "IfNotPresent"' ${{ env.VALUES_YAML }}
-          yq -i '.ingress.tls[0].hosts[0] = "${{ vars.G_SHEETS_CALLBACK_HOST }}"' ${{ env.VALUES_YAML }}
-          yq -i '.ingress.hosts[0].host = "${{ vars.G_SHEETS_CALLBACK_HOST }}"' ${{ env.VALUES_YAML }}
-          yq -i '.env.SPREADSHEET_NOTIFICATION_URL = "https://${{ vars.G_SHEETS_CALLBACK_HOST }}/centro-trevi/trigger"' ${{ env.VALUES_YAML }}
-          yq -i '.envSecret.SHEETS_CLIENT_ID = "${{ secrets.G_SHEETS_CLIENT_ID }}"' ${{ env.VALUES_YAML }}
-          yq -i '.envSecret.SHEETS_CLIENT_SECRET = "${{ secrets.G_SHEETS_CLIENT_SECRET }}"' ${{ env.VALUES_YAML }}
-          yq -i '.envSecret.SHEETS_REFRESH_TOKEN = "${{ secrets.G_SHEETS_REFRESH_TOKEN }}"' ${{ env.VALUES_YAML }}
-          yq -i '.envSecret.SPREADSHEET_ID = "${{ secrets.G_SHEETS_CENTRO_TREVI_ID }}"' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.ODH_CORE_TOKEN_CLIENT_SECRET = "${{ secrets.ODH_CORE_EVENTS_CULTURE_SECRET_PROD }}"' ${{ env.VALUES_YAML }}
 
       - name: Deploy on cluster
         uses: noi-techpark/github-actions/helm-deploy@v2

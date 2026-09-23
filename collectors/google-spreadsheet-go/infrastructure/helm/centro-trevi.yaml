@@ -1,0 +1,64 @@
+# SPDX-FileCopyrightText: 2026 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/dc-google-spreadsheet-go
+  pullPolicy: IfNotPresent
+  tag: latest
+
+service:
+  enabled: true
+  type: ClusterIP
+  port: 8082
+  health:
+    delay: 15
+    path: /health
+
+ingress:
+  enabled: true
+
+  annotations:
+    cert-manager.io/issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/rewrite-target: "/$1"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+
+  className: nginx
+  tls:
+    - hosts:
+      - spreadsheets.dev.testingmachine.eu
+      secretName: tls-spreadsheets
+  hosts:
+    - host: spreadsheets.dev.testingmachine.eu
+      paths:
+        - path: "/centro-trevi/(.*)"
+          pathType: ImplementationSpecific
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 200Mi
+
+env:
+  MQ_CLIENT: dc-google-spreadsheet-centro-trevi
+  MQ_EXCHANGE: ingress
+  PROVIDER: spreadsheets/centro-trevi
+
+  TRIGGER_PATH: trigger
+  TRIGGER_PORT: "8082"
+  TRIGGER_MAX_UPDATE_FREQUENCY: "10000"
+  GOOGLE_WATCH_EXPIRATION_HOURS: "24"
+
+  SERVICE_NAME: dc-google-spreadsheet-centro-trevi
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+envSecret:
+  SHEETS_CLIENT_ID: ""
+  SHEETS_CLIENT_SECRET: ""
+  SHEETS_REFRESH_TOKEN: ""
+  SPREADSHEET_ID: ""
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
