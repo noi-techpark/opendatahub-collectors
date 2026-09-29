@@ -6,7 +6,9 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"encoding/xml"
+	"fmt"
 	"log/slog"
 	"sort"
 	"strconv"
@@ -26,7 +28,12 @@ import (
 const (
 	SOURCE      = "feratel"
 	ENTITY_TYPE = "WebcamInfo"
+
+	// the base language feed defines which webcams exist and is the fallback for missing translations
+	BASE_LANGUAGE = "de"
 )
+
+var languages = []string{"de", "it", "en"}
 
 var env struct {
 	tr.Env
@@ -113,6 +120,38 @@ type DURL struct {
 	K string `xml:"k,attr"`
 }
 
+// camEntry is a cam together with the link (location) it belongs to, taken from one language feed
+type camEntry struct {
+	link FeratelLink
+	cam  FeratelCam
+}
+
+// parseFeeds parses the raw data into one FeratelResponse per language.
+// The collector sends a JSON object {"de": "<xml>", "it": "<xml>", ...}.
+// Older raw records contain a single german XML document and are still supported.
+func parseFeeds(rawdata string) (map[string]FeratelResponse, error) {
+	xmlByLang := map[string]string{}
+	if strings.HasPrefix(strings.TrimSpace(rawdata), "<") {
+		xmlByLang[BASE_LANGUAGE] = rawdata
+	} else if err := json.Unmarshal([]byte(rawdata), &xmlByLang); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal raw json: %w", err)
+	}
+
+	feeds := make(map[string]FeratelResponse, len(xmlByLang))
+	for lang, doc := range xmlByLang {
+		var feed FeratelResponse
+		if err := xml.Unmarshal([]byte(doc), &feed); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal %s xml: %w", lang, err)
+		}
+		feeds[lang] = feed
+	}
+	return feeds, nil
+}
+
+func webcamID(link FeratelLink, cam FeratelCam) string {
+	return "FERATEL_" + link.ID + "_" + cam.PanID
+}
+
 func main() {
 	ms.InitWithEnv(context.Background(), "", &env)
 	slog.Info("Starting Feratel webcam transformer...")
@@ -149,19 +188,42 @@ func Transform(ctx context.Context, r *rdb.Raw[string]) error {
 	}
 	slog.Info("Loaded existing webcams", "count", len(webcamCache.Entries()))
 
-	var raw FeratelResponse
-	err = xml.Unmarshal([]byte(r.Rawdata), &raw)
+	feeds, err := parseFeeds(r.Rawdata)
 	if err != nil {
-		logger.Get(ctx).Error("failed to unmarshal xml", "error", err)
+		logger.Get(ctx).Error("failed to parse feeds", "error", err)
 		return err
+	}
+	baseFeed, ok := feeds[BASE_LANGUAGE]
+	if !ok {
+		err = fmt.Errorf("raw data has no %q feed", BASE_LANGUAGE)
+		logger.Get(ctx).Error("failed to parse feeds", "error", err)
+		return err
+	}
+
+	// index the translated feeds by webcam id, so every base cam can look up its translations
+	translatedCams := map[string]map[string]camEntry{}
+	for lang, feed := range feeds {
+		if lang == BASE_LANGUAGE {
+			continue
+		}
+		for _, link := range feed.Content.Portal.Links.Links {
+			for _, cam := range link.Cams.Cams {
+				id := webcamID(link, cam)
+				if translatedCams[id] == nil {
+					translatedCams[id] = map[string]camEntry{}
+				}
+				translatedCams[id][lang] = camEntry{link: link, cam: cam}
+			}
+		}
 	}
 
 	seen := map[string]struct{}{}
 	webcams := map[string]contentmodel.WebcamInfo{}
 
-	for _, link := range raw.Content.Portal.Links.Links {
+	// the base language feed defines which webcams exist
+	for _, link := range baseFeed.Content.Portal.Links.Links {
 		for _, cam := range link.Cams.Cams {
-			id := "FERATEL_" + link.ID + "_" + cam.PanID
+			id := webcamID(link, cam)
 			seen[id] = struct{}{}
 
 			existing, inCache := webcamCache.Get(id)
@@ -174,7 +236,7 @@ func Transform(ctx context.Context, r *rdb.Raw[string]) error {
 				base = &alreadyParsed
 			}
 
-			webcams[id] = mapToCore(link, cam, base, id)
+			webcams[id] = mapToCore(link, cam, base, id, translatedCams[id])
 		}
 	}
 
@@ -250,7 +312,9 @@ func Transform(ctx context.Context, r *rdb.Raw[string]) error {
 	return nil
 }
 
-func mapToCore(link FeratelLink, cam FeratelCam, base *contentmodel.WebcamInfo, odhid string) contentmodel.WebcamInfo {
+// mapToCore maps a base language cam to a WebcamInfo. translations holds the same cam from the
+// other language feeds; languages without a translation fall back to the base language values.
+func mapToCore(link FeratelLink, cam FeratelCam, base *contentmodel.WebcamInfo, odhid string, translations map[string]camEntry) contentmodel.WebcamInfo {
 	var res contentmodel.WebcamInfo
 	if base != nil {
 		res = *base
@@ -304,9 +368,14 @@ func mapToCore(link FeratelLink, cam FeratelCam, base *contentmodel.WebcamInfo, 
 	}
 	res.GpsInfo = []contentmodel.GpsInfo{gps}
 
-	languages := []string{"de", "it", "en"}
+	res.Shortname = cam.L
 
 	for _, lang := range languages {
+		langLink, langCam := link, cam
+		if t, ok := translations[lang]; ok {
+			langLink, langCam = t.link, t.cam
+		}
+
 		hasLang := false
 		for _, l := range res.HasLanguage {
 			if l == lang {
@@ -321,16 +390,16 @@ func mapToCore(link FeratelLink, cam FeratelCam, base *contentmodel.WebcamInfo, 
 		// ContactInfo
 		contact := contentmodel.ContactInfo{
 			Language:    lang,
-			ZipCode:     link.Location.Zip,
-			City:        link.Location.Value,
-			Area:        link.Village.Value,
-			Region:      link.Region,
-			CountryCode: link.Country.Ioc,
-			CountryName: link.Country.Value,
+			ZipCode:     langLink.Location.Zip,
+			City:        langLink.Location.Value,
+			Area:        langLink.Village.Value,
+			Region:      langLink.Region,
+			CountryCode: langLink.Country.Ioc,
+			CountryName: langLink.Country.Value,
 		}
 
 		// URLs
-		for _, url := range cam.URLs.DURLs {
+		for _, url := range langCam.URLs.DURLs {
 			if url.T == "feratel.com" {
 				contact.Url = url.V
 			}
@@ -339,12 +408,11 @@ func mapToCore(link FeratelLink, cam FeratelCam, base *contentmodel.WebcamInfo, 
 
 		// Detail
 		detail := contentmodel.Detail{
-			Title:    cam.L,
+			Title:    langCam.L,
 			Language: lang,
 		}
-		res.Shortname = cam.L
-		if link.Keywords != "" {
-			parts := strings.Split(link.Keywords, ",")
+		if langLink.Keywords != "" {
+			parts := strings.Split(langLink.Keywords, ",")
 			var kws []string
 			for _, part := range parts {
 				part = strings.TrimSpace(part)
