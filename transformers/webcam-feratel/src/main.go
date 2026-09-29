@@ -129,15 +129,6 @@ func main() {
 	}, clib.WithReferer(env.ODH_CORE_REFERER))
 	ms.FailOnError(context.Background(), err, "failed to create ODH content client")
 
-	webcamCache, err = clib.LoadExisting(context.Background(), contentClient, clib.LoadConfig[contentmodel.WebcamInfo]{
-		EntityType:  ENTITY_TYPE,
-		QueryParams: map[string]string{"source": SOURCE},
-		IDFunc:      func(w contentmodel.WebcamInfo) string { return w.Id },
-	})
-	ms.FailOnError(context.Background(), err, "failed to load existing webcams")
-
-	slog.Info("Loaded existing webcams", "count", len(webcamCache.Entries()))
-
 	listener := tr.NewTr[string](context.Background(), env.Env)
 	err = listener.Start(context.Background(), Transform)
 	ms.FailOnError(context.Background(), err, "error while listening to queue")
@@ -145,9 +136,21 @@ func main() {
 
 func Transform(ctx context.Context, r *rdb.Raw[string]) error {
 	logger.Get(ctx).Info("Processing Feratel webcam feed")
+	
+	var err error
+	webcamCache, err = clib.LoadExisting(ctx, contentClient, clib.LoadConfig[contentmodel.WebcamInfo]{
+		EntityType:  ENTITY_TYPE,
+		QueryParams: map[string]string{"source": SOURCE},
+		IDFunc:      func(w contentmodel.WebcamInfo) string { return w.Id },
+	})
+	if err != nil {
+		logger.Get(ctx).Error("Failed to load existing webcams", "error", err)
+		return err
+	}
+	slog.Info("Loaded existing webcams", "count", len(webcamCache.Entries()))
 
 	var raw FeratelResponse
-	err := xml.Unmarshal([]byte(r.Rawdata), &raw)
+	err = xml.Unmarshal([]byte(r.Rawdata), &raw)
 	if err != nil {
 		logger.Get(ctx).Error("failed to unmarshal xml", "error", err)
 		return err
@@ -231,6 +234,9 @@ func Transform(ctx context.Context, r *rdb.Raw[string]) error {
 			continue
 		}
 		webcam := entry.Entity
+		if !webcam.Active && !webcam.SmgActive {
+			continue
+		}
 		webcam.Active = false
 		webcam.SmgActive = false
 		if err := contentClient.Put(ctx, ENTITY_TYPE, id, webcam); err != nil {

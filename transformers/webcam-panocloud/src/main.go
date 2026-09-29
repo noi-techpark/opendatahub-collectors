@@ -59,15 +59,6 @@ func main() {
 	}, clib.WithReferer(env.ODH_CORE_REFERER))
 	ms.FailOnError(context.Background(), err, "failed to create ODH content client")
 
-	webcamCache, err = clib.LoadExisting(context.Background(), contentClient, clib.LoadConfig[contentmodel.WebcamInfo]{
-		EntityType:  ENTITY_TYPE,
-		QueryParams: map[string]string{"source": SOURCE},
-		IDFunc:      func(w contentmodel.WebcamInfo) string { return w.Id },
-	})
-	ms.FailOnError(context.Background(), err, "failed to load existing webcams")
-
-	slog.Info("Loaded existing webcams", "count", len(webcamCache.Entries()))
-
 	listener := tr.NewTr[string](context.Background(), env.Env)
 	err = listener.Start(context.Background(), tr.RawString2JsonMiddleware(Transform))
 	ms.FailOnError(context.Background(), err, "error while listening to queue")
@@ -75,6 +66,18 @@ func main() {
 
 func Transform(ctx context.Context, r *rdb.Raw[PanocloudResponse]) error {
 	logger.Get(ctx).Info("Processing Panocloud webcam feed", "item_count", len(r.Rawdata.LiveCam))
+
+	var err error
+	webcamCache, err = clib.LoadExisting(ctx, contentClient, clib.LoadConfig[contentmodel.WebcamInfo]{
+		EntityType:  ENTITY_TYPE,
+		QueryParams: map[string]string{"source": SOURCE},
+		IDFunc:      func(w contentmodel.WebcamInfo) string { return w.Id },
+	})
+	if err != nil {
+		logger.Get(ctx).Error("Failed to load existing webcams", "error", err)
+		return err
+	}
+	slog.Info("Loaded existing webcams", "count", len(webcamCache.Entries()))
 
 	seen := map[string]struct{}{}
 	webcams := map[string]contentmodel.WebcamInfo{}
@@ -152,6 +155,9 @@ func Transform(ctx context.Context, r *rdb.Raw[PanocloudResponse]) error {
 			continue
 		}
 		webcam := entry.Entity
+		if !webcam.Active && !webcam.SmgActive {
+			continue
+		}
 		webcam.Active = false
 		webcam.SmgActive = false
 		if err := contentClient.Put(ctx, ENTITY_TYPE, id, webcam); err != nil {
