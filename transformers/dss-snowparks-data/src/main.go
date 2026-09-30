@@ -77,10 +77,7 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 		snowparksCache, err = clib.LoadExisting(ctx, contentClient, clib.LoadConfig[odhmodel.ODHActivityPoi]{
 			EntityType:  ENTITY_TYPE,
 			QueryParams: map[string]string{"source": SOURCE, "tagfilter": "snowpark"},
-			// Normalize legacy uppercase IDs (e.g. "DSS_267") to match buildID output ("dss_267").
-			IDFunc: func(p odhmodel.ODHActivityPoi) string {
-				return strings.ToLower(*p.Generic.ID)
-			},
+			IDFunc:      func(p odhmodel.ODHActivityPoi) string { return *p.Generic.ID },
 		})
 		if err != nil {
 			return fmt.Errorf("failed to load snowpark POI cache: %w", err)
@@ -92,6 +89,7 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 	seen := map[string]struct{}{}
 	pois := map[string]odhmodel.ODHActivityPoi{}
 
+	lifts := newLiftIndex(r.Rawdata.DssLifts)
 	for _, snowpark := range r.Rawdata.DssSnowparks.Items {
 		id := buildID(snowpark)
 		seen[id] = struct{}{}
@@ -103,7 +101,7 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 			base = &copy
 		}
 
-		pois[id] = mapSnowparkToPoi(snowpark, base)
+		pois[id] = mapSnowparkToPoi(snowpark, base, lifts)
 	}
 
 	sortedIDs := make([]string, 0, len(pois))
@@ -176,18 +174,125 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 	return nil
 }
 
+// ── Mapping ───────────────────────────────────────────────────────────────────
+
+// mergeMapping keeps the existing Mapping of the record (other sources and dss
+// keys set elsewhere) and only adds/overwrites the given dss keys. Empty values
+// are skipped, so a missing DSS field never clears an existing key.
+func mergeMapping(base *odhmodel.ODHActivityPoi, dss map[string]string) map[string]map[string]string {
+	mapping := map[string]map[string]string{}
+	if base != nil {
+		for source, values := range base.Mapping {
+			copied := make(map[string]string, len(values))
+			for k, v := range values {
+				copied[k] = v
+			}
+			mapping[source] = copied
+		}
+	}
+	if mapping[SOURCE] == nil {
+		mapping[SOURCE] = map[string]string{}
+	}
+	for k, v := range dss {
+		if v != "" {
+			mapping[SOURCE][k] = v
+		}
+	}
+	return mapping
+}
+
+// liftIndex links snowparks to lifts. The snowpark feed only has lift names
+// (lifts[].rid is always null), so lifts are matched by name within the region.
+type liftIndex struct {
+	byName     map[string][]dto.DssLift  // "<regionId>|<name>"
+	subregions map[int64]map[string]bool // regionId -> subregionIds of its lifts (4a, 4b, ...)
+}
+
+func newLiftIndex(feed dto.DssLiftFeed) liftIndex {
+	idx := liftIndex{byName: map[string][]dto.DssLift{}, subregions: map[int64]map[string]bool{}}
+	for _, lift := range feed.Items {
+		key := liftKey(lift.RegionId, stringFromMultilang(lift.Name, "de"))
+		idx.byName[key] = append(idx.byName[key], lift)
+		if sub := strings.TrimSpace(lift.SubregionId); sub != "" && sub != "all" {
+			if idx.subregions[lift.RegionId] == nil {
+				idx.subregions[lift.RegionId] = map[string]bool{}
+			}
+			idx.subregions[lift.RegionId][sub] = true
+		}
+	}
+	return idx
+}
+
+func liftKey(regionId int64, name string) string {
+	return strconv.FormatInt(regionId, 10) + "|" + strings.ToLower(strings.TrimSpace(name))
+}
+
+// resolve returns the pids of the snowpark's lifts (only names that match exactly
+// one lift) and its talschaft rid: the regionId, the region's only subregionId
+// (6 -> 6a), or for split regions the common subregionId of the matched lifts.
+// Without lift data both are empty.
+func (idx liftIndex) resolve(snowpark dto.DssSnowpark) (liftPids string, skiAreaRid string) {
+	if len(idx.byName) == 0 {
+		return "", ""
+	}
+
+	names := []string{}
+	for _, l := range snowpark.Lifts {
+		names = append(names, stringFromMultilang(l.Name, "de"))
+	}
+	if len(names) == 0 {
+		names = append(names, stringFromMultilang(snowpark.Lift, "de"))
+	}
+
+	pids := []string{}
+	subregions := map[string]bool{}
+	for _, name := range names {
+		matches := idx.byName[liftKey(snowpark.RegionId, name)]
+		if len(matches) == 1 {
+			pids = append(pids, strconv.FormatInt(matches[0].Pid, 10))
+		}
+		for _, lift := range matches {
+			if sub := strings.TrimSpace(lift.SubregionId); sub != "" && sub != "all" {
+				subregions[sub] = true
+			}
+		}
+	}
+
+	regionSubs := idx.subregions[snowpark.RegionId]
+	if len(regionSubs) == 0 {
+		skiAreaRid = strconv.FormatInt(snowpark.RegionId, 10)
+	} else if len(regionSubs) == 1 {
+		subregions = regionSubs
+	}
+	if skiAreaRid == "" && len(subregions) == 1 {
+		for sub := range subregions {
+			skiAreaRid = sub
+		}
+	}
+	return strings.Join(pids, ","), skiAreaRid
+}
+
+func intPtrString(i *int) string {
+	if i == nil {
+		return ""
+	}
+	return strconv.Itoa(*i)
+}
+
 // ── ID ────────────────────────────────────────────────────────────────────────
 
+// buildID: urn:odhactivitypoi:dss:snowpark:<regionId>_<pid>. Snowpark pids overlap lift pids
+// and are only unique together with regionId (e.g. pid 1 exists in region 5 and 7).
 func buildID(snowpark dto.DssSnowpark) string {
-	return fmt.Sprintf("dss_%d", snowpark.Pid)
+	return fmt.Sprintf("urn:odhactivitypoi:%s:snowpark:%d_%d", SOURCE, snowpark.RegionId, snowpark.Pid)
 }
 
 // ── Main mapper ───────────────────────────────────────────────────────────────
 
-func mapSnowparkToPoi(snowpark dto.DssSnowpark, base *odhmodel.ODHActivityPoi) odhmodel.ODHActivityPoi {
+func mapSnowparkToPoi(snowpark dto.DssSnowpark, base *odhmodel.ODHActivityPoi, lifts liftIndex) odhmodel.ODHActivityPoi {
 	id := buildID(snowpark)
 	source := SOURCE
-	shortname := stringFromMultilang(snowpark.Name, "de")
+	shortname := nameWithFallback(snowpark.Name, "de")
 
 	// Snowpark feed has no update-date field — use now as LastChange.
 	lastChange := nowFunc()
@@ -199,14 +304,35 @@ func mapSnowparkToPoi(snowpark dto.DssSnowpark, base *odhmodel.ODHActivityPoi) o
 		firstImport = odhmodel.PtrFlexibleTime(nowFunc())
 	}
 
-	// Snowparks have no skiresort object — map pid, rid, regionId only.
-	mapping := map[string]map[string]string{
-		SOURCE: {
-			"pid":      strconv.FormatInt(snowpark.Pid, 10),
-			"rid":      strconv.FormatInt(snowpark.Rid, 10),
-			"regionId": strconv.FormatInt(snowpark.RegionId, 10),
-		},
-	}
+	liftPids, skiAreaRid := lifts.resolve(snowpark)
+	d := snowpark.Data
+	mapping := mergeMapping(base, map[string]string{
+		"pid":                 strconv.FormatInt(snowpark.Pid, 10),
+		"rid":                 strconv.FormatInt(snowpark.Rid, 10),
+		"regionId":            strconv.FormatInt(snowpark.RegionId, 10),
+		"skiarea_rid":         skiAreaRid,
+		"lift_pids":           liftPids,
+		"bordercross":         strconv.FormatBool(d.Bordercross),
+		"pipe":                strconv.FormatBool(d.Pipe),
+		"artificially_snowed": strconv.FormatBool(d.ArtificiallySnowed),
+		"is_snowpark":         strconv.FormatBool(d.Snowparks.IsSnowpark),
+		"snowpark_overview":   intPtrString(d.Snowparks.SnowparkOverview),
+		"snowpark_pro":        intPtrString(d.Snowparks.SnowparkPro),
+		"snowpark_med":        intPtrString(d.Snowparks.SnowparkMed),
+		"snowpark_easy":       intPtrString(d.Snowparks.SnowparkEasy),
+		"snowpark_jib":        intPtrString(d.Snowparks.SnowparkJib),
+		"snowpark_nightslope": strconv.FormatBool(d.Snowparks.SnowparkNightslope),
+		"is_familyfun":        strconv.FormatBool(d.FamilyFun.IsFamilyFun),
+		"familyfun_overview":  intPtrString(d.FamilyFun.FamilyFunOverview),
+		"familyfun_curves":    intPtrString(d.FamilyFun.FamilyFunCurves),
+		"familyfun_tunnel":    intPtrString(d.FamilyFun.FamilyFunTunnel),
+		"familyfun_tools":     intPtrString(d.FamilyFun.FamilyFunTools),
+		"is_crossline":        strconv.FormatBool(d.Crossline.IsCrossline),
+		"crossline_overview":  intPtrString(d.Crossline.CrosslineOverview),
+		"crossline_curves":    intPtrString(d.Crossline.CrosslineCurves),
+		"crossline_waves":     intPtrString(d.Crossline.CrosslineWaves),
+		"crossline_jumps":     intPtrString(d.Crossline.CrosslineJumps),
+	})
 
 	detail := buildDetail(snowpark)
 
@@ -255,9 +381,10 @@ func mapSnowparkToPoi(snowpark dto.DssSnowpark, base *odhmodel.ODHActivityPoi) o
 		CustomId:             strconv.FormatInt(snowpark.Rid, 10),
 		IsOpen:               isOpen,
 		// BikeTransport nil — not present in snowpark feed, matches old API null.
-		BikeTransport: nil,
-		GpsPoints:     gpsPoints,
-		// No Number, DistanceLength, DistanceDuration, AltitudeLowestPoint,
+		BikeTransport:  nil,
+		GpsPoints:      gpsPoints,
+		DistanceLength: snowpark.Data.Length,
+		// No Number, DistanceDuration, AltitudeLowestPoint,
 		// AltitudeHighestPoint, AltitudeDifference, GpsTrack, OperationSchedule,
 		// Difficulty, Ratings — not present in snowpark feed.
 	}
@@ -270,7 +397,6 @@ func buildTagIds() []string {
 		"activity",
 		"snow parks",
 		"snowpark",
-		"snowparks",
 		"winter",
 	}
 }
@@ -331,7 +457,7 @@ func buildGps(snowpark dto.DssSnowpark) ([]odhmodel.GpsInfo, map[string]*odhmode
 func buildDetail(snowpark dto.DssSnowpark) map[string]*clib.DetailGeneric {
 	detail := map[string]*clib.DetailGeneric{}
 	for _, lang := range []string{"de", "it", "en"} {
-		title := stringFromMultilang(snowpark.Name, lang)
+		title := nameWithFallback(snowpark.Name, lang)
 		baseText := nilableFromMultilang(snowpark.DetailText, lang)
 		langCopy := lang
 		detail[lang] = &clib.DetailGeneric{
@@ -377,6 +503,20 @@ func stringFromMultilang(m dto.DssMultilang, lang string) string {
 		return ""
 	}
 	return *ptr
+}
+
+// nameWithFallback returns the trimmed name in lang. If it is empty, it falls back to
+// the first non-empty name in de, it, en, so every language gets a title.
+func nameWithFallback(m dto.DssMultilang, lang string) string {
+	if name := strings.TrimSpace(stringFromMultilang(m, lang)); name != "" {
+		return name
+	}
+	for _, l := range []string{"de", "it", "en"} {
+		if name := strings.TrimSpace(stringFromMultilang(m, l)); name != "" {
+			return name
+		}
+	}
+	return ""
 }
 
 func nilableFromMultilang(m dto.DssMultilang, lang string) *string {

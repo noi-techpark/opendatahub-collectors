@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	_ "time/tzdata" // embed zoneinfo so Europe/Rome always loads
 
 	"github.com/noi-techpark/opendatahub-go-sdk/clib"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
@@ -44,6 +45,15 @@ var env struct {
 var contentClient clib.ContentAPI
 var poiCache *clib.Cache[odhmodel.ODHActivityPoi]
 var nowFunc = func() time.Time { return time.Now().UTC() }
+
+// DSS season dates are Unix timestamps of local midnight in Italy.
+var romeLocation = func() *time.Location {
+	loc, err := time.LoadLocation("Europe/Rome")
+	if err != nil {
+		panic(err)
+	}
+	return loc
+}()
 
 func main() {
 	ms.InitWithEnv(context.Background(), "", &env)
@@ -86,6 +96,7 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 	pois := map[string]odhmodel.ODHActivityPoi{}
 
 	for _, lift := range r.Rawdata.DssLifts.Items {
+		lift = withGeoFileFallback(ctx, lift)
 		id := buildID(lift)
 		seen[id] = struct{}{}
 
@@ -171,14 +182,16 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 
 // ── Mapping ───────────────────────────────────────────────────────────────────
 
+// buildID: urn:odhactivitypoi:dss:lift:<regionId>_<pid>. pid alone is not unique across DSS
+// exports (snowpark pids overlap lift pids), so the type is part of the ID.
 func buildID(lift dto.DssLift) string {
-	return fmt.Sprintf("dss_%d", lift.Pid)
+	return fmt.Sprintf("urn:odhactivitypoi:%s:lift:%d_%d", SOURCE, lift.RegionId, lift.Pid)
 }
 
 func mapLiftToPoi(lift dto.DssLift, base *odhmodel.ODHActivityPoi) odhmodel.ODHActivityPoi {
 	id := buildID(lift)
 	source := SOURCE
-	shortname := stringFromMultilang(lift.Name, "de")
+	shortname := nameWithFallback(lift.Name, "de")
 	lastChange := time.Unix(lift.UpdateDate, 0).UTC()
 
 	var firstImport *odhmodel.FlexibleTime
@@ -188,17 +201,21 @@ func mapLiftToPoi(lift dto.DssLift, base *odhmodel.ODHActivityPoi) odhmodel.ODHA
 		firstImport = odhmodel.PtrFlexibleTime(nowFunc())
 	}
 
-	// NOTE: skiresort_rid gets Skiresort.Pid and skiresort_pid gets Skiresort.Rid.
-	// This intentional swap mirrors the original C# parser exactly.
-	mapping := map[string]map[string]string{
-		SOURCE: {
-			"pid":           strconv.FormatInt(lift.Pid, 10),
-			"rid":           strconv.FormatInt(lift.Rid, 10),
-			"regionId":      strconv.FormatInt(lift.RegionId, 10),
-			"skiresort_rid": strconv.FormatInt(lift.Skiresort.Pid, 10),
-			"skiresort_pid": strconv.FormatInt(lift.Skiresort.Rid, 10),
-		},
-	}
+	mapping := mergeMapping(base, map[string]string{
+		"pid":                         strconv.FormatInt(lift.Pid, 10),
+		"rid":                         strconv.FormatInt(lift.Rid, 10),
+		"regionId":                    strconv.FormatInt(lift.RegionId, 10),
+		"skiresort_rid":               strconv.FormatInt(lift.Skiresort.Rid, 10),
+		"skiresort_pid":               strconv.FormatInt(lift.Skiresort.Pid, 10),
+		"skiarea_rid":                 skiAreaRid(lift),
+		"lifttype_rid":                nonZeroInt(lift.Lifttype.Rid),
+		"datacenterId":                strings.TrimSpace(lift.DatacenterId),
+		"capacity":                    intPtrString(lift.Data.Capacity),
+		"capacity_per_hour":           intPtrString(lift.Data.CapacityPerHour),
+		"summercard_points_up":        intPtrString(lift.Data.SummercardPoints.Up),
+		"summercard_points_down":      intPtrString(lift.Data.SummercardPoints.Down),
+		"summercard_points_roundtrip": intPtrString(lift.Data.SummercardPoints.Roundtrip),
+	})
 
 	tagIds := buildTagIds(lift.Lifttype.Rid)
 	smgTags := buildSmgTags(lift.Lifttype.Rid)
@@ -208,10 +225,11 @@ func mapLiftToPoi(lift dto.DssLift, base *odhmodel.ODHActivityPoi) odhmodel.ODHA
 	// ── DistanceDuration ─────────────────────────────────────────────────────
 	// Guard against NaN/Inf: in Go, strconv.ParseFloat("NaN", 64) succeeds and
 	// returns math.NaN(), which json.Marshal cannot serialize and will panic.
-	var distDuration *float64
+	// Seconds → hours, rounded to 2 decimals; 0 when missing (as C#).
+	distDuration := new(float64)
 	if lift.Duration != "" {
 		if secs, err := strconv.ParseFloat(lift.Duration, 64); err == nil && isFinite(secs) {
-			hours := math.Round((secs/3600.0)*10) / 10
+			hours := math.RoundToEven((secs/3600.0)*100) / 100 // C# Math.Round rounds midpoints to even
 			if isFinite(hours) {
 				distDuration = &hours
 			}
@@ -220,7 +238,7 @@ func mapLiftToPoi(lift dto.DssLift, base *odhmodel.ODHActivityPoi) odhmodel.ODHA
 
 	gpsInfo, gpsPoints := buildGps(lift)
 
-	var gpsTrack []odhmodel.GpsTrack
+	gpsTrack := []odhmodel.GpsTrack{}
 	if lift.GeoPositionFile != "" {
 		gpsTrack = []odhmodel.GpsTrack{
 			{
@@ -233,7 +251,7 @@ func mapLiftToPoi(lift dto.DssLift, base *odhmodel.ODHActivityPoi) odhmodel.ODHA
 		}
 	}
 
-	var opSchedules []odhmodel.OperationSchedule
+	opSchedules := []odhmodel.OperationSchedule{}
 	if ws := buildOperationSchedule("winter", lift); ws != nil {
 		opSchedules = append(opSchedules, *ws)
 	}
@@ -242,9 +260,9 @@ func mapLiftToPoi(lift dto.DssLift, base *odhmodel.ODHActivityPoi) odhmodel.ODHA
 	}
 
 	additionalPoiInfos := map[string]*odhmodel.AdditionalPoiInfo{
-		"de": {Novelty: "", Language: "de", Categories: []string{"Aufstiegsanlagen"}},
-		"it": {Novelty: "", Language: "it", Categories: []string{"Impianti di risalita"}},
-		"en": {Novelty: "", Language: "en", Categories: []string{"Lifts"}},
+		"de": {Novelty: stringFromMultilang(lift.InfoText, "de"), Language: "de", Categories: []string{"Aufstiegsanlagen"}},
+		"it": {Novelty: stringFromMultilang(lift.InfoText, "it"), Language: "it", Categories: []string{"Impianti di risalita"}},
+		"en": {Novelty: stringFromMultilang(lift.InfoText, "en"), Language: "en", Categories: []string{"Lifts"}},
 	}
 
 	return odhmodel.ODHActivityPoi{
@@ -324,104 +342,136 @@ func intToFloat64(i *int) *float64 {
 	return &f
 }
 
+// ── Mapping ───────────────────────────────────────────────────────────────────
+
+// mergeMapping keeps the existing Mapping of the record (other sources and dss
+// keys set elsewhere) and only adds/overwrites the given dss keys. Empty values
+// are skipped, so a missing DSS field never clears an existing key.
+func mergeMapping(base *odhmodel.ODHActivityPoi, dss map[string]string) map[string]map[string]string {
+	mapping := map[string]map[string]string{}
+	if base != nil {
+		for source, values := range base.Mapping {
+			copied := make(map[string]string, len(values))
+			for k, v := range values {
+				copied[k] = v
+			}
+			mapping[source] = copied
+		}
+	}
+	if mapping[SOURCE] == nil {
+		mapping[SOURCE] = map[string]string{}
+	}
+	for k, v := range dss {
+		if v != "" {
+			mapping[SOURCE][k] = v
+		}
+	}
+	return mapping
+}
+
+// skiAreaRid returns the DSS talschaft rid (SkiArea Mapping.dss.rid) of a lift:
+// subregionId for the split regions (e.g. "4a"), otherwise the regionId.
+func skiAreaRid(lift dto.DssLift) string {
+	if sub := strings.TrimSpace(lift.SubregionId); sub != "" && sub != "all" {
+		return sub
+	}
+	return nonZeroInt(lift.RegionId)
+}
+
+func nonZeroInt(i int64) string {
+	if i == 0 {
+		return ""
+	}
+	return strconv.FormatInt(i, 10)
+}
+
+func intPtrString(i *int) string {
+	if i == nil {
+		return ""
+	}
+	return strconv.Itoa(*i)
+}
+
 // ── Tag builders ──────────────────────────────────────────────────────────────
+
+// liftTypeTags maps DSS lifttype.rid to its SmgTag (ODHTag) and TagIds, as the
+// C# importer produced them. All of them exist on the ODHTag / Tag endpoints.
+var liftTypeTags = map[int64]struct {
+	smgTag string
+	tagIds []string
+}{
+	1:  {"seilbahn", []string{"ropeway"}},
+	3:  {"kabinenbahn", []string{"cabinet train", "gondola lift"}},
+	4:  {"unterirdische bahn", []string{"underground train"}},
+	7:  {"sessellift", []string{"chairlift"}}, // Sessellift 2
+	8:  {"sessellift", []string{"chairlift"}}, // Sessellift 3
+	9:  {"skilift", []string{"ski lift"}},
+	10: {"schrägaufzug", []string{"inclined elevator"}},
+	11: {"klein-skilift", []string{"small ski lift"}},
+	12: {"telemix", []string{"telemix"}},
+	13: {"standseilbahn zahnradbahn", []string{"funicular railwaycog railway"}},
+	14: {"skibus", []string{"skibus"}},
+	15: {"zug", []string{"train"}},
+	16: {"sessellift", []string{"chairlift"}}, // Sessellift 4
+	17: {"sessellift", []string{"chairlift"}}, // Sessellift 6
+	18: {"sessellift", []string{"chairlift"}}, // Sessellift 8
+	19: {"förderband", []string{"moving carpet"}},
+	21: {"4er sessellift kuppelbar", []string{"chairlift 4 persons"}},
+	22: {"6er sessellift kuppelbar", []string{"chairlift 6 persons"}},
+	23: {"8er sessellift kuppelbar", []string{"chairlift 8 persons"}},
+	24: {"seilbahn", []string{"ropeway"}}, // 3S Bahn
+}
 
 func buildTagIds(rid int64) []string {
 	tags := []string{"activity", "lifts", "other", "other lifts"}
-	if t := lifttypeToTagId(rid); t != "" {
-		tags = append(tags, t)
+	if t, ok := liftTypeTags[rid]; ok {
+		tags = append(tags, t.tagIds...)
 	}
 	return tags
 }
 
 func buildSmgTags(rid int64) []string {
 	tags := []string{"anderes", "aufstiegsanlagen", "weitere aufstiegsanlagen"}
-	if t := lifttypeToSmgTag(rid); t != "" {
-		tags = append(tags, t)
+	if t, ok := liftTypeTags[rid]; ok {
+		tags = append(tags, t.smgTag)
 	}
 	tags = append(tags, "activity")
 	return tags
 }
 
-func lifttypeToTagId(rid int64) string {
-	switch rid {
-	case 1:
-		return "cable car"
-	case 3:
-		return "gondola"
-	case 4:
-		return "underground ropeway"
-	case 7:
-		return "chairlift 2 persons"
-	case 8:
-		return "chairlift 3 persons"
-	case 9:
-		return "ski lift"
-	case 10:
-		return "lift"
-	case 13:
-		return "cable railway"
-	case 14:
-		return "skibus"
-	case 15:
-		return "train"
-	case 16:
-		return "chairlift 4 persons"
-	case 17:
-		return "chairlift 6 persons"
-	case 19:
-		return "moving carpet"
-	case 21:
-		return "chairlift 4 persons with canopy"
-	case 22:
-		return "chairlift 6 persons"
-	case 23:
-		return "chairlift 8 persons with canopy"
-	default:
-		return ""
-	}
-}
-
-func lifttypeToSmgTag(rid int64) string {
-	switch rid {
-	case 1:
-		return "seilbahn"
-	case 3:
-		return "gondelbahn"
-	case 4:
-		return "unterirdische seilbahn"
-	case 7:
-		return "2er sessellift"
-	case 8:
-		return "3er sessellift"
-	case 9:
-		return "skilift"
-	case 10:
-		return "lift"
-	case 13:
-		return "standseilbahn"
-	case 14:
-		return "skibus"
-	case 15:
-		return "zug"
-	case 16:
-		return "4er sessellift"
-	case 17:
-		return "6er sessellift"
-	case 19:
-		return "förderband"
-	case 21:
-		return "4er sessellift kuppelbar"
-	case 22:
-		return "6er sessellift kuppelbar"
-	case 23:
-		return "8er sessellift kuppelbar"
-	default:
-		return ""
-	}
-}
-
 // ── GPS builder ───────────────────────────────────────────────────────────────
+
+// withGeoFileFallback fills a missing location from the geoPositionFile track:
+// first point = valley station, last point = mountain station (only if that is
+// missing too). DSS coordinates are never overwritten.
+func withGeoFileFallback(ctx context.Context, lift dto.DssLift) dto.DssLift {
+	if hasValidLocation(lift.Location) || lift.GeoPositionFile == "" {
+		return lift
+	}
+	points, err := geoFiles.Points(ctx, lift.GeoPositionFile)
+	if err != nil {
+		logger.Get(ctx).Warn("No GPS fallback from geoPositionFile", "pid", lift.Pid, "url", lift.GeoPositionFile, "error", err)
+		return lift
+	}
+	lift.Location = toDssLocation(points[0])
+	if !hasValidLocation(lift.LocationMountain) {
+		lift.LocationMountain = toDssLocation(points[len(points)-1])
+	}
+	return lift
+}
+
+func hasValidLocation(loc *dto.DssLocation) bool {
+	if loc == nil {
+		return false
+	}
+	_, latOk := safeParseFloat(loc.Lat)
+	_, lonOk := safeParseFloat(loc.Lon)
+	return latOk && lonOk
+}
+
+func toDssLocation(p geoPoint) *dto.DssLocation {
+	return &dto.DssLocation{Lat: formatCoordinate(p.Lat), Lon: formatCoordinate(p.Lon)}
+}
 
 func buildGps(lift dto.DssLift) ([]odhmodel.GpsInfo, map[string]*odhmodel.GpsInfo) {
 	gpsInfo := []odhmodel.GpsInfo{}
@@ -519,8 +569,8 @@ func buildOperationSchedule(season string, lift dto.DssLift) *odhmodel.Operation
 	}
 
 	const dtFormat = "2006-01-02T00:00:00"
-	start := time.Unix(*seasonStart, 0).UTC().Format(dtFormat)
-	stop := time.Unix(*seasonEnd, 0).UTC().Format(dtFormat)
+	start := time.Unix(*seasonStart, 0).In(romeLocation).Format(dtFormat)
+	stop := time.Unix(*seasonEnd, 0).In(romeLocation).Format(dtFormat)
 
 	nameDE, nameIT, nameEN := "Wintersaison", "stagioneinvernale", "winterseason"
 	if season == "summer" {
@@ -528,9 +578,10 @@ func buildOperationSchedule(season string, lift dto.DssLift) *odhmodel.Operation
 	}
 
 	os := &odhmodel.OperationSchedule{
-		Stop:  stop,
-		Type:  "1",
-		Start: start,
+		Stop:                  stop,
+		OperationScheduleTime: []odhmodel.OperationScheduleTime{},
+		Type:                  "1",
+		Start:                 start,
 		OperationscheduleName: map[string]string{
 			"de": nameDE,
 			"it": nameIT,
@@ -538,29 +589,33 @@ func buildOperationSchedule(season string, lift dto.DssLift) *odhmodel.Operation
 		},
 	}
 
+	// Lifts with a lunch break have a second (afternoon) slot; "00:00" means not set.
 	if times.Start != "" && times.End != "" {
-		endTime := formatTimeWithSeconds(times.End)
-		if times.EndAfternoon != "" {
-			endTime = formatTimeWithSeconds(times.EndAfternoon)
-		}
-		slot := odhmodel.OperationScheduleTime{
-			Start:     formatTimeWithSeconds(times.Start),
-			End:       endTime,
-			State:     0,
-			Timecode:  1,
-			Monday:    true,
-			Tuesday:   true,
-			Wednesday: true,
-			Thursday:  true,
-			Thuresday: true, // ODH typo — must be set alongside Thursday
-			Friday:    true,
-			Saturday:  true,
-			Sunday:    true,
-		}
-		os.OperationScheduleTime = []odhmodel.OperationScheduleTime{slot}
+		os.OperationScheduleTime = append(os.OperationScheduleTime, buildOperationScheduleTime(times.Start, times.End))
+	}
+	if times.StartAfternoon != "" && times.EndAfternoon != "" &&
+		times.StartAfternoon != "00:00" && times.EndAfternoon != "00:00" {
+		os.OperationScheduleTime = append(os.OperationScheduleTime, buildOperationScheduleTime(times.StartAfternoon, times.EndAfternoon))
 	}
 
 	return os
+}
+
+func buildOperationScheduleTime(start, end string) odhmodel.OperationScheduleTime {
+	return odhmodel.OperationScheduleTime{
+		Start:     formatTimeWithSeconds(start),
+		End:       formatTimeWithSeconds(end),
+		State:     0,
+		Timecode:  1,
+		Monday:    true,
+		Tuesday:   true,
+		Wednesday: true,
+		Thursday:  true,
+		Thuresday: true, // ODH typo — must be set alongside Thursday
+		Friday:    true,
+		Saturday:  true,
+		Sunday:    true,
+	}
 }
 
 func formatTimeWithSeconds(t string) string {
@@ -575,21 +630,26 @@ func formatTimeWithSeconds(t string) string {
 
 // ── Detail builder ────────────────────────────────────────────────────────────
 
-func buildDetail(lift dto.DssLift) map[string]*clib.DetailGeneric {
-	detail := map[string]*clib.DetailGeneric{}
+func buildDetail(lift dto.DssLift) map[string]*odhmodel.Detail {
+	detail := map[string]*odhmodel.Detail{}
 	for _, lang := range []string{"de", "it", "en"} {
-		title := stringFromMultilang(lift.Name, lang)
+		title := nameWithFallback(lift.Name, lang)
 		baseText := nilableFromMultilang(lift.Description, lang)
 
-		// AdditionalText (info-text / info-text-summer) is set in the C# parser
-		// but clib.DetailGeneric only exposes BaseText, Title, and Language.
-		// Cannot be mapped until the SDK struct is extended.
+		// AdditionalText: winter info-text, falling back to the summer one.
+		additionalText := nilableFromMultilang(lift.InfoText, lang)
+		if additionalText == nil {
+			additionalText = nilableFromMultilang(lift.InfoTextSummer, lang)
+		}
 
 		langCopy := lang
-		detail[lang] = &clib.DetailGeneric{
-			Language: &langCopy,
-			Title:    &title,
-			BaseText: baseText,
+		detail[lang] = &odhmodel.Detail{
+			DetailGeneric: clib.DetailGeneric{
+				Language: &langCopy,
+				Title:    &title,
+				BaseText: baseText,
+			},
+			AdditionalText: additionalText,
 		}
 	}
 	return detail
@@ -611,6 +671,20 @@ func stringFromMultilang(m dto.DssMultilang, lang string) string {
 		return ""
 	}
 	return *ptr
+}
+
+// nameWithFallback returns the trimmed name in lang. If it is empty, it falls back to
+// the first non-empty name in de, it, en, so every language gets a title.
+func nameWithFallback(m dto.DssMultilang, lang string) string {
+	if name := strings.TrimSpace(stringFromMultilang(m, lang)); name != "" {
+		return name
+	}
+	for _, l := range []string{"de", "it", "en"} {
+		if name := strings.TrimSpace(stringFromMultilang(m, l)); name != "" {
+			return name
+		}
+	}
+	return ""
 }
 
 func nilableFromMultilang(m dto.DssMultilang, lang string) *string {

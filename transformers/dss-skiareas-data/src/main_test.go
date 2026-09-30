@@ -26,6 +26,7 @@ func Test_Transform_Snapshot(t *testing.T) {
 
 	mock := clibmock.NewContentMock()
 	contentClient = mock
+	geoFiles = stubGeoFiles("testdata/regionmap.gpx")
 
 	// Inject an empty cache — no existing ODH records, everything is new.
 	skiAreaCache = clib.NewCache[odhmodel.SkiArea]()

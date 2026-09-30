@@ -8,6 +8,24 @@ package dto
 // The collector merges the DSS response under the key "dssSnowparks".
 type RawData struct {
 	DssSnowparks DssSnowparkFeed `json:"dssSnowparks"`
+	DssLifts     DssLiftFeed     `json:"dssLifts"` // liftbasis, to resolve the lifts/SkiArea of a snowpark
+}
+
+// DssLiftFeed holds the liftbasis fields needed to link a snowpark to its lifts
+// (only by name, lifts[].rid is always null) and SkiArea (subregionId).
+type DssLiftFeed struct {
+	Items []DssLift `json:"items"`
+}
+
+type DssLift struct {
+	Pid         int64        `json:"pid"`
+	RegionId    int64        `json:"regionId"`
+	SubregionId string       `json:"subregionId"`
+	Name        DssMultilang `json:"name"`
+}
+
+type DssSnowparkLift struct {
+	Name DssMultilang `json:"name"`
 }
 
 // DssSnowparkFeed is the full response from
@@ -20,24 +38,25 @@ type DssSnowparkFeed struct {
 
 // DssSnowpark is one snowpark record as delivered by the DSS API.
 // Key facts confirmed from live data:
-//   - rid is always 0 — only pid is a stable key
+//   - rid is always 0 — only regionId + pid together are a stable key (pid alone is duplicated)
 //   - NO geoPositionFile field (unlike lifts/slopes)
 //   - NO seasonStart/seasonEnd (unlike slopes)
 //   - NO update-date — use feed-level modification timestamp
 //   - NO skiresort object — only regionId links to a region
 //   - data.altitude is a flat nullable int (not nested start/end like slopes)
 type DssSnowpark struct {
-	State      int             `json:"state"` // 0=closed, any non-zero=open
-	Rid        int64           `json:"rid"`   // always 0 — not a stable ID
-	Pid        int64           `json:"pid"`   // stable key
-	RegionId   int64           `json:"regionId"`
-	Image      *string         `json:"image"` // nullable image URL
-	Name       DssMultilang    `json:"name"`
-	DetailText DssMultilang    `json:"detailText"` // equivalent of Description in slopes
-	Url        DssMultilang    `json:"url"`
-	Lift       DssMultilang    `json:"lift"` // associated lift name
-	Data       DssSnowparkData `json:"data"`
-	Location   *DssLocation    `json:"location"` // nullable; lat/lon as strings
+	State      int               `json:"state"` // 0=closed, any non-zero=open
+	Rid        int64             `json:"rid"`   // always 0 — not a stable ID
+	Pid        int64             `json:"pid"`   // unique only together with regionId
+	RegionId   int64             `json:"regionId"`
+	Image      *string           `json:"image"` // nullable image URL
+	Name       DssMultilang      `json:"name"`
+	DetailText DssMultilang      `json:"detailText"` // equivalent of Description in slopes
+	Url        DssMultilang      `json:"url"`
+	Lift       DssMultilang      `json:"lift"` // associated lift name
+	Lifts      []DssSnowparkLift `json:"lifts"`
+	Data       DssSnowparkData   `json:"data"`
+	Location   *DssLocation      `json:"location"` // nullable; lat/lon as strings
 }
 
 // DssSnowparkData holds the snowpark-specific data fields.

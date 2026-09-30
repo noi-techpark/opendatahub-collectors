@@ -90,6 +90,7 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 	seen := map[string]struct{}{}
 	webcams := map[string]odhmodel.WebcamInfo{}
 
+	skiAreas := newSkiAreaResolver(r.Rawdata.DssSkiAreas)
 	for _, cam := range r.Rawdata.DssWebcams.Items {
 		id := buildID(cam)
 		seen[id] = struct{}{}
@@ -101,7 +102,7 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 			base = &copy
 		}
 
-		webcams[id] = mapWebcamToODH(cam, base)
+		webcams[id] = mapWebcamToODH(cam, base, skiAreas.rid(cam))
 	}
 
 	// Stable iteration order
@@ -184,7 +185,7 @@ func buildID(cam dto.DssWebcam) string {
 
 // ── Main mapper ───────────────────────────────────────────────────────────────
 
-func mapWebcamToODH(cam dto.DssWebcam, base *odhmodel.WebcamInfo) odhmodel.WebcamInfo {
+func mapWebcamToODH(cam dto.DssWebcam, base *odhmodel.WebcamInfo, skiAreaRid string) odhmodel.WebcamInfo {
 	id := buildID(cam)
 	source := SOURCE
 
@@ -209,9 +210,13 @@ func mapWebcamToODH(cam dto.DssWebcam, base *odhmodel.WebcamInfo) odhmodel.Webca
 	//   - only adds rid if rid != 0 (all live records have rid=0, so skipped)
 	//   - only adds feratelId if non-empty
 	//   - always adds skiresort (plain string)
+	//   - existing Mapping entries are kept, dss keys are only added/overwritten
 	dssMap := map[string]string{
-		"pid":       strconv.FormatInt(cam.Pid, 10),
-		"skiresort": cam.Skiresort,
+		"pid":         strconv.FormatInt(cam.Pid, 10),
+		"skiresort":   cam.Skiresort,
+		"regionId":    strconv.FormatInt(cam.RegionId, 10),
+		"skiarea_rid": skiAreaRid,
+		"webcamType":  cam.WebcamType,
 	}
 	if cam.Rid != 0 {
 		dssMap["rid"] = strconv.FormatInt(cam.Rid, 10)
@@ -219,7 +224,12 @@ func mapWebcamToODH(cam dto.DssWebcam, base *odhmodel.WebcamInfo) odhmodel.Webca
 	if cam.FeratelId != "" {
 		dssMap["feratelId"] = cam.FeratelId
 	}
-	mapping := map[string]map[string]string{SOURCE: dssMap}
+	dssMap["showOnSummer"] = strconv.FormatBool(cam.ShowOnSummer)
+	var baseMapping map[string]map[string]string
+	if base != nil {
+		baseMapping = base.Mapping
+	}
+	mapping := mergeMapping(baseMapping, dssMap)
 
 	// ── Detail + HasLanguage + Webcamname ─────────────────────────────────────
 	// C# parser: only adds Detail entry if name is non-empty.
@@ -363,6 +373,66 @@ func isFinite(f float64) bool {
 }
 
 // ── Multilang helpers ─────────────────────────────────────────────────────────
+
+// mergeMapping keeps the existing Mapping of the record (other sources and dss
+// keys set elsewhere) and only adds/overwrites the given dss keys. Empty values
+// are skipped, so a missing DSS field never clears an existing key.
+func mergeMapping(existing map[string]map[string]string, dss map[string]string) map[string]map[string]string {
+	mapping := map[string]map[string]string{}
+	for source, values := range existing {
+		copied := make(map[string]string, len(values))
+		for k, v := range values {
+			copied[k] = v
+		}
+		mapping[source] = copied
+	}
+	if mapping[SOURCE] == nil {
+		mapping[SOURCE] = map[string]string{}
+	}
+	for k, v := range dss {
+		if v != "" {
+			mapping[SOURCE][k] = v
+		}
+	}
+	return mapping
+}
+
+// skiAreaResolver maps a webcam to its DSS talschaft rid (SkiArea Mapping.dss.rid).
+type skiAreaResolver struct {
+	byRegion map[string][]dto.DssSkiArea // regionId -> talschaften ("4" -> 4a, 4b)
+}
+
+func newSkiAreaResolver(feed dto.DssSkiAreaFeed) skiAreaResolver {
+	r := skiAreaResolver{byRegion: map[string][]dto.DssSkiArea{}}
+	for _, area := range feed.Items {
+		region := strings.TrimRight(area.Rid, "abcdefghijklmnopqrstuvwxyz")
+		r.byRegion[region] = append(r.byRegion[region], area)
+	}
+	return r
+}
+
+// rid returns the only talschaft of the webcam's region; for split regions
+// (4, 5, 8) the one whose name (de/it/en) occurs in the webcam's skiresort text.
+func (r skiAreaResolver) rid(cam dto.DssWebcam) string {
+	areas := r.byRegion[strconv.FormatInt(cam.RegionId, 10)]
+	if len(areas) == 1 {
+		return areas[0].Rid
+	}
+	skiresort := strings.ToLower(cam.Skiresort)
+	match := ""
+	for _, area := range areas {
+		for _, lang := range []string{"de", "it", "en"} {
+			name := strings.ToLower(strings.TrimSpace(stringFromMultilang(area.Name, lang)))
+			if name != "" && strings.Contains(skiresort, name) {
+				if match != "" && match != area.Rid {
+					return "" // ambiguous
+				}
+				match = area.Rid
+			}
+		}
+	}
+	return match
+}
 
 func stringFromMultilang(m dto.DssMultilang, lang string) string {
 	var ptr *string

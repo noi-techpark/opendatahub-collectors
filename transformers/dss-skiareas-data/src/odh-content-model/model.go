@@ -108,6 +108,10 @@ type SkiArea struct {
 	TagIds  []string `json:"TagIds,omitempty"`
 	SmgTags []string `json:"SmgTags,omitempty"`
 
+	// Geo: raw entries so existing ones (e.g. IDM "position") round-trip unchanged;
+	// the transformer only adds/replaces the "track" entry.
+	Geo map[string]json.RawMessage `json:"Geo,omitempty"`
+
 	// ── Catch-all: every other field from the ODH API ────────────────────────
 	// Areas, AreaId, AreaIds, GpsInfo, GpsPoints, Regions, RegionIds,
 	// DistrictIds, SkiRegionId, SkiRegion, SlopeKm*, TotalSlopeKm,
@@ -126,7 +130,7 @@ var knownFields = map[string]bool{
 	"Mapping": true, "Detail": true, "ContactInfos": true,
 	"OperationSchedule": true, "SmgActive": true, "OdhActive": true,
 	"PublishedOn": true, "SyncUpdateMode": true, "SyncSourceInterface": true,
-	"LicenseInfo": true, "TagIds": true, "SmgTags": true,
+	"LicenseInfo": true, "TagIds": true, "SmgTags": true, "Geo": true,
 }
 
 // UnmarshalJSON deserializes all known fields into typed struct fields and

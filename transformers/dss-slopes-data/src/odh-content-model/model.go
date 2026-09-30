@@ -50,12 +50,12 @@ type ODHActivityPoi struct {
 	Generic
 
 	// Multilingual content
-	Detail               map[string]*clib.DetailGeneric `json:"Detail,omitempty"`
-	ContactInfos         map[string]interface{}         `json:"ContactInfos"` // always emit {}
-	AdditionalPoiInfos   map[string]*AdditionalPoiInfo  `json:"AdditionalPoiInfos,omitempty"`
-	AdditionalProperties map[string]interface{}         `json:"AdditionalProperties"` // always emit {}
-	PoiProperty          map[string]interface{}         `json:"PoiProperty"`          // always emit {}
-	ImageGallery         []ImageGalleryEntry            `json:"ImageGallery,omitempty"`
+	Detail               map[string]*Detail            `json:"Detail,omitempty"`
+	ContactInfos         map[string]interface{}        `json:"ContactInfos"` // always emit {}
+	AdditionalPoiInfos   map[string]*AdditionalPoiInfo `json:"AdditionalPoiInfos,omitempty"`
+	AdditionalProperties map[string]interface{}        `json:"AdditionalProperties"` // always emit {}
+	PoiProperty          map[string]interface{}        `json:"PoiProperty"`          // always emit {}
+	ImageGallery         []ImageGalleryEntry           `json:"ImageGallery,omitempty"`
 
 	// LocationInfo: no omitempty on the field itself so &LocationInfo{} emits
 	// {"TvInfo":null,...} not {} — matches old API shape.
@@ -84,7 +84,7 @@ type ODHActivityPoi struct {
 
 	// FIX: *bool — nil serializes as null (old API has null for slopes, not false)
 	BikeTransport *bool  `json:"BikeTransport"`
-	Number        string `json:"Number,omitempty"`
+	Number        string `json:"Number"`
 
 	// Nullable flags — old API has these as null, not set by DSS importer
 	WayNumber        *string  `json:"WayNumber,omitempty"`
@@ -103,11 +103,11 @@ type ODHActivityPoi struct {
 	HasFreeEntrance  *bool    `json:"HasFreeEntrance,omitempty"`
 
 	// GPS
-	GpsTrack  []GpsTrack          `json:"GpsTrack,omitempty"`
+	GpsTrack  []GpsTrack          `json:"GpsTrack"`
 	GpsPoints map[string]*GpsInfo `json:"GpsPoints,omitempty"`
 
 	// Schedule
-	OperationSchedule []OperationSchedule `json:"OperationSchedule,omitempty"`
+	OperationSchedule []OperationSchedule `json:"OperationSchedule"`
 }
 
 // ── Generic ───────────────────────────────────────────────────────────────────
@@ -123,7 +123,7 @@ type Generic struct {
 	Mapping     map[string]map[string]string `json:"Mapping,omitempty"`
 	TagIds      []string                     `json:"TagIds,omitempty"`
 	SmgTags     []string                     `json:"SmgTags,omitempty"`
-	GpsInfo     []GpsInfo                    `json:"GpsInfo,omitempty"`
+	GpsInfo     []GpsInfo                    `json:"GpsInfo"`
 	LicenseInfo *LicenseInfo                 `json:"LicenseInfo,omitempty"`
 }
 
@@ -219,7 +219,7 @@ type OperationSchedule struct {
 	Stop                  string                  `json:"Stop,omitempty"`
 	Type                  string                  `json:"Type,omitempty"`
 	Start                 string                  `json:"Start,omitempty"`
-	OperationScheduleTime []OperationScheduleTime `json:"OperationScheduleTime,omitempty"`
+	OperationScheduleTime []OperationScheduleTime `json:"OperationScheduleTime"`
 	OperationscheduleName map[string]string       `json:"OperationscheduleName"` // lowercase 's' — ODH API shape
 }
 
@@ -237,6 +237,12 @@ type OperationScheduleTime struct {
 	Timecode  int    `json:"Timecode"`
 	Thuresday bool   `json:"Thuresday"` // ODH typo — preserved
 	Wednesday bool   `json:"Wednesday"`
+}
+
+// Detail extends clib.DetailGeneric with AdditionalText, which the SDK type lacks.
+type Detail struct {
+	clib.DetailGeneric
+	AdditionalText *string `json:"AdditionalText,omitempty"`
 }
 
 // AdditionalPoiInfo holds per-language category classification.

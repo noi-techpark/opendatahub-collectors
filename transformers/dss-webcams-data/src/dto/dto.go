@@ -7,7 +7,19 @@ package dto
 // RawData is the top-level envelope from the collector.
 // The collector merges the DSS response under the key "dssWebcams".
 type RawData struct {
-	DssWebcams DssWebcamFeed `json:"dssWebcams"`
+	DssWebcams  DssWebcamFeed  `json:"dssWebcams"`
+	DssSkiAreas DssSkiAreaFeed `json:"dssSkiAreas"` // talschaften, to resolve the SkiArea of a webcam
+}
+
+// DssSkiAreaFeed holds the talschaften fields needed to map a webcam to its
+// SkiArea (talschaft rid = SkiArea Mapping.dss.rid).
+type DssSkiAreaFeed struct {
+	Items []DssSkiArea `json:"items"`
+}
+
+type DssSkiArea struct {
+	Rid  string       `json:"rid"`
+	Name DssMultilang `json:"name"`
 }
 
 // DssWebcamFeed is the full response from

@@ -26,6 +26,7 @@ func Test_Transform_Snapshot(t *testing.T) {
 
 	mock := clibmock.NewContentMock()
 	contentClient = mock
+	geoFiles = stubGeoFiles("testdata/geofile.kml")
 	poiCache = clib.NewCache[odhmodel.ODHActivityPoi]()
 
 	// Load test input: a RawData message with all 3 languages

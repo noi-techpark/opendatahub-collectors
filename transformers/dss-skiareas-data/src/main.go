@@ -9,8 +9,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
+	"strconv"
 	"strings"
 	"time"
+	_ "time/tzdata" // embed zoneinfo so Europe/Rome always loads
 
 	"github.com/noi-techpark/opendatahub-go-sdk/clib"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
@@ -42,6 +44,15 @@ var env struct {
 var contentClient clib.ContentAPI
 var skiAreaCache *clib.Cache[odhmodel.SkiArea]
 var nowFunc = func() time.Time { return time.Now().UTC() }
+
+// DSS season dates are Unix timestamps of local midnight in Italy.
+var romeLocation = func() *time.Location {
+	loc, err := time.LoadLocation("Europe/Rome")
+	if err != nil {
+		panic(err)
+	}
+	return loc
+}()
 
 func main() {
 	ms.InitWithEnv(context.Background(), "", &env)
@@ -101,6 +112,7 @@ func processSkiArea(ctx context.Context, dssArea dto.DssSkiArea) error {
 		// ── CREATE ────────────────────────────────────────────────────────────
 		log.Info("No existing SkiArea found — creating new")
 		newArea := buildNewSkiArea(dssArea, opSchedules)
+		newArea.Geo = withRegionTrack(ctx, newArea.Geo, dssArea.RegionMap)
 		if err := contentClient.Post(ctx, ENTITY_TYPE,
 			map[string]string{"generateid": "false"}, newArea); err != nil {
 			return fmt.Errorf("POST failed: %w", err)
@@ -120,13 +132,11 @@ func processSkiArea(ctx context.Context, dssArea dto.DssSkiArea) error {
 		log.Info("Updating OperationSchedule on existing SkiArea", "id", id)
 
 		area.OperationSchedule = opSchedules
+		area.Geo = withRegionTrack(ctx, area.Geo, dssArea.RegionMap)
 		area.LastChange = odhmodel.PtrFlexibleTime(nowFunc())
 
-		// Ensure DSS mapping block is present (may be absent on idm-only records)
-		if area.Mapping == nil {
-			area.Mapping = map[string]map[string]string{}
-		}
-		area.Mapping[SOURCE] = map[string]string{"rid": dssArea.Rid}
+		// Keep existing Mapping (idm etc.) and existing dss keys, only add/overwrite ours.
+		area.Mapping = mergeMapping(area.Mapping, dssMapping(dssArea))
 
 		if err := contentClient.Put(ctx, ENTITY_TYPE, id, area); err != nil {
 			log.Error("PUT failed", "id", id, "error", err)
@@ -136,6 +146,47 @@ func processSkiArea(ctx context.Context, dssArea dto.DssSkiArea) error {
 	}
 
 	return nil
+}
+
+// withRegionTrack sets Geo["track"] to the regionMap GPX outline as WKT. Other
+// Geo entries are kept unchanged. The API requires exactly one default entry,
+// so the track only becomes the default when no other entry is one (i.e. on
+// DSS-only SkiAreas). On any download/parse error Geo is returned unchanged.
+func withRegionTrack(ctx context.Context, geo map[string]json.RawMessage, regionMap string) map[string]json.RawMessage {
+	if regionMap == "" {
+		return geo
+	}
+	wkt, err := geoFiles.TrackWKT(ctx, regionMap)
+	if err != nil {
+		logger.Get(ctx).Warn("No Geo track from regionMap", "url", regionMap, "error", err)
+		return geo
+	}
+
+	hasDefault := false
+	for key, raw := range geo {
+		var entry struct {
+			Default *bool `json:"Default"`
+		}
+		if key != "track" && json.Unmarshal(raw, &entry) == nil && entry.Default != nil && *entry.Default {
+			hasDefault = true
+		}
+	}
+
+	track := map[string]any{"Geometry": wkt}
+	if !hasDefault {
+		track["Default"] = true
+	}
+	raw, err := json.Marshal(track)
+	if err != nil {
+		return geo
+	}
+
+	result := make(map[string]json.RawMessage, len(geo)+1)
+	for key, value := range geo {
+		result[key] = value
+	}
+	result["track"] = raw
+	return result
 }
 
 // findByDssRid queries ODH SkiArea filtered by Mapping.dss.rid.
@@ -162,8 +213,8 @@ func buildOperationSchedules(dssArea dto.DssSkiArea) []odhmodel.OperationSchedul
 	var schedules []odhmodel.OperationSchedule
 
 	if dssArea.SeasonWinter.Start != nil && dssArea.SeasonWinter.End != nil {
-		start := time.Unix(*dssArea.SeasonWinter.Start, 0).UTC().Format(dtFormat)
-		stop := time.Unix(*dssArea.SeasonWinter.End, 0).UTC().Format(dtFormat)
+		start := time.Unix(*dssArea.SeasonWinter.Start, 0).In(romeLocation).Format(dtFormat)
+		stop := time.Unix(*dssArea.SeasonWinter.End, 0).In(romeLocation).Format(dtFormat)
 		schedules = append(schedules, odhmodel.OperationSchedule{
 			Type:                  "1",
 			Start:                 start,
@@ -178,8 +229,8 @@ func buildOperationSchedules(dssArea dto.DssSkiArea) []odhmodel.OperationSchedul
 	}
 
 	if dssArea.SeasonSummer.Start != nil && dssArea.SeasonSummer.End != nil {
-		start := time.Unix(*dssArea.SeasonSummer.Start, 0).UTC().Format(dtFormat)
-		stop := time.Unix(*dssArea.SeasonSummer.End, 0).UTC().Format(dtFormat)
+		start := time.Unix(*dssArea.SeasonSummer.Start, 0).In(romeLocation).Format(dtFormat)
+		stop := time.Unix(*dssArea.SeasonSummer.End, 0).In(romeLocation).Format(dtFormat)
 		schedules = append(schedules, odhmodel.OperationSchedule{
 			Type:                  "1",
 			Start:                 start,
@@ -239,16 +290,14 @@ func buildNewSkiArea(dssArea dto.DssSkiArea, opSchedules []odhmodel.OperationSch
 	now := nowFunc()
 
 	return odhmodel.SkiArea{
-		Id:          &id,
-		Active:      true,
-		Source:      &source,
-		Shortname:   &shortname,
-		HasLanguage: hasLanguage,
-		FirstImport: odhmodel.PtrFlexibleTime(now),
-		LastChange:  odhmodel.PtrFlexibleTime(now),
-		Mapping: map[string]map[string]string{
-			SOURCE: {"rid": dssArea.Rid},
-		},
+		Id:                &id,
+		Active:            true,
+		Source:            &source,
+		Shortname:         &shortname,
+		HasLanguage:       hasLanguage,
+		FirstImport:       odhmodel.PtrFlexibleTime(now),
+		LastChange:        odhmodel.PtrFlexibleTime(now),
+		Mapping:           mergeMapping(nil, dssMapping(dssArea)),
 		Detail:            detail,
 		ContactInfos:      contactInfos,
 		OperationSchedule: opSchedules,
@@ -266,6 +315,47 @@ func buildNewSkiArea(dssArea dto.DssSkiArea, opSchedules []odhmodel.OperationSch
 			ClosedData:    false,
 		},
 	}
+}
+
+// dssMapping returns the dss Mapping keys of a talschaft.
+func dssMapping(dssArea dto.DssSkiArea) map[string]string {
+	resorts := []string{}
+	for _, resort := range dssArea.Skiresorts {
+		if resort.Rid != 0 {
+			resorts = append(resorts, strconv.FormatInt(resort.Rid, 10))
+		}
+	}
+	return map[string]string{
+		"rid":            dssArea.Rid,
+		"skiresort_rids": strings.Join(resorts, ","),
+		"activeWinter":   strconv.FormatBool(dssArea.ActiveWinter != 0),
+		"activeBike":     strconv.FormatBool(dssArea.ActiveBike != 0),
+		"activeHike":     strconv.FormatBool(dssArea.ActiveHike != 0),
+		"email_lifts":    strings.TrimSpace(dssArea.Email.Lifts),
+	}
+}
+
+// mergeMapping keeps the existing Mapping of the record (other sources and dss
+// keys set elsewhere) and only adds/overwrites the given dss keys. Empty values
+// are skipped, so a missing DSS field never clears an existing key.
+func mergeMapping(existing map[string]map[string]string, dss map[string]string) map[string]map[string]string {
+	mapping := map[string]map[string]string{}
+	for source, values := range existing {
+		copied := make(map[string]string, len(values))
+		for k, v := range values {
+			copied[k] = v
+		}
+		mapping[source] = copied
+	}
+	if mapping[SOURCE] == nil {
+		mapping[SOURCE] = map[string]string{}
+	}
+	for k, v := range dss {
+		if v != "" {
+			mapping[SOURCE][k] = v
+		}
+	}
+	return mapping
 }
 
 // buildID generates a deterministic ODH ID for new DSS SkiArea records.

@@ -6,7 +6,19 @@ package dto
 
 // SlopeRawData is the top-level envelope from the collector.
 type RawData struct {
-	DssSlopes DssSlopeFeed `json:"dssSlopes"`
+	DssSlopes   DssSlopeFeed   `json:"dssSlopes"`
+	DssSkiAreas DssSkiAreaFeed `json:"dssSkiAreas"` // talschaften, to resolve the SkiArea of a slope
+}
+
+// DssSkiAreaFeed holds the talschaften fields needed to map a skiresort to its
+// SkiArea (talschaft rid = SkiArea Mapping.dss.rid).
+type DssSkiAreaFeed struct {
+	Items []DssSkiArea `json:"items"`
+}
+
+type DssSkiArea struct {
+	Rid        string         `json:"rid"`
+	Skiresorts []DssSkiresort `json:"skiresorts"`
 }
 
 type DssSlopeFeed struct {
@@ -26,12 +38,6 @@ type DssSkiresort struct {
 	Rid  int64        `json:"rid"`
 	Pid  int64        `json:"pid"`
 	Name DssMultilang `json:"name"`
-}
-
-// DssSeason holds unix-second timestamps; both can be null.
-type DssSeason struct {
-	Start *int64 `json:"start"`
-	End   *int64 `json:"end"`
 }
 
 type DssOpeningTimes struct {
@@ -57,11 +63,12 @@ type DssSlope struct {
 	Description     DssMultilang      `json:"description"`
 	InfoText        DssMultilang      `json:"info-text-winter"`
 	Skiresort       DssSkiresort      `json:"skiresort"`
+	OnlyForExport   int               `json:"onlyForExport"`
 	Data            DssSlopeData      `json:"data"`
 	Location        *DssSlopeLocation `json:"location"`
 	GeoPositionFile string            `json:"geoPositionFile"`
-	SeasonWinter    DssSeason         `json:"season-winter"`
-	SeasonSummer    DssSeason         `json:"season-summer"`
+	SeasonStart     *int64            `json:"seasonStart"` // unix seconds, winter season; nullable
+	SeasonEnd       *int64            `json:"seasonEnd"`
 	OpeningTimes    DssOpeningTimes   `json:"opening-times"`
 }
 
