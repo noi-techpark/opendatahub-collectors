@@ -39,6 +39,7 @@ var env struct {
 	ODH_CORE_TOKEN_CLIENT_ID     string
 	ODH_CORE_TOKEN_CLIENT_SECRET string
 	ODH_CORE_TOKEN_URL           string
+	ODH_CORE_REFERER             string
 }
 
 var contentClient clib.ContentAPI
@@ -60,7 +61,7 @@ func main() {
 		ClientID:     env.ODH_CORE_TOKEN_CLIENT_ID,
 		ClientSecret: env.ODH_CORE_TOKEN_CLIENT_SECRET,
 		DisableOAuth: env.ODH_CORE_TOKEN_URL == "",
-	})
+	}, clib.WithReferer(env.ODH_CORE_REFERER))
 	ms.FailOnError(context.Background(), err, "failed to create ODH content client")
 
 	listener := tr.NewTr[string](context.Background(), env.Env)
@@ -334,7 +335,7 @@ func mapSnowparkToPoi(snowpark dto.DssSnowpark, base *odhmodel.ODHActivityPoi, l
 		"crossline_jumps":     intPtrString(d.Crossline.CrosslineJumps),
 	})
 
-	detail := buildDetail(snowpark)
+	detail, hasLanguage := buildDetail(snowpark)
 
 	// Mirrors C# Convert.ToBoolean(state): any non-zero value = open.
 	isOpen := snowpark.State != 0
@@ -353,7 +354,7 @@ func mapSnowparkToPoi(snowpark dto.DssSnowpark, base *odhmodel.ODHActivityPoi, l
 			Active:      true,
 			Source:      &source,
 			Shortname:   &shortname,
-			HasLanguage: []string{"de", "it", "en"},
+			HasLanguage: hasLanguage,
 			FirstImport: firstImport,
 			LastChange:  odhmodel.PtrFlexibleTime(lastChange),
 			Mapping:     mapping,
@@ -392,6 +393,7 @@ func mapSnowparkToPoi(snowpark dto.DssSnowpark, base *odhmodel.ODHActivityPoi, l
 
 // ── Tag builders ──────────────────────────────────────────────────────────────
 
+// buildTagIds is kept sorted, as the API stores TagIds sorted (change detection hash).
 func buildTagIds() []string {
 	return []string{
 		"activity",
@@ -454,11 +456,19 @@ func buildGps(snowpark dto.DssSnowpark) ([]odhmodel.GpsInfo, map[string]*odhmode
 // buildDetail maps Name→Title, DetailText→BaseText for each language.
 // DetailText is the snowpark equivalent of Description in slopes.
 // No AdditionalText — snowpark feed has no info-text field.
-func buildDetail(snowpark dto.DssSnowpark) map[string]*clib.DetailGeneric {
+// It also returns the matching HasLanguage. Languages without title and text are
+// skipped: the API drops such entries and removes the language from HasLanguage,
+// so sending them would change the hash on every run.
+func buildDetail(snowpark dto.DssSnowpark) (map[string]*clib.DetailGeneric, []string) {
 	detail := map[string]*clib.DetailGeneric{}
+	hasLanguage := []string{}
 	for _, lang := range []string{"de", "it", "en"} {
 		title := nameWithFallback(snowpark.Name, lang)
 		baseText := nilableFromMultilang(snowpark.DetailText, lang)
+		if title == "" && baseText == nil {
+			continue
+		}
+		hasLanguage = append(hasLanguage, lang)
 		langCopy := lang
 		detail[lang] = &clib.DetailGeneric{
 			Language: &langCopy,
@@ -466,7 +476,7 @@ func buildDetail(snowpark dto.DssSnowpark) map[string]*clib.DetailGeneric {
 			BaseText: baseText,
 		}
 	}
-	return detail
+	return detail, hasLanguage
 }
 
 // ── Float safety ──────────────────────────────────────────────────────────────

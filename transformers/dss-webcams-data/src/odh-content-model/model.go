@@ -57,7 +57,7 @@ type WebcamInfo struct {
 
 	// Timestamps
 	FirstImport *FlexibleTime `json:"FirstImport,omitempty"`
-	LastChange  *FlexibleTime `json:"LastChange,omitempty"`
+	LastChange  *FlexibleTime `json:"LastChange,omitempty" hash:"ignore"` // overwritten by the API on every save
 
 	// Language
 	HasLanguage []string `json:"HasLanguage,omitempty"`

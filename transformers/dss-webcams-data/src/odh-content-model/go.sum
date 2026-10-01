@@ -84,8 +84,8 @@ github.com/modern-go/reflect2 v1.0.2 h1:xBagoLtFs94CBntxluKeaWgTMpvLxC4ur3nMaC9G
 github.com/modern-go/reflect2 v1.0.2/go.mod h1:yWuevngMOJpCy52FWWMvUC8ws7m/LJsjYzDa0/r8luk=
 github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 h1:C3w9PqII01/Oq1c1nUAm88MOHcQC9l5mIlSMApZMrHA=
 github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
-github.com/noi-techpark/opendatahub-go-sdk/clib v0.0.1 h1:xpykmflwExs1ba+GQamZ8WH2aHNvBUQ4pPrAguO0M+w=
-github.com/noi-techpark/opendatahub-go-sdk/clib v0.0.1/go.mod h1:UhZDGhoLJZrmnMAAc+3RX27tNNKOkLEKLBbhqa6oELY=
+github.com/noi-techpark/opendatahub-go-sdk/clib v0.0.2 h1:i5gDNuxBStE3PNQUnNXplKV1JbG/Uu9oZNuvJxG7ZVw=
+github.com/noi-techpark/opendatahub-go-sdk/clib v0.0.2/go.mod h1:UhZDGhoLJZrmnMAAc+3RX27tNNKOkLEKLBbhqa6oELY=
 github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0 h1:qZNcndXyVDNMjm97UUHY83SE/ajxFb3EG8Fy0knYJVA=
 github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0/go.mod h1:UoUUz256zEhBDTyyaGbIdm9JHbDNMqUjrJArVkut4XY=
 github.com/pelletier/go-toml/v2 v2.2.2 h1:aYUidT7k73Pcl9nb2gScu7NSrKCSHIDE89b3+6Wq+LM=

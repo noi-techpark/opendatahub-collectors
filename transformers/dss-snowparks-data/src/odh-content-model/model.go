@@ -48,15 +48,15 @@ type ODHActivityPoi struct {
 
 	// Multilingual content
 	Detail               map[string]*clib.DetailGeneric `json:"Detail,omitempty"`
-	ContactInfos         map[string]interface{}         `json:"ContactInfos"` // always emit {}
-	AdditionalPoiInfos   map[string]*AdditionalPoiInfo  `json:"AdditionalPoiInfos,omitempty"`
-	AdditionalProperties map[string]interface{}         `json:"AdditionalProperties"` // always emit {}
-	PoiProperty          map[string]interface{}         `json:"PoiProperty"`          // always emit {}
+	ContactInfos         map[string]interface{}         `json:"ContactInfos"`                               // always emit {}
+	AdditionalPoiInfos   map[string]*AdditionalPoiInfo  `json:"AdditionalPoiInfos,omitempty" hash:"ignore"` // Categories rebuilt by the API from the tags, Novelty is in Detail.AdditionalText
+	AdditionalProperties map[string]interface{}         `json:"AdditionalProperties"`                       // always emit {}
+	PoiProperty          map[string]interface{}         `json:"PoiProperty"`                                // always emit {}
 	ImageGallery         []ImageGalleryEntry            `json:"ImageGallery,omitempty"`
 
 	// LocationInfo: no omitempty on the field itself so &LocationInfo{} emits
 	// {"TvInfo":null,...} not {} — matches old API shape.
-	LocationInfo *LocationInfo `json:"LocationInfo,omitempty"`
+	LocationInfo *LocationInfo `json:"LocationInfo,omitempty" hash:"ignore"` // computed by the API from GpsInfo
 
 	// Sync metadata
 	SmgActive           bool     `json:"SmgActive"`
@@ -115,7 +115,7 @@ type Generic struct {
 	Active      bool                         `json:"Active"`
 	Source      *string                      `json:"Source,omitempty"`
 	FirstImport *FlexibleTime                `json:"FirstImport,omitempty"`
-	LastChange  *FlexibleTime                `json:"LastChange,omitempty"`
+	LastChange  *FlexibleTime                `json:"LastChange,omitempty" hash:"ignore"` // overwritten by the API on every save
 	HasLanguage []string                     `json:"HasLanguage,omitempty"`
 	Mapping     map[string]map[string]string `json:"Mapping,omitempty"`
 	TagIds      []string                     `json:"TagIds,omitempty"`

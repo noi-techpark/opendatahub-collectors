@@ -40,6 +40,7 @@ var env struct {
 	ODH_CORE_TOKEN_CLIENT_ID     string
 	ODH_CORE_TOKEN_CLIENT_SECRET string
 	ODH_CORE_TOKEN_URL           string
+	ODH_CORE_REFERER             string
 }
 
 var contentClient clib.ContentAPI
@@ -70,17 +71,8 @@ func main() {
 		ClientID:     env.ODH_CORE_TOKEN_CLIENT_ID,
 		ClientSecret: env.ODH_CORE_TOKEN_CLIENT_SECRET,
 		DisableOAuth: env.ODH_CORE_TOKEN_URL == "",
-	})
+	}, clib.WithReferer(env.ODH_CORE_REFERER))
 	ms.FailOnError(context.Background(), err, "failed to create ODH content client")
-
-	poiCache, err = clib.LoadExisting(context.Background(), contentClient, clib.LoadConfig[odhmodel.ODHActivityPoi]{
-		EntityType:  ENTITY_TYPE,
-		QueryParams: map[string]string{"source": SOURCE, "tagfilter": "lifts"},
-		IDFunc:      func(p odhmodel.ODHActivityPoi) string { return *p.Generic.ID },
-	})
-	ms.FailOnError(context.Background(), err, "failed to load existing lift POIs")
-
-	slog.Info("Loaded existing lift POIs", "count", len(poiCache.Entries()))
 
 	listener := tr.NewTr[string](context.Background(), env.Env)
 	err = listener.Start(context.Background(), tr.RawString2JsonMiddleware(Transform))
@@ -91,6 +83,22 @@ func main() {
 func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 	logger.Get(ctx).Info("Processing DSS lift feed",
 		"item_count", len(r.Rawdata.DssLifts.Items))
+
+	// Load the existing lifts on every run, so changes made in the API since the
+	// last run (manual edits, other importers, deletions) are detected.
+	if poiCache == nil {
+		var err error
+		poiCache, err = clib.LoadExisting(ctx, contentClient, clib.LoadConfig[odhmodel.ODHActivityPoi]{
+			EntityType:  ENTITY_TYPE,
+			QueryParams: map[string]string{"source": SOURCE, "tagfilter": "lifts"},
+			IDFunc:      func(p odhmodel.ODHActivityPoi) string { return *p.Generic.ID },
+		})
+		if err != nil {
+			return fmt.Errorf("failed to load lift POI cache: %w", err)
+		}
+		logger.Get(ctx).Info("Loaded existing lift POIs", "count", len(poiCache.Entries()))
+	}
+	defer func() { poiCache = nil }()
 
 	seen := map[string]struct{}{}
 	pois := map[string]odhmodel.ODHActivityPoi{}
@@ -422,11 +430,14 @@ var liftTypeTags = map[int64]struct {
 	24: {"seilbahn", []string{"ropeway"}}, // 3S Bahn
 }
 
+// buildTagIds returns the tags sorted, as the API stores them; otherwise the
+// hash of an unchanged lift would differ from the loaded one on every run.
 func buildTagIds(rid int64) []string {
 	tags := []string{"activity", "lifts", "other", "other lifts"}
 	if t, ok := liftTypeTags[rid]; ok {
 		tags = append(tags, t.tagIds...)
 	}
+	sort.Strings(tags)
 	return tags
 }
 

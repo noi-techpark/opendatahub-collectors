@@ -2,7 +2,7 @@ module opendatahub.com/tr-dss-lift/odhmodel
 
 go 1.24.0
 
-require github.com/noi-techpark/opendatahub-go-sdk/clib v0.0.1
+require github.com/noi-techpark/opendatahub-go-sdk/clib v0.0.2
 
 require (
 	github.com/beorn7/perks v1.0.1 // indirect

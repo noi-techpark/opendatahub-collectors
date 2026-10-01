@@ -39,6 +39,7 @@ var env struct {
 	ODH_CORE_TOKEN_CLIENT_ID     string
 	ODH_CORE_TOKEN_CLIENT_SECRET string
 	ODH_CORE_TOKEN_URL           string
+	ODH_CORE_REFERER             string
 }
 
 var contentClient clib.ContentAPI
@@ -69,7 +70,7 @@ func main() {
 		ClientID:     env.ODH_CORE_TOKEN_CLIENT_ID,
 		ClientSecret: env.ODH_CORE_TOKEN_CLIENT_SECRET,
 		DisableOAuth: env.ODH_CORE_TOKEN_URL == "",
-	})
+	}, clib.WithReferer(env.ODH_CORE_REFERER))
 	ms.FailOnError(context.Background(), err, "failed to create ODH content client")
 
 	listener := tr.NewTr[string](context.Background(), env.Env)
@@ -123,21 +124,38 @@ func processSkiArea(ctx context.Context, dssArea dto.DssSkiArea) error {
 
 	// ── UPDATE — apply to all matched SkiAreas ────────────────────────────
 	// Per senior: "if 2 skiareas found, do this on both"
-	// We replace ONLY OperationSchedule and LastChange.
+	// We replace ONLY OperationSchedule, Mapping (dss keys), Geo track and LastChange.
 	// ContactInfos is json.RawMessage — round-tripped unchanged ✓
 	// PublishedOn, LicenseInfo — preserved from existing record ✓
 	// Detail, TagIds, SmgTags, GpsInfo etc. — preserved via struct fields ✓
+	//
+	// Change detection: the record is hashed as loaded from the API and again after
+	// our changes; it is only PUT (with a new LastChange) when the hashes differ.
 	for _, area := range existing {
 		id := *area.Id
-		log.Info("Updating OperationSchedule on existing SkiArea", "id", id)
+
+		before, err := clib.HashEntity(area)
+		if err != nil {
+			log.Error("Failed to hash SkiArea", "id", id, "error", err)
+			continue
+		}
 
 		area.OperationSchedule = opSchedules
 		applyRegionGeo(ctx, &area, dssArea.RegionMap)
-		area.LastChange = odhmodel.PtrFlexibleTime(nowFunc())
 
 		// Keep existing Mapping (idm etc.) and existing dss keys, only add/overwrite ours.
 		area.Mapping = mergeMapping(area.Mapping, dssMapping(dssArea))
 
+		after, err := clib.HashEntity(area)
+		if err != nil {
+			log.Error("Failed to hash SkiArea", "id", id, "error", err)
+			continue
+		}
+		if before == after {
+			continue
+		}
+
+		area.LastChange = odhmodel.PtrFlexibleTime(nowFunc())
 		if err := contentClient.Put(ctx, ENTITY_TYPE, id, area); err != nil {
 			log.Error("PUT failed", "id", id, "error", err)
 			continue
@@ -197,14 +215,30 @@ func applyRegionGeo(ctx context.Context, area *odhmodel.SkiArea, regionMap strin
 		}
 	}
 
-	trackEntry := map[string]any{"Geometry": track.WKT}
-	if !hasDefault {
-		trackEntry["Default"] = true
-	}
-	if raw, err := json.Marshal(trackEntry); err == nil {
-		geo["track"] = raw
+	// Keep the stored track when it is unchanged: the API stores it with extra null
+	// keys, so the newly marshaled entry would differ byte-wise on every run.
+	if !sameTrack(geo["track"], track.WKT, !hasDefault) {
+		trackEntry := map[string]any{"Geometry": track.WKT}
+		if !hasDefault {
+			trackEntry["Default"] = true
+		}
+		if raw, err := json.Marshal(trackEntry); err == nil {
+			geo["track"] = raw
+		}
 	}
 	area.Geo = geo
+}
+
+// sameTrack reports whether the raw Geo track entry has the given geometry and default flag.
+func sameTrack(raw json.RawMessage, wkt string, isDefault bool) bool {
+	var entry struct {
+		Default  *bool  `json:"Default"`
+		Geometry string `json:"Geometry"`
+	}
+	if raw == nil || json.Unmarshal(raw, &entry) != nil {
+		return false
+	}
+	return entry.Geometry == wkt && (entry.Default != nil && *entry.Default) == isDefault
 }
 
 // hasGpsInfo reports whether the raw GpsInfo holds at least one entry.
