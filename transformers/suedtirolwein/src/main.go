@@ -255,6 +255,14 @@ func cleanCachedPOI(poi *odhContentModel.ODHActivityPoi) {
 func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 	logger.Get(ctx).Info("Processing wine company data")
 
+	if len(companiesFromLang(r.Rawdata.De))+len(companiesFromLang(r.Rawdata.It))+
+		len(companiesFromLang(r.Rawdata.En))+len(companiesFromLang(r.Rawdata.Ru)) == 0 {
+		// An empty payload is far more likely a crawler/source API problem than
+		// "no wine companies at all"; the deactivation below would disable every POI.
+		logger.Get(ctx).Warn("Received payload without wine companies, skipping processing and deactivation")
+		return nil
+	}
+
 	// Rebuild cache for every incoming sync to reflect accurate DB state
 	var err error
 	poiCache, err = clib.LoadExisting(ctx, contentClient, clib.LoadConfig[odhContentModel.ODHActivityPoi]{

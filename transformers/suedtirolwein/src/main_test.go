@@ -54,3 +54,22 @@ func Test_Transform_Snapshot(t *testing.T) {
 
 	clibmock.CompareMockCalls(t, expected, calls)
 }
+
+func Test_Transform_EmptyPayload_NoDeactivation(t *testing.T) {
+	mock := clibmock.NewContentMock()
+	contentClient = mock
+
+	r := &rdb.Raw[dto.RawData]{
+		Rawdata:   dto.RawData{},
+		Timestamp: time.Date(2026, 1, 15, 10, 0, 0, 0, time.UTC),
+	}
+
+	if err := Transform(context.TODO(), r); err != nil {
+		t.Fatalf("Transform failed: %v", err)
+	}
+
+	calls := mock.Calls()
+	if len(calls.Gets)+len(calls.Puts)+len(calls.Posts)+len(calls.PutMultiples) != 0 {
+		t.Fatalf("expected no API calls for an empty payload, got %+v", calls)
+	}
+}
