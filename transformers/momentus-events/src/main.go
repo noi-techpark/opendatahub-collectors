@@ -37,6 +37,12 @@ type Transformer struct {
 	venueMapping  map[string]string
 }
 
+func (t *Transformer) resetVenues() {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	t.venuesCache = make(map[string]*ODHVenue)
+}
+
 func (t *Transformer) getVenues(ctx context.Context) []*ODHVenue {
 	t.mu.Lock()
 	defer t.mu.Unlock()
@@ -85,11 +91,9 @@ func main() {
 	}
 	listener := tr.NewTr[string](context.Background(), env.Env)
 	err = listener.Start(context.Background(), tr.RawString2JsonMiddleware(func(ctx context.Context, rawMsg *rdb.Raw[json.RawMessage]) error {
-		if string(rawMsg.Rawdata) == "[]" {
-			slog.Info("Received empty array payload, deactivating all events")
-			// We still need to process this as a full authoritative snapshot (which happens to be empty)
-			// so we continue to cache loading and deactivation.
-		}
+		// Reload the venues on every message, so rooms added by tr-momentus-venues
+		// in the meantime are matched (and get eventlocation / PublishedOn).
+		t.resetVenues()
 
 		eventCache, err := clib.LoadExisting(ctx, t.contentClient, clib.LoadConfig[odhmodel.EventLinked]{
 			EntityType:  "Event",
@@ -143,6 +147,13 @@ func main() {
 
 			slog.Info("Flattened events", "count", len(events))
 
+			if len(events) == 0 {
+				// An empty snapshot is far more likely a crawler/Momentus API problem than
+				// "no events at all"; deactivating everything on it would be wrong.
+				slog.Warn("Received empty events payload, skipping processing and deactivation")
+				return nil
+			}
+
 			var firstErr error
 			for _, event := range events {
 				if event.Id != "" {
@@ -185,8 +196,13 @@ func main() {
 func deactivateMissingEvents(ctx context.Context, t *Transformer, eventCache *clib.Cache[odhmodel.EventLinked], processedIDs map[string]bool) error {
 	slog.Info("Running deactivation loop for missing events")
 	var firstErr error
+	now := time.Now()
 	for id, entry := range eventCache.Entries() {
 		if !processedIDs[id] && entry.Entity.Active {
+			if endedBeforeCrawlWindow(entry.Entity, now) {
+				// Missing because it has taken place, not because it was deleted or cancelled.
+				continue
+			}
 			slog.Info("Deactivating event no longer present in payload", "eventID", id)
 
 			eventLinked := entry.Entity
@@ -212,6 +228,22 @@ func deactivateMissingEvents(ctx context.Context, t *Transformer, eventCache *cl
 		}
 	}
 	return firstErr
+}
+
+// endedBeforeCrawlWindow reports whether the event ended before the first day the
+// crawler fetches (momentus-events.silky.yaml: start = now -1d). Such events are no
+// longer in the payload because they are past, so they must not be deactivated.
+// Events without a parsable DateEnd are treated as not ended.
+func endedBeforeCrawlWindow(e odhmodel.EventLinked, now time.Time) bool {
+	if len(e.DateEnd) < 10 {
+		return false
+	}
+	end, err := time.Parse("2006-01-02", e.DateEnd[:10])
+	if err != nil {
+		return false
+	}
+	windowStart, _ := time.Parse("2006-01-02", now.UTC().AddDate(0, 0, -1).Format("2006-01-02"))
+	return end.Before(windowStart)
 }
 
 func processEvent(ctx context.Context, t *Transformer, event MomentusEvent, eventCache *clib.Cache[odhmodel.EventLinked]) error {
@@ -358,8 +390,6 @@ func ParseMomentusEvent(mevent MomentusEvent, venue *ODHVenue, base *odhmodel.Ev
 	if len(mevent.ContactRoles) > 0 {
 		firstRole := mevent.ContactRoles[0]
 		contact := buildContactInfo(firstRole)
-		eventLinked.GpsInfo = []odhmodel.GpsInfo{{}}
-		eventLinked.ImageGallery = []odhmodel.ImageGalleryItem{{}}
 		eventLinked.ContactInfos = map[string]odhmodel.ContactInfos{
 			"en": contact,
 		}

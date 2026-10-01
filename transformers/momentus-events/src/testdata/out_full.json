@@ -85,28 +85,11 @@
   ],
   "EventVariants": null,
   "FirstImport": "2026-06-24T10:00:00Z",
-  "GpsInfo": [
-    {
-      "Gpstype": "",
-      "Latitude": 0,
-      "Longitude": 0,
-      "Altitude": 0
-    }
-  ],
+  "GpsInfo": null,
   "GpsPoints": null,
   "HasLanguage": null,
   "Id": "urn:event:momentus:123",
-  "ImageGallery": [
-    {
-      "ImageName": "",
-      "ImageUrl": "",
-      "Width": 0,
-      "Height": 0,
-      "ImageSource": "",
-      "ImageTitle": null,
-      "ImageDesc": null
-    }
-  ],
+  "ImageGallery": null,
   "LastChange": "2026-06-24T10:00:00Z",
   "LicenseInfo": null,
   "LocationInfo": null,

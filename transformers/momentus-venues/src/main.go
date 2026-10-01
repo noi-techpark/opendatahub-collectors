@@ -95,13 +95,12 @@ func main() {
 			roomsByVenue[venueID] = append(roomsByVenue[venueID], room)
 		}
 
-		venueCache := clib.NewCache[map[string]interface{}]()
+		venueMaps := make(map[string]map[string]interface{})
 		for venueID := range roomsByVenue {
 			var venueMap map[string]interface{}
 			err := t.contentClient.Get(ctx, "Venue/"+venueID, nil, &venueMap)
 			if err == nil {
-				hash, _, _ := venueCache.HasChanged(venueID, venueMap)
-				venueCache.Set(venueID, venueMap, hash)
+				venueMaps[venueID] = venueMap
 			} else {
 				ms.FailOnError(ctx, err, "Fatal error: Configured Venue ID not found in ODH Content API", "venueID", venueID)
 			}
@@ -109,21 +108,44 @@ func main() {
 
 		var firstErr error
 		for venueID, groupedRooms := range roomsByVenue {
-			entry, ok := venueCache.Get(venueID)
+			venueMap, ok := venueMaps[venueID]
 			if !ok {
 				continue
 			}
-			venueMap := entry.Entity
 
 			// 1. Marshal back to JSON to unmarshal into VenueV2
 			venueBytes, _ := json.Marshal(venueMap)
 			var venueLinked odhmodel.VenueV2
 			json.Unmarshal(venueBytes, &venueLinked)
 
+			// Only RoomDetails is written, so change detection compares just that, both
+			// sides typed. Hash before parsing: ParseMomentusVenue mutates the shared slice.
+			before, hashErr := clib.HashEntity(venueLinked.RoomDetails)
+			if hashErr != nil {
+				slog.Error("Failed to hash venue rooms", "err", hashErr, "venueID", venueID)
+				if firstErr == nil {
+					firstErr = hashErr
+				}
+				continue
+			}
+
 			// 2. Process Rooms
 			for _, room := range groupedRooms {
 				venueLinkedPtr := ParseMomentusVenue(room, &venueLinked)
 				venueLinked = *venueLinkedPtr
+			}
+
+			after, hashErr := clib.HashEntity(venueLinked.RoomDetails)
+			if hashErr != nil {
+				slog.Error("Failed to hash venue rooms", "err", hashErr, "venueID", venueID)
+				if firstErr == nil {
+					firstErr = hashErr
+				}
+				continue
+			}
+
+			if before == after {
+				continue
 			}
 
 			// 3. Overwrite ONLY RoomDetails in the original map
@@ -132,19 +154,6 @@ func main() {
 			// 4. Strip read-only metadata before pushing
 			delete(venueMap, "_Meta")
 			delete(venueMap, "Self")
-
-			hash, changed, hashErr := venueCache.HasChanged(venueID, venueMap)
-			if hashErr != nil {
-				slog.Error("Failed to hash venue map", "err", hashErr, "venueID", venueID)
-				if firstErr == nil {
-					firstErr = hashErr
-				}
-				continue
-			}
-
-			if !changed {
-				continue
-			}
 
 			// 5. Send map to ODH API
 			err := t.contentClient.Put(ctx, "Venue", venueLinked.Id, &venueMap)
@@ -157,7 +166,6 @@ func main() {
 			}
 
 			slog.Info("Successfully processed grouped rooms and pushed to Core", "venueID", venueLinked.Id, "roomCount", len(groupedRooms))
-			venueCache.Set(venueID, venueMap, hash)
 		}
 
 		return firstErr
