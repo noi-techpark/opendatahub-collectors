@@ -473,14 +473,11 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 				// EventAdditionalInfos — room multilingual name as Location, ticket registration link
 				registrationLink := getValue(row, headers, "link_to_ticket_info")
 				if rd != nil || registrationLink != "" {
-					event.EventAdditionalInfos = map[string]map[string]string{}
+					event.EventAdditionalInfos = map[string]odhmodel.EventAdditionalInfo{}
 					for _, lang := range []string{"it", "de", "en"} {
-						info := map[string]string{"Language": lang}
+						info := odhmodel.EventAdditionalInfo{Language: lang, Registration: registrationLink}
 						if rd != nil {
-							info["Location"] = rd.Names[lang]
-						}
-						if registrationLink != "" {
-							info["Registration"] = registrationLink
+							info.Location = rd.Names[lang]
 						}
 						event.EventAdditionalInfos[lang] = info
 					}

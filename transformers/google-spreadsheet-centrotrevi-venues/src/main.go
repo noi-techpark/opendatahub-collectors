@@ -345,16 +345,16 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 			venue.Source = "drin"
 		}
 		venue.PublishedOn = []string{"centro-trevi." + venue.Source}
-		venue.Detail = map[string]any{
-			"it": map[string]any{"Language": "it", "Title": pd.Names["it"], "BaseText": pd.Descriptions["it"]},
-			"de": map[string]any{"Language": "de", "Title": pd.Names["de"], "BaseText": pd.Descriptions["de"]},
-			"en": map[string]any{"Language": "en", "Title": pd.Names["en"], "BaseText": pd.Descriptions["en"]},
+		venue.Detail = map[string]odhmodel.DetailGeneric{
+			"it": {Language: "it", Title: pd.Names["it"], BaseText: pd.Descriptions["it"]},
+			"de": {Language: "de", Title: pd.Names["de"], BaseText: pd.Descriptions["de"]},
+			"en": {Language: "en", Title: pd.Names["en"], BaseText: pd.Descriptions["en"]},
 		}
 		venue.LocationInfo = map[string]any{"Latitude": pd.Lat, "Longitude": pd.Lon}
-		venue.ContactInfos = map[string]any{
-			"it": map[string]any{"Address": pd.Addresses["it"], "City": pd.Cities["it"], "Email": pd.Email, "Phonenumber": pd.Phone, "ZipCode": pd.ZipCode, "Language": "it"},
-			"de": map[string]any{"Address": pd.Addresses["de"], "City": pd.Cities["de"], "Email": pd.Email, "Phonenumber": pd.Phone, "ZipCode": pd.ZipCode, "Language": "de"},
-			"en": map[string]any{"Address": pd.Addresses["en"], "City": pd.Cities["en"], "Email": pd.Email, "Phonenumber": pd.Phone, "ZipCode": pd.ZipCode, "Language": "en"},
+		venue.ContactInfos = map[string]odhmodel.ContactInfos{
+			"it": {Address: pd.Addresses["it"], City: pd.Cities["it"], Email: pd.Email, Phonenumber: pd.Phone, ZipCode: pd.ZipCode, Language: "it"},
+			"de": {Address: pd.Addresses["de"], City: pd.Cities["de"], Email: pd.Email, Phonenumber: pd.Phone, ZipCode: pd.ZipCode, Language: "de"},
+			"en": {Address: pd.Addresses["en"], City: pd.Cities["en"], Email: pd.Email, Phonenumber: pd.Phone, ZipCode: pd.ZipCode, Language: "en"},
 		}
 		// GpsInfo from place with fallbacks
 		lat, lon := pd.Lat, pd.Lon
@@ -366,8 +366,8 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 			}
 		}
 		if lat != 0 || lon != 0 {
-			venue.GpsInfo = []map[string]any{
-				{"Gpstype": "position", "Latitude": lat, "Longitude": lon},
+			venue.GpsInfo = []odhmodel.GpsInfo{
+				{Gpstype: "position", Latitude: lat, Longitude: lon},
 			}
 		}
 

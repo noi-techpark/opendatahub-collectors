@@ -79,19 +79,19 @@ type VenueV2 struct {
 	Active          *bool                        `json:"Active,omitempty"`
 	Source          string                       `json:"Source,omitempty"`
 	Shortname       string                       `json:"Shortname"`
-	Detail          map[string]any               `json:"Detail,omitempty"`
+	Detail          map[string]DetailGeneric     `json:"Detail,omitempty"`
 	Mapping         map[string]map[string]string `json:"Mapping,omitempty"`
 	MaxCapacity     *int                         `json:"MaxCapacity,omitempty"`
 	RoomDetails     []VenueRoomDetailsV2         `json:"RoomDetails,omitempty"`
-	ContactInfos    map[string]any               `json:"ContactInfos,omitempty"`
-	LocationInfo    map[string]any               `json:"LocationInfo,omitempty"`
-	GpsInfo         []map[string]any             `json:"GpsInfo,omitempty"`
+	ContactInfos    map[string]ContactInfos      `json:"ContactInfos,omitempty"`
+	LocationInfo    map[string]any               `json:"LocationInfo,omitempty" hash:"ignore"`
+	GpsInfo         []GpsInfo                    `json:"GpsInfo,omitempty"`
 	PublishedOn     []string                     `json:"PublishedOn,omitempty"`
 }
 
 type VenueRoomDetailsV2 struct {
 	Id                  string                       `json:"Id"`
-	Shortname           string                       `json:"Shortname"`
+	Shortname           string                       `json:"Shortname" hash:"ignore"` // API overwrites it with the EN title
 	Detail              map[string]DetailGeneric     `json:"Detail"`
 	Active              bool                         `json:"Active"`
 	VenueRoomProperties *VenueRoomProperties         `json:"VenueRoomProperties,omitempty"`
