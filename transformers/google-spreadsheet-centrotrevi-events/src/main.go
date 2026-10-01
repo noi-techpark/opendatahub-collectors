@@ -563,6 +563,13 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 		}
 	}
 
+	if len(spreadsheetEventIDs) == 0 {
+		// No events read from the sheet is far more likely a renamed/emptied "Events" tab or a
+		// collector problem than "no events at all"; deactivating everything on it would be wrong.
+		slog.Warn("No events found in spreadsheet, skipping deactivation", "spreadsheetID", spreadsheet.SpreadsheetID)
+		return nil
+	}
+
 	// 5. Deactivate orphaned events
 	cacheIDs := make([]string, 0, len(eventCache.Entries()))
 	for id := range eventCache.Entries() {

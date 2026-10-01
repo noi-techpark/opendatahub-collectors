@@ -448,6 +448,13 @@ func processSpreadsheet(ctx context.Context, client clib.ContentAPI, spreadsheet
 		}
 	}
 
+	if len(venueIDs) == 0 {
+		// No places read from the sheet is far more likely a renamed/emptied "Places" tab or a
+		// collector problem than "no venues at all"; deactivating everything on it would be wrong.
+		slog.Warn("No places found in spreadsheet, skipping deactivation", "spreadsheetID", spreadsheet.SpreadsheetID)
+		return nil
+	}
+
 	// 5. Deactivate orphaned venues
 	seenVenues := make(map[string]bool)
 	for _, vid := range venueIDs {
