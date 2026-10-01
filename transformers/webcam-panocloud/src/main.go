@@ -67,6 +67,13 @@ func main() {
 func Transform(ctx context.Context, r *rdb.Raw[PanocloudResponse]) error {
 	logger.Get(ctx).Info("Processing Panocloud webcam feed", "item_count", len(r.Rawdata.LiveCam))
 
+	if len(r.Rawdata.LiveCam) == 0 {
+		// An empty feed is far more likely a crawler/source API problem than
+		// "no webcams at all"; the deactivation below would disable every webcam.
+		logger.Get(ctx).Warn("Received webcam feed without items, skipping processing and deactivation")
+		return nil
+	}
+
 	var err error
 	webcamCache, err = clib.LoadExisting(ctx, contentClient, clib.LoadConfig[contentmodel.WebcamInfo]{
 		EntityType:  ENTITY_TYPE,

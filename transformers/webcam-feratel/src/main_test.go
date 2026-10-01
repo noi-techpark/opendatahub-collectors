@@ -134,3 +134,22 @@ func Test_Transform_MultiLanguage(t *testing.T) {
 		}
 	}
 }
+
+func Test_Transform_EmptyFeed_NoDeactivation(t *testing.T) {
+	mock := clibmock.NewContentMock()
+	contentClient = mock
+
+	r := &rdb.Raw[string]{
+		Rawdata:   `<?xml version="1.0" encoding="utf-8"?><feratel><content><portal></portal></content></feratel>`,
+		Timestamp: time.Date(2026, 1, 15, 10, 0, 0, 0, time.UTC),
+	}
+
+	if err := Transform(context.TODO(), r); err != nil {
+		t.Fatalf("Transform failed: %v", err)
+	}
+
+	calls := mock.Calls()
+	if len(calls.Gets)+len(calls.Puts)+len(calls.Posts)+len(calls.PutMultiples) != 0 {
+		t.Fatalf("expected no API calls for a feed without webcams, got %+v", calls)
+	}
+}

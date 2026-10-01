@@ -175,18 +175,6 @@ func main() {
 
 func Transform(ctx context.Context, r *rdb.Raw[string]) error {
 	logger.Get(ctx).Info("Processing Feratel webcam feed")
-	
-	var err error
-	webcamCache, err = clib.LoadExisting(ctx, contentClient, clib.LoadConfig[contentmodel.WebcamInfo]{
-		EntityType:  ENTITY_TYPE,
-		QueryParams: map[string]string{"source": SOURCE},
-		IDFunc:      func(w contentmodel.WebcamInfo) string { return w.Id },
-	})
-	if err != nil {
-		logger.Get(ctx).Error("Failed to load existing webcams", "error", err)
-		return err
-	}
-	slog.Info("Loaded existing webcams", "count", len(webcamCache.Entries()))
 
 	feeds, err := parseFeeds(r.Rawdata)
 	if err != nil {
@@ -199,6 +187,28 @@ func Transform(ctx context.Context, r *rdb.Raw[string]) error {
 		logger.Get(ctx).Error("failed to parse feeds", "error", err)
 		return err
 	}
+
+	baseCamCount := 0
+	for _, link := range baseFeed.Content.Portal.Links.Links {
+		baseCamCount += len(link.Cams.Cams)
+	}
+	if baseCamCount == 0 {
+		// A feed without cams is far more likely a Feratel API problem (e.g. an error
+		// document) than "no webcams at all"; the deactivation below would disable every webcam.
+		logger.Get(ctx).Warn("Received Feratel feed without webcams, skipping processing and deactivation")
+		return nil
+	}
+
+	webcamCache, err = clib.LoadExisting(ctx, contentClient, clib.LoadConfig[contentmodel.WebcamInfo]{
+		EntityType:  ENTITY_TYPE,
+		QueryParams: map[string]string{"source": SOURCE},
+		IDFunc:      func(w contentmodel.WebcamInfo) string { return w.Id },
+	})
+	if err != nil {
+		logger.Get(ctx).Error("Failed to load existing webcams", "error", err)
+		return err
+	}
+	slog.Info("Loaded existing webcams", "count", len(webcamCache.Entries()))
 
 	// index the translated feeds by webcam id, so every base cam can look up its translations
 	translatedCams := map[string]map[string]camEntry{}
