@@ -601,7 +601,9 @@ func buildDetail(c dto.WineCompany, lang string) *odhContentModel.DetailGeneric 
 		DetailGeneric: clib.DetailGeneric{
 			Language: &lang,
 			Title:    ptrOfStr(c.Title),
-			BaseText: ptrOfStr(sanitizeHTML(c.CompanyDescription)),
+			// The Content API trims Detail.BaseText (incl. trailing &nbsp; / U+00A0) on save,
+			// so trim here too, otherwise the hash never matches and the POI is PUT every run.
+			BaseText: ptrOfStr(strings.TrimSpace(sanitizeHTML(c.CompanyDescription))),
 		},
 		Header:    ptrOfStr(sanitizeHTML(c.Slogan)),
 		SubHeader: ptrOfStr(sanitizeHTML(c.Subtitle)),
