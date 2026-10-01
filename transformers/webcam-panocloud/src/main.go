@@ -257,8 +257,15 @@ func mapToCore(cam PanocloudCamera, base *contentmodel.WebcamInfo, odhid string)
 		webcam.HasLanguage = append(webcam.HasLanguage, defaultlanguage)
 	}
 
-	// Detail
+	// Detail: BaseText falls back to the short description, like the C# importer.
+	// The feed's urlConfig is intentionally NOT imported (the C# importer wrote it to
+	// AdditionalText/AuthorTip): its example is the viewer URL including the access
+	// "key=" parameter, and its description explains what that key controls. That
+	// key must not be published through the Open Data Hub.
 	baseText := attr.LongDescription
+	if baseText == "" {
+		baseText = attr.Description
+	}
 	webcam.Detail[defaultlanguage] = contentmodel.Detail{
 		Title:     attr.Name,
 		IntroText: attr.Description,
@@ -266,12 +273,29 @@ func mapToCore(cam PanocloudCamera, base *contentmodel.WebcamInfo, odhid string)
 		Language:  defaultlanguage,
 	}
 
-	// ContactInfo
-	contactinfo := contentmodel.ContactInfo{
-		Region:   attr.GeoRegion,
-		Language: defaultlanguage,
+	// ContactInfo: CompanyName is the page title, falling back to the cam name
+	companyName := attr.PageTitle
+	if companyName == "" {
+		companyName = attr.Name
 	}
-	// No logos in my simplified dto for now, skip logo
+	countryCode := strings.ToUpper(attr.AddressIso)
+	countryName := ""
+	if countryCode == "IT" {
+		countryName = "Italien" // as the C# importer; the feed has no country name
+	}
+	contactinfo := contentmodel.ContactInfo{
+		CompanyName: companyName,
+		Address:     attr.AddressStreet,
+		ZipCode:     attr.AddressZip,
+		City:        attr.GeoPlacename,
+		Region:      attr.GeoRegion,
+		CountryCode: countryCode,
+		CountryName: countryName,
+		Language:    defaultlanguage,
+	}
+	if len(cam.Logos.Logo) > 0 {
+		contactinfo.LogoUrl = addHttpsPrefixIfNotPresent(cam.Logos.Logo[0].Attributes.LogoUrl)
+	}
 	webcam.ContactInfos[defaultlanguage] = contactinfo
 
 	// GpsInfo
@@ -311,7 +335,8 @@ func mapToCore(cam PanocloudCamera, base *contentmodel.WebcamInfo, odhid string)
 			image.ImageTags = append(image.ImageTags, iAttr.MimeType)
 
 			if iAttr.FileType == "thumbnail" {
-				image.ListPosition = 0
+				position := 0
+				image.ListPosition = &position
 			}
 
 			if iAttr.Panorama == "yes" {
@@ -334,19 +359,24 @@ func mapToCore(cam PanocloudCamera, base *contentmodel.WebcamInfo, odhid string)
 			webcam.ImageGallery = append(webcam.ImageGallery, image)
 		}
 
-		sort.Slice(webcam.ImageGallery, func(i, j int) bool {
-			return webcam.ImageGallery[i].ListPosition > webcam.ImageGallery[j].ListPosition
+		// Thumbnail (ListPosition 0) first, the other images keep the feed order.
+		sort.SliceStable(webcam.ImageGallery, func(i, j int) bool {
+			return webcam.ImageGallery[i].ListPosition != nil && webcam.ImageGallery[j].ListPosition == nil
 		})
 	}
 
 	// Videos
-	if attrVideos := cam.Videos; attrVideos.Video.Attributes.VideoClipUrl != "" {
-		vAttr := attrVideos.Video.Attributes
+	webcam.VideoItems = map[string][]contentmodel.VideoItem{}
+	for _, v := range cam.Videos.Video {
+		vAttr := v.Attributes
+		if vAttr.VideoClipUrl == "" {
+			continue
+		}
 		dur, _ := strconv.ParseFloat(vAttr.Duration, 64)
 		bitrate, _ := strconv.ParseInt(vAttr.VideoBitRate, 10, 64)
 		res, _ := strconv.ParseInt(vAttr.Resolution, 10, 64)
 
-		video := contentmodel.VideoItem{
+		webcam.VideoItems[defaultlanguage] = append(webcam.VideoItems[defaultlanguage], contentmodel.VideoItem{
 			Url:             addHttpsPrefixIfNotPresent(vAttr.VideoClipUrl),
 			StreamingSource: "panocloud",
 			Active:          true,
@@ -355,8 +385,7 @@ func mapToCore(cam PanocloudCamera, base *contentmodel.WebcamInfo, odhid string)
 			Bitrate:         int(bitrate),
 			Duration:        dur,
 			VideoType:       vAttr.MimeType,
-		}
-		webcam.VideoItems[defaultlanguage] = []contentmodel.VideoItem{video}
+		})
 	}
 
 	// Mapping

@@ -51,6 +51,7 @@ jobs:
           yq -i '.image.repository="${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML}}
           yq -i '.image.tag="${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
           yq -i '.image.pullPolicy="IfNotPresent"' ${{ env.VALUES_YAML }}
+          yq -i '.envSecret.PANOCLOUD_API_KEY = "${{ secrets.CONTENT_PANOCLOUD_API_KEY }}"' ${{ env.VALUES_YAML }}
           yq -i '.configMap.files["config.yaml"] = load_str("${{ env.HTTP_CONFIG_PATH }}")' ${{ env.VALUES_YAML }}
 
       - name: Deploy on cluster
@@ -83,6 +84,7 @@ jobs:
 #           yq -i '.image.repository="${{ env.DOCKER_IMAGE }}"' ${{ env.VALUES_YAML}}
 #           yq -i '.image.tag="${{ env.DOCKER_TAG }}"' ${{ env.VALUES_YAML }}
 #           yq -i '.image.pullPolicy="IfNotPresent"' ${{ env.VALUES_YAML }}
+#           yq -i '.envSecret.PANOCLOUD_API_KEY = "${{ secrets.CONTENT_PANOCLOUD_API_KEY }}"' ${{ env.VALUES_YAML }}
 #           yq -i '.configMap.files["config.yaml"] = load_str("${{ env.HTTP_CONFIG_PATH }}")' ${{ env.VALUES_YAML }}
 #
 #       - name: Deploy on cluster

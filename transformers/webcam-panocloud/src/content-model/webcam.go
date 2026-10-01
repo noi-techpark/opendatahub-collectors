@@ -40,9 +40,15 @@ type Detail struct {
 }
 
 type ContactInfo struct {
-	Region   string `json:"Region,omitempty"`
-	Language string `json:"Language,omitempty"`
-	LogoUrl  string `json:"LogoUrl,omitempty"`
+	CompanyName string `json:"CompanyName,omitempty"`
+	Address     string `json:"Address,omitempty"`
+	ZipCode     string `json:"ZipCode,omitempty"`
+	City        string `json:"City,omitempty"`
+	Region      string `json:"Region,omitempty"`
+	CountryCode string `json:"CountryCode,omitempty"`
+	CountryName string `json:"CountryName,omitempty"`
+	Language    string `json:"Language,omitempty"`
+	LogoUrl     string `json:"LogoUrl,omitempty"`
 }
 
 type GpsInfo struct {
@@ -61,7 +67,7 @@ type ImageGallery struct {
 	ImageSource  string   `json:"ImageSource,omitempty"`
 	IsInGallery  bool     `json:"IsInGallery"`
 	ImageTags    []string `json:"ImageTags,omitempty"`
-	ListPosition int      `json:"ListPosition"`
+	ListPosition *int     `json:"ListPosition"` // set (0) only for the thumbnail
 }
 
 type VideoItem struct {

@@ -47,9 +47,15 @@ type Detail struct {
 }
 
 type ContactInfo struct {
-	Region   string `json:"Region,omitempty"`
-	Language string `json:"Language,omitempty"`
-	LogoUrl  string `json:"LogoUrl,omitempty"`
+	CompanyName string `json:"CompanyName,omitempty"`
+	City        string `json:"City,omitempty"`
+	Area        string `json:"Area,omitempty"`
+	Region      string `json:"Region,omitempty"`
+	CountryCode string `json:"CountryCode,omitempty"`
+	CountryName string `json:"CountryName,omitempty"`
+	Url         string `json:"Url,omitempty"`
+	LogoUrl     string `json:"LogoUrl,omitempty"`
+	Language    string `json:"Language,omitempty"`
 }
 
 type GpsInfo struct {
@@ -66,16 +72,21 @@ type ImageGallery struct {
 	ImageName    string            `json:"ImageName,omitempty"`
 	ImageUrl     string            `json:"ImageUrl,omitempty"`
 	ImageSource  string            `json:"ImageSource,omitempty"`
-	IsInGallery  bool              `json:"IsInGallery"`
+	IsInGallery  *bool             `json:"IsInGallery"`
 	ImageTags    []string          `json:"ImageTags,omitempty"`
-	ListPosition int               `json:"ListPosition"`
-	ImageDesc    map[string]string `json:"ImageDesc,omitempty"`
-	ImageTitle   map[string]string `json:"ImageTitle,omitempty"`
-	ImageAltText map[string]string `json:"ImageAltText,omitempty"`
+	ListPosition *int              `json:"ListPosition"` // set (0) only for the main thumbnails
+	ImageDesc    map[string]string `json:"ImageDesc"`
+	ImageTitle   map[string]string `json:"ImageTitle"`
+	ImageAltText map[string]string `json:"ImageAltText"`
 }
 
 type VideoItem struct {
 	Url             string  `json:"Url,omitempty"`
+	VideoTitle      string  `json:"VideoTitle,omitempty"`
+	VideoSource     string  `json:"VideoSource,omitempty"`
+	Language        string  `json:"Language,omitempty"`
+	Width           int     `json:"Width,omitempty"`
+	Height          int     `json:"Height,omitempty"`
 	StreamingSource string  `json:"StreamingSource,omitempty"`
 	Active          bool    `json:"Active"`
 	Resolution      int     `json:"Resolution,omitempty"`

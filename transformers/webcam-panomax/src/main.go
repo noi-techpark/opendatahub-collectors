@@ -65,8 +65,8 @@ func main() {
 	ms.FailOnError(context.Background(), err, "error while listening to queue")
 }
 
-func Transform(ctx context.Context, r *rdb.Raw[[]PanomaxCamera]) error {
-	logger.Get(ctx).Info("Processing Panomax webcam feed", "item_count", len(r.Rawdata))
+func Transform(ctx context.Context, r *rdb.Raw[PanomaxRawData]) error {
+	logger.Get(ctx).Info("Processing Panomax webcam feed", "item_count", len(r.Rawdata.Webcams), "video_cams", len(r.Rawdata.Videos))
 
 	var err error
 	webcamCache, err = clib.LoadExisting(ctx, contentClient, clib.LoadConfig[contentmodel.WebcamInfo]{
@@ -83,7 +83,12 @@ func Transform(ctx context.Context, r *rdb.Raw[[]PanomaxCamera]) error {
 	seen := map[string]struct{}{}
 	webcams := map[string]contentmodel.WebcamInfo{}
 
-	for _, cam := range r.Rawdata {
+	videosByCam := map[int][]PanomaxVideo{}
+	for _, videoCam := range r.Rawdata.Videos {
+		videosByCam[videoCam.Id] = append(videosByCam[videoCam.Id], videoCam.Videos...)
+	}
+
+	for _, cam := range r.Rawdata.Webcams {
 		id := buildID(cam.Id)
 		seen[id] = struct{}{}
 
@@ -97,7 +102,7 @@ func Transform(ctx context.Context, r *rdb.Raw[[]PanomaxCamera]) error {
 			base = &alreadyParsed
 		}
 
-		webcams[id] = mapToCore(cam, base, id)
+		webcams[id] = mapToCore(cam, base, id, videosByCam[cam.CamId])
 	}
 
 	sortedIDs := make([]string, 0, len(webcams))
@@ -176,7 +181,7 @@ func buildID(locationId int) string {
 	return "PANOMAX_" + strconv.Itoa(locationId)
 }
 
-func mapToCore(cam PanomaxCamera, base *contentmodel.WebcamInfo, odhid string) contentmodel.WebcamInfo {
+func mapToCore(cam PanomaxCamera, base *contentmodel.WebcamInfo, odhid string, videos []PanomaxVideo) contentmodel.WebcamInfo {
 	var webcam contentmodel.WebcamInfo
 	if base != nil {
 		webcam = *base
@@ -220,37 +225,34 @@ func mapToCore(cam PanomaxCamera, base *contentmodel.WebcamInfo, odhid string) c
 	webcam.WebCamProperties.WebcamUrl = cam.WebcamUrl
 	webcam.WebCamProperties.ZeroDirection = cam.ZeroDirection
 	webcam.WebCamProperties.ViewAngleDegree = strconv.FormatFloat(cam.ViewAngleDegree, 'f', -1, 64)
+	webcam.WebCamProperties.TourCam = cam.TourCam
 	webcam.Webcamurl = cam.WebcamUrl
 
 	webcam.LastChange = timeNow().UTC()
 
 	webcam.Shortname = cam.Name
 
-	languages := []string{"de", "it", "en"}
-
-	for _, lang := range languages {
-		hasLang := false
-		for _, l := range webcam.HasLanguage {
-			if l == lang {
-				hasLang = true
-				break
-			}
-		}
-		if !hasLang {
-			webcam.HasLanguage = append(webcam.HasLanguage, lang)
-		}
-
-		// Detail
-		webcam.Detail[lang] = contentmodel.Detail{
+	// The Panomax feed is English only (name, countryName, state), so only the
+	// "en" node is filled; rebuilt every run so no other languages remain.
+	webcam.HasLanguage = []string{"en"}
+	webcam.Detail = map[string]contentmodel.Detail{
+		"en": {
 			Title:    cam.Name,
-			Language: lang,
-		}
-
-		// ContactInfos
-		webcam.ContactInfos[lang] = contentmodel.ContactInfo{
-			Region:   "IT-BZ",
-			Language: lang,
-		}
+			Language: "en",
+		},
+	}
+	webcam.ContactInfos = map[string]contentmodel.ContactInfo{
+		"en": {
+			CompanyName: strings.TrimSpace(cam.CustomerName),
+			City:        strings.TrimSpace(cam.City),
+			Area:        strings.TrimSpace(stringVal(cam.Area)),
+			Region:      strings.TrimSpace(cam.State),
+			CountryCode: strings.ToUpper(strings.TrimSpace(cam.Country)),
+			CountryName: strings.TrimSpace(cam.CountryName),
+			Url:         strings.TrimSpace(stringVal(cam.CustomerUrl)),
+			LogoUrl:     strings.TrimSpace(cam.Logo),
+			Language:    "en",
+		},
 	}
 
 	lat, _ := strconv.ParseFloat(cam.Latitude, 64)
@@ -267,7 +269,9 @@ func mapToCore(cam PanomaxCamera, base *contentmodel.WebcamInfo, odhid string) c
 	webcam.GpsInfo = []contentmodel.GpsInfo{gpsinfo}
 	webcam.GpsPoints["position"] = gpsinfo
 
-	// Images
+	// Images: like the C# importer, thumbnails ("thumb" in the URL) get the tag
+	// "thumbnail", thumbnails and small images get ListPosition 0 and come first;
+	// all other images keep the feed order without a ListPosition.
 	webcam.ImageGallery = []contentmodel.ImageGallery{}
 	for _, img := range cam.Images {
 		w, _ := strconv.Atoi(img.Width)
@@ -282,7 +286,35 @@ func mapToCore(cam PanomaxCamera, base *contentmodel.WebcamInfo, odhid string) c
 			ImageTitle:   map[string]string{},
 			ImageAltText: map[string]string{},
 		}
+		if strings.Contains(img.Url, "thumb") {
+			image.ImageTags = []string{"thumbnail"}
+		}
+		if strings.Contains(img.Url, "thumb") || strings.Contains(img.Url, "small") {
+			position := 0
+			image.ListPosition = &position
+		}
 		webcam.ImageGallery = append(webcam.ImageGallery, image)
+	}
+	sort.SliceStable(webcam.ImageGallery, func(i, j int) bool {
+		return webcam.ImageGallery[i].ListPosition != nil && webcam.ImageGallery[j].ListPosition == nil
+	})
+
+	// Videos: all resolutions of the cam (fullHD, HDready, mobile), matched via
+	// camId. Replaced on every run like the C# importer did, which however kept
+	// only the last video per cam.
+	webcam.VideoItems = map[string][]contentmodel.VideoItem{}
+	for _, video := range videos {
+		w, _ := strconv.Atoi(video.Width)
+		h, _ := strconv.Atoi(video.Height)
+		webcam.VideoItems["en"] = append(webcam.VideoItems["en"], contentmodel.VideoItem{
+			Url:         video.Url,
+			VideoTitle:  video.FileName,
+			VideoSource: "panomax",
+			Language:    "en",
+			Width:       w,
+			Height:      h,
+			Active:      true,
+		})
 	}
 
 	// Mapping
@@ -296,4 +328,11 @@ func mapToCore(cam PanomaxCamera, base *contentmodel.WebcamInfo, odhid string) c
 	webcam.WebcamId = strconv.Itoa(cam.CamId)
 
 	return webcam
+}
+
+func stringVal(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
 }

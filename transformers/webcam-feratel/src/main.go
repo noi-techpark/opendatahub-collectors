@@ -447,8 +447,9 @@ func mapToCore(link FeratelLink, cam FeratelCam, base *contentmodel.WebcamInfo, 
 			res.ImageGallery = append(res.ImageGallery, image)
 		}
 	}
-	sort.Slice(res.ImageGallery, func(i, j int) bool {
-		return res.ImageGallery[i].ListPosition > res.ImageGallery[j].ListPosition
+	// Main image (Thumbnails 38, ListPosition 0) first, the others keep feed order.
+	sort.SliceStable(res.ImageGallery, func(i, j int) bool {
+		return res.ImageGallery[i].ListPosition < res.ImageGallery[j].ListPosition
 	})
 
 	// WebcamProperties

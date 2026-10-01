@@ -3,6 +3,7 @@ stream: false
 
 # Collector: Panomax Webcams
 # Source:  https://api.panomax.com/1.0/instances/lists/public
+#          https://api.panomax.com/1.0/cams/videos/public
 # Target:  ODH WebcamInfo endpoint
 
 steps:
@@ -13,3 +14,12 @@ steps:
       url: "https://api.panomax.com/1.0/instances/lists/public"
       method: GET
     resultTransformer: "."
+    mergeOn: .webcams = $res
+
+  - type: request
+    name: "Fetch Panomax Videos"
+    request:
+      url: "https://api.panomax.com/1.0/cams/videos/public"
+      method: GET
+    resultTransformer: ".cams"
+    mergeOn: .videos = $res

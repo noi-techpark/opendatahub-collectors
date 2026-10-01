@@ -19,6 +19,9 @@ envSecretRef:
     secret: rabbitmq-svcbind
     key: uri
 
+envSecret:
+  PANOCLOUD_API_KEY: ""
+
 configMap:
   mountPath: "/config/"
   files: {}

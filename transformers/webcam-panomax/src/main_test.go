@@ -28,13 +28,13 @@ func Test_Transform_Snapshot(t *testing.T) {
 	webcamCache = clib.NewCache[contentmodel.WebcamInfo]()
 
 	// Load test input
-	var raw []PanomaxCamera
+	var raw PanomaxRawData
 	err := testsuite.LoadInputData(&raw, "../testdata/in.json")
 	if err != nil {
 		t.Fatalf("failed to load test data: %v", err)
 	}
 
-	r := &rdb.Raw[[]PanomaxCamera]{
+	r := &rdb.Raw[PanomaxRawData]{
 		Rawdata:   raw,
 		Timestamp: fixedNow,
 	}
