@@ -162,6 +162,11 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 		if !stillExists {
 			continue
 		}
+		if !entry.Entity.Active && !entry.Entity.SmgActive && !entry.Entity.OdhActive {
+			// Already inactive on the API - the cache is rebuilt per message, so
+			// re-PUTting it here would repeat on every run.
+			continue
+		}
 		cam := entry.Entity
 		cam.Active = false
 		cam.SmgActive = false
