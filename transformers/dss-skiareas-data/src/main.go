@@ -112,7 +112,7 @@ func processSkiArea(ctx context.Context, dssArea dto.DssSkiArea) error {
 		// ── CREATE ────────────────────────────────────────────────────────────
 		log.Info("No existing SkiArea found — creating new")
 		newArea := buildNewSkiArea(dssArea, opSchedules)
-		newArea.Geo = withRegionTrack(ctx, newArea.Geo, dssArea.RegionMap)
+		applyRegionGeo(ctx, &newArea, dssArea.RegionMap)
 		if err := contentClient.Post(ctx, ENTITY_TYPE,
 			map[string]string{"generateid": "false"}, newArea); err != nil {
 			return fmt.Errorf("POST failed: %w", err)
@@ -132,7 +132,7 @@ func processSkiArea(ctx context.Context, dssArea dto.DssSkiArea) error {
 		log.Info("Updating OperationSchedule on existing SkiArea", "id", id)
 
 		area.OperationSchedule = opSchedules
-		area.Geo = withRegionTrack(ctx, area.Geo, dssArea.RegionMap)
+		applyRegionGeo(ctx, &area, dssArea.RegionMap)
 		area.LastChange = odhmodel.PtrFlexibleTime(nowFunc())
 
 		// Keep existing Mapping (idm etc.) and existing dss keys, only add/overwrite ours.
@@ -148,18 +148,43 @@ func processSkiArea(ctx context.Context, dssArea dto.DssSkiArea) error {
 	return nil
 }
 
-// withRegionTrack sets Geo["track"] to the regionMap GPX outline as WKT. Other
-// Geo entries are kept unchanged. The API requires exactly one default entry,
-// so the track only becomes the default when no other entry is one (i.e. on
-// DSS-only SkiAreas). On any download/parse error Geo is returned unchanged.
-func withRegionTrack(ctx context.Context, geo map[string]json.RawMessage, regionMap string) map[string]json.RawMessage {
+// applyRegionGeo adds the regionMap outline to the SkiArea:
+//   - Geo["track"]: the outline as WKT (LINESTRING / MULTILINESTRING)
+//   - only if GpsInfo is empty: the centroid of the outline as GpsInfo "position"
+//     and Geo["position"], both as the default entry
+//
+// Existing GpsInfo and Geo entries are kept unchanged. The API requires exactly
+// one default Geo entry, so the track only becomes the default when no other
+// entry is one. On any download/parse error the SkiArea is left unchanged.
+func applyRegionGeo(ctx context.Context, area *odhmodel.SkiArea, regionMap string) {
 	if regionMap == "" {
-		return geo
+		return
 	}
-	wkt, err := geoFiles.TrackWKT(ctx, regionMap)
+	track, err := geoFiles.Track(ctx, regionMap)
 	if err != nil {
 		logger.Get(ctx).Warn("No Geo track from regionMap", "url", regionMap, "error", err)
-		return geo
+		return
+	}
+
+	geo := make(map[string]json.RawMessage, len(area.Geo)+2)
+	for key, value := range area.Geo {
+		geo[key] = value
+	}
+
+	if !hasGpsInfo(area.GpsInfo) {
+		position := map[string]any{
+			"Gpstype":   "position",
+			"Latitude":  track.Center.Lat,
+			"Longitude": track.Center.Lon,
+			"Geometry":  "POINT (" + formatCoordinate(track.Center.Lon) + " " + formatCoordinate(track.Center.Lat) + ")",
+			"Default":   true,
+		}
+		gpsInfo, errGps := json.Marshal([]any{position})
+		rawPosition, errPos := json.Marshal(position)
+		if errGps == nil && errPos == nil {
+			area.GpsInfo = gpsInfo
+			geo["position"] = rawPosition
+		}
 	}
 
 	hasDefault := false
@@ -172,21 +197,20 @@ func withRegionTrack(ctx context.Context, geo map[string]json.RawMessage, region
 		}
 	}
 
-	track := map[string]any{"Geometry": wkt}
+	trackEntry := map[string]any{"Geometry": track.WKT}
 	if !hasDefault {
-		track["Default"] = true
+		trackEntry["Default"] = true
 	}
-	raw, err := json.Marshal(track)
-	if err != nil {
-		return geo
+	if raw, err := json.Marshal(trackEntry); err == nil {
+		geo["track"] = raw
 	}
+	area.Geo = geo
+}
 
-	result := make(map[string]json.RawMessage, len(geo)+1)
-	for key, value := range geo {
-		result[key] = value
-	}
-	result["track"] = raw
-	return result
+// hasGpsInfo reports whether the raw GpsInfo holds at least one entry.
+func hasGpsInfo(raw json.RawMessage) bool {
+	var entries []json.RawMessage
+	return json.Unmarshal(raw, &entries) == nil && len(entries) > 0
 }
 
 // findByDssRid queries ODH SkiArea filtered by Mapping.dss.rid.

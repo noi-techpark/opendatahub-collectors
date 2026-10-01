@@ -9,6 +9,7 @@ import (
 	"errors"
 	"os"
 	"testing"
+	"time"
 
 	"opendatahub.com/tr-dss-slopes/dto"
 )
@@ -46,5 +47,45 @@ func Test_withGeoFileFallback(t *testing.T) {
 	slope = withGeoFileFallback(ctx, dto.DssSlope{Pid: 3, GeoPositionFile: file})
 	if slope.Location != nil {
 		t.Errorf("expected no location after failed download, got %+v", slope.Location)
+	}
+}
+
+func Test_fetch_retryAndPause(t *testing.T) {
+	ctx := context.Background()
+	calls := 0
+	f := &geoFileFetcher{
+		download: func(ctx context.Context, url string) ([]byte, error) {
+			calls++
+			if calls < 3 {
+				return nil, errors.New("unexpected status 403")
+			}
+			return []byte("ok"), nil
+		},
+		retryDelays: []time.Duration{time.Millisecond, time.Millisecond},
+		maxFailures: 2,
+		cooldown:    time.Hour,
+	}
+
+	// Two 403s, the second retry succeeds.
+	if body, err := f.fetch(ctx, "u"); err != nil || string(body) != "ok" || calls != 3 {
+		t.Fatalf("expected success on third attempt, got %q, %v after %d calls", body, err, calls)
+	}
+
+	// Always blocked: after 2 failed downloads (3 attempts each) downloads pause.
+	calls = 0
+	f.download = func(ctx context.Context, url string) ([]byte, error) {
+		calls++
+		return nil, errors.New("unexpected status 403")
+	}
+	for i := 0; i < 2; i++ {
+		if _, err := f.fetch(ctx, "u"); err == nil {
+			t.Fatal("expected error")
+		}
+	}
+	if calls != 6 {
+		t.Errorf("expected 6 attempts, got %d", calls)
+	}
+	if _, err := f.fetch(ctx, "u"); err == nil || calls != 6 {
+		t.Errorf("expected paused downloads without new attempts, got %v after %d calls", err, calls)
 	}
 }

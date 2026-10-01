@@ -35,17 +35,25 @@ type cachedGeoFile struct {
 
 type geoFileFetcher struct {
 	download    func(ctx context.Context, url string) ([]byte, error)
-	minInterval time.Duration // minimum pause between two downloads
-	ttl         time.Duration // how long a downloaded track is reused
+	minInterval time.Duration   // minimum pause between two downloads
+	retryDelays []time.Duration // pauses before retrying a failed download
+	maxFailures int             // consecutive failed downloads before pausing (0 = never)
+	cooldown    time.Duration   // how long downloads pause after maxFailures
+	ttl         time.Duration   // how long a downloaded track is reused
 
-	mu       sync.Mutex
-	lastCall time.Time
-	cache    map[string]cachedGeoFile
+	mu          sync.Mutex
+	lastCall    time.Time
+	failures    int
+	pausedUntil time.Time
+	cache       map[string]cachedGeoFile
 }
 
 var geoFiles = &geoFileFetcher{
 	download:    downloadGeoFile,
-	minInterval: 1500 * time.Millisecond,
+	minInterval: 2 * time.Second,
+	retryDelays: []time.Duration{3 * time.Second, 10 * time.Second},
+	maxFailures: 5,
+	cooldown:    30 * time.Minute,
 	ttl:         24 * time.Hour,
 }
 
@@ -60,16 +68,7 @@ func (f *geoFileFetcher) Points(ctx context.Context, url string) ([]geoPoint, er
 		return cached.points, nil
 	}
 
-	if wait := f.minInterval - time.Since(f.lastCall); wait > 0 {
-		select {
-		case <-time.After(wait):
-		case <-ctx.Done():
-			return nil, ctx.Err()
-		}
-	}
-	f.lastCall = time.Now()
-
-	body, err := f.download(ctx, url)
+	body, err := f.fetch(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -83,6 +82,47 @@ func (f *geoFileFetcher) Points(ctx context.Context, url string) ([]geoPoint, er
 	}
 	f.cache[url] = cachedGeoFile{points: points, fetchedAt: time.Now()}
 	return points, nil
+}
+
+// fetch downloads url with a minimum pause before every request. A failed
+// download (e.g. Cloudflare 403 after a burst of requests from the cluster) is
+// retried after retryDelays. After maxFailures consecutive failed downloads the
+// fallback downloads pause for cooldown, so a blocked run does not spend its
+// time on retries. Callers hold f.mu.
+func (f *geoFileFetcher) fetch(ctx context.Context, url string) ([]byte, error) {
+	if time.Now().Before(f.pausedUntil) {
+		return nil, fmt.Errorf("downloads paused until %s after repeated failures", f.pausedUntil.Format(time.RFC3339))
+	}
+
+	var err error
+	for attempt := 0; attempt <= len(f.retryDelays); attempt++ {
+		wait := f.minInterval - time.Since(f.lastCall)
+		if attempt > 0 && f.retryDelays[attempt-1] > wait {
+			wait = f.retryDelays[attempt-1]
+		}
+		if wait > 0 {
+			select {
+			case <-time.After(wait):
+			case <-ctx.Done():
+				return nil, ctx.Err()
+			}
+		}
+
+		var body []byte
+		body, err = f.download(ctx, url)
+		f.lastCall = time.Now()
+		if err == nil {
+			f.failures = 0
+			return body, nil
+		}
+	}
+
+	f.failures++
+	if f.maxFailures > 0 && f.failures >= f.maxFailures {
+		f.pausedUntil = time.Now().Add(f.cooldown)
+		f.failures = 0
+	}
+	return nil, err
 }
 
 func downloadGeoFile(ctx context.Context, url string) ([]byte, error) {
