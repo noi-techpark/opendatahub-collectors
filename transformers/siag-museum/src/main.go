@@ -69,6 +69,13 @@ func main() {
 func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 	logger.Get(ctx).Info("Processing museum data")
 
+	if len(r.Rawdata.De)+len(r.Rawdata.It)+len(r.Rawdata.En) == 0 {
+		// An empty payload is far more likely a crawler/source API problem than
+		// "no museums at all"; the deactivation below would disable every museum.
+		logger.Get(ctx).Warn("Received payload without museums, skipping processing and deactivation")
+		return nil
+	}
+
 	var err error
 	poiCache, err = clib.LoadExisting(ctx, contentClient, clib.LoadConfig[odhContentModel.ODHActivityPoi]{
 		EntityType:  ENTITY_TYPE,
