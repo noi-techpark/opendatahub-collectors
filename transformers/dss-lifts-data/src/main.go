@@ -84,6 +84,13 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 	logger.Get(ctx).Info("Processing DSS lift feed",
 		"item_count", len(r.Rawdata.DssLifts.Items))
 
+	if len(r.Rawdata.DssLifts.Items) == 0 {
+		// An empty feed is far more likely a crawler/DSS API problem than
+		// "no lifts at all"; the deactivation below would disable every lift.
+		logger.Get(ctx).Warn("Received DSS lift feed without items, skipping processing and deactivation")
+		return nil
+	}
+
 	// Load the existing lifts on every run, so changes made in the API since the
 	// last run (manual edits, other importers, deletions) are detected.
 	if poiCache == nil {

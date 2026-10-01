@@ -83,6 +83,13 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 	logger.Get(ctx).Info("Processing DSS slope feed",
 		"item_count", len(r.Rawdata.DssSlopes.Items))
 
+	if len(r.Rawdata.DssSlopes.Items) == 0 {
+		// An empty feed is far more likely a crawler/DSS API problem than
+		// "no slopes at all"; the deactivation below would disable every slope.
+		logger.Get(ctx).Warn("Received DSS slope feed without items, skipping processing and deactivation")
+		return nil
+	}
+
 	if poiCache == nil {
 		var err error
 		poiCache, err = clib.LoadExisting(ctx, contentClient, clib.LoadConfig[odhmodel.ODHActivityPoi]{

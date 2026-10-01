@@ -74,6 +74,13 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 	logger.Get(ctx).Info("Processing DSS webcam feed",
 		"item_count", len(r.Rawdata.DssWebcams.Items))
 
+	if len(r.Rawdata.DssWebcams.Items) == 0 {
+		// An empty feed is far more likely a crawler/DSS API problem than
+		// "no webcams at all"; the deactivation below would disable every webcam.
+		logger.Get(ctx).Warn("Received DSS webcam feed without items, skipping processing and deactivation")
+		return nil
+	}
+
 	if webcamCache == nil {
 		var err error
 		webcamCache, err = clib.LoadExisting(ctx, contentClient, clib.LoadConfig[odhmodel.WebcamInfo]{

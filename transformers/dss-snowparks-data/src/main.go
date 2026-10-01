@@ -73,6 +73,13 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 	logger.Get(ctx).Info("Processing DSS snowpark feed",
 		"item_count", len(r.Rawdata.DssSnowparks.Items))
 
+	if len(r.Rawdata.DssSnowparks.Items) == 0 {
+		// An empty feed is far more likely a crawler/DSS API problem than
+		// "no snowparks at all"; the deactivation below would disable every snowpark.
+		logger.Get(ctx).Warn("Received DSS snowpark feed without items, skipping processing and deactivation")
+		return nil
+	}
+
 	if snowparksCache == nil {
 		var err error
 		snowparksCache, err = clib.LoadExisting(ctx, contentClient, clib.LoadConfig[odhmodel.ODHActivityPoi]{
