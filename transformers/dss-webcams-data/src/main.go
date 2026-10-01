@@ -78,7 +78,7 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 		webcamCache, err = clib.LoadExisting(ctx, contentClient, clib.LoadConfig[odhmodel.WebcamInfo]{
 			EntityType:  ENTITY_TYPE,
 			QueryParams: map[string]string{"source": SOURCE},
-			IDFunc:      func(w odhmodel.WebcamInfo) string { return *w.Id },
+			IDFunc:      func(w odhmodel.WebcamInfo) string { return strings.ToUpper(*w.Id) },
 		})
 		if err != nil {
 			return fmt.Errorf("failed to load webcam cache: %w", err)
@@ -178,9 +178,11 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 
 // ── ID ────────────────────────────────────────────────────────────────────────
 
-// buildID mirrors C# parser: "dss_" + pid.
+// buildID mirrors the C# parser: "DSS_" + pid. The API stores WebcamInfo Ids in
+// uppercase, so the ID must be uppercase too, otherwise no feed webcam matches the
+// cache and the deactivation step deactivates every webcam.
 func buildID(cam dto.DssWebcam) string {
-	return fmt.Sprintf("dss_%d", cam.Pid)
+	return fmt.Sprintf("DSS_%d", cam.Pid)
 }
 
 // ── Main mapper ───────────────────────────────────────────────────────────────
