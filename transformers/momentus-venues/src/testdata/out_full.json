@@ -1,0 +1,36 @@
+{
+  "Id": "urn:venue:noi:6b3f0a14-3c5b-5d09-81f3-3ebe5b7885ea",
+  "RoomDetails": [
+    {
+      "Id": "urn:room:noi:old-1",
+      "Shortname": "Seminar Room 1",
+      "Detail": {
+        "en": {
+          "Title": "Seminar Room 1",
+          "Language": "en"
+        }
+      },
+      "Active": true,
+      "VenueRoomProperties": {
+        "SquareMeters": 50.5
+      },
+      "MaxCapacity": 40,
+      "Mapping": {
+        "momentus": {
+          "conflictingRoomIds": "room-2-A",
+          "group": "NOI TECHPARK",
+          "id": "room-1-A",
+          "isComboRoom": "false",
+          "itemCode": "SEM1",
+          "name": "NOI - Seminar Room 1",
+          "subRoomIds": ""
+        }
+      }
+    }
+  ],
+  "Mapping": {
+    "tag": {
+      "eventlocation": "noi"
+    }
+  }
+}

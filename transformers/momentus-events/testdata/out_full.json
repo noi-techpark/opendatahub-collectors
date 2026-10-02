@@ -1,0 +1,138 @@
+{
+  "Active": true,
+  "AdditionalProperties": null,
+  "ContactInfos": {
+    "en": {
+      "Address": "123 Main St",
+      "City": "Bolzano",
+      "CompanyName": "NOI - Example Corp",
+      "CountryName": "Italy",
+      "Email": "john@example.com",
+      "Givenname": "John",
+      "Language": "en",
+      "Phonenumber": "12345",
+      "Surname": "Doe",
+      "ZipCode": "39100"
+    }
+  },
+  "DateBegin": "2026-06-25T10:00:00Z",
+  "DateEnd": "2026-06-25T12:00:00Z",
+  "Detail": {
+    "de": {
+      "BaseText": "Base description",
+      "Language": "de",
+      "Title": "German Title"
+    },
+    "en": {
+      "BaseText": "Base description",
+      "Language": "en",
+      "Title": "English Title"
+    },
+    "it": {
+      "BaseText": "Base description",
+      "Language": "it",
+      "Title": "Italian Title"
+    }
+  },
+  "DistanceInfo": null,
+  "DistrictIds": null,
+  "Districts": null,
+  "Documents": null,
+  "EventAdditionalInfos": null,
+  "EventBooking": null,
+  "EventDate": [
+    {
+      "Active": true,
+      "Begin": "10:00",
+      "End": "12:00",
+      "From": "2026-06-25T10:00:00Z",
+      "To": "2026-06-25T12:00:00Z",
+      "VenueRoomDetailsIds": [
+        "urn:room:noi:1"
+      ]
+    }
+  ],
+  "EventDatesBegin": null,
+  "EventDatesEnd": null,
+  "EventLanguages": null,
+  "EventPrice": null,
+  "EventProperty": null,
+  "EventPublisher": null,
+  "EventUrls": [
+    {
+      "Active": true,
+      "Type": "default",
+      "Url": {
+        "en": "https://example.com"
+      }
+    }
+  ],
+  "EventVariants": null,
+  "FirstImport": "2026-06-24T10:00:00Z",
+  "GpsInfo": [
+    {
+      "Gpstype": "",
+      "Latitude": 0,
+      "Longitude": 0,
+      "Altitude": 0
+    }
+  ],
+  "GpsPoints": null,
+  "HasLanguage": null,
+  "Id": "urn:event:momentus:123",
+  "ImageGallery": [
+    {
+      "ImageName": "",
+      "ImageUrl": "",
+      "Width": 0,
+      "Height": 0,
+      "ImageSource": "",
+      "ImageTitle": null,
+      "ImageDesc": null
+    }
+  ],
+  "LastChange": "2026-06-24T10:00:00Z",
+  "LicenseInfo": null,
+  "LocationInfo": null,
+  "Mapping": {
+    "momentus": {
+      "eventTypeId": "type1",
+      "eventTypeName": "Meeting",
+      "ext1": "val1",
+      "id": "123"
+    }
+  },
+  "ODHTags": null,
+  "OrganizerInfos": {
+    "en": {
+      "Address": "123 Main St",
+      "City": "Bolzano",
+      "CompanyName": "NOI - Example Corp",
+      "CountryName": "Italy",
+      "Email": "john@example.com",
+      "Givenname": "John",
+      "Language": "en",
+      "Phonenumber": "12345",
+      "Surname": "Doe",
+      "ZipCode": "39100"
+    }
+  },
+  "PublishedOn": [
+    "noi-totem",
+    "today.noi.bz.it"
+  ],
+  "RelatedContent": null,
+  "Shortname": "Test Event",
+  "SmgTags": null,
+  "Source": "momentus",
+  "TagIds": [
+    "noi"
+  ],
+  "TopicRIDs": null,
+  "Topics": null,
+  "VenueIds": [
+    "urn:venue:noi:6b3f0a14-3c5b-5d09-81f3-3ebe5b7885ea"
+  ],
+  "VenueLink": null,
+  "VideoItems": null
+}

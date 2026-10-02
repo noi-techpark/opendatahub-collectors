@@ -1,0 +1,76 @@
+stream: false
+
+rootContext: {}
+
+auth:
+  type: custom
+  loginRequest:
+    url: "https://auth-api.eu-venueops.com/token"
+    method: POST
+    headers:
+      Content-Type: "application/json"
+    body:
+      clientId: "${MOMENTUS_CLIENT_ID}"
+      clientSecret: "${MOMENTUS_CLIENT_SECRET}"
+  extractFrom: body
+  extractSelector: '"Bearer " + .accessToken'
+  injectInto: header
+  injectKey: Authorization
+  maxAgeSeconds: 3000
+
+steps:
+  - type: request
+    name: "Fetch Rooms"
+    request:
+      method: GET
+      url: "https://api.eu-venueops.com/v1/general-setup/rooms"
+    mergeOn: .rooms = $res
+
+  - type: forEach
+    name: "Query Events for Room"
+    path: .rooms
+    as: room
+    resultTransformer: "flatten"
+    steps:
+      - type: request
+        name: "Fetch Events Base List"
+        request:
+          method: POST
+          url: "https://api.eu-venueops.com/v1/events/query-by-date-range"
+          headers:
+            Content-Type: "application/json"
+            Accept: "application/json"
+          body:
+            start: '{{ now | dateModify "-1d" | date "2006-01-02" }}'
+            end: '{{ now | dateModify "+1y" | date "2006-01-02" }}'
+            includeBookedSpaces: true
+            venueIds:
+              - "venue-1-A"
+            roomIds:
+              - '{{ .room.id }}'
+        
+        resultTransformer: "map(select(.bookedSpaces | type == \"array\" and any(.[]; .usageType == \"event\")))"
+
+        steps:
+          - type: forEach
+            name: "Fetch Event Details"
+            path: .
+            as: event
+            steps:
+              - type: request
+                name: "Get Event Functions"
+                request:
+                  method: GET
+                  url: "https://api.eu-venueops.com/v1/functions/event/{{ .event.id }}"
+                  headers:
+                    Accept: "application/json"
+                mergeOn: .functions = $res
+                
+              - type: request
+                name: "Get Booked Spaces"
+                request:
+                  method: GET
+                  url: "https://api.eu-venueops.com/v1/booked-spaces/{{ .event.id }}"
+                  headers:
+                    Accept: "application/json"
+                mergeOn: .bookedSpacesDetails = $res

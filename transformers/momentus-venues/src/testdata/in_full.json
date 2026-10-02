@@ -1,0 +1,12 @@
+{
+  "id": "room-1-A",
+  "name": "NOI - Seminar Room 1",
+  "group": "NOI TECHPARK",
+  "isActive": true,
+  "squareFootage": 50.5,
+  "maxCapacity": 40,
+  "isComboRoom": false,
+  "subRoomIds": [],
+  "conflictingRoomIds": ["room-2-A"],
+  "itemCode": "SEM1"
+}

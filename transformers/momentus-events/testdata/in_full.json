@@ -1,0 +1,62 @@
+{
+  "id": "123",
+  "name": "Test Event",
+  "isActive": true,
+  "isCanceled": false,
+  "start": "2026-06-25T10:00:00Z",
+  "end": "2026-06-25T12:00:00Z",
+  "description": "Base description",
+  "website": "https://example.com",
+  "accountName": "NOI - Example Corp",
+  "eventTypeId": "type1",
+  "eventTypeName": "Meeting",
+  "externalIds": [
+    {
+      "key": "ext1",
+      "value": "val1"
+    }
+  ],
+  "contactRoles": [
+    {
+      "name": "John Doe",
+      "accountName": "NOI - Example Corp",
+      "email": "john@example.com",
+      "phone": "12345",
+      "address1": "123 Main St",
+      "addressCity": "Bolzano",
+      "addressPostalCode": "39100",
+      "addressCountry": "Italy"
+    }
+  ],
+  "bookedSpaces": [
+    {
+      "usageType": "event",
+      "bookedSpaceId": "bs1",
+      "roomId": "room1",
+      "startDate": "2026-06-25T10:00:00Z",
+      "endDate": "2026-06-25T12:00:00Z",
+      "startTime": "10:00",
+      "endTime": "12:00"
+    }
+  ],
+  "functions": [
+    {
+      "functionTypeName": "EN Title",
+      "name": "English Title"
+    },
+    {
+      "functionTypeName": "DE Title",
+      "name": "German Title"
+    },
+    {
+      "functionTypeName": "IT Title",
+      "name": "Italian Title"
+    }
+  ],
+  "bookedSpacesDetails": [
+    {
+      "id": "bs1",
+      "spaceUsageName": "Event PUBLIC"
+    }
+  ]
+}
