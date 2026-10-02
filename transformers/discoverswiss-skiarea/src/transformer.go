@@ -116,6 +116,11 @@ func IntPtr(i int) *int {
 	return &i
 }
 
+// PointWKT builds a WKT point (longitude first) as required by the ODH API Geo validation.
+func PointWKT(lon, lat float64) string {
+	return fmt.Sprintf("POINT (%s %s)", strconv.FormatFloat(lon, 'f', -1, 64), strconv.FormatFloat(lat, 'f', -1, 64))
+}
+
 // flattenJSONToMap parses raw JSON and flattens it into dot-notation keys in the target map.
 // Objects use dot: prefix.key.subkey
 // Arrays use brackets: prefix[0].field
@@ -295,6 +300,7 @@ func MapSubEntityToPOI(raw dto.SkiSubEntityDetails, subEntityType string, parent
 			Latitude:  Float64Ptr(raw.Geo.Latitude),
 			Longitude: Float64Ptr(raw.Geo.Longitude),
 			Gpstype:   StringPtr("position"),
+			Geometry:  StringPtr(PointWKT(raw.Geo.Longitude, raw.Geo.Latitude)),
 			Default:   true,
 		}
 		if raw.Geo.Elevation > 0 {
@@ -972,6 +978,7 @@ func MapSkiAreaToODH(raw dto.SkiArea, id string, lang string) (odhContentModel.S
 			Latitude:  Float64Ptr(raw.Geo.Latitude),
 			Longitude: Float64Ptr(raw.Geo.Longitude),
 			Gpstype:   StringPtr("position"),
+			Geometry:  StringPtr(PointWKT(raw.Geo.Longitude, raw.Geo.Latitude)),
 			Default:   true,
 		}
 

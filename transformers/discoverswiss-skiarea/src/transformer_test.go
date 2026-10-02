@@ -47,6 +47,11 @@ func TestMapSkiAreaToODH(t *testing.T) {
 	assert.NotNil(t, skiArea.GpsInfo[0].Longitude)
 	assert.True(t, skiArea.GpsInfo[0].Default)
 
+	// Verify Geo carries a WKT geometry (required by the ODH API on POST/PUT)
+	require.Contains(t, skiArea.Geo, "position")
+	require.NotNil(t, skiArea.Geo["position"].Geometry, "Geo position should have a WKT Geometry")
+	assert.Equal(t, PointWKT(*skiArea.Geo["position"].Longitude, *skiArea.Geo["position"].Latitude), *skiArea.Geo["position"].Geometry)
+
 	// Verify Shortname is the name, not identifier
 	assert.NotNil(t, skiArea.Shortname, "Shortname should not be nil")
 	assert.NotEqual(t, raw.Identifier, *skiArea.Shortname, "Shortname should be name, not identifier")
@@ -200,6 +205,8 @@ func TestMapSubEntityToPOI(t *testing.T) {
 	assert.NotEmpty(t, poi.GpsInfo, "GpsInfo should not be empty")
 	assert.NotNil(t, poi.GpsInfo[0].Latitude)
 	assert.Equal(t, 46.5, *poi.GpsInfo[0].Latitude)
+	require.NotNil(t, poi.Geo["position"].Geometry, "Geo position should have a WKT Geometry")
+	assert.Equal(t, "POINT (11.3 46.5)", *poi.Geo["position"].Geometry)
 
 	// Validate Mapping has individual fields
 	dsMapping := poi.Mapping["discoverswiss"]
@@ -405,4 +412,10 @@ func TestGenerateID(t *testing.T) {
 
 	assert.NotEmpty(t, id, "Generated ID should not be empty")
 	assert.Contains(t, id, SKIAREA_ID_PREFIX, "ID should contain the template prefix")
+}
+
+func TestPointWKT(t *testing.T) {
+	assert.Equal(t, "POINT (6.057447195053101 46.47980135096053)", PointWKT(6.057447195053101, 46.47980135096053))
+	assert.Equal(t, "POINT (11 46.5)", PointWKT(11, 46.5))
+	assert.Equal(t, "POINT (-0.000001 -45)", PointWKT(-0.000001, -45))
 }
