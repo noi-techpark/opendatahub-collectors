@@ -378,14 +378,20 @@ func buildNewSkiArea(dssArea dto.DssSkiArea, opSchedules []odhmodel.OperationSch
 // dssMapping returns the dss Mapping keys of a talschaft.
 func dssMapping(dssArea dto.DssSkiArea) map[string]string {
 	resorts := []string{}
+	resortPids := []string{}
 	for _, resort := range dssArea.Skiresorts {
 		if resort.Rid != 0 {
 			resorts = append(resorts, strconv.FormatInt(resort.Rid, 10))
 		}
+		if resort.Pid != 0 {
+			resortPids = append(resortPids, strconv.FormatInt(resort.Pid, 10))
+		}
 	}
 	return map[string]string{
 		"rid":            dssArea.Rid,
+		"pid":            strings.TrimSpace(dssArea.Pid),
 		"skiresort_rids": strings.Join(resorts, ","),
+		"skiresort_pids": strings.Join(resortPids, ","),
 		"activeWinter":   strconv.FormatBool(dssArea.ActiveWinter != 0),
 		"activeBike":     strconv.FormatBool(dssArea.ActiveBike != 0),
 		"activeHike":     strconv.FormatBool(dssArea.ActiveHike != 0),

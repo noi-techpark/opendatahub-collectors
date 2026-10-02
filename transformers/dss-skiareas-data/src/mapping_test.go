@@ -19,7 +19,8 @@ func Test_dssMapping_mergedIntoExisting(t *testing.T) {
 		Rid:          "4b",
 		ActiveWinter: 1,
 		ActiveBike:   0,
-		Skiresorts:   []dto.DssSkiresort{{Rid: 23}, {Rid: 0}, {Rid: 24}},
+		Pid:          " 42 ",
+		Skiresorts:   []dto.DssSkiresort{{Rid: 23, Pid: 82}, {Rid: 0}, {Rid: 24, Pid: 83}},
 	}
 	area.Email.Lifts = " info@lifts.example "
 
@@ -30,6 +31,7 @@ func Test_dssMapping_mergedIntoExisting(t *testing.T) {
 	}
 	want := map[string]string{
 		"rid": "4b", "custom": "keep", "skiresort_rids": "23,24",
+		"pid": "42", "skiresort_pids": "82,83",
 		"activeWinter": "true", "activeBike": "false", "activeHike": "false",
 		"email_lifts": "info@lifts.example",
 	}

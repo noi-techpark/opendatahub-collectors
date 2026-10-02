@@ -27,7 +27,7 @@ type DssSkiAreaFeed struct {
 type DssSkiArea struct {
 	Name         DssMultilang     `json:"name"`
 	Rid          string           `json:"rid"` // string — includes "4a", "4b" etc.
-	Pid          string           `json:"pid"` // always empty
+	Pid          string           `json:"pid"` // currently always empty, mapped once filled
 	SeasonSummer DssSkiAreaSeason `json:"season-summer"`
 	SeasonWinter DssSkiAreaSeason `json:"season-winter"`
 	Phone        string           `json:"phone"`
