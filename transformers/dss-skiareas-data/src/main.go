@@ -113,7 +113,8 @@ func processSkiArea(ctx context.Context, dssArea dto.DssSkiArea) error {
 		// ── CREATE ────────────────────────────────────────────────────────────
 		log.Info("No existing SkiArea found — creating new")
 		newArea := buildNewSkiArea(dssArea, opSchedules)
-		applyRegionGeo(ctx, &newArea, dssArea.RegionMap)
+		// temporarily disabled creating polygons by another service
+		// applyRegionGeo(ctx, &newArea, dssArea.RegionMap)
 		if err := contentClient.Post(ctx, ENTITY_TYPE,
 			map[string]string{"generateid": "false"}, newArea); err != nil {
 			return fmt.Errorf("POST failed: %w", err)
@@ -141,7 +142,8 @@ func processSkiArea(ctx context.Context, dssArea dto.DssSkiArea) error {
 		}
 
 		area.OperationSchedule = opSchedules
-		applyRegionGeo(ctx, &area, dssArea.RegionMap)
+		// temporarily disabled creating polygons by another service
+		// applyRegionGeo(ctx, &area, dssArea.RegionMap)
 
 		// Keep existing Mapping (idm etc.) and existing dss keys, only add/overwrite ours.
 		area.Mapping = mergeMapping(area.Mapping, dssMapping(dssArea))
