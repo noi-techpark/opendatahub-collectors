@@ -9,6 +9,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/noi-techpark/opendatahub-go-sdk/clib"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"opendatahub.com/tr-discoverswiss-skiarea/dto"
@@ -296,4 +297,77 @@ func TestMergeMappings(t *testing.T) {
 		assert.Equal(t, "Parcheggio", result["discoverswiss"]["parking.it"])
 		assert.Equal(t, "SkiResort", result["discoverswiss"]["type"])
 	})
+}
+
+// Replaying identical data in alternating languages must not be detected as a change
+// once all languages are merged (e.g. localized fields overwritten per language).
+func TestMergeSkiAreaHashStableAcrossLanguages(t *testing.T) {
+	rawDE := loadTestSkiArea(t, "../test/data/skiarea-merge-de.json")
+	rawIT := loadTestSkiArea(t, "../test/data/skiarea-merge-it.json")
+
+	cache := clib.NewCache[odhContentModel.SkiArea]()
+	var changes []bool
+	for _, raw := range []dto.SkiArea{rawDE, rawIT, rawDE, rawIT} {
+		result, err := TransformSkiArea(raw, generateID(raw), raw.ApiCrawlerLang)
+		require.NoError(t, err)
+
+		existing, exists := cache.Get(raw.Identifier)
+		if exists {
+			MergeSkiArea(&existing.Entity, result.SkiArea)
+		} else {
+			existing = clib.CacheEntry[odhContentModel.SkiArea]{Entity: result.SkiArea}
+		}
+		hash, changed, err := cache.HasChanged(raw.Identifier, existing.Entity)
+		require.NoError(t, err)
+		if changed {
+			cache.Set(raw.Identifier, existing.Entity, hash)
+		}
+		changes = append(changes, changed)
+	}
+
+	assert.Equal(t, []bool{true, true, false, false}, changes)
+}
+
+// Sub-entities (lifts, slopes, ...) have localized names; replaying alternating languages
+// must not be detected as a change once all languages are merged.
+func TestMergePOIHashStableAcrossLanguages(t *testing.T) {
+	rawDE := loadTestSkiArea(t, "../test/data/skiarea-merge-de.json")
+	rawIT := loadTestSkiArea(t, "../test/data/skiarea-merge-it.json")
+
+	cache := clib.NewCache[odhContentModel.ODHActivityPoi]()
+	changes := map[string][]bool{}
+	for _, raw := range []dto.SkiArea{rawDE, rawIT, rawDE, rawIT} {
+		result, err := TransformSkiArea(raw, generateID(raw), raw.ApiCrawlerLang)
+		require.NoError(t, err)
+		require.NotEmpty(t, result.POI)
+
+		for _, poi := range result.POI {
+			mappingId := getMappingId(poi.Mapping)
+			existing, exists := cache.Get(mappingId)
+			if exists {
+				MergePOI(&existing.Entity, poi)
+			} else {
+				existing = clib.CacheEntry[odhContentModel.ODHActivityPoi]{Entity: poi}
+			}
+			hash, changed, err := cache.HasChanged(mappingId, existing.Entity)
+			require.NoError(t, err)
+			if changed {
+				cache.Set(mappingId, existing.Entity, hash)
+			}
+			changes[mappingId] = append(changes[mappingId], changed)
+		}
+	}
+
+	for id, c := range changes {
+		assert.Equal(t, []bool{true, true, false, false}, c, "POI %s", id)
+	}
+}
+
+func TestMergeShortnamePrefersGerman(t *testing.T) {
+	de, it := "Sesselbahn Confin", "Seggiovia Confin"
+
+	assert.Equal(t, &it, mergeShortname(nil, &it, []string{"it"}), "empty base takes any language")
+	assert.Equal(t, &de, mergeShortname(&it, &de, []string{"de"}), "de overwrites")
+	assert.Equal(t, &de, mergeShortname(&de, &it, []string{"it"}), "other language keeps existing")
+	assert.Equal(t, &de, mergeShortname(&de, nil, []string{"it"}), "nil overlay keeps existing")
 }

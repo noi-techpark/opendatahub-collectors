@@ -28,6 +28,7 @@ const (
 	SOURCE            = "discoverswiss"
 	SKIAREA_ID_PREFIX = "urn:skiarea:discoverswiss"
 	PROVIDER_TIMEZONE = "Europe/Rome"
+	LICENSE_HOLDER    = "Schweiz Tourismus"
 )
 
 func generateID(raw dto.SkiArea) string {

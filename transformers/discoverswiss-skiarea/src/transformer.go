@@ -376,9 +376,8 @@ func MapSubEntityToPOI(raw dto.SkiSubEntityDetails, subEntityType string, parent
 		poi.LicenseInfo.License = StringPtr(license)
 		poi.LicenseInfo.ClosedData = closedData
 	}
-	if raw.DataGovernance != nil && raw.DataGovernance.Source != nil {
-		poi.LicenseInfo.LicenseHolder = IfNotEmpty(raw.DataGovernance.Source.Name)
-	}
+	// dataGovernance.source.name is localized per language; use a fixed holder so merged hashes stay stable
+	poi.LicenseInfo.LicenseHolder = StringPtr(LICENSE_HOLDER)
 
 	// Set HasLanguage to the current language
 	poi.HasLanguage = []string{lang}
@@ -995,10 +994,8 @@ func MapSkiAreaToODH(raw dto.SkiArea, id string, lang string) (odhContentModel.S
 		skiArea.LicenseInfo.ClosedData = closedData
 	}
 
-	// Map data governance to license holder
-	if raw.DataGovernance != nil && raw.DataGovernance.Source != nil {
-		skiArea.LicenseInfo.LicenseHolder = IfNotEmpty(raw.DataGovernance.Source.Name)
-	}
+	// dataGovernance.source.name is localized per language; use a fixed holder so merged hashes stay stable
+	skiArea.LicenseInfo.LicenseHolder = StringPtr(LICENSE_HOLDER)
 
 	// Map logo URL to ContactInfos
 	if len(raw.Logo) > 0 {
@@ -1384,9 +1381,8 @@ func mapMeasuringpoint(
 		mp.LicenseInfo.License = StringPtr(license)
 		mp.LicenseInfo.ClosedData = closedData
 	}
-	if raw.DataGovernance != nil && raw.DataGovernance.Source != nil {
-		mp.LicenseInfo.LicenseHolder = IfNotEmpty(raw.DataGovernance.Source.Name)
-	}
+	// dataGovernance.source.name is localized per language; use a fixed holder so merged hashes stay stable
+	mp.LicenseInfo.LicenseHolder = StringPtr(LICENSE_HOLDER)
 
 	// Detail (language-keyed title)
 	if name != "" {
