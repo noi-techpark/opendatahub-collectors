@@ -178,6 +178,8 @@ func TestMergeSkiAreaOverwritesNonLangFields(t *testing.T) {
 				"position": {
 					Latitude:  Float64Ptr(47.0),
 					Longitude: Float64Ptr(10.0),
+					Geometry:  StringPtr("POINT (10 47)"),
+					Default:   true,
 				},
 			},
 			HasLanguage: []string{"it"},
@@ -205,6 +207,9 @@ func TestMergeSkiAreaOverwritesNonLangFields(t *testing.T) {
 	assert.False(t, base.Active, "Active should be overwritten to false")
 	assert.Equal(t, 47.0, *base.Geo["position"].Latitude, "GPS should be overwritten")
 	assert.Equal(t, 10.0, *base.Geo["position"].Longitude, "GPS should be overwritten")
+	require.NotNil(t, base.Geo["position"].Geometry, "Geometry should be kept after merge")
+	assert.Equal(t, "POINT (10 47)", *base.Geo["position"].Geometry, "Geometry should be overwritten")
+	assert.True(t, base.Geo["position"].Default, "Default flag should be kept after merge")
 
 	// New SkiArea-specific fields should be overwritten
 	assert.Equal(t, 47.0, *base.GpsInfo[0].Latitude, "GpsInfo should be overwritten")
