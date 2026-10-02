@@ -1,0 +1,67 @@
+{
+  "Id": "dss_skiarea_1",
+  "Active": true,
+  "Source": "dss",
+  "Shortname": "Cortina d'Ampezzo",
+  "FirstImport": "2026-01-15T10:00:00Z",
+  "LastChange": "2026-01-15T10:00:00Z",
+  "HasLanguage": ["de", "it", "en"],
+  "Mapping": { "dss": { "rid": "1" } },
+  "Detail": {
+    "de": { "Title": "Cortina d'Ampezzo", "Language": "de" },
+    "en": { "Title": "Cortina d'Ampezzo", "Language": "en" },
+    "it": { "Title": "Cortina d'Ampezzo", "Language": "it" }
+  },
+  "ContactInfos": {
+    "de": {
+      "Language": "de",
+      "Email": "info@cortinamarketing.it",
+      "Phonenumber": "0436 866252"
+    },
+    "en": {
+      "Language": "en",
+      "Email": "info@cortinamarketing.it",
+      "Phonenumber": "0436 866252"
+    },
+    "it": {
+      "Language": "it",
+      "Email": "info@cortinamarketing.it",
+      "Phonenumber": "0436 866252"
+    }
+  },
+  "OperationSchedule": [
+    {
+      "Stop": "2026-05-02T00:00:00",
+      "Type": "1",
+      "Start": "2025-12-04T00:00:00",
+      "OperationScheduleTime": [],
+      "OperationscheduleName": {
+        "de": "Wintersaison",
+        "en": "winterseason",
+        "it": "stagioneinvernale"
+      }
+    },
+    {
+      "Stop": "2026-10-17T00:00:00",
+      "Type": "1",
+      "Start": "2026-06-05T00:00:00",
+      "OperationScheduleTime": [],
+      "OperationscheduleName": {
+        "de": "Sommersaison",
+        "en": "summerseason",
+        "it": "stagioneestiva"
+      }
+    }
+  ],
+  "SmgActive": true,
+  "OdhActive": true,
+  "PublishedOn": [],
+  "SyncUpdateMode": "Full",
+  "SyncSourceInterface": "dssskiarea",
+  "LicenseInfo": {
+    "Author": "",
+    "License": "CC0",
+    "ClosedData": false,
+    "LicenseHolder": "https://www.dolomitisuperski.com"
+  }
+}
