@@ -360,7 +360,8 @@ func mapToPoi(m dto.SiagMuseum, lang string) odhContentModel.ODHActivityPoi {
 	e := m.Elements
 	id := buildID(m)
 	source := SOURCE
-	shortname := e.Title.Value
+	// The API trims Shortname; an untrimmed value would never match the cache hash.
+	shortname := strings.TrimSpace(e.Title.Value)
 	lon := parseCoord(e.GeoCoordX.Value)
 	lat := parseCoord(e.GeoCoordY.Value)
 
@@ -510,6 +511,8 @@ func buildTagIds(e dto.SiagElements) (tagIds []string, smgTags []string) {
 	}
 
 	tagIds, smgTags = addCompatibilityTags(tagIds)
+	// The API stores TagIds sorted; send them the same way so the hash matches.
+	sort.Strings(tagIds)
 	return tagIds, smgTags
 }
 
@@ -530,6 +533,11 @@ func addCompatibilityTags(tags []string) (tagIds []string, smgTags []string) {
 		}
 	}
 
+	// The API derives these TagIds from the base SmgTags below; add them
+	// ourselves so the payload matches what is stored.
+	addTag("poi")
+	addTag("culture attractions")
+	addTag("museums")
 	smgTags = []string{"poi", "kultur sehenswürdigkeiten", "museen"}
 
 	if has("siag:museum:culture") {
