@@ -5,32 +5,40 @@
 package odhmodel
 
 type EventLinked struct {
-	Active               bool                         `json:"Active"`
-	ContactInfos         map[string]ContactInfos      `json:"ContactInfos,omitempty"`
-	DateBegin            string                       `json:"DateBegin,omitempty"`
-	DateEnd              string                       `json:"DateEnd,omitempty"`
-	Detail               map[string]Detail            `json:"Detail,omitempty"`
-	EventAdditionalInfos map[string]map[string]string `json:"EventAdditionalInfos,omitempty"`
-	EventBooking         map[string]any               `json:"EventBooking,omitempty"`
-	EventDate            []EventDate                  `json:"EventDate,omitempty"`
-	EventProperty        map[string]any               `json:"EventProperty,omitempty"`
-	FirstImport          string                       `json:"FirstImport,omitempty" hash:"ignore"`
-	GpsInfo              []GpsInfo                    `json:"GpsInfo,omitempty"`
-	Id                   string                       `json:"Id"`
-	ImageGallery         []ImageGalleryItem           `json:"ImageGallery,omitempty"`
-	LicenseInfo          map[string]any               `json:"LicenseInfo,omitempty"`
-	LocationInfo         map[string]any               `json:"LocationInfo,omitempty"`
-	OdhActive            bool                         `json:"OdhActive,omitempty"`
-	OrganizerInfos       map[string]ContactInfos      `json:"OrganizerInfos,omitempty"`
-	OrgRID               string                       `json:"OrgRID,omitempty"`
-	PublishedOn          []string                     `json:"PublishedOn,omitempty"`
-	Shortname            string                       `json:"Shortname,omitempty"`
-	Source               string                       `json:"Source,omitempty"`
-	TagIds               []string                     `json:"TagIds,omitempty"`
-	Topics               []map[string]any             `json:"Topics,omitempty"`
-	TopicRIDs            []string                     `json:"TopicRIDs,omitempty"`
-	VenueIds             []string                     `json:"VenueIds,omitempty"`
-	Mapping              map[string]map[string]string `json:"Mapping,omitempty"`
+	Active               bool                           `json:"Active"`
+	ContactInfos         map[string]ContactInfos        `json:"ContactInfos,omitempty"`
+	DateBegin            string                         `json:"DateBegin,omitempty"`
+	DateEnd              string                         `json:"DateEnd,omitempty"`
+	Detail               map[string]Detail              `json:"Detail,omitempty"`
+	EventAdditionalInfos map[string]EventAdditionalInfo `json:"EventAdditionalInfos,omitempty"`
+	EventBooking         map[string]any                 `json:"EventBooking,omitempty"`
+	EventDate            []EventDate                    `json:"EventDate,omitempty"`
+	EventProperty        map[string]any                 `json:"EventProperty,omitempty" hash:"ignore"`
+	FirstImport          string                         `json:"FirstImport,omitempty" hash:"ignore"`
+	GpsInfo              []GpsInfo                      `json:"GpsInfo,omitempty"`
+	Id                   string                         `json:"Id"`
+	ImageGallery         []ImageGalleryItem             `json:"ImageGallery,omitempty"`
+	LicenseInfo          map[string]any                 `json:"LicenseInfo,omitempty"`
+	LocationInfo         map[string]any                 `json:"LocationInfo,omitempty" hash:"ignore"`
+	OdhActive            bool                           `json:"OdhActive,omitempty"`
+	OrganizerInfos       map[string]ContactInfos        `json:"OrganizerInfos,omitempty"`
+	OrgRID               string                         `json:"OrgRID,omitempty"`
+	PublishedOn          []string                       `json:"PublishedOn,omitempty"`
+	Shortname            string                         `json:"Shortname,omitempty"`
+	Source               string                         `json:"Source,omitempty"`
+	TagIds               []string                       `json:"TagIds,omitempty"`
+	Topics               []map[string]any               `json:"Topics,omitempty" hash:"ignore"`
+	TopicRIDs            []string                       `json:"TopicRIDs,omitempty"`
+	VenueIds             []string                       `json:"VenueIds,omitempty"`
+	Mapping              map[string]map[string]string   `json:"Mapping,omitempty"`
+}
+
+// EventAdditionalInfo only declares the keys we write; the API pads the object
+// with empty extra keys, which would otherwise break hash comparison.
+type EventAdditionalInfo struct {
+	Language     string `json:"Language,omitempty"`
+	Location     string `json:"Location,omitempty"`
+	Registration string `json:"Registration,omitempty"`
 }
 
 type Detail struct {
@@ -41,8 +49,8 @@ type Detail struct {
 }
 
 type EventDate struct {
-	Active bool   `json:"Active"`
-	Begin  string `json:"Begin,omitempty"`
+	Active              bool     `json:"Active"`
+	Begin               string   `json:"Begin,omitempty"`
 	End                 string   `json:"End,omitempty"`
 	From                string   `json:"From,omitempty"`
 	To                  string   `json:"To,omitempty"`
@@ -80,15 +88,15 @@ type ImageGalleryItem struct {
 }
 
 type VenueV2 struct {
-	Id              string                       `json:"Id"`
-	Active          *bool                        `json:"Active,omitempty"`
-	Shortname       string                       `json:"Shortname"`
-	Detail          map[string]any               `json:"Detail,omitempty"`
-	Mapping         map[string]map[string]string `json:"Mapping,omitempty"`
-	MaxCapacity     *int                         `json:"MaxCapacity,omitempty"`
-	RoomDetails     []VenueRoomDetailsV2         `json:"RoomDetails,omitempty"`
-	ContactInfos    map[string]any               `json:"ContactInfos,omitempty"`
-	LocationInfo    map[string]any               `json:"LocationInfo,omitempty"`
+	Id           string                       `json:"Id"`
+	Active       *bool                        `json:"Active,omitempty"`
+	Shortname    string                       `json:"Shortname"`
+	Detail       map[string]any               `json:"Detail,omitempty"`
+	Mapping      map[string]map[string]string `json:"Mapping,omitempty"`
+	MaxCapacity  *int                         `json:"MaxCapacity,omitempty"`
+	RoomDetails  []VenueRoomDetailsV2         `json:"RoomDetails,omitempty"`
+	ContactInfos map[string]any               `json:"ContactInfos,omitempty"`
+	LocationInfo map[string]any               `json:"LocationInfo,omitempty"`
 }
 
 type VenueRoomDetailsV2 struct {

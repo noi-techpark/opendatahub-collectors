@@ -1,0 +1,32 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-discoverswiss-skiarea
+  pullPolicy: IfNotPresent
+  tag: sometaghere
+
+imagePullSecrets:
+  - name: container-registry-r
+
+env:
+  LOG_LEVEL: "DEBUG"
+  MQ_QUEUE: api-crawler.discoverswiss-skiresort
+  MQ_EXCHANGE: routed
+  MQ_KEY: api-crawler.discoverswiss-skiresort
+  MQ_CLIENT: tr-discoverswiss-skiarea
+
+  ODH_CORE_URL: "https://tourism.api.opendatahub.testingmachine.eu/v1"
+  ODH_CORE_TOKEN_URL: "https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token"
+  ODH_CORE_TOKEN_CLIENT_ID: "discoverswiss-skidata"
+  RAW_DATA_BRIDGE_ENDPOINT: "http://raw-data-bridge.core.svc.cluster.local:2000"
+
+  SERVICE_NAME: tr-discoverswiss-skiarea
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+envSecret:
+  ODH_CORE_TOKEN_CLIENT_SECRET: ""
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri

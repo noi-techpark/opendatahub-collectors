@@ -20,7 +20,7 @@ func MergeSkiArea(base *odhContentModel.SkiArea, overlay odhContentModel.SkiArea
 	base.ImageGallery = mergeImageGallery(base.ImageGallery, overlay.ImageGallery)
 	base.SmgTags = overlay.SmgTags
 	base.Mapping = mergeMappings(base.Mapping, overlay.Mapping)
-	base.Shortname = overlay.Shortname
+	base.Shortname = mergeShortname(base.Shortname, overlay.Shortname, overlay.HasLanguage)
 	base.LastChange = overlay.LastChange
 	base.FirstImport = overlay.FirstImport
 	base.TagIds = overlay.TagIds
@@ -80,7 +80,7 @@ func MergePOI(base *odhContentModel.ODHActivityPoi, overlay odhContentModel.ODHA
 	base.ImageGallery = mergeImageGallery(base.ImageGallery, overlay.ImageGallery)
 	base.SmgTags = overlay.SmgTags
 	base.Mapping = mergeMappings(base.Mapping, overlay.Mapping)
-	base.Shortname = overlay.Shortname
+	base.Shortname = mergeShortname(base.Shortname, overlay.Shortname, overlay.HasLanguage)
 	base.LastChange = overlay.LastChange
 	base.FirstImport = overlay.FirstImport
 	base.TagIds = overlay.TagIds
@@ -139,7 +139,7 @@ func MergeMeasuringpoint(base *odhContentModel.MeasuringpointV2, overlay odhCont
 	base.Source = overlay.Source
 	base.LicenseInfo = overlay.LicenseInfo
 	base.Mapping = mergeMappings(base.Mapping, overlay.Mapping)
-	base.Shortname = overlay.Shortname
+	base.Shortname = mergeShortname(base.Shortname, overlay.Shortname, overlay.HasLanguage)
 	base.LastChange = overlay.LastChange
 	base.FirstImport = overlay.FirstImport
 	base.TagIds = overlay.TagIds
@@ -226,6 +226,28 @@ func mergeMPLocationInfo(base *odhContentModel.MeasuringpointV2, overlay odhCont
 			base.LocationInfo.DistrictInfo.Name[lang] = name
 		}
 	}
+}
+
+// SHORTNAME_LANG is the language whose name is used as Shortname.
+const SHORTNAME_LANG = "de"
+
+// mergeShortname keeps Shortname stable across language records: names are localized
+// (e.g. "Sesselbahn Confin" / "Seggiovia Confin"), so overwriting it with every record
+// would flip the hash per language. The SHORTNAME_LANG name wins; other languages only
+// fill an empty Shortname.
+func mergeShortname(base, overlay *string, overlayLangs []string) *string {
+	if overlay == nil {
+		return base
+	}
+	if base == nil || *base == "" {
+		return overlay
+	}
+	for _, lang := range overlayLangs {
+		if lang == SHORTNAME_LANG {
+			return overlay
+		}
+	}
+	return base
 }
 
 // mergeLanguages returns the union of two language slices without duplicates

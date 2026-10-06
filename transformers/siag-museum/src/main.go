@@ -61,15 +61,6 @@ func main() {
 	}, clib.WithReferer(env.ODH_CORE_REFERER))
 	ms.FailOnError(context.Background(), err, "failed to create client")
 
-	poiCache, err = clib.LoadExisting(context.Background(), contentClient, clib.LoadConfig[odhContentModel.ODHActivityPoi]{
-		EntityType:  ENTITY_TYPE,
-		QueryParams: map[string]string{"source": SOURCE},
-		IDFunc:      func(p odhContentModel.ODHActivityPoi) string { return *p.Generic.ID },
-	})
-	ms.FailOnError(context.Background(), err, "failed to load existing POIs")
-
-	slog.Info("Loaded existing POIs", "count", len(poiCache.Entries()))
-
 	listener := tr.NewTr[string](context.Background(), env.Env)
 	err = listener.Start(context.Background(), tr.RawString2JsonMiddleware(Transform))
 	ms.FailOnError(context.Background(), err, "error while listening to queue")
@@ -77,6 +68,25 @@ func main() {
 
 func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 	logger.Get(ctx).Info("Processing museum data")
+
+	if len(r.Rawdata.De)+len(r.Rawdata.It)+len(r.Rawdata.En) == 0 {
+		// An empty payload is far more likely a crawler/source API problem than
+		// "no museums at all"; the deactivation below would disable every museum.
+		logger.Get(ctx).Warn("Received payload without museums, skipping processing and deactivation")
+		return nil
+	}
+
+	var err error
+	poiCache, err = clib.LoadExisting(ctx, contentClient, clib.LoadConfig[odhContentModel.ODHActivityPoi]{
+		EntityType:  ENTITY_TYPE,
+		QueryParams: map[string]string{"source": SOURCE},
+		IDFunc:      func(p odhContentModel.ODHActivityPoi) string { return *p.Generic.ID },
+	})
+	if err != nil {
+		logger.Get(ctx).Error("Failed to load existing POIs", "error", err)
+		return err
+	}
+	slog.Info("Loaded existing POIs", "count", len(poiCache.Entries()))
 
 	pois := map[string]odhContentModel.ODHActivityPoi{}
 	// seen tracks every id present in the current source batch.
@@ -122,6 +132,10 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 	for _, def := range tagDefsMap {
 		tagDefs = append(tagDefs, def)
 	}
+	
+	sort.Slice(tagDefs, func(i, j int) bool {
+		return tagDefs[i].ID < tagDefs[j].ID
+	})
 
 	// Sync all tags discovered in this batch to the ODH Tag endpoint.
 	// clib.SyncTags POSTs each tag and ignores ErrAlreadyExists, so it is
@@ -201,6 +215,10 @@ func Transform(ctx context.Context, r *rdb.Raw[dto.RawData]) error {
 		}
 
 		poi := entry.Entity
+		if !poi.Active {
+			continue
+		}
+		
 		poi.Active = false
 		poi.PublishedOn = removeChannels(poi.PublishedOn, getPublishedOnChannels())
 
@@ -342,7 +360,8 @@ func mapToPoi(m dto.SiagMuseum, lang string) odhContentModel.ODHActivityPoi {
 	e := m.Elements
 	id := buildID(m)
 	source := SOURCE
-	shortname := e.Title.Value
+	// The API trims Shortname; an untrimmed value would never match the cache hash.
+	shortname := strings.TrimSpace(e.Title.Value)
 	lon := parseCoord(e.GeoCoordX.Value)
 	lat := parseCoord(e.GeoCoordY.Value)
 
@@ -492,6 +511,8 @@ func buildTagIds(e dto.SiagElements) (tagIds []string, smgTags []string) {
 	}
 
 	tagIds, smgTags = addCompatibilityTags(tagIds)
+	// The API stores TagIds sorted; send them the same way so the hash matches.
+	sort.Strings(tagIds)
 	return tagIds, smgTags
 }
 
@@ -512,6 +533,11 @@ func addCompatibilityTags(tags []string) (tagIds []string, smgTags []string) {
 		}
 	}
 
+	// The API derives these TagIds from the base SmgTags below; add them
+	// ourselves so the payload matches what is stored.
+	addTag("poi")
+	addTag("culture attractions")
+	addTag("museums")
 	smgTags = []string{"poi", "kultur sehenswürdigkeiten", "museen"}
 
 	if has("siag:museum:culture") {

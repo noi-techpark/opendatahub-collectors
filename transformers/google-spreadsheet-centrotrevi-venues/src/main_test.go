@@ -130,3 +130,33 @@ func Test_Transform_Snapshot(t *testing.T) {
 
 	clibmock.CompareMockCalls(t, expected, calls)
 }
+
+// existingMock returns one active Venue from the Content API, so a missing guard
+// would show up as a deactivation PUT.
+type existingMock struct {
+	*clibmock.ContentMock
+}
+
+func (m *existingMock) Get(ctx context.Context, apiPath string, queryParams map[string]string, responseStruct interface{}) error {
+	_ = m.ContentMock.Get(ctx, apiPath, queryParams, responseStruct)
+	return json.Unmarshal([]byte(`{"Items": [{"Id": "urn:venue:centrotrevi-drin:test", "Active": true, "Shortname": "existing"}], "TotalPages": 1, "CurrentPage": 1}`), responseStruct)
+}
+
+func Test_ProcessSpreadsheet_NoPlaces_NoDeactivation(t *testing.T) {
+	for name, spreadsheet := range map[string]Spreadsheet{
+		"tab renamed": {SpreadsheetID: "test", Sheets: []Sheet{sheetFromRows("Luoghi", [][]string{{"id"}, {"x"}})}},
+		"header only": {SpreadsheetID: "test", Sheets: []Sheet{sheetFromRows("Places", [][]string{{"id", "it:title"}})}},
+		"no sheets":   {SpreadsheetID: "test"},
+	} {
+		t.Run(name, func(t *testing.T) {
+			mock := &existingMock{ContentMock: clibmock.NewContentMock()}
+			if err := processSpreadsheet(context.Background(), mock, spreadsheet); err != nil {
+				t.Fatalf("processSpreadsheet failed: %v", err)
+			}
+			calls := mock.Calls()
+			if len(calls.Puts)+len(calls.Posts)+len(calls.PutMultiples) != 0 {
+				t.Fatalf("expected no writes when the sheet has no places, got %+v", calls)
+			}
+		})
+	}
+}

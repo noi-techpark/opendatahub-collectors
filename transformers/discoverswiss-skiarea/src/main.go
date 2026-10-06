@@ -21,6 +21,8 @@ import (
 	"github.com/noi-techpark/opendatahub-go-sdk/tel/logger"
 	"opendatahub.com/tr-discoverswiss-skiarea/dto"
 	odhContentModel "opendatahub.com/tr-discoverswiss-skiarea/odh-content-model"
+
+	_ "time/tzdata"
 )
 
 // start
@@ -28,6 +30,7 @@ const (
 	SOURCE            = "discoverswiss"
 	SKIAREA_ID_PREFIX = "urn:skiarea:discoverswiss"
 	PROVIDER_TIMEZONE = "Europe/Rome"
+	LICENSE_HOLDER    = "Schweiz Tourismus"
 )
 
 func generateID(raw dto.SkiArea) string {
