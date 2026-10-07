@@ -1,0 +1,69 @@
+[
+  {
+    "id": 7,
+    "name": "Großglockner - KFJ-Höhe",
+    "logo": "https://static.panomax.com/instances/resources/7/default/6e13ac80415154b7f293abcc10ec7659.png",
+    "camId": 7,
+    "viewAngleDegree": 235,
+    "latitude": "47.075826",
+    "longitude": "12.750602",
+    "zeroDirection": "211.5",
+    "elevation": "2325",
+    "country": "at",
+    "countryName": "Austria",
+    "state": "Carinthia",
+    "city": "Heiligenblut",
+    "area": null,
+    "webcamUrl": "https://grossglockner.panomax.com",
+    "customerId": 4,
+    "customerUrl": null,
+    "customerName": "Großglockner Hochalpenstraße",
+    "images": [
+      {
+        "url": "https://live-image.panomax.com/cams/7/recent_thumb.jpg",
+        "width": "257",
+        "height": "75"
+      },
+      {
+        "url": "https://live-image.panomax.com/cams/7/recent_small.jpg",
+        "width": "515",
+        "height": "150"
+      },
+      {
+        "url": "https://live-image.panomax.com/cams/7/recent_optimized.jpg",
+        "width": "1030",
+        "height": "300"
+      },
+      {
+        "url": "https://live-image.panomax.com/cams/7/recent_reduced.jpg",
+        "width": "1545",
+        "height": "450"
+      },
+      {
+        "url": "https://live-image.panomax.com/cams/7/recent_h572.jpg",
+        "width": "1963",
+        "height": "572"
+      },
+      {
+        "url": "https://live-image.panomax.com/cams/7/recent_default.jpg",
+        "width": "2746",
+        "height": "800"
+      },
+      {
+        "url": "https://live-image.panomax.com/cams/7/recent_hd.jpg",
+        "width": "3704",
+        "height": "1080"
+      },
+      {
+        "url": "https://live-image.panomax.com/cams/7/recent_full.jpg",
+        "width": "7024",
+        "height": "2048"
+      }
+    ],
+    "htmlEmbed": "<script type=\"text/javascript\" src=\"https://static.panomax.com/front/thumbnail/js/pmaxthumbnail.js\"></script><script type=\"text/javascript\">PmaxThumbnail.place({ instance: 7});</script>",
+    "tourCam": false,
+    "location": "Großglockner - KFJ-Höhe",
+    "customerInstanceName": "Großglockner - Kaiser-Franz-Josefs-Höhe",
+    "imageFirst": "2010-08-10 16:29:00"
+  }
+]

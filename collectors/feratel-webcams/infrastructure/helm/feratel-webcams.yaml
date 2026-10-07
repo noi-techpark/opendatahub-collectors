@@ -1,0 +1,25 @@
+# SPDX-FileCopyrightText: 2026 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/dc-feratel-webcams
+  pullPolicy: IfNotPresent
+  tag: latest
+
+env:
+  MQ_CLIENT: dc-feratel-webcams
+  PROVIDER: webcams/webcam-feratel
+
+  CRON: "0 0 0/4 * * *"
+  HTTP_URL: http://wtvxmlp.feratel.com/xmlpan/x3/infoxml.jsp?pg=CDB9645D-E67B-44D2-9FC9-E1539FF9A6B7&lg=de&showKeywords=1&geoXY=1&xmlv3=1&nolg=1
+  LANGUAGE_PARAM: lg
+  LANGUAGES: de,it,en
+
+  SERVICE_NAME: dc-feratel-webcams
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
