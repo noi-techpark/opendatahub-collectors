@@ -6,8 +6,11 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log/slog"
+	"math"
+	"strconv"
 
 	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
@@ -25,13 +28,18 @@ const (
 )
 
 const (
+	ParkingFacilityCategoryBike = "BIKE"
+	ParkingFacilityCategoryCar  = "CAR"
+)
+
+const (
 	DataTypePredictedForecastedOccupancy   = "predictedForecastedOccupancy"
 	DataTypeCurrentEstimatedOccupancy      = "currentEstimatedOccupancy"
 	DataTypeCurrentEstimatedOccupancyLevel = "currentEstimatedOccupancyLevel"
 )
 
-// Measurement field names to exclude from car parking metadata
-var carParkingMeasurementFields = map[string]bool{
+// Measurement field names to exclude from parking facility metadata
+var measurementFields = map[string]bool{
 	DataTypePredictedForecastedOccupancy:   true,
 	DataTypeCurrentEstimatedOccupancy:      true,
 	DataTypeCurrentEstimatedOccupancyLevel: true,
@@ -66,41 +74,25 @@ func TransformWithBdp(bdp bdplib.Bdp) tr.Handler[Root] {
 }
 
 func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) error {
-	slog.Info("Processing Swiss parking data",
-		"timestamp", payload.Timestamp,
-		"bikeFeatures", len(payload.Rawdata.BikeParking.Features),
-		"carFeatures", len(payload.Rawdata.CarParking.Features))
+	slog.Info("Processing Swiss parking data", "features", len(payload.Rawdata.Features))
 
 	ts := payload.Timestamp.UnixMilli()
 
-	// Process bike parking stations
-	bikeStations, err := processBikeParking(bdp, payload.Rawdata.BikeParking)
-	if err != nil {
-		return fmt.Errorf("processing bike parking: %w", err)
-	}
+	bikeStations, carStations, dataMap := processFeatures(bdp, payload.Rawdata, ts)
 
-	// Process car parking stations and measurements
-	carStations, carDataMap, err := processCarParking(bdp, payload.Rawdata.CarParking, ts)
-	if err != nil {
-		return fmt.Errorf("processing car parking: %w", err)
-	}
-
-	// Sync bike parking stations
 	slog.Info("Syncing bike parking stations", "count", len(bikeStations))
-	err = bdp.SyncStations(StationTypeBikeParking, bikeStations, true, false)
+	err := bdp.SyncStations(StationTypeBikeParking, bikeStations, true, false)
 	if err != nil {
 		return fmt.Errorf("syncing bike parking stations: %w", err)
 	}
 
-	// Sync car parking stations
 	slog.Info("Syncing car parking stations", "count", len(carStations))
 	err = bdp.SyncStations(StationTypeParkingStation, carStations, true, false)
 	if err != nil {
 		return fmt.Errorf("syncing car parking stations: %w", err)
 	}
 
-	// Push car parking measurements
-	err = bdp.PushData(StationTypeParkingStation, carDataMap)
+	err = bdp.PushData(StationTypeParkingStation, dataMap)
 	if err != nil {
 		return fmt.Errorf("pushing car parking measurements: %w", err)
 	}
@@ -109,105 +101,111 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 	return nil
 }
 
-func processBikeParking(bdp bdplib.Bdp, fc GeoJSONFeatureCollection) ([]bdplib.Station, error) {
-	var stations []bdplib.Station
+// processFeatures splits the unified feature collection into bike and car
+// parking stations (keyed off the "parkingFacilityCategory" property) and
+// collects car parking occupancy measurements.
+func processFeatures(bdp bdplib.Bdp, root Root, ts int64) ([]bdplib.Station, []bdplib.Station, bdplib.DataMap) {
+	var bikeStations, carStations []bdplib.Station
+	dataMap := bdp.CreateDataMap()
 
-	for _, feature := range fc.Features {
+	for _, feature := range root.Features {
 		props := feature.Properties
 
-		// Extract station code from properties.stopPlaceUic
-		stopPlaceUic, ok := props["stopPlaceUic"]
-		if !ok || stopPlaceUic == nil {
-			slog.Warn("Bike parking feature missing stopPlaceUic", "featureID", feature.ID)
+		category, _ := props["parkingFacilityCategory"].(string)
+
+		var stationType, codeField string
+		switch category {
+		case ParkingFacilityCategoryBike:
+			stationType, codeField = StationTypeBikeParking, "uic"
+		case ParkingFacilityCategoryCar:
+			stationType, codeField = StationTypeParkingStation, "didokId"
+		default:
+			slog.Warn("feature has unknown parkingFacilityCategory", "featureID", feature.ID, "category", category)
 			continue
 		}
 
-		stationCode := fmt.Sprintf("%v", stopPlaceUic)
+		codeVal, ok := props[codeField]
+		if !ok || codeVal == nil {
+			slog.Warn("feature missing station code", "featureID", feature.ID, "field", codeField)
+			continue
+		}
+		stationCode := formatCode(codeVal)
 
-		nameVal, ok := props["name"]
+		nameVal, ok := props["displayName"]
 		if !ok || nameVal == nil {
-			slog.Warn("Bike parking feature missing name", "featureID", feature.ID)
+			slog.Warn("feature missing displayName", "featureID", feature.ID)
 			continue
 		}
 		name := fmt.Sprintf("%v", nameVal)
 
 		lat, lon, err := extractCoordinates(feature.Geometry)
 		if err != nil {
-			slog.Warn("Bike parking feature invalid coordinates", "featureID", feature.ID, "err", err)
+			slog.Warn("feature has invalid coordinates", "featureID", feature.ID, "err", err)
 			continue
 		}
 
-		station := bdplib.CreateStation(fmt.Sprintf("%s:%s", Origin, stationCode), name, StationTypeBikeParking, lat, lon, Origin)
+		station := bdplib.CreateStation(fmt.Sprintf("%s:%s", Origin, stationCode), name, stationType, lat, lon, Origin)
 
-		// Store all properties as metadata
 		metadata := make(map[string]interface{})
 		for k, v := range props {
-			metadata[k] = v
-		}
-		station.MetaData = metadata
-
-		stations = append(stations, station)
-	}
-
-	return stations, nil
-}
-
-func processCarParking(bdp bdplib.Bdp, fc GeoJSONFeatureCollection, ts int64) ([]bdplib.Station, bdplib.DataMap, error) {
-	var stations []bdplib.Station
-	dataMap := bdp.CreateDataMap()
-
-	for _, feature := range fc.Features {
-		props := feature.Properties
-
-		stationCode := fmt.Sprintf("%v", props["didokId"])
-		name := fmt.Sprintf("%v", props["displayName"])
-
-		lat, lon, err := extractCoordinates(feature.Geometry)
-		if err != nil {
-			slog.Warn("Car parking feature invalid coordinates", "featureID", feature.ID, "err", err)
-			continue
-		}
-
-		station := bdplib.CreateStation(fmt.Sprintf("%s:%s", Origin, stationCode), name, StationTypeParkingStation, lat, lon, Origin)
-
-		// Store all properties as metadata, except measurement fields
-		metadata := make(map[string]interface{})
-		for k, v := range props {
-			if !carParkingMeasurementFields[k] {
+			if !measurementFields[k] {
 				metadata[k] = v
 			}
 		}
 		station.MetaData = metadata
 
-		stations = append(stations, station)
+		if category == ParkingFacilityCategoryBike {
+			bikeStations = append(bikeStations, station)
+			continue
+		}
 
-		// Add measurements (only if values are non-nil)
+		carStations = append(carStations, station)
+
 		if v, ok := props[DataTypePredictedForecastedOccupancy]; ok && v != nil {
 			dataMap.AddRecord(station.Id, DataTypePredictedForecastedOccupancy,
 				bdplib.CreateRecord(ts, map[string]any{"predictions": v}, Period))
 		}
-
 		if v, ok := props[DataTypeCurrentEstimatedOccupancy]; ok && v != nil {
 			dataMap.AddRecord(station.Id, DataTypeCurrentEstimatedOccupancy,
 				bdplib.CreateRecord(ts, v, Period))
 		}
-
 		if v, ok := props[DataTypeCurrentEstimatedOccupancyLevel]; ok && v != nil {
 			dataMap.AddRecord(station.Id, DataTypeCurrentEstimatedOccupancyLevel,
 				bdplib.CreateRecord(ts, v, Period))
 		}
 	}
 
-	return stations, dataMap, nil
+	return bikeStations, carStations, dataMap
 }
 
-// extractCoordinates converts GeoJSON [longitude, latitude] to (latitude, longitude)
-func extractCoordinates(geom GeoJSONGeometry) (float64, float64, error) {
-	if len(geom.Coordinates) < 2 {
-		return 0, 0, fmt.Errorf("coordinates array has less than 2 elements")
+// extractCoordinates finds the Point geometry within a GeometryCollection and
+// converts its GeoJSON [longitude, latitude] coordinates to (latitude, longitude).
+func extractCoordinates(geom GeoJSONGeometryCollection) (float64, float64, error) {
+	for _, g := range geom.Geometries {
+		if g.Type != "Point" {
+			continue
+		}
+		var coords []float64
+		if err := json.Unmarshal(g.Coordinates, &coords); err != nil {
+			return 0, 0, fmt.Errorf("invalid point coordinates: %w", err)
+		}
+		if len(coords) < 2 {
+			return 0, 0, fmt.Errorf("point coordinates has less than 2 elements")
+		}
+		return coords[1], coords[0], nil
 	}
-	// GeoJSON: [longitude, latitude] → return (latitude, longitude)
-	return geom.Coordinates[1], geom.Coordinates[0], nil
+	return 0, 0, fmt.Errorf("no point geometry found")
+}
+
+// formatCode formats a station code property value as a string. Codes like
+// "uic" are decoded from JSON as float64; formatting them with "%v" directly
+// would produce scientific notation (e.g. "8.503104e+06"), so whole numbers
+// are converted to plain integer form first.
+func formatCode(v interface{}) string {
+	if f, ok := v.(float64); ok && f == math.Trunc(f) {
+		return strconv.FormatInt(int64(f), 10)
+	}
+	return fmt.Sprintf("%v", v)
 }
 
 func syncDataTypes(bdp bdplib.Bdp) error {

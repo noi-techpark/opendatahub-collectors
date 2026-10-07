@@ -4,6 +4,11 @@
 
 package main
 
+import (
+	"encoding/json"
+	"fmt"
+)
+
 type BikeBoxRawData struct {
 	It  []BikeLocation `json:"it"`
 	De  []BikeLocation `json:"de"`
@@ -12,15 +17,15 @@ type BikeBoxRawData struct {
 }
 
 type BikeLocation struct {
-	LocationID int                   `json:"locationID"`
+	LocationID FlexID                `json:"locationID"`
 	Name       string                `json:"name"`
 	Stations   []BikeLocationStation `json:"stations"`
 }
 
 type BikeLocationStation struct {
-	StationID                              int         `json:"stationID"`
+	StationID                              FlexID      `json:"stationID"`
 	LocationName                           string      `json:"locationName"`
-	LocationID                             int         `json:"locationID"`
+	LocationID                             FlexID      `json:"locationID"`
 	Name                                   string      `json:"name"`
 	Address                                string      `json:"address"`
 	Latitude                               float64     `json:"latitude"`
@@ -39,4 +44,23 @@ type BikePlace struct {
 	State    int `json:"state"`
 	Level    int `json:"level"`
 	Type     int `json:"type"`
+}
+
+// FlexID accepts locationID/stationID as either a JSON string (loewenbytes) or a JSON number (bicincitta),
+// preserving it as a string so arbitrary, non-numeric IDs are supported too.
+type FlexID string
+
+func (f *FlexID) UnmarshalJSON(data []byte) error {
+	var s string
+	if err := json.Unmarshal(data, &s); err == nil {
+		*f = FlexID(s)
+		return nil
+	}
+
+	var n json.Number
+	if err := json.Unmarshal(data, &n); err != nil {
+		return fmt.Errorf("FlexID: cannot unmarshal %s as string or number", data)
+	}
+	*f = FlexID(n.String())
+	return nil
 }

@@ -4,29 +4,36 @@
 
 package main
 
-// Root holds the top-level payload structure from the collector
-type Root struct {
-	BikeParking GeoJSONFeatureCollection `json:"bike_parking"`
-	CarParking  GeoJSONFeatureCollection `json:"car_parking"`
-}
+import "encoding/json"
 
-// GeoJSONFeatureCollection represents a standard GeoJSON Feature Collection
-type GeoJSONFeatureCollection struct {
+// Root holds the top-level payload structure from the collector: a single
+// GeoJSON FeatureCollection mixing bike and car parking facilities,
+// distinguished by the "parkingFacilityCategory" property.
+type Root struct {
 	Type     string           `json:"type"`
 	Features []GeoJSONFeature `json:"features"`
 }
 
 // GeoJSONFeature represents a single GeoJSON Feature
 type GeoJSONFeature struct {
-	Type       string                 `json:"type"`
-	ID         string                 `json:"id"`
-	Geometry   GeoJSONGeometry        `json:"geometry"`
-	Properties map[string]interface{} `json:"properties"`
+	Type       string                    `json:"type"`
+	ID         string                    `json:"id"`
+	Geometry   GeoJSONGeometryCollection `json:"geometry"`
+	Properties map[string]interface{}    `json:"properties"`
 }
 
-// GeoJSONGeometry represents a Point geometry
-// Coordinates are [longitude, latitude] per GeoJSON spec
+// GeoJSONGeometryCollection represents the feature's geometry, which is a
+// GeometryCollection: always includes one Point (the facility location) and
+// may include a Polygon/MultiPolygon (the facility area).
+type GeoJSONGeometryCollection struct {
+	Type       string            `json:"type"`
+	Geometries []GeoJSONGeometry `json:"geometries"`
+}
+
+// GeoJSONGeometry represents a single geometry within a GeometryCollection.
+// Coordinates are kept raw since their shape depends on Type (a flat
+// [lon, lat] pair for Point, nested rings for Polygon/MultiPolygon).
 type GeoJSONGeometry struct {
-	Type        string    `json:"type"`
-	Coordinates []float64 `json:"coordinates"` // [longitude, latitude]
+	Type        string          `json:"type"`
+	Coordinates json.RawMessage `json:"coordinates"`
 }

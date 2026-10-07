@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"os"
 	"time"
 
 	"github.com/noi-techpark/go-bdp-client/bdplib"
@@ -31,6 +32,7 @@ const (
 	dataTypeVehicleFutureAvailability30   = "future-availability-30"
 	dataTypeVehicleFutureAvailability60   = "future-availability-60"
 	dataTypeVehicleFutureAvailability120  = "future-availability-120"
+	dataTypeVehicleFutureAvailability180  = "future-availability-180"
 	dataTypeVehicleFutureAvailability360  = "future-availability-360"
 	dataTypeVehicleFutureAvailability720  = "future-availability-720"
 	dataTypeVehicleFutureAvailability1440 = "future-availability-1440"
@@ -119,6 +121,7 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 		vechile_dataMap.AddRecord(vehicle_code, dataTypeVehicleFutureAvailability30, bdplib.CreateRecord(ts, checkAvailabilityAt(avail, now.Add(30*time.Minute)), 300))
 		vechile_dataMap.AddRecord(vehicle_code, dataTypeVehicleFutureAvailability60, bdplib.CreateRecord(ts, checkAvailabilityAt(avail, now.Add(60*time.Minute)), 300))
 		vechile_dataMap.AddRecord(vehicle_code, dataTypeVehicleFutureAvailability120, bdplib.CreateRecord(ts, checkAvailabilityAt(avail, now.Add(120*time.Minute)), 300))
+		vechile_dataMap.AddRecord(vehicle_code, dataTypeVehicleFutureAvailability180, bdplib.CreateRecord(ts, checkAvailabilityAt(avail, now.Add(180*time.Minute)), 300))
 		vechile_dataMap.AddRecord(vehicle_code, dataTypeVehicleFutureAvailability360, bdplib.CreateRecord(ts, checkAvailabilityAt(avail, now.Add(360*time.Minute)), 300))
 		vechile_dataMap.AddRecord(vehicle_code, dataTypeVehicleFutureAvailability720, bdplib.CreateRecord(ts, checkAvailabilityAt(avail, now.Add(720*time.Minute)), 300))
 		vechile_dataMap.AddRecord(vehicle_code, dataTypeVehicleFutureAvailability1440, bdplib.CreateRecord(ts, checkAvailabilityAt(avail, now.Add(1440*time.Minute)), 300))
@@ -160,6 +163,7 @@ func SyncDataTypes(bdp bdplib.Bdp) {
 	dataTypes = append(dataTypes, bdplib.CreateDataType(dataTypeVehicleFutureAvailability30, "", "Availability in 30 minutes ", "Instantaneous"))
 	dataTypes = append(dataTypes, bdplib.CreateDataType(dataTypeVehicleFutureAvailability60, "", "Availability in 60 minutes ", "Instantaneous"))
 	dataTypes = append(dataTypes, bdplib.CreateDataType(dataTypeVehicleFutureAvailability120, "", "Availability in 120 minutes ", "Instantaneous"))
+	dataTypes = append(dataTypes, bdplib.CreateDataType(dataTypeVehicleFutureAvailability180, "", "Availability in 180 minutes ", "Instantaneous"))
 	dataTypes = append(dataTypes, bdplib.CreateDataType(dataTypeVehicleFutureAvailability360, "", "Availability in 360 minutes ", "Instantaneous"))
 	dataTypes = append(dataTypes, bdplib.CreateDataType(dataTypeVehicleFutureAvailability720, "", "Availability in 720 minutes ", "Instantaneous"))
 	dataTypes = append(dataTypes, bdplib.CreateDataType(dataTypeVehicleFutureAvailability1440, "", "Availability in 1440 minutes ", "Instantaneous"))
@@ -176,12 +180,20 @@ func main() {
 
 	defer tel.FlushOnPanic()
 
-	b := bdplib.FromEnv()
+	b := bdplib.FromEnv(bdplib.BdpEnv{
+		BDP_BASE_URL:           os.Getenv("BDP_BASE_URL"),
+		BDP_PROVENANCE_VERSION: os.Getenv("BDP_PROVENANCE_VERSION"),
+		BDP_PROVENANCE_NAME:    os.Getenv("BDP_PROVENANCE_NAME"),
+		BDP_ORIGIN:             os.Getenv("BDP_ORIGIN"),
+		BDP_TOKEN_URL:          os.Getenv("ODH_TOKEN_URL"),
+		BDP_CLIENT_ID:          os.Getenv("ODH_CLIENT_ID"),
+		BDP_CLIENT_SECRET:      os.Getenv("ODH_CLIENT_SECRET"),
+	})
 
 	SyncDataTypes(b)
 
-	listener := tr.NewTr[Root](context.Background(), env)
-	err := listener.Start(context.Background(), TransformWithBdp(b))
+	listener := tr.NewTr[string](context.Background(), env)
+	err := listener.Start(context.Background(), tr.RawString2JsonMiddleware[Root](TransformWithBdp(b)))
 
 	ms.FailOnError(context.Background(), err, "error while listening to queue")
 }

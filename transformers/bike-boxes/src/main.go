@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
-	"strconv"
 
 	"github.com/noi-techpark/go-bdp-client/bdplib"
 	ms "github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
@@ -81,7 +80,7 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[BikeBoxRawD
 
 	ts := payload.Timestamp.UnixMilli()
 
-	findByLocationId := func(locations []BikeLocation, id int) *BikeLocation {
+	findByLocationId := func(locations []BikeLocation, id FlexID) *BikeLocation {
 		for _, l := range locations {
 			if l.LocationID == id {
 				return &l
@@ -90,7 +89,7 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[BikeBoxRawD
 		return nil
 	}
 
-	findStationById := func(stations []BikeLocationStation, id int) *BikeLocationStation {
+	findStationById := func(stations []BikeLocationStation, id FlexID) *BikeLocationStation {
 		for _, l := range stations {
 			if l.StationID == id {
 				return &l
@@ -195,7 +194,7 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[BikeBoxRawD
 }
 
 func createLocationStation(bdp bdplib.Bdp, locationData BikeLocation) bdplib.Station {
-	stationID := strconv.Itoa(locationData.LocationID)
+	stationID := string(locationData.LocationID)
 
 	station := bdplib.CreateStation(
 		stationID,
@@ -214,7 +213,7 @@ func createLocationStation(bdp bdplib.Bdp, locationData BikeLocation) bdplib.Sta
 }
 
 func createBikeStation(bdp bdplib.Bdp, stationData BikeLocationStation, parentStation bdplib.Station) bdplib.Station {
-	stationID := strconv.Itoa(stationData.StationID)
+	stationID := string(stationData.StationID)
 
 	station := bdplib.CreateStation(
 		stationID,
@@ -229,8 +228,8 @@ func createBikeStation(bdp bdplib.Bdp, stationData BikeLocationStation, parentSt
 	station.ParentStationType = StationTypeLocation
 
 	metadata := make(map[string]interface{})
-	metadata["stationID"] = stationData.StationID
-	metadata["locationID"] = stationData.LocationID
+	metadata["stationID"] = string(stationData.StationID)
+	metadata["locationID"] = string(stationData.LocationID)
 	metadata["type"] = mapBikeStationType(stationData.Type)
 	metadata["totalPlaces"] = stationData.TotalPlaces
 

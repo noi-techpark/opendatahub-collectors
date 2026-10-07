@@ -1,0 +1,29 @@
+rootContext: {}
+stream: false
+
+# Swarco SMI (SWARCO mobility interface) of the Rodeneck/Rodengo parking
+# guidance system. Basic Auth credentials are injected into this file by the
+# deploy workflow (yq) before it is mounted as a configMap — never commit them.
+auth:
+  type: basic
+  username:
+  password:
+
+steps:
+  - type: request
+    name: static
+    request:
+      url: http://195.254.241.29:8081/api/getAllStaticPOIData
+      method: GET
+      headers:
+        Accept: application/json
+    mergeOn: .static = $res
+
+  - type: request
+    name: dynamic
+    request:
+      url: http://195.254.241.29:8081/api/getAllDynamicPOIData
+      method: GET
+      headers:
+        Accept: application/json
+    mergeOn: .dynamic = $res

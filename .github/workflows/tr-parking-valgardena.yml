@@ -16,9 +16,27 @@ env:
   KUBERNETES_NAMESPACE: collector
 
 jobs:
+  tests:
+    runs-on: ubuntu-22.04
+    concurrency: tr-parking-valgardena-tests
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ${{ env.WORKING_DIRECTORY }}/src/go.mod
+
+      - name: Test
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: cd src && go test -v ./...
+
   build:
     runs-on: ubuntu-22.04
     concurrency: tr-parking-valgardena-build
+    needs:
+      - tests
     permissions:
       packages: write
     steps:

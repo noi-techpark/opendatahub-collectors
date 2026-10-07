@@ -18,6 +18,8 @@ github.com/noi-techpark/go-opendatahub-ingest v1.3.1 h1:lfJjn9K2Hza9EE+g/mtDOSfN
 github.com/noi-techpark/go-opendatahub-ingest v1.3.1/go.mod h1:i/2Gbagc/PBHZD7pjW/22WHvc9MBkhJ9RhVhJ/s9h3c=
 github.com/noi-techpark/go-timeseries-client v0.0.0-20241031132739-c45d758598b3 h1:991izyA4IYAgOMZzBKc917V9m138vo6ZnkSNcxjzneA=
 github.com/noi-techpark/go-timeseries-client v0.0.0-20241031132739-c45d758598b3/go.mod h1:HzbXTeKGUegflWeRfgwfQFduX7P7YrZydBfVzeW0D4s=
+github.com/noi-techpark/go-timeseries-client v0.3.2 h1:WfU3VkueEbSsZzZbmfed2JBz9LBn4nHaDO7k64gwMMk=
+github.com/noi-techpark/go-timeseries-client v0.3.2/go.mod h1:HzbXTeKGUegflWeRfgwfQFduX7P7YrZydBfVzeW0D4s=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/rabbitmq/amqp091-go v1.10.0 h1:STpn5XsHlHGcecLmMFCtg7mqq0RnD+zFr4uzukfVhBw=

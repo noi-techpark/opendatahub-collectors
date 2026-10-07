@@ -14,7 +14,8 @@ env:
   BDP_ORIGIN: DRIWE-OCPI
   
   NINJA_URL: http://ninja-api.core.svc.cluster.local
-  
+  LOCATION_CACHE_ENABLED: "false"
+
   LOG_LEVEL: INFO
 
   MQ_EXCHANGE: routed

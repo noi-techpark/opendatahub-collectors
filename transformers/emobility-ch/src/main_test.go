@@ -17,8 +17,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func strPtr(value string) *string { return &value }
-func boolPtr(value bool) *bool    { return &value }
+func strPtr(value string) *string       { return &value }
+func boolPtr(value bool) *bool          { return &value }
+func flexStrPtr(value string) *FlexString { v := FlexString(value); return &v }
 
 func sampleRoot() Root {
 	return Root{
@@ -35,7 +36,7 @@ func sampleRoot() Root {
 						Address: &EVSEAddress{
 							Street:     strPtr("Via Stazione 1"),
 							City:       strPtr("Bolzano"),
-							PostalCode: strPtr("39100"),
+							PostalCode: flexStrPtr("39100"),
 							Country:    strPtr("CH"),
 						},
 						Accessibility:       strPtr("Public"),
@@ -182,6 +183,25 @@ func TestTransform_NumberAvailableMeasurement(t *testing.T) {
 	assert.Contains(t, dmStr, dtNumberAvailable.Name, "DataMap should contain number-available datatype")
 	// single EVSE with status "Available" → count = 1
 	assert.Contains(t, dmStr, "1", "available count should be 1")
+}
+
+// A missing/empty name would make BDP silently reject the station during sync
+// (it never gets persisted under its ID), so later data pushes for that same ID
+// would fail with "station not found". Verify we always fall back to a non-empty name.
+func TestTransform_MissingNameFallsBackToStationID(t *testing.T) {
+	root := sampleRoot()
+	root.EVSEData[0].EVSEDataRecord[0].ChargingStationNames = nil
+	payload, err := json.Marshal(root)
+	require.NoError(t, err)
+	mock := runTransform(t, string(payload))
+
+	calls := mock.Requests()
+
+	parent := calls.SyncedStations[StationTypeStation][0].Stations[0]
+	assert.Equal(t, "OP-1:ST-100", parent.Name, "parent station name should fall back to station ID")
+
+	plug := calls.SyncedStations[StationTypePlug][0].Stations[0]
+	assert.Equal(t, "OP-1:ST-100", plug.Name, "plug station name should fall back to station ID")
 }
 
 func assertExpectedBdpCalls(t *testing.T, calls bdpmock.BdpMockCalls) {

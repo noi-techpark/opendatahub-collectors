@@ -89,9 +89,7 @@ jobs:
             .image.pullPolicy="IfNotPresent" |
 
             .env.BDP_PROVENANCE_NAME="${{ env.PROJECT_NAME }}" |
-            .env.BDP_PROVENANCE_VERSION="${{ github.sha}}" |
-
-            .env.NINJA_URL="https://mobility.api.opendatahub.com"
+            .env.BDP_PROVENANCE_VERSION="${{ github.sha}}"
           ' ${{ env.VALUES_YAML }}
 
       - name: Deploy on cluster  

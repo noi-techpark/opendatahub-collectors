@@ -1,0 +1,20 @@
+# SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+services:
+  app:
+    build:
+      dockerfile: infrastructure/docker/Dockerfile
+      context: . 
+      target: dev
+    env_file:
+      - .env
+    volumes:
+      - ./src:/code
+      - pkg:/go/pkg/mod
+    working_dir: /code
+    # host mode so we can use the port forwards
+    network_mode: host 
+volumes:
+  pkg:

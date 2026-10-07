@@ -1,0 +1,80 @@
+// SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+package main
+
+import (
+	"context"
+	"testing"
+	"time"
+
+	"github.com/noi-techpark/opendatahub-go-sdk/clib"
+	"github.com/noi-techpark/opendatahub-go-sdk/clib/clibmock"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
+	"github.com/noi-techpark/opendatahub-go-sdk/testsuite"
+	"opendatahub.com/tr-siag-museum/dto"
+	odhContentModel "opendatahub.com/tr-siag-museum/odh-content-model"
+)
+
+func Test_Transform_Snapshot(t *testing.T) {
+	// Use mock content client — no real API calls
+	mock := clibmock.NewContentMock()
+	contentClient = mock
+
+	// Empty cache for a clean test (no pre-existing ODH records)
+	poiCache = clib.NewCache[odhContentModel.ODHActivityPoi]()
+
+	// Load test input: a RawData message with all 3 languages
+	var raw dto.RawData
+	err := testsuite.LoadInputData(&raw, "testdata/in_small.json")
+	if err != nil {
+		t.Fatalf("failed to load test data: %v", err)
+	}
+
+	r := &rdb.Raw[dto.RawData]{
+		Rawdata:   raw,
+		Timestamp: time.Date(2026, 1, 15, 10, 0, 0, 0, time.UTC),
+	}
+
+	err = Transform(context.TODO(), r)
+	if err != nil {
+		t.Fatalf("Transform failed: %v", err)
+	}
+
+	calls := mock.Calls()
+
+	var expected clibmock.MockCalls
+	err = testsuite.LoadOutput(&expected, "testdata/out.json")
+	if err != nil {
+		// First run: write the snapshot and pass
+		t.Logf("No snapshot found, generating testdata/out.json")
+		err = testsuite.WriteOutput(calls, "testdata/out.json")
+		if err != nil {
+			t.Fatalf("failed to write snapshot: %v", err)
+		}
+		t.Log("Snapshot generated. Re-run the test to validate.")
+		return
+	}
+
+	clibmock.CompareMockCalls(t, expected, calls)
+}
+
+func Test_Transform_EmptyPayload_NoDeactivation(t *testing.T) {
+	mock := clibmock.NewContentMock()
+	contentClient = mock
+
+	r := &rdb.Raw[dto.RawData]{
+		Rawdata:   dto.RawData{},
+		Timestamp: time.Date(2026, 1, 15, 10, 0, 0, 0, time.UTC),
+	}
+
+	if err := Transform(context.TODO(), r); err != nil {
+		t.Fatalf("Transform failed: %v", err)
+	}
+
+	calls := mock.Calls()
+	if len(calls.Gets)+len(calls.Puts)+len(calls.Posts)+len(calls.PutMultiples) != 0 {
+		t.Fatalf("expected no API calls for an empty payload, got %+v", calls)
+	}
+}

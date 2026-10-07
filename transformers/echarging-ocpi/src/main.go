@@ -8,7 +8,9 @@ import (
 	"fmt"
 	"log/slog"
 	"strconv"
+	"strings"
 	"sync"
+	"time"
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/noi-techpark/go-bdp-client/bdplib"
@@ -17,7 +19,10 @@ import (
 	"github.com/noi-techpark/go-opendatahub-ingest/ms"
 	"github.com/noi-techpark/go-opendatahub-ingest/tr"
 	"github.com/noi-techpark/go-timeseries-client/odhts"
+	"github.com/noi-techpark/go-timeseries-client/where"
 )
+
+const locationCacheTTL = time.Hour
 
 const stationTypeLocation = "EChargingStation"
 const stationTypePlug = "EChargingPlug"
@@ -56,6 +61,8 @@ var cfg struct {
 	MQ_POLL_KEY   string
 
 	NINJA_URL string
+
+	LOCATION_CACHE_ENABLED bool `default:"false"`
 }
 
 type EVSERaw struct {
@@ -68,12 +75,103 @@ type EVSERaw struct {
 	Body OCPIEvse
 }
 
+var ninja odhts.C
+
 func setupNinja() {
-	odhts.C.BaseUrl = cfg.NINJA_URL
-	odhts.C.Referer = cfg.MQ_CONSUMER
+	ninja = odhts.NewCustomClient(cfg.NINJA_URL, "", cfg.MQ_CONSUMER)
 }
 
 var locDataMu = sync.Mutex{}
+
+type locationPlugCache struct {
+	states    map[string]string
+	fetchedAt time.Time
+}
+
+var locationCache = map[string]*locationPlugCache{}
+
+func pushLocationAvailability(b bdplib.Bdp, locationId, plugId, status string, timestamp time.Time) error {
+	locDataMu.Lock()
+	defer locDataMu.Unlock()
+
+	numAvailable, err := availableCount(locationId, plugId, status)
+	if err != nil {
+		return fmt.Errorf("failed determining number of available plugs: %w", err)
+	}
+
+	recs := b.CreateDataMap()
+	recs.AddRecord(locationId, dtNumberAvailable.Name, bdplib.CreateRecord(timestamp.UnixMilli(), numAvailable, period))
+	return b.PushData(stationTypeLocation, recs)
+}
+
+func cacheLocationStates(locationId string, states map[string]string) {
+	if !cfg.LOCATION_CACHE_ENABLED {
+		return
+	}
+	locDataMu.Lock()
+	defer locDataMu.Unlock()
+	locationCache[locationId] = &locationPlugCache{states: states, fetchedAt: time.Now()}
+}
+
+func availableCount(locationId, plugId, status string) (int, error) {
+	if !cfg.LOCATION_CACHE_ENABLED {
+		states, err := fetchPlugStates(locationId)
+		if err != nil {
+			return 0, err
+		}
+		return countAvailable(states), nil
+	}
+
+	entry, ok := locationCache[locationId]
+	if !ok || time.Since(entry.fetchedAt) > locationCacheTTL {
+		states, err := fetchPlugStates(locationId)
+		if err != nil {
+			if !ok {
+				return 0, err
+			}
+			slog.Warn("failed refreshing location plug cache, using stale cache", "locationId", locationId, "err", err)
+		} else {
+			entry = &locationPlugCache{states: states, fetchedAt: time.Now()}
+			locationCache[locationId] = entry
+		}
+	}
+
+	entry.states[plugId] = status
+	return countAvailable(entry.states), nil
+}
+
+func countAvailable(states map[string]string) int {
+	numAvailable := 0
+	for _, s := range states {
+		if s == "AVAILABLE" {
+			numAvailable++
+		}
+	}
+	return numAvailable
+}
+
+func fetchPlugStates(locationId string) (map[string]string, error) {
+	req := odhts.DefaultRequest()
+	req.StationTypes = append(req.StationTypes, stationTypePlug)
+	req.Repr = odhts.FlatNode
+	req.DataTypes = append(req.DataTypes, dtPlugStatus.Name)
+	req.Where = strings.Join([]string{
+		where.Eq("sactive", "true"),
+		where.Eq("pcode", where.Escape(locationId)),
+	}, ",")
+	req.Select = "scode,mvalue"
+
+	res := odhts.Response[[]struct{ Scode, Mvalue string }]{}
+	if err := odhts.Latest(ninja, req, &res); err != nil {
+		return nil, fmt.Errorf("failed requesting sibling plug states: %w", err)
+	}
+
+	states := map[string]string{}
+	for _, d := range res.Data {
+		states[d.Scode] = d.Mvalue
+	}
+	return states, nil
+}
 
 func main() {
 	envconfig.MustProcess("", &cfg)
@@ -97,6 +195,7 @@ func main() {
 			plugData := b.CreateDataMap()
 
 			plugid := stationId(r.Rawdata.Params.Evse_uid, b.GetOrigin())
+			locationId := stationId(r.Rawdata.Params.Location_id, b.GetOrigin())
 			plugData.AddRecord(plugid, dtPlugStatus.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), r.Rawdata.Body.Status, period))
 			if err := b.PushData(stationTypePlug, plugData); err != nil {
 				return fmt.Errorf("error pushing plug data: %w", err)
@@ -105,31 +204,9 @@ func main() {
 
 			// Update parent station "number available data type"
 			go func() {
-				// Mutex this to avoid race conditions with ourselves
-				locDataMu.Lock()
-				defer locDataMu.Unlock()
-
-				req := odhts.DefaultRequest()
-				req.StationTypes = append(req.StationTypes, stationTypePlug)
-				req.Repr = odhts.FlatNode
-				req.DataTypes = append(req.DataTypes, dtPlugStatus.Name)
-				// count available plugs under same parent
-				req.Where = fmt.Sprintf("sactive.eq.true,pcode.eq.\"%s\",mvalue.eq.AVAILABLE", r.Rawdata.Params.Location_id)
-				req.Select = "scode"
-
-				res := odhts.Response[[]struct{ Mvalue string }]{}
-
-				if err := odhts.Latest(req, &res); err != nil {
-					slog.Error("failed requesting sibling plug states", "err", err)
+				if err := pushLocationAvailability(b, locationId, plugid, r.Rawdata.Body.Status, r.Timestamp); err != nil {
+					slog.Error("failed updating location availability", "err", err)
 					return
-				}
-
-				numAvailable := len(res.Data)
-				recs := b.CreateDataMap()
-				locationId := stationId(r.Rawdata.Params.Location_id, b.GetOrigin())
-				recs.AddRecord(locationId, dtNumberAvailable.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), numAvailable, period))
-				if err := b.PushData(stationTypePlug, plugData); err != nil {
-					slog.Error("error pushing location data", "err", err)
 				}
 				slog.Info("Updated location state", "locationid", locationId)
 			}()
@@ -178,6 +255,7 @@ func main() {
 				stations = append(stations, station)
 
 				numAvailable := 0
+				plugStates := map[string]string{}
 
 				for _, evse := range loc.Evses {
 					plug := bdplib.CreateStation(
@@ -204,8 +282,10 @@ func main() {
 						numAvailable++
 					}
 					plugData.AddRecord(plug.Id, dtPlugStatus.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), evse.Status, period))
+					plugStates[plug.Id] = evse.Status
 				}
 
+				cacheLocationStates(station.Id, plugStates)
 				locationData.AddRecord(station.Id, dtNumberAvailable.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), numAvailable, period))
 			}
 

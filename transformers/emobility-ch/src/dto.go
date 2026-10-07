@@ -37,6 +37,27 @@ func (l *ChargingStationNameList) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// FlexString handles the API inconsistency where a field is sometimes a string and sometimes a number.
+type FlexString string
+
+func (f *FlexString) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		*f = ""
+		return nil
+	}
+	if len(data) > 0 && data[0] == '"' {
+		var s string
+		if err := json.Unmarshal(data, &s); err != nil {
+			return err
+		}
+		*f = FlexString(s)
+		return nil
+	}
+	// number or other scalar — take raw representation as string
+	*f = FlexString(data)
+	return nil
+}
+
 // Root holds the top-level payload structure from multi-rest-poller
 // Uses snake_case keys as delivered by the collector
 type Root struct {
@@ -96,7 +117,7 @@ type EVSEAddress struct {
 	HouseNum        *string `json:"HouseNum"`
 	ParkingFacility *bool   `json:"ParkingFacility"`
 	ParkingSpot     *string `json:"ParkingSpot"`
-	PostalCode      *string `json:"PostalCode"`
+	PostalCode      *FlexString `json:"PostalCode"`
 	Region          *string `json:"Region"`
 	Street          *string `json:"Street"`
 	TimeZone        *string `json:"TimeZone"`

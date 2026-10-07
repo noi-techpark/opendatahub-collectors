@@ -6,7 +6,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/noi-techpark/go-bdp-client v1.2.1
 	github.com/noi-techpark/go-opendatahub-ingest v1.3.1
-	github.com/noi-techpark/go-timeseries-client v0.0.0-20241031132739-c45d758598b3
+	github.com/noi-techpark/go-timeseries-client v0.3.2
 )
 
 require (

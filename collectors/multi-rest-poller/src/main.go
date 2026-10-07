@@ -5,13 +5,9 @@
 package main
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"log/slog"
-	"net/http"
-	"net/url"
-	"strings"
 	"time"
 
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/dc"
@@ -41,34 +37,6 @@ var env struct {
 	BASIC_AUTH_PASSWORD string
 
 	AUTH_BEARER_TOKEN string
-
-	RAW_WRITER_REST_BASE_URL string
-}
-
-func sendRaw(baseURL, provider string, timestamp time.Time, data string, contentType string) error {
-	parts := strings.SplitN(provider, "/", 2)
-	if len(parts) != 2 {
-		return fmt.Errorf("PROVIDER must be in the form 'provider1/provider2', got: %s", provider)
-	}
-	p1 := url.PathEscape(parts[0])
-	p2 := url.PathEscape(parts[1])
-	path := fmt.Sprintf("%s/%s/%s/%s", baseURL, p1, p2, url.PathEscape(timestamp.UTC().Format(time.RFC3339)))
-	req, err := http.NewRequest(http.MethodPost, path, bytes.NewBufferString(data))
-	if err != nil {
-		return fmt.Errorf("could not create raw writer request: %w", err)
-	}
-	if contentType != "" {
-		req.Header.Set("Content-Type", contentType)
-	}
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return fmt.Errorf("raw writer request failed: %w", err)
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return fmt.Errorf("raw writer returned non-2xx status %d", resp.StatusCode)
-	}
-	return nil
 }
 
 func main() {
@@ -133,15 +101,11 @@ func main() {
 						)
 					}
 
-					if env.RAW_WRITER_REST_BASE_URL != "" {
-						err = sendRaw(env.RAW_WRITER_REST_BASE_URL, env.PROVIDER, time.Now(), enc_data, contentType)
-					} else {
-						err = col.Publish(pubCtx, &rdb.RawAny{
-							Provider:  env.PROVIDER,
-							Timestamp: time.Now(),
-							Rawdata:   enc_data,
-						})
-					}
+					err = col.Publish(pubCtx, &rdb.RawAny{
+						Timestamp:   time.Now(),
+						Rawdata:     enc_data,
+						ContentType: contentType,
+					})
 					ms.FailOnError(pubCtx, err, "failed to publish", "err", err)
 					pubSpan.End()
 				}
@@ -156,15 +120,11 @@ func main() {
 			enc_data, err := encoder(data)
 			ms.FailOnError(ctx, err, "failed to encode data", "err", err, "data", data)
 
-			if env.RAW_WRITER_REST_BASE_URL != "" {
-				err = sendRaw(env.RAW_WRITER_REST_BASE_URL, env.PROVIDER, time.Now(), enc_data, contentType)
-			} else {
-				err = col.Publish(ctx, &rdb.RawAny{
-					Provider:  env.PROVIDER,
-					Timestamp: time.Now(),
-					Rawdata:   enc_data,
-				})
-			}
+			err = col.Publish(ctx, &rdb.RawAny{
+				Timestamp:   time.Now(),
+				Rawdata:     enc_data,
+				ContentType: contentType,
+			})
 			ms.FailOnError(ctx, err, "failed to publish", "err", err)
 		}
 

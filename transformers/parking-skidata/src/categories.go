@@ -1,162 +1,165 @@
-// SPDX-FileCopyrightText: 2025 NOI Techpark <digital@noi.bz.it>
+// SPDX-FileCopyrightText: 2026 NOI Techpark <digital@noi.bz.it>
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 package main
 
-import (
-	"context"
-	"os"
-	"strings"
+import "sort"
 
-	"github.com/gocarina/gocsv"
-	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
+// Counting categories describe what a facility contains: its carparks, and per
+// counting category the capacity and limits. They are collected by
+// rest-push-skidata as a second flow and read here keyed by facility.
+//
+// They are the only source for two things a push event cannot supply. An event
+// describes one carpark and one category, so it can never state the
+// facility→carpark topology, and it carries a capacity that for some carparks
+// is a live quota rather than a fact.
+
+// Counting category ids used by the provider. They are stable across every
+// facility — verified against four months of production traffic and against
+// every counting-categories response: category 3 is the total everywhere
+// ("Totale" or "Gesamt", never anything else), and no other id ever carries
+// those names.
+const (
+	catShortStay   = 1
+	catSubscribers = 2
+	catTotal       = 3
 )
 
-// CountingCategoryRow is one entry of resources/counting_categories.csv.
-// Rows are produced by the sync-stations script in collectors/rest-push-skidata.
-// Together they describe the per-(facility, carpark, category) capacity/limits
-// reported by Skidata's countingcategories endpoint.
-type CountingCategoryRow struct {
-	FacilityId         string `csv:"facility_id"`
-	CarparkId          int    `csv:"carpark_id"`
-	CountingCategoryId int    `csv:"counting_category_id"`
-	Name               string `csv:"name"`
-	Capacity           int    `csv:"capacity"`
-	OccupancyLimit     int    `csv:"occupancy_limit"`
-	FreeLimit          int    `csv:"free_limit"`
+const (
+	// capacityUnknown is published when the provider does not state a usable
+	// capacity. It is a value, not an absence: a station has to say "I do not
+	// know" rather than imply a number nobody can act on.
+	capacityUnknown = -1
+
+	// sentinelCapacity is what the provider sends for a carpark with no
+	// configured limit. Taken literally it produced free counts near ten
+	// thousand, and facility aggregates near twenty thousand.
+	sentinelCapacity = 9999
+)
+
+// CountingCategory is one row of the provider's countingcategories response,
+// as republished by the collector.
+type CountingCategory struct {
+	CarparkId          int    `json:"carparkId"`
+	CountingCategoryId int    `json:"countingCategoryId"`
+	Name               string `json:"name"`
+	Capacity           int    `json:"capacity"`
+	OccupancyLimit     int    `json:"occupancyLimit"`
+	FreeLimit          int    `json:"freeLimit"`
 }
 
-type CountingCategories []CountingCategoryRow
+// FacilityCategories is one facility's complete category list — the payload of
+// a single document in the counting-categories collection.
+type FacilityCategories []CountingCategory
 
-func ReadCountingCategories(filename string) CountingCategories {
-	f, err := os.Open(filename)
-	ms.FailOnError(context.Background(), err, "failed opening counting_categories.csv")
-	defer f.Close()
-
-	var rows CountingCategories
-	err = gocsv.UnmarshalFile(f, &rows)
-	ms.FailOnError(context.Background(), err, "failed unmarshalling counting_categories.csv")
-	return rows
-}
-
-// ReadCountingCategoriesOptional reads a counting_categories CSV like
-// ReadCountingCategories but returns an empty slice if the file does not
-// exist. Used to merge in optional overlays like `*.dev.csv` that aren't
-// shipped to production.
-func ReadCountingCategoriesOptional(filename string) CountingCategories {
-	f, err := os.Open(filename)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return nil
-		}
-		ms.FailOnError(context.Background(), err, "failed opening optional counting_categories.csv")
-	}
-	defer f.Close()
-
-	var rows CountingCategories
-	err = gocsv.UnmarshalFile(f, &rows)
-	ms.FailOnError(context.Background(), err, "failed unmarshalling optional counting_categories.csv")
-	return rows
-}
-
-// ForFacility returns all category rows belonging to the given facility id.
-func (c CountingCategories) ForFacility(facilityId string) []CountingCategoryRow {
-	var out []CountingCategoryRow
-	for _, row := range c {
-		if row.FacilityId == facilityId {
-			out = append(out, row)
+// CarparkIDs returns the facility's carpark ids, sorted.
+//
+// This is the topology, and it is why the flow exists: a facility total is the
+// sum over its carparks, so it cannot be computed without knowing which
+// carparks there are before any of them has reported.
+func (f FacilityCategories) CarparkIDs() []int {
+	seen := map[int]bool{}
+	out := []int{}
+	for _, c := range f {
+		if !seen[c.CarparkId] {
+			seen[c.CarparkId] = true
+			out = append(out, c.CarparkId)
 		}
 	}
+	sort.Ints(out)
 	return out
 }
 
-// ForCarpark returns all category rows for a specific (facility, carpark).
-func (c CountingCategories) ForCarpark(facilityId string, carparkId int) []CountingCategoryRow {
-	var out []CountingCategoryRow
-	for _, row := range c {
-		if row.FacilityId == facilityId && row.CarparkId == carparkId {
-			out = append(out, row)
+// TotalCapacity returns a carpark's overall capacity — the category-3 entry,
+// normalised. Returns capacityUnknown when there is no total row or the
+// provider sent the sentinel.
+//
+// Only the total is read. The per-category capacities are a live quota for at
+// least two carparks (short-stay and subscribers repartitioning a fixed pool
+// minute by minute, always summing to the total), so storing them would be
+// recording a measurement as though it were a fact.
+func (f FacilityCategories) TotalCapacity(carparkID int) int {
+	for _, c := range f {
+		if c.CarparkId == carparkID && c.CountingCategoryId == catTotal {
+			return normalizeCapacity(c.Capacity)
 		}
 	}
-	return out
+	return capacityUnknown
 }
 
-// Find returns the row for the given (facility, carpark, category), or nil.
-func (c CountingCategories) Find(facilityId string, carparkId, categoryId int) *CountingCategoryRow {
-	for i := range c {
-		row := c[i]
-		if row.FacilityId == facilityId && row.CarparkId == carparkId && row.CountingCategoryId == categoryId {
-			return &row
+// FacilityCapacity sums the known carpark totals.
+//
+// Carparks whose capacity is unknown contribute nothing rather than zero, and a
+// facility where none is known is itself unknown — a partial sum presented as a
+// total is the failure this whole change is about.
+func (f FacilityCategories) FacilityCapacity() int {
+	sum, known := 0, false
+	for _, id := range f.CarparkIDs() {
+		if c := f.TotalCapacity(id); c != capacityUnknown {
+			sum += c
+			known = true
 		}
 	}
-	return nil
+	if !known {
+		return capacityUnknown
+	}
+	return sum
 }
 
-// catDescriptor names the metadata-key suffix and BDP datatype for one
-// counting category id. Categories 1/2/3 use the legacy fixed naming
-// (short_stay/subscribers/no-suffix-for-total) for backward compatibility
-// with previously published BDP entities; unknown category ids get a
-// suffix derived from their Skidata name (e.g. "Autobus" → "autobus").
-type catDescriptor struct {
-	// suffix is appended after an underscore. Empty ("") means no suffix
-	// (used for the "total" category — datatype names are just "free" and
-	// "occupied"; metadata keys are "capacity", "free_limit", etc.).
-	suffix string
+// normalizeCapacity turns anything unusable into capacityUnknown.
+func normalizeCapacity(v int) int {
+	if v >= sentinelCapacity || v < 0 {
+		return capacityUnknown
+	}
+	return v
 }
 
-func descriptorFor(id int, name string) catDescriptor {
-	switch id {
-	case 1:
-		return catDescriptor{suffix: "short_stay"}
-	case 2:
-		return catDescriptor{suffix: "subscribers"}
-	case 3:
-		return catDescriptor{suffix: ""}
+// suffixFor maps a counting category id to its datatype suffix, and reports
+// whether the category is published at all.
+//
+// Only the total, short stay and subscribers are kept. Everything else the
+// provider sends — per-floor occupancy arriving as countingAreaId, and the
+// site-specific categories — is dropped here rather than deeper down, so there
+// is exactly one place that decides what reaches the public API.
+func suffixFor(categoryID int) (string, bool) {
+	switch categoryID {
+	case catTotal:
+		return "", true
+	case catShortStay:
+		return "short_stay", true
+	case catSubscribers:
+		return "subscribers", true
 	default:
-		return catDescriptor{suffix: slugify(name)}
+		return "", false
 	}
 }
 
-func (d catDescriptor) freeType() string {
-	if d.suffix == "" {
+func freeType(suffix string) string {
+	if suffix == "" {
 		return "free"
 	}
-	return "free_" + d.suffix
+	return "free_" + suffix
 }
 
-func (d catDescriptor) occupiedType() string {
-	if d.suffix == "" {
+func occupiedType(suffix string) string {
+	if suffix == "" {
 		return "occupied"
 	}
-	return "occupied_" + d.suffix
+	return "occupied_" + suffix
 }
 
-// metaKey returns "<prefix>" if suffix is empty, otherwise "<prefix>_<suffix>".
-func (d catDescriptor) metaKey(prefix string) string {
-	if d.suffix == "" {
-		return prefix
-	}
-	return prefix + "_" + d.suffix
-}
+// publishedSuffixes is the complete, fixed set. It no longer depends on what
+// the provider happens to send, which is what allows the datatype registration
+// to be static.
+var publishedSuffixes = []string{"", "short_stay", "subscribers"}
 
-// slugify lower-cases and replaces any non-alphanumeric run with "_".
-// Trailing/leading underscores are trimmed. Empty input returns "unknown".
-func slugify(s string) string {
-	var b strings.Builder
-	prevSep := true
-	for _, r := range strings.ToLower(s) {
-		if (r >= 'a' && r <= 'z') || (r >= '0' && r <= '9') {
-			b.WriteRune(r)
-			prevSep = false
-		} else if !prevSep {
-			b.WriteByte('_')
-			prevSep = true
-		}
+// allDataTypeNames returns every datatype this transformer publishes, sorted.
+func allDataTypeNames() []string {
+	out := make([]string, 0, 2*len(publishedSuffixes))
+	for _, s := range publishedSuffixes {
+		out = append(out, freeType(s), occupiedType(s))
 	}
-	out := strings.Trim(b.String(), "_")
-	if out == "" {
-		return "unknown"
-	}
+	sort.Strings(out)
 	return out
 }

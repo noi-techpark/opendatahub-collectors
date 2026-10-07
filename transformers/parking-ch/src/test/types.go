@@ -5,27 +5,29 @@
 // Package test contains integration tests for the parking-ch transformer
 package test
 
+import "encoding/json"
+
 // GeoJSON structures matching the transformer DTO
 type GeoJSONGeometry struct {
-	Type        string    `json:"type"`
-	Coordinates []float64 `json:"coordinates"` // [longitude, latitude]
+	Type        string          `json:"type"`
+	Coordinates json.RawMessage `json:"coordinates"`
+}
+
+type GeoJSONGeometryCollection struct {
+	Type       string            `json:"type"`
+	Geometries []GeoJSONGeometry `json:"geometries"`
 }
 
 type GeoJSONFeature struct {
-	Type       string                 `json:"type"`
-	ID         string                 `json:"id"`
-	Geometry   GeoJSONGeometry        `json:"geometry"`
-	Properties map[string]interface{} `json:"properties"`
-}
-
-type GeoJSONFeatureCollection struct {
-	Type     string           `json:"type"`
-	Features []GeoJSONFeature `json:"features"`
+	Type       string                    `json:"type"`
+	ID         string                    `json:"id"`
+	Geometry   GeoJSONGeometryCollection `json:"geometry"`
+	Properties map[string]interface{}    `json:"properties"`
 }
 
 type ParkingData struct {
-	BikeParking GeoJSONFeatureCollection `json:"bike_parking"`
-	CarParking  GeoJSONFeatureCollection `json:"car_parking"`
+	Type     string           `json:"type"`
+	Features []GeoJSONFeature `json:"features"`
 }
 
 // TestMetrics holds statistics about test data
@@ -37,21 +39,22 @@ type TestMetrics struct {
 
 // Helper to count test data
 func (p ParkingData) GetMetrics() TestMetrics {
-	measurements := 0
-	for _, feature := range p.CarParking.Features {
+	var metrics TestMetrics
+	for _, feature := range p.Features {
 		props := feature.Properties
 		if props == nil {
 			continue
 		}
+		switch props["parkingFacilityCategory"] {
+		case "BIKE":
+			metrics.BikeFeatures++
+		case "CAR":
+			metrics.CarFeatures++
+		}
 		if props["currentEstimatedOccupancy"] != nil ||
-			props["currentEstimatedOccupancyLevel"] != nil ||
-			props["predictedForecastedOccupancy"] != nil {
-			measurements++
+			props["currentEstimatedOccupancyLevel"] != nil {
+			metrics.Measurements++
 		}
 	}
-	return TestMetrics{
-		BikeFeatures: len(p.BikeParking.Features),
-		CarFeatures:  len(p.CarParking.Features),
-		Measurements: measurements,
-	}
+	return metrics
 }

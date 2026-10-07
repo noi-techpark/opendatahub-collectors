@@ -6,9 +6,8 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"os"
-	"sort"
 	"testing"
 	"time"
 
@@ -19,78 +18,11 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// NormalizeBdpMockCalls sorts all slices contained within the BdpMockCalls structure
-// so that comparisons between expected and actual calls are order-independent.
-func NormalizeBdpMockCalls(calls *bdpmock.BdpMockCalls) {
-	// Normalize SyncedDataTypes: map[string][][]bdplib.DataType
-	dataTypesCalls := calls.SyncedDataTypes
-	// For each call (a slice of DataType slices)
-	for i := range dataTypesCalls {
-		// Sort each inner slice by a string representation.
-		sort.Slice(dataTypesCalls[i], func(a, b int) bool {
-			return fmt.Sprintf("%v", dataTypesCalls[i][a]) < fmt.Sprintf("%v", dataTypesCalls[i][b])
-		})
-	}
-	// Sort the outer slice by comparing the string representation of each inner slice.
-	sort.Slice(dataTypesCalls, func(i, j int) bool {
-		return dataTypeSliceToString(dataTypesCalls[i]) < dataTypeSliceToString(dataTypesCalls[j])
-	})
-	calls.SyncedDataTypes = dataTypesCalls
-
-	// Normalize SyncedData: map[string][]bdplib.DataMap
-	for key, dataMaps := range calls.SyncedData {
-		// Assuming each DataMap has a Name field you can sort by.
-		sort.Slice(dataMaps, func(i, j int) bool {
-			return dataMaps[i].Name < dataMaps[j].Name
-		})
-		calls.SyncedData[key] = dataMaps
-	}
-
-	// Normalize SyncedStations: map[string][]BdpMockStationCall
-	for key, stationCalls := range calls.SyncedStations {
-		// First, sort the Stations slice in each call.
-		for i := range stationCalls {
-			sort.Slice(stationCalls[i].Stations, func(a, b int) bool {
-				// Assuming each Station has an Id field.
-				return stationCalls[i].Stations[a].Id < stationCalls[i].Stations[b].Id
-			})
-		}
-		// Then, sort the slice of BdpMockStationCall.
-		sort.Slice(stationCalls, func(i, j int) bool {
-			// Compare based on the first station's Id, or length if empty.
-			var idI, idJ string
-			if len(stationCalls[i].Stations) > 0 {
-				idI = stationCalls[i].Stations[0].Id
-			}
-			if len(stationCalls[j].Stations) > 0 {
-				idJ = stationCalls[j].Stations[0].Id
-			}
-			if idI == idJ {
-				// Fall back to comparing SyncState and OnlyActivate if needed.
-				if stationCalls[i].SyncState == stationCalls[j].SyncState {
-					return !stationCalls[i].OnlyActivate && stationCalls[j].OnlyActivate
-				}
-				return !stationCalls[i].SyncState && stationCalls[j].SyncState
-			}
-			return idI < idJ
-		})
-		calls.SyncedStations[key] = stationCalls
-	}
-}
-
-// dataTypeSliceToString converts a slice of bdplib.DataType into a string representation.
-// This is used for sorting slices of DataType.
-func dataTypeSliceToString(slice []bdplib.DataType) string {
-	s := ""
-	for _, dt := range slice {
-		s += fmt.Sprintf("%v", dt)
-	}
-	return s
-}
+const goldenPath = "../testdata/output/out.json"
 
 func Test(t *testing.T) {
 	var in = Root{}
-	err := bdpmock.LoadInputData(&in, "../testdata/input/in.json")
+	err := testsuite.LoadInputData(&in, "../testdata/input/in.json")
 	require.Nil(t, err)
 
 	timestamp, err := time.Parse(time.RFC3339, "2025-04-02T13:00:03+02:00")
@@ -101,28 +33,24 @@ func Test(t *testing.T) {
 		Timestamp: timestamp,
 	}
 
-	var out = bdpmock.BdpMockCalls{}
-	err = bdpmock.LoadOutput(&out, "../testdata/output/out.json")
-	require.Nil(t, err)
-
-	b := bdpmock.MockFromEnv()
+	b := bdpmock.MockFromEnv(bdplib.BdpEnv{})
 
 	err = Transform(context.TODO(), b, &raw)
 	require.Nil(t, err)
 
-	mock := b.(*bdpmock.BdpMock)
+	req := b.(*bdpmock.BdpMock).Requests()
 
-	req := mock.Requests()
-	NormalizeBdpMockCalls(&req)
+	// Delete the golden file to regenerate it from a run. It then agrees with
+	// whatever the code does at that moment, regression included, so read the
+	// diff before committing one.
+	if _, err := os.Stat(goldenPath); errors.Is(err, os.ErrNotExist) {
+		require.Nil(t, testsuite.WriteOutput(req, goldenPath))
+		t.Logf("wrote %s from this run; review the diff before committing it", goldenPath)
+		return
+	}
 
-	// save and reload from file because otherwise we get issues with metadata ordering
-	tmp, err := os.CreateTemp("", "req-*.json")
-	require.Nil(t, err)
-	defer os.Remove(tmp.Name())
-	defer tmp.Close()
-	bdpmock.WriteOutput(req, tmp.Name())
-	err = bdpmock.LoadOutput(&req, tmp.Name())
-	require.Nil(t, err)
+	var out = bdpmock.BdpMockCalls{}
+	require.Nil(t, testsuite.LoadOutput(&out, goldenPath))
 
-	testsuite.DeepEqualFromFile(t, out, req)
+	bdpmock.CompareBdpMockCalls(t, out, req)
 }

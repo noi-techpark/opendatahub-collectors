@@ -12,6 +12,7 @@ import (
 
 var Config struct {
 	LogLevel     string `default:"INFO"`
+	ServerPort   string `default:"8080"`
 	RabbitURL    string `default:"amqp://rabbitmq:5672"`
 	SwaggerURL   string `default:"http://localhost:8081"`
 	AuthURL      string `default:"https://auth.opendatahub.testingmachine.eu/auth/"`

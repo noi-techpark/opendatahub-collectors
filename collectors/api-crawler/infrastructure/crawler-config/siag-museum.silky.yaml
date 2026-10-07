@@ -1,0 +1,28 @@
+# SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+rootContext: {}
+stream: false   # each item appended to rootContext is published as its own message
+
+steps:
+  # iterate over each supported language
+  - type: forValues
+    name: Iterate over languages
+    values: ["de", "it", "en"]
+    as: language
+    steps:
+
+      # fetch the complete museum list for this language
+      # Returns: { "items": [ {...}, {...}, ... ], "pagination": {...} }
+      - type: request
+        name: "Fetch museums (language={{ .language }})"
+        request:
+          url: "https://api.integrations.services.siag.it/pub/cocweb/musport/opendata/api/items?system.type=museum&includeTotalCount=true&language={{ .language }}"
+          method: GET
+          headers:
+            Accept: application/json
+
+        # Unwrap the items array so forEach below can iterate over it
+        resultTransformer: ".items"
+        mergeOn: .[$ctx.language] = $res

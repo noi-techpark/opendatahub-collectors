@@ -36,14 +36,6 @@ type CountingCategory struct {
 	FreeLimit          int    `json:"freeLimit"`
 }
 
-// ParseCredentials parses the JSON blob from the SKIDATA_CREDENTIALS_JSON
-// env var (or credentials.json file) into a slice of FacilityCredential.
-func ParseCredentials(jsonBlob []byte) ([]FacilityCredential, error) {
-	var creds []FacilityCredential
-	err := json.Unmarshal(jsonBlob, &creds)
-	return creds, err
-}
-
 // NewHTTPClient returns a retryable HTTP client suitable for talking to the
 // Skidata API (silent logger, default retry/backoff policy).
 func NewHTTPClient() *http.Client {

@@ -200,6 +200,14 @@ func processStaticData(evseOperators []EVSEOperator) (plugStations []bdplib.Stat
 			}
 		}
 
+		// BDP rejects stations with an empty name during sync (without erroring the request),
+		// so an unnamed station never actually gets persisted under its ID. Any later data push
+		// referencing that same ID then fails with "station not found", even though the ID matches.
+		// Fall back to the station ID itself so the station always passes validation and gets synced.
+		if refName == "" {
+			refName = stationID
+		}
+
 		parent := bdplib.Station{
 			Id:          stationID,
 			Name:        refName,

@@ -1,0 +1,822 @@
+{
+  "de": [
+    {
+      "elements": {
+        "description": {
+          "images": {},
+          "links": {},
+          "modular_content": [],
+          "name": "Description",
+          "type": "rich_text",
+          "value": "<p>Wanduhren, Schnitzereien, Masken, Flaschenstöpsel, Korkenzieher, Pfeifen, Kaffeemühlen und Küchengeräte, religiöse Gegenstände,&nbsp;Oldtimer und Motorräder, etwa mehrere Vespas,&nbsp;zählen zur privaten Sammlung der Familie Trebo. Die Objekte erzählen Geschichten aus den letzten 150 Jahren und sind auf die unterschiedlichen Räume des Hotels verteilt.</p>"
+        },
+        "districts": {
+          "name": "Districts",
+          "taxonomy_group": "districts",
+          "type": "taxonomy",
+          "value": [
+            {
+              "codename": "pustertal_val_pusteria",
+              "name": "Pustertal|Val Pusteria|Pustertal|Pustertal"
+            }
+          ]
+        },
+        "e_mail": {
+          "name": "E-mail",
+          "type": "text",
+          "value": "info@alplan.it"
+        },
+        "fee": {
+          "images": {},
+          "links": {},
+          "modular_content": [],
+          "name": "Fee",
+          "type": "rich_text",
+          "value": "<p><br></p>"
+        },
+        "geocoordinate_x": {
+          "name": "Geocoordinate X",
+          "type": "text",
+          "value": "12.033979"
+        },
+        "geocoordinate_y": {
+          "name": "Geocoordinate Y",
+          "type": "text",
+          "value": "46.6377536"
+        },
+        "id": {
+          "name": "ID",
+          "type": "number",
+          "value": 1564
+        },
+        "main_image": {
+          "name": "Main Image",
+          "type": "asset",
+          "value": [
+            {
+              "description": "Al Plan Dolomites Hotel Museum. Foto Al Plan Dolomites Hotel Museum",
+              "height": 2160,
+              "name": "1564_id_1305.JPG",
+              "renditions": {},
+              "size": 4080640,
+              "type": "image/jpeg",
+              "url": "https://assets-eu-01.kc-usercontent.com:443/8a6432cf-178a-0187-1f9c-fbc60d24042f/597750fd-d3ad-42e9-9f97-53bbbc4eeda9/1564_id_1305.JPG",
+              "width": 3840
+            }
+          ]
+        },
+        "municipality": {
+          "name": "Municipality",
+          "type": "text",
+          "value": "St. Vigil in Enneberg"
+        },
+        "mus": {
+          "name": "MUS",
+          "type": "text",
+          "value": ""
+        },
+        "museum_association": {
+          "name": "Museum Association",
+          "type": "multiple_choice",
+          "value": []
+        },
+        "museum_categories": {
+          "name": "Museum Categories",
+          "taxonomy_group": "museum_categories",
+          "type": "taxonomy",
+          "value": [
+            {
+              "codename": "art",
+              "name": "Kunst|Arte|Kunst|Art"
+            },
+            {
+              "codename": "culture",
+              "name": "Kultur|Cultura|Kultur|Culture"
+            }
+          ]
+        },
+        "museum_offerings": {
+          "name": "Museum Offerings",
+          "taxonomy_group": "museum_offerings",
+          "type": "taxonomy",
+          "value": [
+            {
+              "codename": "mondays_open",
+              "name": "montags geöffnet|lunedì aperto|montags geöffnet|open mondays"
+            },
+            {
+              "codename": "free_entry",
+              "name": "freier Eintritt|ingresso libero|freier Eintritt|free entry"
+            }
+          ]
+        },
+        "museum_services": {
+          "name": "Museum Services",
+          "taxonomy_group": "museum_services",
+          "type": "taxonomy",
+          "value": [
+            {
+              "codename": "offers_for_schools",
+              "name": "Angebote für Schulen|offerte per scuole|Angebote für Schulen|offers for schools"
+            },
+            {
+              "codename": "barrier_free",
+              "name": "barrierefrei|senza barriere|barrierefrei|barrier-free"
+            },
+            {
+              "codename": "offers_for_children",
+              "name": "Angebote für Kinder|offerte per bambini|Angebote für Kinder|offers for children"
+            },
+            {
+              "codename": "parking",
+              "name": "Parkmöglichkeit in der Nähe|parcheggio nelle vicinanze|Parkmöglichkeit in der Nähe|parking nearby"
+            }
+          ]
+        },
+        "opening_hours": {
+          "images": {},
+          "links": {},
+          "modular_content": [],
+          "name": "Opening Hours",
+          "type": "rich_text",
+          "value": "<p>Dez-März, Juni-Sep<br>täglich geöffnet 10-18 Uhr</p>"
+        },
+        "paramuseum": {
+          "name": "Paramuseum",
+          "type": "multiple_choice",
+          "value": [
+            {
+              "codename": "yes",
+              "name": "Yes"
+            }
+          ]
+        },
+        "phone": {
+          "name": "Phone",
+          "type": "text",
+          "value": "+39 0474 501025"
+        },
+        "phone_2": {
+          "name": "Phone 2",
+          "type": "text",
+          "value": ""
+        },
+        "photo_gallery": {
+          "name": "Photo gallery",
+          "type": "asset",
+          "value": [
+            {
+              "description": "Al Plan Dolomites Hotel Museum. Foto Al Plan Dolomites Hotel Museum",
+              "height": 2160,
+              "name": "1564_id_1305.JPG",
+              "renditions": {},
+              "size": 4080640,
+              "type": "image/jpeg",
+              "url": "https://assets-eu-01.kc-usercontent.com:443/8a6432cf-178a-0187-1f9c-fbc60d24042f/597750fd-d3ad-42e9-9f97-53bbbc4eeda9/1564_id_1305.JPG",
+              "width": 3840
+            },
+            {
+              "description": "Al Plan Dolomites Hotel Museum. Foto Al Plan Dolomites Hotel Museum",
+              "height": 2160,
+              "name": "1564_id_1306.JPG",
+              "renditions": {},
+              "size": 3878912,
+              "type": "image/jpeg",
+              "url": "https://assets-eu-01.kc-usercontent.com:443/8a6432cf-178a-0187-1f9c-fbc60d24042f/6d3515c7-77cb-4686-8c4b-66bc72f24dbc/1564_id_1306.JPG",
+              "width": 3840
+            },
+            {
+              "description": "Al Plan Dolomites Hotel Museum. Foto Al Plan Dolomites Hotel Museum",
+              "height": 3168,
+              "name": "1564_id_1302.JPG",
+              "renditions": {},
+              "size": 3431424,
+              "type": "image/jpeg",
+              "url": "https://assets-eu-01.kc-usercontent.com:443/8a6432cf-178a-0187-1f9c-fbc60d24042f/2a067ff7-cb46-4de2-9e08-8f7e6f4a7a28/1564_id_1302.JPG",
+              "width": 2376
+            },
+            {
+              "description": "Al Plan Dolomites Hotel Museum. Foto Al Plan Dolomites Hotel Museum",
+              "height": 3168,
+              "name": "1564_id_1304.JPG",
+              "renditions": {},
+              "size": 2459648,
+              "type": "image/jpeg",
+              "url": "https://assets-eu-01.kc-usercontent.com:443/8a6432cf-178a-0187-1f9c-fbc60d24042f/0cfe3353-3069-40c2-b6dd-8c63b57b42d8/1564_id_1304.JPG",
+              "width": 2376
+            },
+            {
+              "description": "Al Plan Dolomites Hotel Museum. Foto Helmuth Rier",
+              "height": 1667,
+              "name": "1564_id_1628.jpg",
+              "renditions": {},
+              "size": 539648,
+              "type": "image/jpeg",
+              "url": "https://assets-eu-01.kc-usercontent.com:443/8a6432cf-178a-0187-1f9c-fbc60d24042f/c7459a09-4e6e-4206-b0a3-bcf7f247f9b0/1564_id_1628.jpg",
+              "width": 2500
+            },
+            {
+              "description": "Al Plan Dolomites Hotel Museum. Foto Helmuth Rier",
+              "height": 1667,
+              "name": "1564_id_1627.jpg",
+              "renditions": {},
+              "size": 804864,
+              "type": "image/jpeg",
+              "url": "https://assets-eu-01.kc-usercontent.com:443/8a6432cf-178a-0187-1f9c-fbc60d24042f/a908af10-4723-4a99-b274-531bb9a00f46/1564_id_1627.jpg",
+              "width": 2500
+            }
+          ]
+        },
+        "provincial_museum": {
+          "name": "Provincial Museum",
+          "type": "multiple_choice",
+          "value": []
+        },
+        "street": {
+          "name": "Street",
+          "type": "text",
+          "value": "Ciasè Straße 11"
+        },
+        "title": {
+          "name": "Title",
+          "type": "text",
+          "value": "Al Plan Dolomites Hotel Museum"
+        },
+        "url": {
+          "name": "URL",
+          "type": "url_slug",
+          "value": "al-plan-dolomites-hotel-museum"
+        },
+        "web": {
+          "name": "Web",
+          "type": "text",
+          "value": "https://www.alplan.it"
+        },
+        "zip_code": {
+          "name": "Zip Code",
+          "type": "text",
+          "value": "39030"
+        }
+      },
+      "system": {
+        "codename": "al_plan_dolomites_hotel_museum",
+        "collection": "default",
+        "id": "ec4a4788-28d0-41b2-b5ec-d0cfa352f0b0",
+        "language": "de",
+        "last_modified": "2024-06-19T09:44:13.9745296Z",
+        "name": "Al Plan Dolomites Hotel Museum",
+        "sitemap_locations": [],
+        "type": "museum",
+        "workflow": "default",
+        "workflow_step": "published"
+      }
+    }
+  ],
+
+  "en": [
+    {
+      "elements": {
+        "description": {
+          "images": {},
+          "links": {},
+          "modular_content": [],
+          "name": "Description",
+          "type": "rich_text",
+          "value": "<p>Wall clocks, carvings, masks, bottle stoppers, corkscrews, pipes, coffee grinders and kitchen equipment, religious objects, antique cars and motorcycles, such as several Vespas, are part of the Trebo family’s private collection. The objects tell stories from the last 150 years and are distributed across different rooms of the hotel.</p>"
+        },
+        "districts": {
+          "name": "Districts",
+          "taxonomy_group": "districts",
+          "type": "taxonomy",
+          "value": [
+            {
+              "codename": "pustertal_val_pusteria",
+              "name": "Pustertal|Val Pusteria|Pustertal|Pustertal"
+            }
+          ]
+        },
+        "e_mail": {
+          "name": "E-mail",
+          "type": "text",
+          "value": "info@alplan.it"
+        },
+        "fee": {
+          "images": {},
+          "links": {},
+          "modular_content": [],
+          "name": "Fee",
+          "type": "rich_text",
+          "value": "<p><br></p>"
+        },
+        "geocoordinate_x": {
+          "name": "Geocoordinate X",
+          "type": "text",
+          "value": "12.033979"
+        },
+        "geocoordinate_y": {
+          "name": "Geocoordinate Y",
+          "type": "text",
+          "value": "46.6377536"
+        },
+        "id": {
+          "name": "ID",
+          "type": "number",
+          "value": 1564
+        },
+        "main_image": {
+          "name": "Main Image",
+          "type": "asset",
+          "value": [
+            {
+              "description": "Al Plan Dolomites Hotel Museum. Foto Al Plan Dolomites Hotel Museum",
+              "height": 2160,
+              "name": "1564_id_1305.JPG",
+              "renditions": {},
+              "size": 4080640,
+              "type": "image/jpeg",
+              "url": "https://assets-eu-01.kc-usercontent.com:443/8a6432cf-178a-0187-1f9c-fbc60d24042f/597750fd-d3ad-42e9-9f97-53bbbc4eeda9/1564_id_1305.JPG",
+              "width": 3840
+            }
+          ]
+        },
+        "municipality": {
+          "name": "Municipality",
+          "type": "text",
+          "value": "St. Vigil in Enneberg"
+        },
+        "mus": {
+          "name": "MUS",
+          "type": "text",
+          "value": ""
+        },
+        "museum_association": {
+          "name": "Museum Association",
+          "type": "multiple_choice",
+          "value": []
+        },
+        "museum_categories": {
+          "name": "Museum Categories",
+          "taxonomy_group": "museum_categories",
+          "type": "taxonomy",
+          "value": [
+            {
+              "codename": "art",
+              "name": "Kunst|Arte|Kunst|Art"
+            },
+            {
+              "codename": "culture",
+              "name": "Kultur|Cultura|Kultur|Culture"
+            }
+          ]
+        },
+        "museum_offerings": {
+          "name": "Museum Offerings",
+          "taxonomy_group": "museum_offerings",
+          "type": "taxonomy",
+          "value": [
+            {
+              "codename": "mondays_open",
+              "name": "montags geöffnet|lunedì aperto|montags geöffnet|open mondays"
+            },
+            {
+              "codename": "free_entry",
+              "name": "freier Eintritt|ingresso libero|freier Eintritt|free entry"
+            }
+          ]
+        },
+        "museum_services": {
+          "name": "Museum Services",
+          "taxonomy_group": "museum_services",
+          "type": "taxonomy",
+          "value": [
+            {
+              "codename": "offers_for_schools",
+              "name": "Angebote für Schulen|offerte per scuole|Angebote für Schulen|offers for schools"
+            },
+            {
+              "codename": "barrier_free",
+              "name": "barrierefrei|senza barriere|barrierefrei|barrier-free"
+            },
+            {
+              "codename": "offers_for_children",
+              "name": "Angebote für Kinder|offerte per bambini|Angebote für Kinder|offers for children"
+            },
+            {
+              "codename": "parking",
+              "name": "Parkmöglichkeit in der Nähe|parcheggio nelle vicinanze|Parkmöglichkeit in der Nähe|parking nearby"
+            }
+          ]
+        },
+        "opening_hours": {
+          "images": {},
+          "links": {},
+          "modular_content": [],
+          "name": "Opening Hours",
+          "type": "rich_text",
+          "value": "<p>Dec-March, Juni-Sep<br>open daily 10 am-6 pm</p>"
+        },
+        "paramuseum": {
+          "name": "Paramuseum",
+          "type": "multiple_choice",
+          "value": [
+            {
+              "codename": "yes",
+              "name": "Yes"
+            }
+          ]
+        },
+        "phone": {
+          "name": "Phone",
+          "type": "text",
+          "value": "+39 0474 501025"
+        },
+        "phone_2": {
+          "name": "Phone 2",
+          "type": "text",
+          "value": ""
+        },
+        "photo_gallery": {
+          "name": "Photo gallery",
+          "type": "asset",
+          "value": [
+            {
+              "description": "Al Plan Dolomites Hotel Museum. Foto Al Plan Dolomites Hotel Museum",
+              "height": 2160,
+              "name": "1564_id_1305.JPG",
+              "renditions": {},
+              "size": 4080640,
+              "type": "image/jpeg",
+              "url": "https://assets-eu-01.kc-usercontent.com:443/8a6432cf-178a-0187-1f9c-fbc60d24042f/597750fd-d3ad-42e9-9f97-53bbbc4eeda9/1564_id_1305.JPG",
+              "width": 3840
+            },
+            {
+              "description": "Al Plan Dolomites Hotel Museum. Foto Al Plan Dolomites Hotel Museum",
+              "height": 2160,
+              "name": "1564_id_1306.JPG",
+              "renditions": {},
+              "size": 3878912,
+              "type": "image/jpeg",
+              "url": "https://assets-eu-01.kc-usercontent.com:443/8a6432cf-178a-0187-1f9c-fbc60d24042f/6d3515c7-77cb-4686-8c4b-66bc72f24dbc/1564_id_1306.JPG",
+              "width": 3840
+            },
+            {
+              "description": "Al Plan Dolomites Hotel Museum. Foto Al Plan Dolomites Hotel Museum",
+              "height": 3168,
+              "name": "1564_id_1302.JPG",
+              "renditions": {},
+              "size": 3431424,
+              "type": "image/jpeg",
+              "url": "https://assets-eu-01.kc-usercontent.com:443/8a6432cf-178a-0187-1f9c-fbc60d24042f/2a067ff7-cb46-4de2-9e08-8f7e6f4a7a28/1564_id_1302.JPG",
+              "width": 2376
+            },
+            {
+              "description": "Al Plan Dolomites Hotel Museum. Foto Al Plan Dolomites Hotel Museum",
+              "height": 3168,
+              "name": "1564_id_1304.JPG",
+              "renditions": {},
+              "size": 2459648,
+              "type": "image/jpeg",
+              "url": "https://assets-eu-01.kc-usercontent.com:443/8a6432cf-178a-0187-1f9c-fbc60d24042f/0cfe3353-3069-40c2-b6dd-8c63b57b42d8/1564_id_1304.JPG",
+              "width": 2376
+            },
+            {
+              "description": "Al Plan Dolomites Hotel Museum. Foto Helmuth Rier",
+              "height": 1667,
+              "name": "1564_id_1628.jpg",
+              "renditions": {},
+              "size": 539648,
+              "type": "image/jpeg",
+              "url": "https://assets-eu-01.kc-usercontent.com:443/8a6432cf-178a-0187-1f9c-fbc60d24042f/c7459a09-4e6e-4206-b0a3-bcf7f247f9b0/1564_id_1628.jpg",
+              "width": 2500
+            },
+            {
+              "description": "Al Plan Dolomites Hotel Museum. Foto Helmuth Rier",
+              "height": 1667,
+              "name": "1564_id_1627.jpg",
+              "renditions": {},
+              "size": 804864,
+              "type": "image/jpeg",
+              "url": "https://assets-eu-01.kc-usercontent.com:443/8a6432cf-178a-0187-1f9c-fbc60d24042f/a908af10-4723-4a99-b274-531bb9a00f46/1564_id_1627.jpg",
+              "width": 2500
+            }
+          ]
+        },
+        "provincial_museum": {
+          "name": "Provincial Museum",
+          "type": "multiple_choice",
+          "value": []
+        },
+        "street": {
+          "name": "Street",
+          "type": "text",
+          "value": ""
+        },
+        "title": {
+          "name": "Title",
+          "type": "text",
+          "value": "Al Plan Dolomites Hotel Museum"
+        },
+        "url": {
+          "name": "URL",
+          "type": "url_slug",
+          "value": "al-plan-dolomites-hotel-museum"
+        },
+        "web": {
+          "name": "Web",
+          "type": "text",
+          "value": "https://www.alplan.it"
+        },
+        "zip_code": {
+          "name": "Zip Code",
+          "type": "text",
+          "value": "39030"
+        }
+      },
+      "system": {
+        "codename": "al_plan_dolomites_hotel_museum",
+        "collection": "default",
+        "id": "ec4a4788-28d0-41b2-b5ec-d0cfa352f0b0",
+        "language": "en",
+        "last_modified": "2024-06-19T09:45:38.7352561Z",
+        "name": "Al Plan Dolomites Hotel Museum",
+        "sitemap_locations": [],
+        "type": "museum",
+        "workflow": "default",
+        "workflow_step": "published"
+      }
+    }
+  ],
+  "it": [
+    {
+      "elements": {
+        "description": {
+          "images": {},
+          "links": {},
+          "modular_content": [],
+          "name": "Description",
+          "type": "rich_text",
+          "value": "<p>Orologi a muro, opere in legno intagliato, maschere, tappi di bottiglia, cavatappi, pipe, macinini per il caffè e utensili da cucina, oggetti religiosi, oldtimer e motociclette, come diversi modelli di Vespa: fanno parte della collezione della famiglia Trebo. Raccontano storie anche di 150 anni fa e sono disseminati nei diversi locali dell’hotel.</p>"
+        },
+        "districts": {
+          "name": "Districts",
+          "taxonomy_group": "districts",
+          "type": "taxonomy",
+          "value": [
+            {
+              "codename": "pustertal_val_pusteria",
+              "name": "Pustertal|Val Pusteria|Pustertal|Pustertal"
+            }
+          ]
+        },
+        "e_mail": {
+          "name": "E-mail",
+          "type": "text",
+          "value": "info@alplan.it"
+        },
+        "fee": {
+          "images": {},
+          "links": {},
+          "modular_content": [],
+          "name": "Fee",
+          "type": "rich_text",
+          "value": "<p><br></p>"
+        },
+        "geocoordinate_x": {
+          "name": "Geocoordinate X",
+          "type": "text",
+          "value": "12.033979"
+        },
+        "geocoordinate_y": {
+          "name": "Geocoordinate Y",
+          "type": "text",
+          "value": "46.6377536"
+        },
+        "id": {
+          "name": "ID",
+          "type": "number",
+          "value": 1564
+        },
+        "main_image": {
+          "name": "Main Image",
+          "type": "asset",
+          "value": [
+            {
+              "description": "Al Plan Dolomites Hotel Museo. Foto Al Plan Dolomites Hotel Museo",
+              "height": 2160,
+              "name": "1564_id_1305.JPG",
+              "renditions": {},
+              "size": 4080640,
+              "type": "image/jpeg",
+              "url": "https://assets-eu-01.kc-usercontent.com:443/8a6432cf-178a-0187-1f9c-fbc60d24042f/597750fd-d3ad-42e9-9f97-53bbbc4eeda9/1564_id_1305.JPG",
+              "width": 3840
+            }
+          ]
+        },
+        "municipality": {
+          "name": "Municipality",
+          "type": "text",
+          "value": "San Vigilio di Marebbe"
+        },
+        "mus": {
+          "name": "MUS",
+          "type": "text",
+          "value": ""
+        },
+        "museum_association": {
+          "name": "Museum Association",
+          "type": "multiple_choice",
+          "value": []
+        },
+        "museum_categories": {
+          "name": "Museum Categories",
+          "taxonomy_group": "museum_categories",
+          "type": "taxonomy",
+          "value": [
+            {
+              "codename": "art",
+              "name": "Kunst|Arte|Kunst|Art"
+            },
+            {
+              "codename": "culture",
+              "name": "Kultur|Cultura|Kultur|Culture"
+            }
+          ]
+        },
+        "museum_offerings": {
+          "name": "Museum Offerings",
+          "taxonomy_group": "museum_offerings",
+          "type": "taxonomy",
+          "value": [
+            {
+              "codename": "mondays_open",
+              "name": "montags geöffnet|lunedì aperto|montags geöffnet|open mondays"
+            },
+            {
+              "codename": "free_entry",
+              "name": "freier Eintritt|ingresso libero|freier Eintritt|free entry"
+            }
+          ]
+        },
+        "museum_services": {
+          "name": "Museum Services",
+          "taxonomy_group": "museum_services",
+          "type": "taxonomy",
+          "value": [
+            {
+              "codename": "offers_for_schools",
+              "name": "Angebote für Schulen|offerte per scuole|Angebote für Schulen|offers for schools"
+            },
+            {
+              "codename": "barrier_free",
+              "name": "barrierefrei|senza barriere|barrierefrei|barrier-free"
+            },
+            {
+              "codename": "offers_for_children",
+              "name": "Angebote für Kinder|offerte per bambini|Angebote für Kinder|offers for children"
+            },
+            {
+              "codename": "parking",
+              "name": "Parkmöglichkeit in der Nähe|parcheggio nelle vicinanze|Parkmöglichkeit in der Nähe|parking nearby"
+            }
+          ]
+        },
+        "opening_hours": {
+          "images": {},
+          "links": {},
+          "modular_content": [],
+          "name": "Opening Hours",
+          "type": "rich_text",
+          "value": "<p>dic-marzo, giu-sett<br>aperto tutti i giorni ore 10-18</p>"
+        },
+        "paramuseum": {
+          "name": "Paramuseum",
+          "type": "multiple_choice",
+          "value": [
+            {
+              "codename": "yes",
+              "name": "Yes"
+            }
+          ]
+        },
+        "phone": {
+          "name": "Phone",
+          "type": "text",
+          "value": "+39 0474 501025"
+        },
+        "phone_2": {
+          "name": "Phone 2",
+          "type": "text",
+          "value": ""
+        },
+        "photo_gallery": {
+          "name": "Photo gallery",
+          "type": "asset",
+          "value": [
+            {
+              "description": "Al Plan Dolomites Hotel Museo. Foto Al Plan Dolomites Hotel Museo",
+              "height": 2160,
+              "name": "1564_id_1305.JPG",
+              "renditions": {},
+              "size": 4080640,
+              "type": "image/jpeg",
+              "url": "https://assets-eu-01.kc-usercontent.com:443/8a6432cf-178a-0187-1f9c-fbc60d24042f/597750fd-d3ad-42e9-9f97-53bbbc4eeda9/1564_id_1305.JPG",
+              "width": 3840
+            },
+            {
+              "description": "Al Plan Dolomites Hotel Museo. Foto Al Plan Dolomites Hotel Museo",
+              "height": 2160,
+              "name": "1564_id_1306.JPG",
+              "renditions": {},
+              "size": 3878912,
+              "type": "image/jpeg",
+              "url": "https://assets-eu-01.kc-usercontent.com:443/8a6432cf-178a-0187-1f9c-fbc60d24042f/6d3515c7-77cb-4686-8c4b-66bc72f24dbc/1564_id_1306.JPG",
+              "width": 3840
+            },
+            {
+              "description": "Al Plan Dolomites Hotel Museo. Foto Al Plan Dolomites Hotel Museo",
+              "height": 3168,
+              "name": "1564_id_1302.JPG",
+              "renditions": {},
+              "size": 3431424,
+              "type": "image/jpeg",
+              "url": "https://assets-eu-01.kc-usercontent.com:443/8a6432cf-178a-0187-1f9c-fbc60d24042f/2a067ff7-cb46-4de2-9e08-8f7e6f4a7a28/1564_id_1302.JPG",
+              "width": 2376
+            },
+            {
+              "description": "Al Plan Dolomites Hotel Museo. Foto Al Plan Dolomites Hotel Museo",
+              "height": 3168,
+              "name": "1564_id_1304.JPG",
+              "renditions": {},
+              "size": 2459648,
+              "type": "image/jpeg",
+              "url": "https://assets-eu-01.kc-usercontent.com:443/8a6432cf-178a-0187-1f9c-fbc60d24042f/0cfe3353-3069-40c2-b6dd-8c63b57b42d8/1564_id_1304.JPG",
+              "width": 2376
+            },
+            {
+              "description": "Al Plan Dolomites Hotel Museo. Foto Helmuth Rier",
+              "height": 1667,
+              "name": "1564_id_1628.jpg",
+              "renditions": {},
+              "size": 539648,
+              "type": "image/jpeg",
+              "url": "https://assets-eu-01.kc-usercontent.com:443/8a6432cf-178a-0187-1f9c-fbc60d24042f/c7459a09-4e6e-4206-b0a3-bcf7f247f9b0/1564_id_1628.jpg",
+              "width": 2500
+            },
+            {
+              "description": "Al Plan Dolomites Hotel Museo. Foto Helmuth Rier",
+              "height": 1667,
+              "name": "1564_id_1627.jpg",
+              "renditions": {},
+              "size": 804864,
+              "type": "image/jpeg",
+              "url": "https://assets-eu-01.kc-usercontent.com:443/8a6432cf-178a-0187-1f9c-fbc60d24042f/a908af10-4723-4a99-b274-531bb9a00f46/1564_id_1627.jpg",
+              "width": 2500
+            }
+          ]
+        },
+        "provincial_museum": {
+          "name": "Provincial Museum",
+          "type": "multiple_choice",
+          "value": []
+        },
+        "street": {
+          "name": "Street",
+          "type": "text",
+          "value": "via Ciasè, 11"
+        },
+        "title": {
+          "name": "Title",
+          "type": "text",
+          "value": "Al Plan Dolomites Hotel Museo"
+        },
+        "url": {
+          "name": "URL",
+          "type": "url_slug",
+          "value": "al-plan-dolomites-hotel-museo"
+        },
+        "web": {
+          "name": "Web",
+          "type": "text",
+          "value": "https://www.alplan.it"
+        },
+        "zip_code": {
+          "name": "Zip Code",
+          "type": "text",
+          "value": "39030"
+        }
+      },
+      "system": {
+        "codename": "al_plan_dolomites_hotel_museum",
+        "collection": "default",
+        "id": "ec4a4788-28d0-41b2-b5ec-d0cfa352f0b0",
+        "language": "it",
+        "last_modified": "2025-02-06T15:09:14.4587219Z",
+        "name": "Al Plan Dolomites Hotel Museum",
+        "sitemap_locations": [],
+        "type": "museum",
+        "workflow": "default",
+        "workflow_step": "published"
+      }
+    }
+  ]
+}

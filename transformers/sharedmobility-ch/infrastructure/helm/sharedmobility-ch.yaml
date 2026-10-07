@@ -25,6 +25,7 @@ env:
   BDP_ORIGIN: sharedmobility-ch
 
   RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
+  RAW_WRITER_URL: http://raw-writer-2.core.svc.cluster.local
 
   SERVICE_NAME: tr-sharedmobility-ch
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317

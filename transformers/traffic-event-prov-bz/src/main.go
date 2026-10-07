@@ -142,7 +142,13 @@ func Transform(ctx context.Context, r *rdb.Raw[[]dto.TrafficEvent]) error {
 			continue
 		}
 		ann := entry.Entity
-		ann.EndTime = &sourceTime
+		// Only close announcements the provider left open-ended. A planned end
+		// date from the feed is the better answer than "the batch that stopped
+		// listing it", and overwriting it rewrites future end dates to now on
+		// every restart.
+		if ann.EndTime == nil {
+			ann.EndTime = &sourceTime
+		}
 		ann.Mapping.ProviderProvinceBz.SyncTime = sourceTime
 		list = append(list, ann)
 		annCache.Delete(id)

@@ -7,6 +7,7 @@ on:
       - "!transformers/parking-offstreet-skidata/infrastructure/helm/**"
       - "transformers/parking-offstreet-skidata/infrastructure/helm/parking-offstreet-skidata*"
       - "transformers/parking-offstreet-skidata/src/**"
+      - "transformers/parking-offstreet-skidata/resources/**"
       - ".github/workflows/tr-parking-offstreet-skidata.yml"     
 
 env:
