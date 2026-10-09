@@ -8,7 +8,7 @@ env:
   MQ_CLIENT: dc-api-crawler-dss-skiareas
   PROVIDER: api-crawler/dss-skiareas
 
-  CRON: "0 40 1,13 * * *"
+  CRON: "0 40 1 * * *"
   CONFIG_PATH: "/config/config.yaml"
 
   SERVICE_NAME: dc-api-crawler-dss-skiareas
