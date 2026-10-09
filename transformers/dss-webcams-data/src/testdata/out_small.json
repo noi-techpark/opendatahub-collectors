@@ -1,0 +1,66 @@
+{
+  "Id": "dss_2848",
+  "WebcamId": "dss_2848",
+  "Shortname": "Alba - Ciampac panorama 360°",
+  "Source": "dss",
+  "Active": true,
+  "SmgActive": true,
+  "OdhActive": true,
+  "FirstImport": "2026-01-15T10:00:00Z",
+  "HasLanguage": ["de", "it", "en"],
+  "Mapping": { "dss": { "pid": "2848", "skiresort": "Val di Fassa" } },
+  "Detail": {
+    "de": { "Title": "Alba - Ciampac panorama 360°", "Language": "de" },
+    "en": { "Title": "Alba - Ciampac panorama 360°", "Language": "en" },
+    "it": { "Title": "Alba - Ciampac panorama 360°", "Language": "it" }
+  },
+  "Webcamname": {
+    "de": "Alba - Ciampac panorama 360°",
+    "en": "Alba - Ciampac panorama 360°",
+    "it": "Alba - Ciampac panorama 360°"
+  },
+  "ContactInfos": {},
+  "Webcamurl": "https://panodata.panomax.com/cams/1674/skiareaciampac.jpg",
+  "Streamurl": "https://ciampac.panomax.com/?cu=en-GB",
+  "GpsInfo": [
+    {
+      "Gpstype": "position",
+      "Altitude": 2306,
+      "Latitude": 46.436910495781,
+      "Longitude": 11.764104366302,
+      "AltitudeUnitofMeasure": "m"
+    }
+  ],
+  "GpsPoints": {
+    "position": {
+      "Gpstype": "position",
+      "Altitude": 2306,
+      "Latitude": 46.436910495781,
+      "Longitude": 11.764104366302,
+      "AltitudeUnitofMeasure": "m"
+    }
+  },
+  "ImageGallery": [
+    {
+      "ImageUrl": "https://panodata.panomax.com/cams/1674/skiareaciampac.jpg",
+      "ImageDesc": {},
+      "ImageName": "Alba - Ciampac panorama 360°",
+      "ImageTitle": {},
+      "ImageSource": "dss",
+      "IsInGallery": true,
+      "ImageAltText": {},
+      "ListPosition": 0
+    }
+  ],
+  "WebCamProperties": {
+    "StreamUrl": "https://ciampac.panomax.com/?cu=en-GB",
+    "WebcamUrl": "https://panodata.panomax.com/cams/1674/skiareaciampac.jpg"
+  },
+  "PublishedOn": [],
+  "LicenseInfo": {
+    "Author": "",
+    "License": "CC0",
+    "ClosedData": false,
+    "LicenseHolder": "https://www.dolomitisuperski.com"
+  }
+}

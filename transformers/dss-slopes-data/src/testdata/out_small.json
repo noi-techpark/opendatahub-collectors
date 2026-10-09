@@ -1,0 +1,115 @@
+{
+  "apiPath": "ODHActivityPoi",
+  "queryParams": { "generateid": "false" },
+  "payload": {
+    "Id": "dss_187043",
+    "Shortname": "2000",
+    "Active": true,
+    "Source": "dss",
+    "FirstImport": "2026-01-15T10:00:00Z",
+    "LastChange": "2026-03-30T07:18:09Z",
+    "HasLanguage": ["de", "it", "en"],
+    "Mapping": {
+      "dss": {
+        "pid": "187043",
+        "regionId": "12",
+        "rid": "10365",
+        "skiresort_pid": "53",
+        "skiresort_rid": "173"
+      }
+    },
+    "TagIds": ["activity", "slope red", "slopes", "other", "other slopes"],
+    "SmgTags": [
+      "winter",
+      "skirundtouren pisten",
+      "pisten",
+      "ski alpin",
+      "piste",
+      "weitere pisten",
+      "rote piste",
+      "activity"
+    ],
+    "GpsInfo": [
+      {
+        "Gpstype": "position",
+        "Altitude": 1520,
+        "Latitude": 46.405995612431,
+        "Longitude": 12.085690498352,
+        "AltitudeUnitofMeasure": "m"
+      }
+    ],
+    "LicenseInfo": {
+      "Author": "",
+      "License": "CC0",
+      "ClosedData": false,
+      "LicenseHolder": "https://www.dolomitisuperski.com"
+    },
+    "Detail": {
+      "de": { "Title": "2000", "Language": "de" },
+      "en": { "Title": "2000", "Language": "en" },
+      "it": { "Title": "2000", "Language": "it" }
+    },
+    "ContactInfos": {},
+    "AdditionalPoiInfos": {
+      "de": {
+        "Novelty": "",
+        "PoiType": null,
+        "SubType": null,
+        "Language": "de",
+        "MainType": null,
+        "Categories": ["Pisten"]
+      },
+      "en": {
+        "Novelty": "",
+        "PoiType": null,
+        "SubType": null,
+        "Language": "en",
+        "MainType": null,
+        "Categories": ["Slopes"]
+      },
+      "it": {
+        "Novelty": "",
+        "PoiType": null,
+        "SubType": null,
+        "Language": "it",
+        "MainType": null,
+        "Categories": ["Piste"]
+      }
+    },
+    "AdditionalProperties": {},
+    "PoiProperty": {},
+    "SmgActive": true,
+    "OdhActive": true,
+    "PublishedOn": [],
+    "SyncUpdateMode": "Full",
+    "SyncSourceInterface": "dssslopebase",
+    "CustomId": "10365",
+    "DistanceLength": 1989,
+    "DistanceDuration": 0.1,
+    "AltitudeLowestPoint": 1910,
+    "AltitudeHighestPoint": 1520,
+    "AltitudeDifference": 390,
+    "BikeTransport": false,
+    "Number": "31",
+    "Difficulty": "2",
+    "IsOpen": false,
+    "GpsTrack": [
+      {
+        "Id": null,
+        "Type": "detailed",
+        "Format": "kml",
+        "GpxTrackUrl": "https://www.dolomitisuperski.com/file/?uuidSlope=1fdddda3-e1ae-4891-bad9-c4292b766311",
+        "GpxTrackDesc": {}
+      }
+    ],
+    "GpsPoints": {
+      "position": {
+        "Gpstype": "position",
+        "Altitude": 1520,
+        "Latitude": 46.405995612431,
+        "Longitude": 12.085690498352,
+        "AltitudeUnitofMeasure": "m"
+      }
+    }
+  }
+}

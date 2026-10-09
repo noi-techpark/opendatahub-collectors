@@ -1,0 +1,158 @@
+{
+  "Id": "DSS_2848",
+  "Self": "https://tourism.api.opendatahub.com/v1/WebcamInfo/DSS_2848",
+  "Areas": [],
+  "_Meta": {
+    "Id": "DSS_2848",
+    "Type": "webcam",
+    "Source": "dss",
+    "Reduced": false,
+    "LastUpdate": "2024-01-12T09:45:50.4930301+00:00",
+    "UpdateInfo": {
+      "UpdatedBy": "dss.webcam.import",
+      "UpdateSource": "http://tourism.importer.opendatahub.com/DSS/Webcam"
+    }
+  },
+  "Active": true,
+  "Detail": {
+    "de": {
+      "Title": "Alba - Ciampac panorama 360°",
+      "Header": null,
+      "BaseText": null,
+      "Keywords": null,
+      "Language": "de",
+      "MetaDesc": null,
+      "AuthorTip": null,
+      "IntroText": null,
+      "MetaTitle": null,
+      "SubHeader": null,
+      "SafetyInfo": null,
+      "ParkingInfo": null,
+      "GetThereText": null,
+      "EquipmentInfo": null,
+      "AdditionalText": null,
+      "PublicTransportationInfo": null
+    },
+    "en": {
+      "Title": "Alba - Ciampac panorama 360°",
+      "Header": null,
+      "BaseText": null,
+      "Keywords": null,
+      "Language": "en",
+      "MetaDesc": null,
+      "AuthorTip": null,
+      "IntroText": null,
+      "MetaTitle": null,
+      "SubHeader": null,
+      "SafetyInfo": null,
+      "ParkingInfo": null,
+      "GetThereText": null,
+      "EquipmentInfo": null,
+      "AdditionalText": null,
+      "PublicTransportationInfo": null
+    },
+    "it": {
+      "Title": "Alba - Ciampac panorama 360°",
+      "Header": null,
+      "BaseText": null,
+      "Keywords": null,
+      "Language": "it",
+      "MetaDesc": null,
+      "AuthorTip": null,
+      "IntroText": null,
+      "MetaTitle": null,
+      "SubHeader": null,
+      "SafetyInfo": null,
+      "ParkingInfo": null,
+      "GetThereText": null,
+      "EquipmentInfo": null,
+      "AdditionalText": null,
+      "PublicTransportationInfo": null
+    }
+  },
+  "Source": "dss",
+  "AreaIds": null,
+  "GpsInfo": [
+    {
+      "Gpstype": "position",
+      "Altitude": 2306,
+      "Latitude": 46.436910495781,
+      "Longitude": 11.764104366302,
+      "AltitudeUnitofMeasure": "m"
+    }
+  ],
+  "Mapping": {
+    "dss": {
+      "pid": "2848",
+      "skiresort": "Val di Fassa"
+    }
+  },
+  "ODHTags": [],
+  "SmgTags": null,
+  "WebcamId": "dss_2848",
+  "GpsPoints": {
+    "position": {
+      "Gpstype": "position",
+      "Altitude": 2306,
+      "Latitude": 46.436910495781,
+      "Longitude": 11.764104366302,
+      "AltitudeUnitofMeasure": "m"
+    }
+  },
+  "OdhActive": true,
+  "Shortname": "Alba - Ciampac panorama 360°",
+  "SmgActive": true,
+  "Streamurl": "https://ciampac.panomax.com/?cu=en-GB",
+  "Webcamurl": "https://panodata.panomax.com/cams/1674/skiareaciampac.jpg",
+  "LastChange": "2024-01-12T09:45:50.4930301+00:00",
+  "Previewurl": null,
+  "VideoItems": null,
+  "Webcamname": {
+    "de": "Alba - Ciampac panorama 360°",
+    "en": "Alba - Ciampac panorama 360°",
+    "it": "Alba - Ciampac panorama 360°"
+  },
+  "FirstImport": "2024-01-12T09:45:50.4893143+00:00",
+  "HasLanguage": ["de", "it", "en"],
+  "LicenseInfo": {
+    "Author": "",
+    "License": "",
+    "ClosedData": false,
+    "LicenseHolder": "https://www.dolomitisuperski.com"
+  },
+  "PublishedOn": null,
+  "ContactInfos": {},
+  "ImageGallery": [
+    {
+      "Width": null,
+      "Height": null,
+      "License": null,
+      "ValidTo": null,
+      "ImageUrl": "https://panodata.panomax.com/cams/1674/skiareaciampac.jpg",
+      "CopyRight": null,
+      "ImageDesc": {},
+      "ImageName": "Alba - Ciampac panorama 360°",
+      "ImageTags": null,
+      "ValidFrom": null,
+      "ImageTitle": {},
+      "ImageSource": "dss",
+      "IsInGallery": true,
+      "ImageAltText": {},
+      "ListPosition": 0,
+      "LicenseHolder": null
+    }
+  ],
+  "ListPosition": null,
+  "WebCamProperties": {
+    "HasVR": null,
+    "TourCam": null,
+    "HtmlEmbed": null,
+    "StreamUrl": "https://ciampac.panomax.com/?cu=en-GB",
+    "WebcamUrl": "https://panodata.panomax.com/cams/1674/skiareaciampac.jpg",
+    "PreviewUrl": null,
+    "ViewerType": null,
+    "ZeroDirection": null,
+    "ViewAngleDegree": null
+  },
+  "WebcamAssignedOn": null
+}

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<kml>
+<Document id="root_doc">
+<Schema name="594" id="594">
+	<SimpleField name="pid" type="int"></SimpleField>
+</Schema>
+<Folder><name>594</name>
+  <Placemark>
+	<ExtendedData><SchemaData schemaUrl="#594">
+		<SimpleData name="name">Castelir - Le Fassane</SimpleData>
+		<SimpleData name="pid">594</SimpleData>
+	</SchemaData></ExtendedData>
+     <MultiGeometry><LineString><coordinates>11.68806792428,46.31319228408 11.68822354695,46.3133580513 11.69291234352,46.31841443686 11.69304449305,46.31858565101 11.6935375164,46.3190886216 11.69791372653,46.32380791479 11.69809013631,46.32401813725 </coordinates></LineString></MultiGeometry>
+  </Placemark>
+</Folder>
+</Document></kml>

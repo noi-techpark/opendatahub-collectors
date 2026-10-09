@@ -1,0 +1,29 @@
+rootContext: {}
+stream: false
+
+steps:
+  # ── Webcams ─────────────────────────────────────────────────────────────────
+  - type: request
+    name: "Fetch DSS Webcams"
+    request:
+      url: "https://www.dolomitisuperski.com/jsonexport/export/webcams"
+      method: GET
+      auth:
+        type: basic
+        username: "${DSS_USERNAME}"
+        password: "${DSS_PASSWORD}"
+    resultTransformer: "."
+    mergeOn: .dssWebcams = $res
+
+  # ── SKI AREAS (talschaften, to resolve the SkiArea of a webcam) ─────────────
+  - type: request
+    name: "Fetch DSS Ski Areas"
+    request:
+      url: "https://www.dolomitisuperski.com/jsonexport/export/talschaften"
+      method: GET
+      auth:
+        type: basic
+        username: "${DSS_USERNAME}"
+        password: "${DSS_PASSWORD}"
+    resultTransformer: "."
+    mergeOn: .dssSkiAreas = $res
