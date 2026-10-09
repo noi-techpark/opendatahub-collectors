@@ -541,8 +541,10 @@ func nameWithFallback(m dto.DssMultilang, lang string) string {
 	return ""
 }
 
+// The API trims texts, so they are trimmed here too; otherwise the hash of an
+// unchanged record would differ from the loaded one on every run.
 func nilableFromMultilang(m dto.DssMultilang, lang string) *string {
-	val := stringFromMultilang(m, lang)
+	val := strings.TrimSpace(stringFromMultilang(m, lang))
 	if val == "" {
 		return nil
 	}

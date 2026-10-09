@@ -133,7 +133,7 @@ type LicenseInfo struct {
 	Author        string `json:"Author"`
 	License       string `json:"License"`
 	ClosedData    bool   `json:"ClosedData"`
-	LicenseHolder string `json:"LicenseHolder"`
+	LicenseHolder string `json:"LicenseHolder" hash:"ignore"` // assigned by the API
 }
 
 // GpsInfo matches the full ODH shape.

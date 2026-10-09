@@ -317,7 +317,7 @@ func mapLiftToPoi(lift dto.DssLift, base *odhmodel.ODHActivityPoi) odhmodel.ODHA
 		SyncSourceInterface:  SYNC_INTERFACE,
 		CustomId:             strconv.FormatInt(lift.Rid, 10),
 		IsOpen:               isOpen,
-		Number:               lift.Number,
+		Number:               strings.TrimSpace(lift.Number), // the API trims it
 		BikeTransport:        &lift.Data.BikeTransport,
 		DistanceLength:       lift.Data.Length,
 		DistanceDuration:     distDuration,
@@ -710,8 +710,10 @@ func nameWithFallback(m dto.DssMultilang, lang string) string {
 	return ""
 }
 
+// The API trims texts, so they are trimmed here too; otherwise the hash of an
+// unchanged record would differ from the loaded one on every run.
 func nilableFromMultilang(m dto.DssMultilang, lang string) *string {
-	val := stringFromMultilang(m, lang)
+	val := strings.TrimSpace(stringFromMultilang(m, lang))
 	if val == "" {
 		return nil
 	}

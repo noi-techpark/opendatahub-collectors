@@ -377,7 +377,7 @@ func mapSlopeToPoi(slope dto.DssSlope, base *odhmodel.ODHActivityPoi, skiAreaRid
 		SyncSourceInterface:  SYNC_INTERFACE,
 		CustomId:             strconv.FormatInt(slope.Rid, 10),
 		IsOpen:               isOpen,
-		Number:               slope.Number,
+		Number:               strings.TrimSpace(slope.Number), // the API trims it
 		// FIX B+E: set both Difficulty and Ratings.Difficulty — mirrors C# exactly
 		Difficulty: difficulty,
 		Ratings:    &odhmodel.Ratings{Difficulty: difficulty},
@@ -631,8 +631,10 @@ func nameWithFallback(m dto.DssMultilang, lang string) string {
 	return ""
 }
 
+// The API trims texts, so they are trimmed here too; otherwise the hash of an
+// unchanged record would differ from the loaded one on every run.
 func nilableFromMultilang(m dto.DssMultilang, lang string) *string {
-	val := stringFromMultilang(m, lang)
+	val := strings.TrimSpace(stringFromMultilang(m, lang))
 	if val == "" {
 		return nil
 	}

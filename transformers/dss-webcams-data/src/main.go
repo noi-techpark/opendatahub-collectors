@@ -206,9 +206,9 @@ func mapWebcamToODH(cam dto.DssWebcam, base *odhmodel.WebcamInfo, skiAreaRid str
 
 	// Shortname: first non-empty name across de/it/en
 	shortname := firstNonEmpty(
-		stringVal(cam.Name.De),
-		stringVal(cam.Name.It),
-		stringVal(cam.Name.En),
+		stringFromMultilang(cam.Name, "de"),
+		stringFromMultilang(cam.Name, "it"),
+		stringFromMultilang(cam.Name, "en"),
 	)
 
 	// Preserve FirstImport from cache; set now only on first create
@@ -449,6 +449,8 @@ func (r skiAreaResolver) rid(cam dto.DssWebcam) string {
 	return match
 }
 
+// stringFromMultilang returns the trimmed text: the API trims names, so an
+// untrimmed one would change the hash of an unchanged webcam on every run.
 func stringFromMultilang(m dto.DssMultilang, lang string) string {
 	var ptr *string
 	switch lang {
@@ -459,7 +461,7 @@ func stringFromMultilang(m dto.DssMultilang, lang string) string {
 	case "en":
 		ptr = m.En
 	}
-	return stringVal(ptr)
+	return strings.TrimSpace(stringVal(ptr))
 }
 
 // stringVal safely dereferences a *string, returning "" for nil.
