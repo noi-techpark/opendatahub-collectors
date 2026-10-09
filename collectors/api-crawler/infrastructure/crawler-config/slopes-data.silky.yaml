@@ -1,0 +1,30 @@
+rootContext: {}
+stream: false
+
+steps:
+
+  # ── SLOPES ─────────────────────────────────────────────────────────────────
+  - type: request
+    name: "Fetch DSS Slopes"
+    request:
+      url: "https://www.dolomitisuperski.com/jsonexport/export/pistebasis"
+      method: GET
+      auth:
+        type: basic
+        username: "${DSS_USERNAME}"
+        password: "${DSS_PASSWORD}"
+    resultTransformer: "."
+    mergeOn: .dssSlopes = $res
+
+  # ── SKI AREAS (talschaften, to resolve the SkiArea of a slope) ──────────────
+  - type: request
+    name: "Fetch DSS Ski Areas"
+    request:
+      url: "https://www.dolomitisuperski.com/jsonexport/export/talschaften"
+      method: GET
+      auth:
+        type: basic
+        username: "${DSS_USERNAME}"
+        password: "${DSS_PASSWORD}"
+    resultTransformer: "."
+    mergeOn: .dssSkiAreas = $res
