@@ -1,0 +1,56 @@
+# SPDX-FileCopyrightText: 2024 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+@host=http://localhost:{{$dotenv SERVER_PORT}}
+
+
+###
+PUT https://car.webhost.skidata.com/bei/advconn/dynamicdata/v1/notifications/enable/0607242
+Authorization: Basic OPENDATAHUB_582998:TZPv6q3o0YKt3XlEe7qjl2d0H90D63aTV57Xs4uS
+Content-Type: application/json
+
+[]
+
+###
+GET https://car.webhost.skidata.com/bei/advconn/dynamicdata/v1/health
+Authorization: Basic pifo:jdmoqPG6b6R3lnL3p55F3PXxgN529Q4VcoeGQ268
+
+###
+GET https://car.webhost.skidata.com/bei/advconn/dynamicdata/v1/countingcategories/0602581
+Authorization: Basic OPENDATAHUB_MERANARENA_153712:qHU8HdG98Vxj63U6kwkwd1Qv75V2ZFVgiy5EKj67
+
+###
+GET https://car.webhost.skidata.com/bei/advconn/dynamicdata/v1/notifications/config
+Authorization: Basic OPENDATAHUB_BRUOSP_640585:pgI9N53xC9TUJz8nzpr8WdTPkl8f8B8Yc1o2O3RJ
+
+### Push json
+POST https://push.api.dev.testingmachine.eu/push/skidata/parking-stations/1
+Content-Type: application/json
+Authorization: Basic skidata-timeseries-push:lSiW8SmVSlx9TJMTIbunGKFpg2mxAOUU
+
+### Push json
+POST https://push.api.opendatahub.com/push/skidata/parking-stations/1
+Content-Type: application/json
+Authorization: Basic skidata-timeseries-push:sgkjCk87kMBik1FFlV0rufANbxHUItxT
+
+
+{"value": 123}
+
+###
+GET https://push.api.dev.testingmachine.eu/push/skidata/parking-stations
+
+###
+HEAD https://push.api.dev.testingmachine.eu/push/skidata/parking-stations
+
+###
+GET https://push.api.dev.testingmachine.eu/push/skidata/parking-stations/health?
+
+###
+HEAD https://push.api.dev.testingmachine.eu/push/skidata/parking-stations/health?
+
+###
+GET https://push.api.dev.testingmachine.eu/push/skidata/parking-stations/v1/health
+
+###
+HEAD https://push.api.dev.testingmachine.eu/push/skidata/parking-stations/v1/health
