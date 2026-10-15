@@ -103,7 +103,7 @@ func getPage(url string, token string) ([]map[string]any, string, error) {
 
 	if oResp.StatusCode != 1000 {
 		slog.Error("ocpi status code not OK", "statusCode", oResp.StatusCode, "msg", oResp.StatusMessage)
-		return nil, "", err
+		return nil, "", fmt.Errorf("ocpi status code %d", oResp.StatusCode)
 	}
 
 	// but wait! there is more!

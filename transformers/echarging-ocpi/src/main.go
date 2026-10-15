@@ -63,6 +63,9 @@ var cfg struct {
 	NINJA_URL string
 
 	LOCATION_CACHE_ENABLED bool `default:"false"`
+
+	// ignore the status data in pulled locations, for providers whose pulled statuses are not real-time
+	SKIP_PULLED_STATUS bool `default:"false"`
 }
 
 type EVSERaw struct {
@@ -273,11 +276,14 @@ func main() {
 					if len(evse.Capabilities) > 0 {
 						plug.MetaData["capabilities"] = evse.Capabilities
 					}
-					if len(evse.Capabilities) > 0 {
+					if len(evse.Connectors) > 0 {
 						plug.MetaData["connectors"] = evse.Connectors
 					}
 
 					plugs = append(plugs, plug)
+					if cfg.SKIP_PULLED_STATUS {
+						continue
+					}
 					if evse.Status == "AVAILABLE" {
 						numAvailable++
 					}
@@ -285,8 +291,10 @@ func main() {
 					plugStates[plug.Id] = evse.Status
 				}
 
-				cacheLocationStates(station.Id, plugStates)
-				locationData.AddRecord(station.Id, dtNumberAvailable.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), numAvailable, period))
+				if !cfg.SKIP_PULLED_STATUS {
+					cacheLocationStates(station.Id, plugStates)
+					locationData.AddRecord(station.Id, dtNumberAvailable.Name, bdplib.CreateRecord(r.Timestamp.UnixMilli(), numAvailable, period))
+				}
 			}
 
 			// TODO: figure out some way to sync the total set of stations, and identify inactive ones

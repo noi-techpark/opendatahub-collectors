@@ -9,11 +9,13 @@ set -e
 read -rp "Token A (plain): " TOKEN_A
 read -rp "Versions endpoint URL: " VERSIONS_URL
 read -rp "Our versions URL: " OUR_VERSIONS_URL
+read -rp "OCPI version [2.2]: " OCPI_VERSION
+OCPI_VERSION=${OCPI_VERSION:-2.2}
 
 TOKEN_A_B64=$(echo -n "$TOKEN_A" | base64)
 
 VERSIONS_RESPONSE=$(curl -sf -H "Authorization: Token $TOKEN_A_B64" "$VERSIONS_URL")
-VERSION_URL=$(echo "$VERSIONS_RESPONSE" | jq -r '.data[] | select(.version == "2.2") | .url')
+VERSION_URL=$(echo "$VERSIONS_RESPONSE" | jq -r --arg v "$OCPI_VERSION" '.data[] | select(.version == $v) | .url')
 
 VERSION_DETAILS=$(curl -sf -H "Authorization: Token $TOKEN_A_B64" "$VERSION_URL")
 CREDENTIALS_URL=$(echo "$VERSION_DETAILS" | jq -r '.data.endpoints[] | select(.identifier == "credentials") | .url')
