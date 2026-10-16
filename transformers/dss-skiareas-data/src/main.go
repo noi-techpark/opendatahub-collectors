@@ -113,8 +113,12 @@ func processSkiArea(ctx context.Context, dssArea dto.DssSkiArea) error {
 		// ── CREATE ────────────────────────────────────────────────────────────
 		log.Info("No existing SkiArea found — creating new")
 		newArea := buildNewSkiArea(dssArea, opSchedules)
-		// temporarily disabled creating polygons by another service
-		// applyRegionGeo(ctx, &newArea, dssArea.RegionMap)
+		// The API requires Geo on create: add the regionMap centroid as position.
+		// The polygon track is temporarily disabled (created by another service).
+		applyRegionGeo(ctx, &newArea, dssArea.RegionMap, false)
+		if len(newArea.Geo) == 0 {
+			return fmt.Errorf("no Geo position from regionMap %q, cannot create SkiArea", dssArea.RegionMap)
+		}
 		if err := contentClient.Post(ctx, ENTITY_TYPE,
 			map[string]string{"generateid": "false"}, newArea); err != nil {
 			return fmt.Errorf("POST failed: %w", err)
@@ -143,7 +147,7 @@ func processSkiArea(ctx context.Context, dssArea dto.DssSkiArea) error {
 
 		area.OperationSchedule = opSchedules
 		// temporarily disabled creating polygons by another service
-		// applyRegionGeo(ctx, &area, dssArea.RegionMap)
+		// applyRegionGeo(ctx, &area, dssArea.RegionMap, true)
 
 		// Keep existing Mapping (idm etc.) and existing dss keys, only add/overwrite ours.
 		area.Mapping = mergeMapping(area.Mapping, dssMapping(dssArea))
@@ -169,14 +173,14 @@ func processSkiArea(ctx context.Context, dssArea dto.DssSkiArea) error {
 }
 
 // applyRegionGeo adds the regionMap outline to the SkiArea:
-//   - Geo["track"]: the outline as WKT (LINESTRING / MULTILINESTRING)
+//   - only if withTrack: Geo["track"]: the outline as WKT (LINESTRING / MULTILINESTRING)
 //   - only if GpsInfo is empty: the centroid of the outline as GpsInfo "position"
 //     and Geo["position"], both as the default entry
 //
 // Existing GpsInfo and Geo entries are kept unchanged. The API requires exactly
 // one default Geo entry, so the track only becomes the default when no other
 // entry is one. On any download/parse error the SkiArea is left unchanged.
-func applyRegionGeo(ctx context.Context, area *odhmodel.SkiArea, regionMap string) {
+func applyRegionGeo(ctx context.Context, area *odhmodel.SkiArea, regionMap string, withTrack bool) {
 	if regionMap == "" {
 		return
 	}
@@ -205,6 +209,11 @@ func applyRegionGeo(ctx context.Context, area *odhmodel.SkiArea, regionMap strin
 			area.GpsInfo = gpsInfo
 			geo["position"] = rawPosition
 		}
+	}
+
+	if !withTrack {
+		area.Geo = geo
+		return
 	}
 
 	hasDefault := false
