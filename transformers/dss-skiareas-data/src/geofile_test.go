@@ -93,7 +93,7 @@ func Test_applyRegionGeo(t *testing.T) {
 	// DSS-only SkiArea without GpsInfo: position from the centroid becomes the
 	// default in GpsInfo and Geo, the track is added without Default.
 	area := odhmodel.SkiArea{}
-	applyRegionGeo(ctx, &area, url)
+	applyRegionGeo(ctx, &area, url, true)
 
 	var gpsInfo []map[string]any
 	if err := json.Unmarshal(area.GpsInfo, &gpsInfo); err != nil || len(gpsInfo) != 1 {
@@ -114,7 +114,7 @@ func Test_applyRegionGeo(t *testing.T) {
 	// Earlier DSS run left the track as default: with the new position it is no
 	// longer the default, so there is exactly one.
 	area = odhmodel.SkiArea{Geo: map[string]json.RawMessage{"track": json.RawMessage(`{"Default":true,"Geometry":"LINESTRING (1 1, 2 2)"}`)}}
-	applyRegionGeo(ctx, &area, url)
+	applyRegionGeo(ctx, &area, url, true)
 	if geoEntry(t, area.Geo, "track")["Default"] != nil || geoEntry(t, area.Geo, "position")["Default"] != true {
 		t.Errorf("expected position as the only default, got %s / %s", area.Geo["track"], area.Geo["position"])
 	}
@@ -124,7 +124,7 @@ func Test_applyRegionGeo(t *testing.T) {
 	idmPosition := json.RawMessage(`{"Default":true,"Gpstype":"position","Geometry":"POINT (11.6201 46.5402)","Latitude":46.5402,"Longitude":11.6201}`)
 	idmGpsInfo := json.RawMessage(`[` + string(idmPosition) + `]`)
 	area = odhmodel.SkiArea{GpsInfo: idmGpsInfo, Geo: map[string]json.RawMessage{"position": idmPosition}}
-	applyRegionGeo(ctx, &area, url)
+	applyRegionGeo(ctx, &area, url, true)
 	if string(area.GpsInfo) != string(idmGpsInfo) || string(area.Geo["position"]) != string(idmPosition) {
 		t.Errorf("IDM GpsInfo/position was changed: %s / %s", area.GpsInfo, area.Geo["position"])
 	}
@@ -137,7 +137,7 @@ func Test_applyRegionGeo(t *testing.T) {
 		return nil, errors.New("unexpected status 403")
 	}}
 	area = odhmodel.SkiArea{}
-	applyRegionGeo(ctx, &area, url)
+	applyRegionGeo(ctx, &area, url, true)
 	if area.Geo != nil || area.GpsInfo != nil {
 		t.Errorf("expected no change after failed download, got %v / %s", area.Geo, area.GpsInfo)
 	}
