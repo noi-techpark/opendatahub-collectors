@@ -598,7 +598,7 @@ func mergeLang(poi *odhContentModel.ODHActivityPoi, c dto.WineCompany, lang stri
 	}
 
 	if len(poi.ImageGallery) == 0 || (len(poi.ImageGallery) == 1 && poi.ImageGallery[0].ImageUrl == "") {
-		if gallery := buildImageGallery(c, c); len(gallery) > 0 {
+		if gallery := buildImageGallery(c); len(gallery) > 0 {
 			poi.ImageGallery = gallery
 		}
 	}
@@ -724,56 +724,32 @@ func gpsFromAnyLang(preferred dto.WineCompany, byLang map[string]dto.WineCompany
 	return []odhContentModel.GpsData{}
 }
 
-func buildImageGallery(geoSource dto.WineCompany, c dto.WineCompany) []odhContentModel.ImageGalleryEntry {
-	var gallery []odhContentModel.ImageGalleryEntry
-	seen := map[string]bool{}
-	pos := 0
-
-	addImage := func(raw interface{}) {
-		url := dto.AssetURL(raw)
-		if url == "" || seen[url] {
-			return
-		}
-		seen[url] = true
-		gallery = append(gallery, odhContentModel.ImageGalleryEntry{
-			ImageUrl:      url,
-			ImageSource:   "suedtirolwein",
-			CopyRight:     COPYRIGHT,
-			LicenseHolder: LICENSE_HOLDER,
-			IsInGallery:   true,
-			ListPosition:  pos,
-			ImageTitle:    nil,
-			ImageDesc:     nil,
-			ImageAltText:  nil,
-		})
-		pos++
+// buildImageGallery only uses the header image; image_preview and logo are
+// intentionally not part of the gallery (the logo is exposed via ContactInfos.LogoUrl).
+func buildImageGallery(c dto.WineCompany) []odhContentModel.ImageGalleryEntry {
+	url := dto.AssetURL(c.Media)
+	if url == "" {
+		return nil
 	}
-
-	if dto.AssetURL(geoSource.Media) != "" {
-		addImage(geoSource.Media)
-	} else {
-		addImage(c.Media)
-	}
-	if dto.AssetURL(geoSource.MediaDetail) != "" {
-		addImage(geoSource.MediaDetail)
-	} else {
-		addImage(c.MediaDetail)
-	}
-	if dto.AssetURL(geoSource.Logo) != "" {
-		addImage(geoSource.Logo)
-	} else {
-		addImage(c.Logo)
-	}
-
-	return gallery
+	return []odhContentModel.ImageGalleryEntry{{
+		ImageUrl:      url,
+		ImageSource:   "suedtirolwein",
+		CopyRight:     COPYRIGHT,
+		LicenseHolder: LICENSE_HOLDER,
+		IsInGallery:   true,
+		ListPosition:  0,
+		ImageTitle:    nil,
+		ImageDesc:     nil,
+		ImageAltText:  nil,
+	}}
 }
 
 func imageGalleryFromAnyLang(preferred dto.WineCompany, byLang map[string]dto.WineCompany) []odhContentModel.ImageGalleryEntry {
-	if gallery := buildImageGallery(preferred, preferred); len(gallery) > 0 {
+	if gallery := buildImageGallery(preferred); len(gallery) > 0 {
 		return gallery
 	}
 	for _, c := range byLang {
-		if gallery := buildImageGallery(c, c); len(gallery) > 0 {
+		if gallery := buildImageGallery(c); len(gallery) > 0 {
 			return gallery
 		}
 	}
