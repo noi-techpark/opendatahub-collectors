@@ -4,6 +4,8 @@
 
 package main
 
+import "log/slog"
+
 // Root holds the top-level fields as mapped by the multi-rest-poller.
 type Root struct {
 	Providers          []Provider           `json:"providers"`
@@ -129,11 +131,12 @@ func (p Provider) GetStationType() string {
 	switch p.VehicleType {
 	case "E-Moped", "E-scooter":
 		return "ScooterSharingService"
-	case "E-Bike", "Bike", "E-CargoBike":
+	case "E-Bike", "Bike", "E-CargoBike", "CargoBike":
 		return "BikeSharingService"
 	case "E-Car", "Car":
 		return "CarSharingService"
 	default:
+		slog.Warn("Unmapped provider vehicle_type, using generic station type", "provider_id", p.ProviderID, "vehicle_type", p.VehicleType)
 		return "SharingMobilityService"
 	}
 }
