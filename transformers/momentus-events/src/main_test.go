@@ -45,7 +45,7 @@ func TestTransformer(t *testing.T) {
 		},
 	}
 
-	result := ParseMomentusEvent(event, venue, nil, true)
+	result := ParseMomentusEvent(event, venue, nil)
 	if result != nil {
 		// Normalize volatile fields for deterministic testing
 		result.FirstImport = "2026-06-24T10:00:00Z"
@@ -86,7 +86,7 @@ func TestParseKeepsImageGalleryAndGpsInfo(t *testing.T) {
 		GpsInfo:      []odhmodel.GpsInfo{{Gpstype: "position", Latitude: 46.47, Longitude: 11.33}},
 	}
 
-	result := ParseMomentusEvent(event, nil, base, true)
+	result := ParseMomentusEvent(event, nil, base)
 	if result == nil {
 		t.Fatalf("expected event")
 	}
@@ -202,7 +202,7 @@ func TestUnchangedEventIsNotPutAgain(t *testing.T) {
 	}
 
 	// The record as the API stores and returns it.
-	stored := *ParseMomentusEvent(event, venue, nil, true)
+	stored := *ParseMomentusEvent(event, venue, nil)
 	stored.Shortname = "Test Event"
 	stored.TagIds = []string{"digital", "food", "noi"}
 	stored.DateBegin = "2026-06-25T10:00:00" // calculated by the API from EventDate

@@ -290,7 +290,7 @@ func processEvent(ctx context.Context, t *Transformer, event MomentusEvent, even
 		baseEvent = &cachedEntry.Entity
 	}
 
-	eventLinked := ParseMomentusEvent(event, matchedVenue, baseEvent, true)
+	eventLinked := ParseMomentusEvent(event, matchedVenue, baseEvent)
 	if eventLinked == nil {
 		slog.Info("Event skipped by parser (no languages)", "eventID", event.Id)
 		return nil
@@ -329,7 +329,8 @@ func processEvent(ctx context.Context, t *Transformer, event MomentusEvent, even
 // PARSER LOGIC
 // ----------------------------------------------------------------------------
 
-func ParseMomentusEvent(mevent MomentusEvent, venue *ODHVenue, base *odhmodel.EventLinked, optimizedays bool) *odhmodel.EventLinked {
+// DateBegin/DateEnd are not set: the API calculates them from the active EventDates and ignores sent values.
+func ParseMomentusEvent(mevent MomentusEvent, venue *ODHVenue, base *odhmodel.EventLinked) *odhmodel.EventLinked {
 	var eventLinked *odhmodel.EventLinked
 	if base != nil {
 		copy := *base
@@ -359,13 +360,6 @@ func ParseMomentusEvent(mevent MomentusEvent, venue *ODHVenue, base *odhmodel.Ev
 	eventLinked.Documents = oldDocuments
 	eventLinked.VideoItems = oldVideoItems
 
-	if mevent.Start != "" {
-		eventLinked.DateBegin = mevent.Start
-	}
-	if mevent.End != "" {
-		eventLinked.DateEnd = mevent.End
-	}
-
 	details := buildDetailFromFunctions(mevent.Functions, mevent.Description, mevent.Name, base)
 	if len(details) > 0 {
 		eventLinked.Detail = details
@@ -386,10 +380,6 @@ func ParseMomentusEvent(mevent MomentusEvent, venue *ODHVenue, base *odhmodel.Ev
 	eventLinked.EventDate = buildDetailFromFunctionsForEventDates(mevent.Functions, eventLinked.EventDate)
 	// After the SUBtitle matching, which compares the raw Momentus date/time values.
 	normalizeEventDates(eventLinked.EventDate)
-
-	if optimizedays {
-		refineRootDatesFromEventDates(eventLinked)
-	}
 
 	if len(mevent.ContactRoles) > 0 {
 		firstRole := mevent.ContactRoles[0]
@@ -463,7 +453,8 @@ func buildDetailFromFunctions(functions []MomentusFunction, description string, 
 	details := make(map[string]odhmodel.Detail)
 
 	for _, fn := range functions {
-		if !fn.IsEventWide {
+		// Only event-wide functions without a specific room set the root title/subtitle
+		if !fn.IsEventWide || fn.RoomId != "" {
 			continue
 		}
 
@@ -828,33 +819,6 @@ func dateOnly(value string) string {
 		return value[:10]
 	}
 	return value
-}
-
-func refineRootDatesFromEventDates(eventLinked *odhmodel.EventLinked) {
-	if len(eventLinked.EventDate) == 0 {
-		return
-	}
-
-	var firstFrom string
-	var lastTo string
-
-	for _, d := range eventLinked.EventDate {
-		if d.Active {
-			if d.From != "" && (firstFrom == "" || d.From < firstFrom) {
-				firstFrom = d.From
-			}
-			if d.To != "" && (lastTo == "" || d.To > lastTo) {
-				lastTo = d.To
-			}
-		}
-	}
-
-	if firstFrom != "" {
-		eventLinked.DateBegin = firstFrom
-	}
-	if lastTo != "" {
-		eventLinked.DateEnd = lastTo
-	}
 }
 
 func buildContactInfo(contact MomentusContactRole) odhmodel.ContactInfos {
