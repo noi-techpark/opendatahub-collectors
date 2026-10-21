@@ -15,8 +15,8 @@
       "ZipCode": "39100"
     }
   },
-  "DateBegin": "2026-06-25T10:00:00Z",
-  "DateEnd": "2026-06-25T12:00:00Z",
+  "DateBegin": "2026-06-25T00:00:00",
+  "DateEnd": "2026-06-25T00:00:00",
   "Detail": {
     "de": {
       "BaseText": "Base description",
@@ -43,15 +43,15 @@
   "EventDate": [
     {
       "Active": true,
-      "Begin": "10:00",
+      "Begin": "10:00:00",
       "Detail": {
         "en": {
           "Language": "en",
           "Title": "English Date Subtitle"
         }
       },
-      "End": "12:00",
-      "From": "2026-06-25T10:00:00Z",
+      "End": "12:00:00",
+      "From": "2026-06-25T00:00:00",
       "Mapping": {
         "momentus": {
           "roomId": "room1",
@@ -62,7 +62,7 @@
         "noi-totem",
         "today.noi.bz.it"
       ],
-      "To": "2026-06-25T12:00:00Z",
+      "To": "2026-06-25T00:00:00",
       "VenueRoomDetailsIds": [
         "urn:room:noi:1"
       ]

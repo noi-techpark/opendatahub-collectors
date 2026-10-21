@@ -11,9 +11,9 @@ type EventLinked struct {
 	AltitudeUnitofMeasure string                            `json:"AltitudeUnitofMeasure,omitempty"`
 	ClassificationRID     string                            `json:"ClassificationRID,omitempty"`
 	ContactInfos          map[string]ContactInfos           `json:"ContactInfos,omitempty"`
-	DateBegin             string                            `json:"DateBegin,omitempty"`
+	DateBegin             string                            `json:"DateBegin,omitempty" hash:"ignore"`
 	DateBeginUTC          float64                           `json:"DateBeginUTC,omitempty"`
-	DateEnd               string                            `json:"DateEnd,omitempty"`
+	DateEnd               string                            `json:"DateEnd,omitempty" hash:"ignore"`
 	DateEndUTC            float64                           `json:"DateEndUTC,omitempty"`
 	Detail                map[string]Detail                 `json:"Detail,omitempty"`
 	DistanceInfo          map[string]any                    `json:"DistanceInfo"`

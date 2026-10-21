@@ -33,8 +33,8 @@
       "usageType": "event",
       "bookedSpaceId": "bs1",
       "roomId": "room1",
-      "startDate": "2026-06-25T10:00:00Z",
-      "endDate": "2026-06-25T12:00:00Z",
+      "startDate": "2026-06-25",
+      "endDate": "2026-06-25",
       "startTime": "10:00",
       "endTime": "12:00"
     }
@@ -59,8 +59,8 @@
       "functionTypeName": "EN SUBtitle",
       "name": "English Date Subtitle",
       "isEventWide": false,
-      "startDate": "2026-06-25T10:00:00Z",
-      "endDate": "2026-06-25T12:00:00Z",
+      "startDate": "2026-06-25",
+      "endDate": "2026-06-25",
       "startTime": "10:00",
       "endTime": "12:00",
       "roomId": "room1"

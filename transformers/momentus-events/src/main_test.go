@@ -151,3 +151,72 @@ func TestDeactivateMissingEventsKeepsPastEvents(t *testing.T) {
 		t.Fatalf("expected only the missing future event to be deactivated, got %v", mock.putIDs)
 	}
 }
+
+func TestUnchangedEventIsNotPutAgain(t *testing.T) {
+	inBytes, err := os.ReadFile("./testdata/in_full.json")
+	if err != nil {
+		t.Fatalf("Failed to read in_full.json: %v", err)
+	}
+	var event MomentusEvent
+	if err := json.Unmarshal(inBytes, &event); err != nil {
+		t.Fatalf("Failed to unmarshal in_full.json: %v", err)
+	}
+	// Momentus sends names with trailing spaces and the tags are built unsorted.
+	event.Name = "Test Event "
+	event.AccountName = "NOI - Food & Digital"
+
+	venue := &ODHVenue{
+		Id:      "urn:venue:noi:1",
+		Mapping: ODHVenueMapping{Tag: map[string]string{"eventlocation": "noi"}},
+		RoomDetails: []ODHRoomDetails{
+			{Id: "urn:room:noi:1", Mapping: map[string]map[string]string{"momentus": {"id": "room1"}}},
+		},
+	}
+
+	// The record as the API stores and returns it.
+	stored := *ParseMomentusEvent(event, venue, nil, true)
+	stored.Shortname = "Test Event"
+	stored.TagIds = []string{"digital", "food", "noi"}
+	stored.DateBegin = "2026-06-25T10:00:00" // calculated by the API from EventDate
+	stored.DateEnd = "2026-06-25T12:00:00"
+	stored.LastChange = "2026-06-24T10:00:00.1234567+00:00"
+	ed := stored.EventDate[0]
+	if ed.From != "2026-06-25T00:00:00" || ed.To != "2026-06-25T00:00:00" || ed.Begin != "10:00:00" || ed.End != "12:00:00" {
+		t.Fatalf("EventDate not in API format: %+v", ed)
+	}
+
+	hash, err := clib.HashEntity(stored)
+	if err != nil {
+		t.Fatalf("hash failed: %v", err)
+	}
+	cache := clib.NewCache[odhmodel.EventLinked]()
+	cache.Set(stored.Id, stored, hash)
+
+	mock := &putRecorder{}
+	tr := &Transformer{
+		contentClient: mock,
+		venuesCache:   map[string]*ODHVenue{venue.Id: venue},
+		venueMapping:  map[string]string{"NOI": venue.Id},
+	}
+	if err := processEvent(context.Background(), tr, event, cache); err != nil {
+		t.Fatalf("processEvent failed: %v", err)
+	}
+	if len(mock.putIDs) != 0 {
+		t.Fatalf("unchanged event was updated again: %v", mock.putIDs)
+	}
+}
+
+func TestNormalizeEventDates(t *testing.T) {
+	dates := []odhmodel.EventDate{
+		{From: "2026-06-09", To: "2026-06-10", Begin: "18:00", End: "20:30"},
+		{From: "2026-06-09T00:00:00", To: "", Begin: "18:00:00", End: "invalid"},
+	}
+	normalizeEventDates(dates)
+	want := []odhmodel.EventDate{
+		{From: "2026-06-09T00:00:00", To: "2026-06-10T00:00:00", Begin: "18:00:00", End: "20:30:00"},
+		{From: "2026-06-09T00:00:00", To: "", Begin: "18:00:00", End: "invalid"},
+	}
+	if !reflect.DeepEqual(dates, want) {
+		t.Errorf("normalizeEventDates = %+v, want %+v", dates, want)
+	}
+}

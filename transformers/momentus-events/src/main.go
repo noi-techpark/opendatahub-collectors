@@ -8,6 +8,7 @@ import (
 	"context"
 	"encoding/json"
 	"log/slog"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -345,7 +346,8 @@ func ParseMomentusEvent(mevent MomentusEvent, venue *ODHVenue, base *odhmodel.Ev
 	oldVideoItems := eventLinked.VideoItems
 
 	eventLinked.Id = "urn:event:momentus:" + mevent.Id
-	eventLinked.Shortname = mevent.Name
+	// The API trims the name; keep it identical so the change detection hash matches.
+	eventLinked.Shortname = strings.TrimSpace(mevent.Name)
 	eventLinked.Source = "momentus"
 
 	eventLinked.Active = mevent.IsActive && !mevent.IsCanceled
@@ -382,6 +384,8 @@ func ParseMomentusEvent(mevent MomentusEvent, venue *ODHVenue, base *odhmodel.Ev
 
 	eventLinked.EventDate = buildEventDates(mevent, venue, mevent.BookedSpacesDetails, venueEventLocation)
 	eventLinked.EventDate = buildDetailFromFunctionsForEventDates(mevent.Functions, eventLinked.EventDate)
+	// After the SUBtitle matching, which compares the raw Momentus date/time values.
+	normalizeEventDates(eventLinked.EventDate)
 
 	if optimizedays {
 		refineRootDatesFromEventDates(eventLinked)
@@ -439,6 +443,8 @@ func ParseMomentusEvent(mevent MomentusEvent, venue *ODHVenue, base *odhmodel.Ev
 	}
 
 	if len(tagIds) > 0 {
+		// The API returns TagIds sorted; keep the same order so the hash matches.
+		sort.Strings(tagIds)
 		eventLinked.TagIds = tagIds
 	}
 
@@ -793,6 +799,29 @@ func buildEventDates(mevent MomentusEvent, venue *ODHVenue, bookedSpaces []Momen
 	}
 
 	return eventDates
+}
+
+// normalizeEventDates converts the Momentus date ("2006-01-02") and time ("15:04")
+// values to the format the API stores and returns ("2006-01-02T00:00:00",
+// "15:04:05"). Otherwise the record loaded from the API never hashes equal to the
+// parsed one and every event is updated on every run. Values in any other format
+// are left unchanged.
+func normalizeEventDates(eventDates []odhmodel.EventDate) {
+	for i := range eventDates {
+		ed := &eventDates[i]
+		ed.From = normalizeLayout(ed.From, "2006-01-02", "2006-01-02T15:04:05")
+		ed.To = normalizeLayout(ed.To, "2006-01-02", "2006-01-02T15:04:05")
+		ed.Begin = normalizeLayout(ed.Begin, "15:04", "15:04:05")
+		ed.End = normalizeLayout(ed.End, "15:04", "15:04:05")
+	}
+}
+
+func normalizeLayout(value, from, to string) string {
+	parsed, err := time.Parse(from, value)
+	if err != nil {
+		return value
+	}
+	return parsed.Format(to)
 }
 
 func refineRootDatesFromEventDates(eventLinked *odhmodel.EventLinked) {
