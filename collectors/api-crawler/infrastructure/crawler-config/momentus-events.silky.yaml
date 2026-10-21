@@ -41,8 +41,8 @@ steps:
             Content-Type: "application/json"
             Accept: "application/json"
           body:
-            start: '{{ now | dateModify "-1d" | date "2006-01-02" }}'
-            end: '{{ now | dateModify "+1y" | date "2006-01-02" }}'
+            start: '{{ now | dateModify "-24h" | date "2006-01-02" }}'
+            end: '{{ now | dateModify "8760h" | date "2006-01-02" }}'
             includeBookedSpaces: true
             venueIds:
               - "venue-1-A"
