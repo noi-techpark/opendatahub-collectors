@@ -8,7 +8,7 @@ env:
   MQ_CLIENT: dc-api-crawler-parking-affluences
   PROVIDER: api-crawler/parking-affluences
 
-  CRON: "0 0/10 * * * *"
+  CRON: "0 0/15 * * * *"
   CONFIG_PATH: "/config/config.yaml"
 
   SERVICE_NAME: dc-api-crawler-parking-affluences

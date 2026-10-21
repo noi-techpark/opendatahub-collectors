@@ -30,7 +30,7 @@ const (
 	// Affluences elaborates a fresh occupancy roughly every 30 minutes; we
 	// poll more often and the measurements are idempotent (same provider
 	// timestamp overwrites). Keep the declared sampling period constant.
-	Period = 600
+	Period = 900
 
 	DataTypeOccupancy = "occupancy"
 	DataTypeFree      = "free"
