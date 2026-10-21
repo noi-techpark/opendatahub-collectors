@@ -98,6 +98,34 @@ func TestParseKeepsImageGalleryAndGpsInfo(t *testing.T) {
 	}
 }
 
+func TestBuildDetailTakesTitlesFromMomentusOnly(t *testing.T) {
+	functions := []MomentusFunction{
+		{FunctionTypeName: "DE Title", Name: "Neuer Titel", IsEventWide: true},
+	}
+	base := &odhmodel.EventLinked{
+		Detail: map[string]odhmodel.Detail{
+			"de": {Language: "de", Title: "Alter Titel", SubHeader: "Alter Untertitel", BaseText: "Manueller Text"},
+			"en": {Language: "en", Title: "Removed in Momentus", BaseText: "Old text"},
+		},
+	}
+
+	details := buildDetailFromFunctions(functions, "", "Event", base)
+
+	if _, ok := details["en"]; ok {
+		t.Errorf("language removed in Momentus was kept: %+v", details["en"])
+	}
+	want := odhmodel.Detail{Language: "de", Title: "Neuer Titel", BaseText: "Manueller Text"}
+	if details["de"] != want {
+		t.Errorf("got %+v, want %+v", details["de"], want)
+	}
+
+	// A Momentus description wins over the stored BaseText.
+	details = buildDetailFromFunctions(functions, "Momentus description", "Event", base)
+	if details["de"].BaseText != "Momentus description" {
+		t.Errorf("BaseText = %q, want the Momentus description", details["de"].BaseText)
+	}
+}
+
 func TestEndedBeforeCrawlWindow(t *testing.T) {
 	now := time.Date(2026, 10, 1, 12, 0, 0, 0, time.UTC) // crawl window starts 2026-09-30
 	tests := []struct {

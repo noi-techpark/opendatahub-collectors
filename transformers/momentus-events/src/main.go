@@ -409,6 +409,10 @@ func ParseMomentusEvent(mevent MomentusEvent, venue *ODHVenue, base *odhmodel.Ev
 		"id":            mevent.Id,
 		"eventTypeId":   mevent.EventTypeId,
 		"eventTypeName": mevent.EventTypeName,
+		"start":         dateOnly(mevent.Start),
+		"end":           dateOnly(mevent.End),
+		"starttime":     mevent.StartTime,
+		"endtime":       mevent.EndTime,
 	}
 	for _, e := range mevent.ExternalIds {
 		if e.Key != "" {
@@ -506,25 +510,19 @@ func buildDetailFromFunctions(functions []MomentusFunction, description string, 
 		}
 	}
 
-	// Restore existing BaseTexts, Titles, and SubHeaders from the base event if they are not empty
+	// Languages, Titles and SubHeaders always come from Momentus, so removed ones are not kept.
+	// Only an existing BaseText is restored, for languages Momentus still delivers without a description.
 	if base != nil && base.Detail != nil {
 		for lang, baseDetail := range base.Detail {
 			d, ok := details[lang]
 			if !ok {
-				d = odhmodel.Detail{Language: lang}
+				continue
 			}
 
 			if baseDetail.BaseText != "" && d.BaseText == "" {
 				d.BaseText = baseDetail.BaseText
+				details[lang] = d
 			}
-			if baseDetail.Title != "" && d.Title == "" {
-				d.Title = baseDetail.Title
-			}
-			if baseDetail.SubHeader != "" && d.SubHeader == "" {
-				d.SubHeader = baseDetail.SubHeader
-			}
-
-			details[lang] = d
 		}
 	}
 
@@ -822,6 +820,14 @@ func normalizeLayout(value, from, to string) string {
 		return value
 	}
 	return parsed.Format(to)
+}
+
+// dateOnly cuts a Momentus date or datetime value to "2006-01-02", as the legacy importer does.
+func dateOnly(value string) string {
+	if len(value) > 10 {
+		return value[:10]
+	}
+	return value
 }
 
 func refineRootDatesFromEventDates(eventLinked *odhmodel.EventLinked) {

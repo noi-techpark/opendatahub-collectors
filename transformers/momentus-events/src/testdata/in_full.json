@@ -5,6 +5,8 @@
   "isCanceled": false,
   "start": "2026-06-25T10:00:00Z",
   "end": "2026-06-25T12:00:00Z",
+  "startTime": "10:00",
+  "endTime": "12:00",
   "description": "Base description",
   "website": "https://example.com",
   "accountName": "NOI - Example Corp",

@@ -12,6 +12,8 @@ type MomentusEvent struct {
 	IsCanceled    bool                  `json:"isCanceled"`
 	Start         string                `json:"start"`
 	End           string                `json:"end"`
+	StartTime     string                `json:"startTime"`
+	EndTime       string                `json:"endTime"`
 	Description   string                `json:"description"`
 	Website       string                `json:"website"`
 	AccountName   string                `json:"accountName"`

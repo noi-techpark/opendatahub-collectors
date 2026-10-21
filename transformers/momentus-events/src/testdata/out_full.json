@@ -95,10 +95,14 @@
   "LocationInfo": null,
   "Mapping": {
     "momentus": {
+      "end": "2026-06-25",
+      "endtime": "12:00",
       "eventTypeId": "type1",
       "eventTypeName": "Meeting",
       "ext1": "val1",
-      "id": "123"
+      "id": "123",
+      "start": "2026-06-25",
+      "starttime": "10:00"
     }
   },
   "ODHTags": null,
