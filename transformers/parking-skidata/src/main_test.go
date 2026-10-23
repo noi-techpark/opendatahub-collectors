@@ -36,7 +36,7 @@ func loadTestFixtures(t *testing.T) bdplib.Bdp {
 	// left cached would make the next test's sync look like a no-op.
 	regMu.Lock()
 	registry = map[string]entry{}
-	observedCapacity = map[string]int{}
+	observedCapacity = map[capacityKey]int{}
 	regMu.Unlock()
 	syncedStations = tr.NewCache[bdplib.Station]()
 
@@ -218,7 +218,7 @@ func TestNonPublishedCategoryStillRegistersTheStation(t *testing.T) {
 
 // ---------------------------------------------------------------- capacity
 
-func TestCarparkCapacityIsTheTotalOnly(t *testing.T) {
+func TestCarparkCapacityIsTheTotalAndShortStayOnly(t *testing.T) {
 	b := loadTestFixtures(t)
 	feed(t, b, event(607242, 0, catTotal, 70, 245, "Totale"))
 
@@ -226,8 +226,9 @@ func TestCarparkCapacityIsTheTotalOnly(t *testing.T) {
 	require.True(t, ok)
 
 	require.Equal(t, 245, metaInt(t, s, "capacity"), "carpark capacity must be the category-3 total")
+	require.Equal(t, 125, metaInt(t, s, "capacity_short_stay"), "from the counting categories until a category-1 event")
 	for _, gone := range []string{
-		"capacity_short_stay", "capacity_subscribers",
+		"capacity_subscribers",
 		"free_limit", "free_limit_short_stay",
 		"occupancy_limit", "occupancy_limit_subscribers",
 	} {
@@ -270,6 +271,46 @@ func TestCapacityFallsBackToTheCountingCategories(t *testing.T) {
 	require.True(t, ok)
 	require.Equal(t, 245, metaInt(t, s, "capacity"),
 		"with no category-3 event yet, the counting categories supply the total")
+}
+
+// Short stay is what most consumers read free_short_stay against, so its
+// capacity has to be the one that free was computed from.
+func TestShortStayCapacityFollowsTheEvent(t *testing.T) {
+	b := loadTestFixtures(t)
+	feed(t, b, event(607242, 0, catShortStay, 5, 160, "SostaBreve"))
+
+	s, ok := stationByProviderID(t, b, "0607242_0")
+	require.True(t, ok)
+	capacity := metaInt(t, s, "capacity_short_stay")
+	require.Equal(t, 160, capacity, "the live event states the short-stay capacity")
+	require.Equal(t, capacity-5, records(t, b, stationType)["free_short_stay"])
+	require.Equal(t, 245, metaInt(t, s, "capacity"), "a short-stay event must not touch the total")
+}
+
+func TestSentinelShortStayCapacityBecomesUnknown(t *testing.T) {
+	b := loadTestFixtures(t)
+	feed(t, b, event(607242, 0, catShortStay, 5, sentinelCapacity, "SostaBreve"))
+
+	s, ok := stationByProviderID(t, b, "0607242_0")
+	require.True(t, ok)
+	require.Equal(t, 125, metaInt(t, s, "capacity_short_stay"),
+		"a sentinel event falls back to the counting categories")
+
+	feed(t, b, event(602581, 0, catShortStay, 5, sentinelCapacity, "SostaBreve"))
+	s, ok = stationByProviderID(t, b, "0602581_0")
+	require.True(t, ok)
+	require.Equal(t, capacityUnknown, metaInt(t, s, "capacity_short_stay"),
+		"sentinel in both the event and the categories is unknown, not 9999")
+}
+
+func TestFacilityShortStayCapacityIsTheSumOfItsCarparks(t *testing.T) {
+	b := loadTestFixtures(t)
+	feed(t, b, event(601393, 0, catTotal, 10, 150, "Totale"))
+
+	s, ok := stationByProviderID(t, b, "0601393")
+	require.True(t, ok)
+	require.Equal(t, 245, metaInt(t, s, "capacity_short_stay"), "100 + 100 + 45")
+	require.Equal(t, 360, metaInt(t, s, "capacity"), "150 + 140 + 70")
 }
 
 func TestFacilityCapacityIsTheSumOfItsCarparks(t *testing.T) {
