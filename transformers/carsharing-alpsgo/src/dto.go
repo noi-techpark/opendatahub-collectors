@@ -59,6 +59,8 @@ type Station struct {
 	Street                string      `json:"street"`
 }
 
+const bookingURL = "https://www.alpsgo.it"
+
 func (s Station) ToBDPStation(bdp bdplib.Bdp) bdplib.Station {
 	bdpStation := bdplib.CreateStation(
 		fmt.Sprintf("%d", s.ID), s.Name, StationTypeCarSharing, s.Lat, s.Lng, bdp.GetOrigin(),
@@ -66,6 +68,7 @@ func (s Station) ToBDPStation(bdp bdplib.Bdp) bdplib.Station {
 	bdpStation.MetaData = make(map[string]any)
 
 	bdpStation.MetaData["capacity_max"] = s.CapacityMax
+	bdpStation.MetaData["booking_url"] = bookingURL
 
 	// Add fields that are not used in the primary station creation, if they have values.
 	if s.CenterLat != 0 {

@@ -47,6 +47,15 @@ type StationInformation struct {
 	RegionID   string  `json:"region_id"`
 	Address    string  `json:"address"`
 	ProviderID string  `json:"provider_id"`
+
+	RentalURIs RentalURIs `json:"rental_uris"`
+}
+
+// GBFS Rental URIs
+type RentalURIs struct {
+	Android string `json:"android"`
+	IOS     string `json:"ios"`
+	Web     string `json:"web"`
 }
 
 // GBFS Free Bike Status (from free_bike_status.json)

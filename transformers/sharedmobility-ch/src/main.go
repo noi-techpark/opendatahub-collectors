@@ -121,6 +121,10 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 		bdpStation := bdplib.CreateStation(providerStationID, p.Name, stationType, 0, 0, bdp.GetOrigin())
 		bdpStation.MetaData = make(map[string]any)
 
+		if p.URL != "" {
+			bdpStation.MetaData["booking_url"] = p.URL
+		}
+
 		var plans []PricingPlan
 		for _, plan := range payload.Rawdata.Plans {
 			if plan.ProviderID == p.ProviderID {
@@ -215,8 +219,10 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 	physicalDataMapsByType := make(map[string]*bdplib.DataMap)
 
 	providerTypeByID := make(map[string]string)
+	providerURLByID := make(map[string]string)
 	for _, p := range payload.Rawdata.Providers {
 		providerTypeByID[p.ProviderID] = p.GetStationType()
+		providerURLByID[p.ProviderID] = p.URL
 	}
 
 	for _, s := range payload.Rawdata.StationInformation {
@@ -246,6 +252,12 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 		if region, ok := regionsMap[s.RegionID]; ok {
 			bdpStation.MetaData["region_id"] = region.RegionID
 			bdpStation.MetaData["region_name"] = region.Name
+		}
+
+		if s.RentalURIs.Web != "" {
+			bdpStation.MetaData["booking_url"] = s.RentalURIs.Web
+		} else if url := providerURLByID[s.ProviderID]; url != "" {
+			bdpStation.MetaData["booking_url"] = url
 		}
 
 		bdpStation.ParentStation = providerStationIDByProviderID[s.ProviderID]
