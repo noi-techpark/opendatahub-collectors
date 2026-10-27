@@ -1,0 +1,69 @@
+{
+  "bookedSpaces": [
+    {
+      "id": "bs1",
+      "spaceUsageName": "Event PUBLIC"
+    }
+  ],
+  "event": {
+    "accountName": "NOI - Example Corp",
+    "bookedSpaces": [
+      {
+        "bookedSpaceId": "bs1",
+        "endDate": "2026-06-25T12:00:00Z",
+        "endTime": "12:00",
+        "roomId": "room1",
+        "startDate": "2026-06-25T10:00:00Z",
+        "startTime": "10:00",
+        "usageType": "event"
+      }
+    ],
+    "contactRoles": [
+      {
+        "accountName": "NOI - Example Corp",
+        "address1": "123 Main St",
+        "addressCity": "Bolzano",
+        "addressCountry": "Italy",
+        "addressPostalCode": "39100",
+        "email": "john@example.com",
+        "name": "John Doe",
+        "phone": "12345"
+      }
+    ],
+    "description": "Base description",
+    "end": "2026-06-25T12:00:00Z",
+    "eventTypeId": "type1",
+    "eventTypeName": "Meeting",
+    "externalIds": [
+      {
+        "key": "ext1",
+        "value": "val1"
+      }
+    ],
+    "id": "123",
+    "isActive": true,
+    "isCanceled": false,
+    "name": "Test Event",
+    "start": "2026-06-25T10:00:00Z",
+    "website": "https://example.com"
+  },
+  "functions": [],
+  "venue": {
+    "Id": "urn:venue:noi:6b3f0a14-3c5b-5d09-81f3-3ebe5b7885ea",
+    "Mapping": {
+      "tag": {
+        "eventlocation": "noi"
+      }
+    },
+    "RoomDetails": [
+      {
+        "Id": "urn:room:noi:1",
+        "Mapping": {
+          "momentus": {
+            "id": "room1"
+          }
+        }
+      }
+    ]
+  }
+}

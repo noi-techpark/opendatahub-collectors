@@ -42,7 +42,7 @@ func contentApiSpan(ctx context.Context, url, method string) (context.Context, t
 	return ctx, clientSpan
 }
 
-func GetAccomodationIdByRawFilter(ctx context.Context, id string, baseURL string) (string, error) {
+func GetAccomodationIdByRawFilter(ctx context.Context, id string, baseURL string, referer string) (string, error) {
 	ctx, clientSpan := contentApiSpan(ctx, baseURL, "GET")
 	defer clientSpan.End()
 
@@ -60,6 +60,7 @@ func GetAccomodationIdByRawFilter(ctx context.Context, id string, baseURL string
 	if err != nil {
 		return "", fmt.Errorf("could not create http request: %w", err)
 	}
+	setReferer(req, referer)
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -87,6 +88,13 @@ func GetAccomodationIdByRawFilter(ctx context.Context, id string, baseURL string
 
 }
 
+// setReferer sets the Referer header, which the Content API stores as UpdateSource
+func setReferer(req *retryablehttp.Request, referer string) {
+	if referer != "" {
+		req.Header.Set("Referer", referer)
+	}
+}
+
 // Option 1: Using TokenSource (automatic refresh)
 func GetAccessToken(tokenURL, clientID, clientSecret string) (oauth2.TokenSource, error) {
 	config := &clientcredentials.Config{
@@ -107,7 +115,7 @@ func GetAccessToken(tokenURL, clientID, clientSecret string) (oauth2.TokenSource
 	return ts, nil
 }
 
-func PutContentApi(ctx context.Context, url *url.URL, token string, payload interface{}, id string) (string, error) {
+func PutContentApi(ctx context.Context, url *url.URL, token string, referer string, payload interface{}, id string) (string, error) {
 	ctx, clientSpan := contentApiSpan(ctx, url.String(), "PUT")
 	defer clientSpan.End()
 
@@ -133,6 +141,7 @@ func PutContentApi(ctx context.Context, url *url.URL, token string, payload inte
 	}
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
 	req.Header.Set("Content-Type", "application/json")
+	setReferer(req, referer)
 
 	client := retryablehttp.NewClient()
 	client.HTTPClient.Transport = &http.TracingRoundTripper{}
@@ -147,7 +156,7 @@ func PutContentApi(ctx context.Context, url *url.URL, token string, payload inte
 	return strconv.Itoa(resp.StatusCode), nil
 }
 
-func PostContentApi(ctx context.Context, url *url.URL, token string, payload interface{}) (string, error) {
+func PostContentApi(ctx context.Context, url *url.URL, token string, referer string, payload interface{}) (string, error) {
 	ctx, clientSpan := contentApiSpan(ctx, url.String(), "POST")
 	defer clientSpan.End()
 
@@ -168,6 +177,7 @@ func PostContentApi(ctx context.Context, url *url.URL, token string, payload int
 
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
 	req.Header.Set("Content-Type", "application/json")
+	setReferer(req, referer)
 
 	client := retryablehttp.NewClient()
 	client.HTTPClient.Transport = &http.TracingRoundTripper{}
