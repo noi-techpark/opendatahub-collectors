@@ -495,7 +495,8 @@ func buildDetailFromFunctions(functions []MomentusFunction, description string, 
 		}
 	}
 
-	if description != "" {
+	// A whitespace-only description is stored as "" by the API; skip it so the change detection hash matches.
+	if strings.TrimSpace(description) != "" {
 		for lang, d := range details {
 			if d.BaseText == "" {
 				d.BaseText = description

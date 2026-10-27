@@ -124,6 +124,12 @@ func TestBuildDetailTakesTitlesFromMomentusOnly(t *testing.T) {
 	if details["de"].BaseText != "Momentus description" {
 		t.Errorf("BaseText = %q, want the Momentus description", details["de"].BaseText)
 	}
+
+	// A whitespace-only description is ignored (the API would store it as "").
+	details = buildDetailFromFunctions(functions, "\n", "Event", nil)
+	if details["de"].BaseText != "" {
+		t.Errorf("BaseText = %q, want empty for a whitespace-only description", details["de"].BaseText)
+	}
 }
 
 func TestEndedBeforeCrawlWindow(t *testing.T) {
