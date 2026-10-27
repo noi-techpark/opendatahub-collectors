@@ -20,6 +20,7 @@ env:
   ODH_CORE_TOKEN_URL: "https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token"
   ODH_CORE_TOKEN_CLIENT_ID: "odh-api-core-discoverswiss"
   ODH_API_CORE_URL: "https://api.tourism.testingmachine.eu/v1/Accommodation"
+  ODH_CORE_REFERER: "https://importer.v2.opendatahub.testingmachine.eu/discoverswiss.lodging"
   RAW_DATA_BRIDGE_ENDPOINT: "http://raw-data-bridge.core.svc.cluster.local:2000"
 
   SERVICE_NAME: tr-discoverswiss-lodging

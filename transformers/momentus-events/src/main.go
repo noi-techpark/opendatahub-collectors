@@ -354,6 +354,9 @@ func ParseMomentusEvent(mevent MomentusEvent, venue *ODHVenue, base *odhmodel.Ev
 	eventLinked.Active = mevent.IsActive && !mevent.IsCanceled
 	eventLinked.LastChange = time.Now().Format(time.RFC3339)
 
+	// HasLanguage is calculated by the API (order de, en, it); a copied list would keep its old order
+	eventLinked.HasLanguage = nil
+
 	// Restore preserved fields
 	eventLinked.ImageGallery = oldImageGallery
 	eventLinked.TagIds = oldTagIds
@@ -520,16 +523,12 @@ func buildDetailFromFunctions(functions []MomentusFunction, description string, 
 	return details
 }
 
-// buildDetailFromFunctionsForEventDates assigns the per-date SUBtitle functions
-// (isEventWide: false) to the Detail of the matching EventDate. The matching
-// EventDate is found by date, time and room, since a non-event-wide SUBtitle
-// function only applies to one specific booked space.
+// buildDetailFromFunctionsForEventDates assigns SUBtitle functions to the Detail
+// of the matching EventDate, found by date, time and room. As in the legacy
+// importer, isEventWide is not checked: event-wide SUBtitles bound to a room
+// are skipped for the root Detail and land here.
 func buildDetailFromFunctionsForEventDates(functions []MomentusFunction, eventDates []odhmodel.EventDate) []odhmodel.EventDate {
 	for _, fn := range functions {
-		if fn.IsEventWide {
-			continue
-		}
-
 		fnType := strings.TrimSpace(fn.FunctionTypeName)
 		lang := ""
 		if fnType == "EN SUBtitle" {
@@ -543,22 +542,29 @@ func buildDetailFromFunctionsForEventDates(functions []MomentusFunction, eventDa
 			continue
 		}
 
-		if fn.StartDate == "" || fn.EndDate == "" || fn.StartTime == "" || fn.EndTime == "" || fn.RoomId == "" {
+		if fn.StartDate == "" {
 			continue
+		}
+		endDate := fn.EndDate
+		if endDate == "" {
+			endDate = fn.StartDate
 		}
 
 		for i := range eventDates {
 			ed := &eventDates[i]
-			if ed.From != fn.StartDate || ed.To != fn.EndDate || ed.Begin != fn.StartTime || ed.End != fn.EndTime {
+			if ed.From != fn.StartDate || ed.To != endDate || ed.Begin != fn.StartTime || ed.End != fn.EndTime {
 				continue
 			}
 
-			roomId := ""
-			if mm, ok := ed.Mapping["momentus"]; ok {
-				roomId = mm["roomId"]
-			}
-			if roomId != fn.RoomId {
-				continue
+			// A function without room matches the date in any room
+			if fn.RoomId != "" {
+				roomId := ""
+				if mm, ok := ed.Mapping["momentus"]; ok {
+					roomId = mm["roomId"]
+				}
+				if roomId != fn.RoomId {
+					continue
+				}
 			}
 
 			if ed.Detail == nil {

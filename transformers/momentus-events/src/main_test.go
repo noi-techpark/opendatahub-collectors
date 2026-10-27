@@ -248,3 +248,29 @@ func TestNormalizeEventDates(t *testing.T) {
 		t.Errorf("normalizeEventDates = %+v, want %+v", dates, want)
 	}
 }
+
+func TestBuildDetailForEventDatesMatchesLikeLegacy(t *testing.T) {
+	dates := []odhmodel.EventDate{
+		{From: "2026-11-09", To: "2026-11-09", Begin: "08:00", End: "14:00", Mapping: map[string]map[string]string{"momentus": {"roomId": "room-40-A"}}},
+		{From: "2026-11-09", To: "2026-11-09", Begin: "08:30", End: "13:00", Mapping: map[string]map[string]string{"momentus": {"roomId": "room-35-A"}}},
+	}
+	functions := []MomentusFunction{
+		// Event-wide but bound to a room: not used for the root Detail, so it belongs to the EventDate.
+		{FunctionTypeName: "IT SUBtitle", Name: "Sottotitolo", IsEventWide: true, StartDate: "2026-11-09", EndDate: "2026-11-09", StartTime: "08:30", EndTime: "13:00", RoomId: "room-35-A"},
+		// Without EndDate and room: EndDate defaults to StartDate, any room matches.
+		{FunctionTypeName: "DE SUBtitle", Name: "Untertitel", StartDate: "2026-11-09", StartTime: "08:00", EndTime: "14:00"},
+		// Room does not match.
+		{FunctionTypeName: "EN SUBtitle", Name: "Subtitle", StartDate: "2026-11-09", EndDate: "2026-11-09", StartTime: "08:00", EndTime: "14:00", RoomId: "room-35-A"},
+	}
+
+	dates = buildDetailFromFunctionsForEventDates(functions, dates)
+
+	want0 := map[string]odhmodel.Detail{"de": {Language: "de", Title: "Untertitel"}}
+	want1 := map[string]odhmodel.Detail{"it": {Language: "it", Title: "Sottotitolo"}}
+	if !reflect.DeepEqual(dates[0].Detail, want0) {
+		t.Errorf("EventDate[0].Detail = %+v, want %+v", dates[0].Detail, want0)
+	}
+	if !reflect.DeepEqual(dates[1].Detail, want1) {
+		t.Errorf("EventDate[1].Detail = %+v, want %+v", dates[1].Detail, want1)
+	}
+}

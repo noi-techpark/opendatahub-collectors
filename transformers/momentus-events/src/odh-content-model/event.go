@@ -37,7 +37,7 @@ type EventLinked struct {
 	GpsInfo               []GpsInfo                         `json:"GpsInfo"`
 	GpsPoints             map[string]any                    `json:"GpsPoints"`
 	Gpstype               string                            `json:"Gpstype,omitempty"`
-	HasLanguage           []string                          `json:"HasLanguage"`
+	HasLanguage           []string                          `json:"HasLanguage" hash:"ignore"`
 	Id                    string                            `json:"Id"`
 	ImageGallery          []ImageGalleryItem                `json:"ImageGallery"`
 	LastChange            string                            `json:"LastChange,omitempty" hash:"ignore"`
