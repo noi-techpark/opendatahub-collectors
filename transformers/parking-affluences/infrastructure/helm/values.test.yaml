@@ -1,0 +1,44 @@
+# SPDX-FileCopyrightText: 2026 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-parking-affluences
+  pullPolicy: IfNotPresent
+  tag: ""
+
+imagePullSecrets:
+  - name: container-registry-r
+
+env:
+  LOG_LEVEL: "DEBUG"
+  MQ_QUEUE: api-crawler.parking-affluences
+  MQ_EXCHANGE: routed
+  MQ_KEY: api-crawler.parking-affluences
+  MQ_CLIENT: tr-parking-affluences
+
+  BDP_BASE_URL: http://bdp-core.core.svc.cluster.local
+  BDP_PROVENANCE_VERSION:
+  BDP_PROVENANCE_NAME: tr-parking-affluences
+  BDP_ORIGIN: Affluences
+
+  RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
+
+  SERVICE_NAME: tr-parking-affluences
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
+  - name: BDP_TOKEN_URL
+    secret: oauth-collector
+    key: tokenUri
+  - name: BDP_CLIENT_ID
+    secret: oauth-collector
+    key: clientId
+  - name: BDP_CLIENT_SECRET
+    secret: oauth-collector
+    key: clientSecret
