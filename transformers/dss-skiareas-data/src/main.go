@@ -174,8 +174,8 @@ func processSkiArea(ctx context.Context, dssArea dto.DssSkiArea) error {
 
 // applyRegionGeo adds the regionMap outline to the SkiArea:
 //   - only if withTrack: Geo["track"]: the outline as WKT (LINESTRING / MULTILINESTRING)
-//   - only if GpsInfo is empty: the centroid of the outline as GpsInfo "position"
-//     and Geo["position"], both as the default entry
+//   - only if Geo has no "position": the centroid of the outline as Geo["position"],
+//     as the default entry (GpsInfo is readonly on the ODH API, generated from Geo["position"])
 //
 // Existing GpsInfo and Geo entries are kept unchanged. The API requires exactly
 // one default Geo entry, so the track only becomes the default when no other
@@ -195,7 +195,7 @@ func applyRegionGeo(ctx context.Context, area *odhmodel.SkiArea, regionMap strin
 		geo[key] = value
 	}
 
-	if !hasGpsInfo(area.GpsInfo) {
+	if !hasGeoPosition(area.Geo) {
 		position := map[string]any{
 			"Gpstype":   "position",
 			"Latitude":  track.Center.Lat,
@@ -203,10 +203,11 @@ func applyRegionGeo(ctx context.Context, area *odhmodel.SkiArea, regionMap strin
 			"Geometry":  "POINT (" + formatCoordinate(track.Center.Lon) + " " + formatCoordinate(track.Center.Lat) + ")",
 			"Default":   true,
 		}
-		gpsInfo, errGps := json.Marshal([]any{position})
+		// GpsInfo is readonly on the ODH API, generated from Geo["position"]
+		// gpsInfo, errGps := json.Marshal([]any{position})
 		rawPosition, errPos := json.Marshal(position)
-		if errGps == nil && errPos == nil {
-			area.GpsInfo = gpsInfo
+		if errPos == nil {
+			// area.GpsInfo = gpsInfo
 			geo["position"] = rawPosition
 		}
 	}
@@ -252,11 +253,18 @@ func sameTrack(raw json.RawMessage, wkt string, isDefault bool) bool {
 	return entry.Geometry == wkt && (entry.Default != nil && *entry.Default) == isDefault
 }
 
-// hasGpsInfo reports whether the raw GpsInfo holds at least one entry.
-func hasGpsInfo(raw json.RawMessage) bool {
-	var entries []json.RawMessage
-	return json.Unmarshal(raw, &entries) == nil && len(entries) > 0
+// hasGeoPosition reports whether Geo holds a "position" entry.
+func hasGeoPosition(geo map[string]json.RawMessage) bool {
+	_, ok := geo["position"]
+	return ok
 }
+
+// GpsInfo is readonly on the ODH API (generated from Geo["position"]), use hasGeoPosition
+// // hasGpsInfo reports whether the raw GpsInfo holds at least one entry.
+// func hasGpsInfo(raw json.RawMessage) bool {
+// 	var entries []json.RawMessage
+// 	return json.Unmarshal(raw, &entries) == nil && len(entries) > 0
+// }
 
 // findByDssRid queries ODH SkiArea filtered by Mapping.dss.rid.
 // Uses rawfilter + pagenumber=1 as required by the SkiArea endpoint.

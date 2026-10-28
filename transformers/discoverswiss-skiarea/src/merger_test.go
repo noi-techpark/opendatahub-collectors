@@ -212,7 +212,8 @@ func TestMergeSkiAreaOverwritesNonLangFields(t *testing.T) {
 	assert.True(t, base.Geo["position"].Default, "Default flag should be kept after merge")
 
 	// New SkiArea-specific fields should be overwritten
-	assert.Equal(t, 47.0, *base.GpsInfo[0].Latitude, "GpsInfo should be overwritten")
+	// GpsInfo is readonly on the ODH API (generated from Geo), it is no longer merged
+	// assert.Equal(t, 47.0, *base.GpsInfo[0].Latitude, "GpsInfo should be overwritten")
 	assert.Equal(t, 1200, *base.AltitudeFrom, "AltitudeFrom should be overwritten")
 	assert.Equal(t, 2500, *base.AltitudeTo, "AltitudeTo should be overwritten")
 	assert.Equal(t, "75.0", *base.TotalSlopeKm, "TotalSlopeKm should be overwritten")
@@ -375,4 +376,82 @@ func TestMergeShortnamePrefersGerman(t *testing.T) {
 	assert.Equal(t, &de, mergeShortname(&it, &de, []string{"de"}), "de overwrites")
 	assert.Equal(t, &de, mergeShortname(&de, &it, []string{"it"}), "other language keeps existing")
 	assert.Equal(t, &de, mergeShortname(&de, nil, []string{"it"}), "nil overlay keeps existing")
+}
+
+func TestMergeSkiAreaKeepsOtherGeoEntries(t *testing.T) {
+	base := odhContentModel.SkiArea{
+		Generic: odhContentModel.Generic{
+			Geo: map[string]odhContentModel.GpsInfo{
+				"position": {Latitude: Float64Ptr(46.0), Longitude: Float64Ptr(9.0), Geometry: StringPtr("POINT (9 46)"), Default: true},
+				"track":    {Geometry: StringPtr("LINESTRING (9 46, 9.1 46.1)")},
+			},
+		},
+	}
+	overlay := odhContentModel.SkiArea{
+		Generic: odhContentModel.Generic{
+			Geo: map[string]odhContentModel.GpsInfo{
+				"position": {Latitude: Float64Ptr(47.0), Longitude: Float64Ptr(10.0), Geometry: StringPtr("POINT (10 47)"), Default: true},
+			},
+		},
+	}
+
+	MergeSkiArea(&base, overlay)
+
+	require.Contains(t, base.Geo, "track", "track should be kept")
+	assert.Equal(t, "LINESTRING (9 46, 9.1 46.1)", *base.Geo["track"].Geometry)
+	assert.Equal(t, "POINT (10 47)", *base.Geo["position"].Geometry, "position should be overwritten")
+	assert.True(t, base.Geo["position"].Default, "position stays the default")
+}
+
+func TestMergeSkiAreaKeepsSingleDefault(t *testing.T) {
+	base := odhContentModel.SkiArea{
+		Generic: odhContentModel.Generic{
+			Geo: map[string]odhContentModel.GpsInfo{
+				"track": {Geometry: StringPtr("LINESTRING (9 46, 9.1 46.1)"), Default: true},
+			},
+		},
+	}
+	overlay := odhContentModel.SkiArea{
+		Generic: odhContentModel.Generic{
+			Geo: map[string]odhContentModel.GpsInfo{
+				"position": {Geometry: StringPtr("POINT (10 47)"), Default: true},
+			},
+		},
+	}
+
+	MergeSkiArea(&base, overlay)
+
+	assert.True(t, base.Geo["track"].Default, "existing default track stays the default")
+	assert.False(t, base.Geo["position"].Default, "position must not become a second default")
+}
+
+// A SkiArea loaded from the API carries the readonly GpsInfo (generated from
+// Geo["position"]) and Geo entries of other services (e.g. track). Replaying the
+// same DiscoverSwiss data must not be detected as a change.
+func TestMergeSkiAreaHashStableWithApiGpsInfoAndTrack(t *testing.T) {
+	raw := loadTestSkiArea(t, "../test/data/skiarea-merge-de.json")
+	result, err := TransformSkiArea(raw, generateID(raw), raw.ApiCrawlerLang)
+	require.NoError(t, err)
+	require.Contains(t, result.SkiArea.Geo, "position")
+
+	loaded := result.SkiArea
+	loaded.GpsInfo = []odhContentModel.GpsInfo{loaded.Geo["position"]}
+	loaded.Geo = map[string]odhContentModel.GpsInfo{
+		"position": loaded.Geo["position"],
+		"track":    {Geometry: StringPtr("LINESTRING (9 46, 9.1 46.1)")},
+	}
+	cache := clib.NewCache[odhContentModel.SkiArea]()
+	hash, err := clib.HashEntity(loaded)
+	require.NoError(t, err)
+	cache.Set(raw.Identifier, loaded, hash)
+
+	result, err = TransformSkiArea(raw, generateID(raw), raw.ApiCrawlerLang)
+	require.NoError(t, err)
+	existing, _ := cache.Get(raw.Identifier)
+	MergeSkiArea(&existing.Entity, result.SkiArea)
+
+	_, changed, err := cache.HasChanged(raw.Identifier, existing.Entity)
+	require.NoError(t, err)
+	assert.False(t, changed, "API GpsInfo and track must not trigger an update")
+	assert.Equal(t, loaded.GpsInfo, existing.Entity.GpsInfo, "API GpsInfo is kept")
 }

@@ -41,11 +41,12 @@ func TestMapSkiAreaToODH(t *testing.T) {
 	// Verify HasLanguage
 	assert.Equal(t, []string{lang}, skiArea.HasLanguage, "HasLanguage should contain only the specified language")
 
-	// Verify GpsInfo array
-	assert.NotEmpty(t, skiArea.GpsInfo, "GpsInfo should not be empty")
-	assert.NotNil(t, skiArea.GpsInfo[0].Latitude)
-	assert.NotNil(t, skiArea.GpsInfo[0].Longitude)
-	assert.True(t, skiArea.GpsInfo[0].Default)
+	// GpsInfo is readonly on the ODH API (generated from Geo["position"]), no longer written
+	// assert.NotEmpty(t, skiArea.GpsInfo, "GpsInfo should not be empty")
+	// assert.NotNil(t, skiArea.GpsInfo[0].Latitude)
+	// assert.NotNil(t, skiArea.GpsInfo[0].Longitude)
+	// assert.True(t, skiArea.GpsInfo[0].Default)
+	assert.True(t, skiArea.Geo["position"].Default)
 
 	// Verify Geo carries a WKT geometry (required by the ODH API on POST/PUT)
 	require.Contains(t, skiArea.Geo, "position")
