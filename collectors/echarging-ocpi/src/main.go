@@ -23,10 +23,9 @@ var cfg struct {
 	PULL_LOCATIONS_ENDPOINT string
 	PULL_LOCATIONS_CRON     string
 
-	OCPI_TOKENS []string
+	OCPI_TOKENS  []string
+	OCPI_VERSION string `default:"2.2"`
 }
-
-const ver string = "2.2"
 
 func main() {
 	envconfig.MustProcess("", &cfg)
@@ -68,6 +67,7 @@ func startCron(rabbit mq.R) {
 }
 
 func startEndpoint(rabbit mq.R) {
+	ver := cfg.OCPI_VERSION
 	r := gin.New()
 	r.Use(gin.Recovery())
 	r.Use(cors.Default())

@@ -71,21 +71,33 @@ func (f FacilityCategories) CarparkIDs() []int {
 	return out
 }
 
-// TotalCapacity returns a carpark's overall capacity — the category-3 entry,
-// normalised. Returns capacityUnknown when there is no total row or the
-// provider sent the sentinel.
+// capacityMetaKeys names the categories whose capacity is station metadata.
 //
-// Only the total is read. The per-category capacities are a live quota for at
-// least two carparks (short-stay and subscribers repartitioning a fixed pool
-// minute by minute, always summing to the total), so storing them would be
-// recording a measurement as though it were a fact.
-func (f FacilityCategories) TotalCapacity(carparkID int) int {
+// Short stay is the share open to everyone, and free_short_stay read against
+// the total overstates how full a carpark is. Its id is a provider convention
+// rather than a contract (confirmed for every facility so far, issue #150), so
+// a new facility should be checked against it. For at least two carparks it is
+// a live quota repartitioned with subscribers, so it follows the latest event
+// and the station re-syncs when it moves.
+var capacityMetaKeys = map[int]string{
+	catTotal:     "capacity",
+	catShortStay: "capacity_short_stay",
+}
+
+// Capacity returns a carpark's normalised capacity for one category. Returns
+// capacityUnknown when there is no such row or the provider sent the sentinel.
+func (f FacilityCategories) Capacity(carparkID, categoryID int) int {
 	for _, c := range f {
-		if c.CarparkId == carparkID && c.CountingCategoryId == catTotal {
+		if c.CarparkId == carparkID && c.CountingCategoryId == categoryID {
 			return normalizeCapacity(c.Capacity)
 		}
 	}
 	return capacityUnknown
+}
+
+// TotalCapacity returns a carpark's overall capacity — the category-3 entry.
+func (f FacilityCategories) TotalCapacity(carparkID int) int {
+	return f.Capacity(carparkID, catTotal)
 }
 
 // FacilityCapacity sums the known carpark totals.

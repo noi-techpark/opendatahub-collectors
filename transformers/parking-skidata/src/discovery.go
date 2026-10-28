@@ -43,8 +43,8 @@ var (
 	registry = map[string]entry{}
 	regMu    sync.Mutex
 
-	// observedCapacity is the total capacity the provider last stated in a
-	// category-3 event, per carpark provider id.
+	// observedCapacity is the capacity the provider last stated in an event,
+	// per carpark and per category in capacityMetaKeys.
 	//
 	// It exists so that the capacity published as metadata and the capacity the
 	// free count is computed from are the same number. Taking metadata from the
@@ -53,13 +53,18 @@ var (
 	// change exists to remove. The event wins because it is the live figure;
 	// the categories supply it before any event has arrived, which is what
 	// hydration and the facility sum need at boot.
-	observedCapacity = map[string]int{}
+	observedCapacity = map[capacityKey]int{}
 
 	// syncedStations remembers the last station pushed for each provider id, so
 	// an unchanged merge costs nothing. Commit only happens after the sync
 	// succeeds — a failed push must not be remembered as done.
 	syncedStations = tr.NewCache[bdplib.Station]()
 )
+
+type capacityKey struct {
+	carpark  string // carpark provider id
+	category int
+}
 
 // baseFacility builds the provider-derived facility station.
 func baseFacility(bdp bdplib.Bdp, facilityID, name string) bdplib.Station {
@@ -70,34 +75,36 @@ func baseFacility(bdp bdplib.Bdp, facilityID, name string) bdplib.Station {
 
 	s.MetaData = map[string]any{
 		"provider_id": facilityID,
-		// Sum of the carpark totals, or capacityUnknown when none is known.
-		"capacity": facilityCapacityLocked(facilityID),
+	}
+	// Sums of the carpark capacities, or capacityUnknown when none is known.
+	for category, key := range capacityMetaKeys {
+		s.MetaData[key] = facilityCapacityLocked(facilityID, category)
 	}
 	return s
 }
 
-// carparkCapacityLocked returns the capacity to publish for one carpark: what
-// the provider last stated in an event, falling back to the counting
-// categories. Callers must hold regMu.
-func carparkCapacityLocked(facilityID string, carparkID int) int {
-	if c, ok := observedCapacity[carparkProviderID(facilityID, carparkID)]; ok {
+// carparkCapacityLocked returns the capacity to publish for one carpark and
+// category: what the provider last stated in an event, falling back to the
+// counting categories. Callers must hold regMu.
+func carparkCapacityLocked(facilityID string, carparkID, category int) int {
+	if c, ok := observedCapacity[capacityKey{carparkProviderID(facilityID, carparkID), category}]; ok {
 		return c
 	}
-	return facilityCategories(facilityID).TotalCapacity(carparkID)
+	return facilityCategories(facilityID).Capacity(carparkID, category)
 }
 
 // facilityCapacityLocked sums the known carpark capacities over the facility's
 // topology. Carparks whose capacity is unknown contribute nothing rather than
 // zero, and a facility where none is known is itself unknown. Callers must hold
 // regMu.
-func facilityCapacityLocked(facilityID string) int {
+func facilityCapacityLocked(facilityID string, category int) int {
 	cats := facilityCategories(facilityID)
 	if len(cats) == 0 {
 		return capacityUnknown
 	}
 	sum, known := 0, false
 	for _, id := range cats.CarparkIDs() {
-		if c := carparkCapacityLocked(facilityID, id); c != capacityUnknown {
+		if c := carparkCapacityLocked(facilityID, id, category); c != capacityUnknown {
 			sum += c
 			known = true
 		}
@@ -122,9 +129,9 @@ func baseCarpark(bdp bdplib.Bdp, facilityID string, carparkID int, name string) 
 		"provider_id": providerID,
 		"facility_id": facilityID,
 		"carpark_id":  carparkID,
-		// The category-3 total only. Per-category capacities are a live quota
-		// for some carparks, so they are measurements, not metadata.
-		"capacity": carparkCapacityLocked(facilityID, carparkID),
+	}
+	for category, key := range capacityMetaKeys {
+		s.MetaData[key] = carparkCapacityLocked(facilityID, carparkID, category)
 	}
 	return s
 }
@@ -159,14 +166,15 @@ func observe(ctx context.Context, bdp bdplib.Bdp, ev ParkingEvent, facilityID st
 	childID := carparkProviderID(facilityID, carparkID)
 
 	regMu.Lock()
-	// A category-3 event restates the carpark's total capacity. Record it
-	// before building the bases so the station advertises the same number the
-	// free count is derived from.
-	if ev.CountingCategoryId == catTotal {
+	// An event restates its category's capacity. Record it before building the
+	// bases so the station advertises the same number the free count is
+	// derived from.
+	if _, ok := capacityMetaKeys[ev.CountingCategoryId]; ok {
+		key := capacityKey{childID, ev.CountingCategoryId}
 		if c := normalizeCapacity(ev.Capacity); c != capacityUnknown {
-			observedCapacity[childID] = c
+			observedCapacity[key] = c
 		} else {
-			delete(observedCapacity, childID)
+			delete(observedCapacity, key)
 		}
 	}
 	// A carpark event carries only the carpark's own name. Using it for the

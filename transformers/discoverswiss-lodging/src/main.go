@@ -31,6 +31,7 @@ var env struct {
 	ODH_CORE_TOKEN_CLIENT_SECRET string
 
 	ODH_API_CORE_URL string
+	ODH_CORE_REFERER string
 
 	RAW_FILTER_URL_TEMPLATE string
 }
@@ -75,7 +76,7 @@ func main() {
 			ctx := acco.ctx
 			logger.Get(acco.ctx).Debug("getting content accomodation", "id", acco.Accommodation.Mapping.DiscoverSwiss.Id)
 			odhID, err := odhContentClient.GetAccomodationIdByRawFilter(
-				acco.ctx, acco.Accommodation.Mapping.DiscoverSwiss.Id, env.RAW_FILTER_URL_TEMPLATE,
+				acco.ctx, acco.Accommodation.Mapping.DiscoverSwiss.Id, env.RAW_FILTER_URL_TEMPLATE, env.ODH_CORE_REFERER,
 			)
 			ms.FailOnError(acco.ctx, err, "cannot get accomodation from content", "id", acco.Accommodation.Mapping.DiscoverSwiss.Id)
 			if len(odhID) > 0 && odhID != "" {
@@ -115,7 +116,7 @@ func main() {
 			puttoken, err := tokenSource.Token()
 			ms.FailOnError(acco.ctx, err, "failed to get content api token")
 
-			_, err = odhContentClient.PutContentApi(acco.ctx, contentCoreUrl, puttoken.AccessToken, acco.Accommodation, acco.Id)
+			_, err = odhContentClient.PutContentApi(acco.ctx, contentCoreUrl, puttoken.AccessToken, env.ODH_CORE_REFERER, acco.Accommodation, acco.Id)
 			ms.FailOnError(acco.ctx, err, "failed to put content accomodation", "id", acco.Accommodation.Mapping.DiscoverSwiss.Id,
 				"content_id", acco.Id)
 
@@ -135,7 +136,7 @@ func main() {
 			posttoken, err := token.Token()
 			ms.FailOnError(acco.ctx, err, "failed to get content api token")
 
-			_, err = odhContentClient.PostContentApi(acco.ctx, contentCoreUrl, posttoken.AccessToken, acco.Accommodation)
+			_, err = odhContentClient.PostContentApi(acco.ctx, contentCoreUrl, posttoken.AccessToken, env.ODH_CORE_REFERER, acco.Accommodation)
 			ms.FailOnError(acco.ctx, err, "failed to post content accomodation", "id", acco.Accommodation.Mapping.DiscoverSwiss.Id)
 
 			slog.Debug("post ok", "id", acco.Accommodation.Mapping.DiscoverSwiss.Id)

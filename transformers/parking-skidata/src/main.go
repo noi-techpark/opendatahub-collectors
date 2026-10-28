@@ -281,12 +281,12 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[ParkingEven
 //
 // The event's capacity is authoritative for its own category and nothing else —
 // for some carparks the per-category capacity is a live quota that moves every
-// few minutes, which is exactly why it is used here and stored nowhere. When it
-// is the sentinel there is no capacity to subtract from, so free is not
-// computable and is withheld; occupied is a real count and is still published.
+// few minutes. When it is the sentinel there is no capacity to subtract from,
+// so free is not computable and is withheld; occupied is a real count and is
+// still published.
 //
-// For the total category this is the same number the station advertises as its
-// capacity (see observedCapacity), so free can never exceed it.
+// For the categories in capacityMetaKeys this is the same number the station
+// advertises (see observedCapacity), so free can never exceed it.
 func freeFromEvent(ctx context.Context, event ParkingEvent) (int, bool) {
 	capacity := normalizeCapacity(event.Capacity)
 	if capacity == capacityUnknown {
