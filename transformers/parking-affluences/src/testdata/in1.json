@@ -1,0 +1,112 @@
+[
+  {
+    "actions": [],
+    "categories": [
+      {
+        "id": 18,
+        "name": "Parking",
+        "name_plural": "Parkings"
+      }
+    ],
+    "cover": "https://static.affluences.media/default/universal-default_cover.jpg",
+    "email": null,
+    "id": "a5a6294b-36b5-4d57-851d-c66e90024fe5",
+    "images": [
+      "https://static.affluences.media/default/universal-default_cover.jpg"
+    ],
+    "infos": [],
+    "location": {
+      "address": {
+        "city": "Funes",
+        "country_code": "IT",
+        "region": "Trentino-Alto Adige",
+        "route": "Parcheggio Pe de Börz, SP29",
+        "zip_code": "39030"
+      },
+      "coordinates": {
+        "latitude": 46.681725,
+        "longitude": 11.822493
+      }
+    },
+    "parent_id": null,
+    "phone_number": null,
+    "primary_name": "Parcheggio Passo delle Erbe (P1)",
+    "realtime": {
+      "capacity": 100,
+      "entries": null,
+      "exits": null,
+      "max_measurable_waiting": null,
+      "occupancy": 80,
+      "occupancy_datetime_utc": "2026-07-20T08:00:07.000Z",
+      "occupancy_rate": 80,
+      "open": true,
+      "site_id": "a5a6294b-36b5-4d57-851d-c66e90024fe5",
+      "waiting_datetime_utc": null,
+      "waiting_time": null
+    },
+    "secondary_name": "Nei pressi di Ütia de Börz",
+    "services": [],
+    "timezone": "Europe/Rome",
+    "type": {
+      "id": 18,
+      "name": "Parking"
+    },
+    "url": null,
+    "warning": null
+  },
+  {
+    "actions": [],
+    "categories": [
+      {
+        "id": 18,
+        "name": "Parking",
+        "name_plural": "Parkings"
+      }
+    ],
+    "cover": "https://static.affluences.media/default/universal-default_cover.jpg",
+    "email": null,
+    "id": "871cbd18-0dc5-4398-a986-930fc164aad2",
+    "images": [
+      "https://static.affluences.media/default/universal-default_cover.jpg"
+    ],
+    "infos": [],
+    "location": {
+      "address": {
+        "city": null,
+        "country_code": "IT",
+        "region": "Trentino-Alto Adige",
+        "route": "SP29",
+        "zip_code": "39030"
+      },
+      "coordinates": {
+        "latitude": 46.6748,
+        "longitude": 11.8132
+      }
+    },
+    "parent_id": null,
+    "phone_number": null,
+    "primary_name": "Parcheggio Passo delle Erbe - Pe de Börz (P2)",
+    "realtime": {
+      "capacity": 250,
+      "entries": null,
+      "exits": null,
+      "max_measurable_waiting": null,
+      "occupancy": 3,
+      "occupancy_datetime_utc": "2026-07-20T08:00:07.000Z",
+      "occupancy_rate": 1,
+      "open": true,
+      "site_id": "871cbd18-0dc5-4398-a986-930fc164aad2",
+      "waiting_datetime_utc": null,
+      "waiting_time": null
+    },
+    "secondary_name": "Versante Val Badia",
+    "services": [],
+    "timezone": "Europe/Rome",
+    "type": {
+      "id": 18,
+      "name": "Parking"
+    },
+    "url": null,
+    "warning": null
+  }
+]
