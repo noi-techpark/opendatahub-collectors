@@ -987,8 +987,8 @@ func MapSkiAreaToODH(raw dto.SkiArea, id string, lang string) (odhContentModel.S
 		}
 
 		skiArea.Geo["position"] = gpsInfo
-		// SkiArea uses GpsInfo array (not Geo map) in the ODH API
-		skiArea.GpsInfo = []odhContentModel.GpsInfo{gpsInfo}
+		// GpsInfo is readonly on the ODH API, generated from Geo["position"]
+		// skiArea.GpsInfo = []odhContentModel.GpsInfo{gpsInfo}
 	}
 
 	// Map images

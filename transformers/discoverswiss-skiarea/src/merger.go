@@ -16,7 +16,8 @@ func MergeSkiArea(base *odhContentModel.SkiArea, overlay odhContentModel.SkiArea
 	base.Active = overlay.Active
 	base.Source = overlay.Source
 	base.LicenseInfo = overlay.LicenseInfo
-	base.Geo = overlay.Geo
+	// Only overwrite the Geo entries from DiscoverSwiss (position), keep the others (e.g. tracks)
+	base.Geo = mergeGeo(base.Geo, overlay.Geo)
 	base.ImageGallery = mergeImageGallery(base.ImageGallery, overlay.ImageGallery)
 	base.SmgTags = overlay.SmgTags
 	base.Mapping = mergeMappings(base.Mapping, overlay.Mapping)
@@ -32,7 +33,8 @@ func MergeSkiArea(base *odhContentModel.SkiArea, overlay odhContentModel.SkiArea
 			base.SkiRegionName[lang] = name
 		}
 	}
-	base.GpsInfo = overlay.GpsInfo
+	// GpsInfo is readonly on the ODH API, generated from Geo["position"]
+	// base.GpsInfo = overlay.GpsInfo
 	base.TotalSlopeKm = overlay.TotalSlopeKm
 	base.SlopeKmBlue = overlay.SlopeKmBlue
 	base.SlopeKmRed = overlay.SlopeKmRed
@@ -71,6 +73,31 @@ func MergeSkiArea(base *odhContentModel.SkiArea, overlay odhContentModel.SkiArea
 // MergePOI merges overlay into base.
 // Language-dependent fields (Detail, ContactInfos, HasLanguage)
 // are merged per-language key. Non-language fields are overwritten from overlay.
+// mergeGeo overwrites only the Geo entries delivered by the overlay and keeps all
+// other existing entries (e.g. tracks added by other services or the databrowser).
+// The ODH API requires exactly one default entry: when a kept entry is already the
+// default, the overwritten entries are not set as default.
+func mergeGeo(base, overlay map[string]odhContentModel.GpsInfo) map[string]odhContentModel.GpsInfo {
+	merged := make(map[string]odhContentModel.GpsInfo, len(base)+len(overlay))
+	keptDefault := false
+	for key, value := range base {
+		if _, overwritten := overlay[key]; overwritten {
+			continue
+		}
+		merged[key] = value
+		if value.Default {
+			keptDefault = true
+		}
+	}
+	for key, value := range overlay {
+		if keptDefault {
+			value.Default = false
+		}
+		merged[key] = value
+	}
+	return merged
+}
+
 func MergePOI(base *odhContentModel.ODHActivityPoi, overlay odhContentModel.ODHActivityPoi) {
 	// Overwrite non-language fields
 	base.Active = overlay.Active
