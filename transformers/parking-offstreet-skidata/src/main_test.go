@@ -16,6 +16,7 @@ import (
 	"github.com/noi-techpark/go-bdp-client/bdpmock"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/reftable"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
 	"github.com/noi-techpark/opendatahub-go-sdk/testsuite"
 	"github.com/stretchr/testify/require"
 	"gotest.tools/v3/assert"
@@ -193,3 +194,16 @@ func TestFacilityWithUnknownCarparkIsSkippedWhole(t *testing.T) {
 // 	}
 // 	main()
 // }
+
+// The raw writer stores the poller's body as a JSON string; the listener must
+// accept exactly that shape, which is what the lake holds for both pollers.
+func TestListenerAcceptsRawStoredAsString(t *testing.T) {
+	loadFixtures(t)
+	body, err := os.ReadFile("../testdata/input/mybestparking.json")
+	require.NoError(t, err)
+
+	b := bdpmock.MockFromEnv(bdplib.BdpEnv{})
+	handler := tr.RawString2JsonMiddleware[FacilityData](TransformWithBdp(b))
+	require.NoError(t, handler(context.TODO(), &rdb.Raw[string]{Rawdata: string(body), Timestamp: time.Now()}))
+	require.NotEmpty(t, b.(*bdpmock.BdpMock).Requests().SyncedStations[stationType])
+}

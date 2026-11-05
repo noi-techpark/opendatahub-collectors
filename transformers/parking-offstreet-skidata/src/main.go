@@ -265,8 +265,10 @@ func main() {
 
 	SyncDataTypes(b)
 
-	listener := tr.NewTr[FacilityData](context.Background(), env)
-	err = listener.Start(context.Background(), TransformWithBdp(b))
+	// The raw writer stores the poller's JSON body as a string, so the payload
+	// is unwrapped once before it reaches the handler.
+	listener := tr.NewTr[string](context.Background(), env)
+	err = listener.Start(context.Background(), tr.RawString2JsonMiddleware[FacilityData](TransformWithBdp(b)))
 
 	ms.FailOnError(context.Background(), err, "error while listening to queue")
 }
