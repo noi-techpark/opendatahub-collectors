@@ -1,0 +1,138 @@
+{
+  "105": {
+    "gps": {
+      "lat": 46.4981740999847,
+      "lon": 11.3572551000081
+    },
+    "name": "P05 - Laurin",
+    "names": {
+      "de": "Laurin",
+      "en": "Laurin",
+      "it": "Laurin"
+    },
+    "netex": {
+      "charging": true,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Laurin"
+  },
+  "105_facility": {
+    "gps": {
+      "lat": 46.4981740999847,
+      "lon": 11.3572551000081
+    },
+    "name": "P05 - Laurin",
+    "names": {
+      "de": "Laurin",
+      "en": "Laurin",
+      "it": "Laurin"
+    },
+    "netex": {
+      "charging": true,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Laurin"
+  },
+  "607440": {
+    "gps": {
+      "lat": 46.7137081995625,
+      "lon": 11.6504978046581
+    },
+    "name": "Parcheggio Stazione Bressanone",
+    "standard_name": "Parcheggio Stazione Bressanone"
+  },
+  "607440_0": {
+    "gps": {
+      "lat": 46.7137081995625,
+      "lon": 11.6504978046581
+    },
+    "name": "Parcheggio Stazione Bressanone 01-Priel",
+    "standard_name": "Parcheggio Stazione Bressanone 01-Priel"
+  },
+  "607440_1": {
+    "gps": {
+      "lat": 46.7137081995625,
+      "lon": 11.6504978046581
+    },
+    "name": "Parcheggio Stazione Bressanone 02-Rosslauf",
+    "standard_name": "Parcheggio Stazione Bressanone 02-Rosslauf"
+  },
+  "607440_2": {
+    "gps": {
+      "lat": 46.7137081995625,
+      "lon": 11.6504978046581
+    },
+    "name": "Parcheggio Stazione Bressanone 03-C.Mobilità-Mobilitätsz",
+    "standard_name": "Parcheggio Stazione Bressanone 03-C.Mobilità-Mobilitätsz"
+  },
+  "608612": {
+    "gps": {
+      "lat": 46.7928154562203,
+      "lon": 11.9276220059167
+    },
+    "name": "Parcheggio Stazione Brunico",
+    "standard_name": "Parcheggio Stazione Brunico"
+  },
+  "608612_0": {
+    "gps": {
+      "lat": 46.7928154562203,
+      "lon": 11.9276220059167
+    },
+    "name": "Parcheggio Stazione Brunico Mobilitätszentrum",
+    "standard_name": "Parcheggio Stazione Brunico Mobilitätszentrum"
+  },
+  "609883": {
+    "gps": {
+      "lat": 46.49458,
+      "lon": 11.35497
+    },
+    "name": "Parcheggio Waltherpark",
+    "names": {
+      "de": "Waltherpark",
+      "en": "Waltherpark",
+      "it": "Waltherpark"
+    },
+    "netex": {
+      "charging": true,
+      "hazard_prohibited": true,
+      "layout": "covered",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Waltherpark"
+  },
+  "609883_0": {
+    "gps": {
+      "lat": 46.49458,
+      "lon": 11.35497
+    },
+    "name": "Parcheggio Waltherpark",
+    "names": {
+      "de": "Waltherpark",
+      "en": "Waltherpark",
+      "it": "Waltherpark"
+    },
+    "netex": {
+      "charging": true,
+      "hazard_prohibited": true,
+      "layout": "covered",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Waltherpark"
+  }
+}

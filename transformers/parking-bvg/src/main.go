@@ -69,10 +69,9 @@ type AreaNameComponents struct {
 
 // --- MAIN FUNCTION AND TRANSFORMER SETUP ---
 
-var StationProto Stations = nil
-
 func main() {
 	ms.InitWithEnv(context.Background(), "", &env)
+	ms.InitWithEnv(context.Background(), "", &enrichEnv)
 	slog.Info("Starting data (parking) transformer...")
 
 	b := bdplib.FromEnv(bdplib.BdpEnv{
@@ -86,10 +85,13 @@ func main() {
 	})
 	defer tel.FlushOnPanic()
 
-	StationProto = ReadStations("./resources/stations.csv")
+	var err error
+	err = startEnrichment(context.Background(), env)
+	ms.FailOnError(context.Background(), err, "failed to start the enrichment table")
+	defer stopEnrichment()
 
 	slog.Info("Syncing data types on startup")
-	err := syncDataTypes(b)
+	err = syncDataTypes(b)
 	ms.FailOnError(context.Background(), err, "failed to sync types")
 
 	slog.Info("Starting transformer listener...")
@@ -244,7 +246,7 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CountingAre
 
 	if len(skipped) > 0 {
 		sort.Strings(skipped)
-		slog.Error("facilities skipped, they will be deactivated until stations.csv describes them",
+		slog.Error("facilities skipped, they will be deactivated until the control tower describes them",
 			"skipped", strings.Join(skipped, ", "), "count", len(skipped))
 	}
 
@@ -252,7 +254,7 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CountingAre
 	// origin. A payload we understood nothing of is a reason to publish nothing, not
 	// a reason to tear down what is already there.
 	if len(allParkingFacilities) == 0 {
-		return fmt.Errorf("no facility in the payload is described by stations.csv, nothing to publish")
+		return fmt.Errorf("no facility in the payload is described by the enrichment table, nothing to publish")
 	}
 
 	slog.Info("Syncing stations and pushing data",
@@ -320,8 +322,9 @@ func parseAreaName(name string) AreaNameComponents {
 	}
 }
 
-// checkKnownStations reports every station of one facility that stations.csv does
-// not describe, so the csv can be completed in one go instead of one poll at a time.
+// checkKnownStations reports every station of one facility the enrichment table
+// does not describe, so the records can be completed in one go instead of one poll
+// at a time.
 //
 // The provider recreates its counting areas from time to time, which gives them new
 // ids and new names. Publishing such an area anyway yields a station with no
@@ -333,13 +336,13 @@ func parseAreaName(name string) AreaNameComponents {
 func checkKnownStations(standort string, areas []CountingArea) error {
 	var missing []string
 
-	if StationProto.GetStationByID(standort) == nil {
-		slog.Error("facility not found in stations.csv", "facility", standort)
+	if !hasRecord(standort) {
+		slog.Error("facility has no enrichment record", "facility", standort)
 		missing = append(missing, standort)
 	}
 	for _, area := range areas {
-		if StationProto.GetStationByID(area.ID) == nil {
-			slog.Error("counting area not found in stations.csv",
+		if !hasRecord(area.Name) {
+			slog.Error("counting area has no enrichment record",
 				"area", area.Name, "provider_id", area.ID, "facility", standort)
 			missing = append(missing, area.Name)
 		}
@@ -350,24 +353,19 @@ func checkKnownStations(standort string, areas []CountingArea) error {
 	}
 
 	sort.Strings(missing)
-	return fmt.Errorf("%d station(s) not found in stations.csv: %s",
+	return fmt.Errorf("%d station(s) without enrichment record: %s",
 		len(missing), strings.Join(missing, ", "))
 }
 
 // createParkingStation now accepts a map for capacityByType
 func createParkingStation(bdp bdplib.Bdp, area CountingArea, parsed AreaNameComponents, capacity int, capacityByType map[string]int) (*bdplib.Station, error) {
-	proto := StationProto.GetStationByID(area.ID)
-	if proto == nil {
-		return nil, fmt.Errorf("counting area %q (provider_id %s) not found in stations.csv", area.Name, area.ID)
-	}
-
-	metadata := proto.ToMetadata()
+	metadata := map[string]any{}
 
 	station := bdplib.CreateStation(
 		area.Name,
-		proto.StandardName,
+		area.Name,
 		StationTypeParkingStation,
-		proto.Lat, proto.Lon,
+		0, 0,
 		bdp.GetOrigin(),
 	)
 
@@ -389,22 +387,20 @@ func createParkingStation(bdp bdplib.Bdp, area CountingArea, parsed AreaNameComp
 	}
 
 	station.MetaData = metadata
+	if !enrichStation(area.Name, &station) {
+		return nil, fmt.Errorf("counting area %q (provider_id %s) has no enrichment record", area.Name, area.ID)
+	}
 	return &station, nil
 }
 
 func createParkingFacility(bdp bdplib.Bdp, siteID, facilityName string, totalCapacity int, capacityByType map[string]int) (*bdplib.Station, error) {
-	proto := StationProto.GetStationByID(siteID)
-	if proto == nil {
-		return nil, fmt.Errorf("facility %q not found in stations.csv", siteID)
-	}
-
-	metadata := proto.ToMetadata()
+	metadata := map[string]any{}
 
 	station := bdplib.CreateStation(
 		facilityName,
-		proto.StandardName,
+		facilityName,
 		StationTypeParkingFacility,
-		proto.Lat, proto.Lon,
+		0, 0,
 		bdp.GetOrigin(),
 	)
 
@@ -420,6 +416,9 @@ func createParkingFacility(bdp bdplib.Bdp, siteID, facilityName string, totalCap
 	}
 
 	station.MetaData = metadata
+	if !enrichStation(siteID, &station) {
+		return nil, fmt.Errorf("facility %q has no enrichment record", siteID)
+	}
 	return &station, nil
 }
 
