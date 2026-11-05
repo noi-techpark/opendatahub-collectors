@@ -17,7 +17,9 @@ import (
 )
 
 // Station descriptions edited in the parking control tower, published through
-// rest-push and read from the raw data lake. Records are keyed by station code.
+// rest-push and read from the raw data lake. Records are keyed by provider id:
+// the counting area's id, which survives the provider renaming the area when
+// its capacity changes, and the Standort for a facility.
 var enrichEnv struct {
 	REFTABLE_DB         string `default:""`
 	REFTABLE_COLLECTION string `default:""`

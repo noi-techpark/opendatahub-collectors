@@ -341,7 +341,7 @@ func checkKnownStations(standort string, areas []CountingArea) error {
 		missing = append(missing, standort)
 	}
 	for _, area := range areas {
-		if !hasRecord(area.Name) {
+		if !hasRecord(area.ID) {
 			slog.Error("counting area has no enrichment record",
 				"area", area.Name, "provider_id", area.ID, "facility", standort)
 			missing = append(missing, area.Name)
@@ -387,7 +387,7 @@ func createParkingStation(bdp bdplib.Bdp, area CountingArea, parsed AreaNameComp
 	}
 
 	station.MetaData = metadata
-	if !enrichStation(area.Name, &station) {
+	if !enrichStation(area.ID, &station) {
 		return nil, fmt.Errorf("counting area %q (provider_id %s) has no enrichment record", area.Name, area.ID)
 	}
 	return &station, nil
@@ -406,8 +406,10 @@ func createParkingFacility(bdp bdplib.Bdp, siteID, facilityName string, totalCap
 
 	// Required capacity fields: capacity is total
 	metadata["capacity"] = totalCapacity
-	// siteID is not reliable as parent id
-	// metadata["provider_id"] = siteID
+	// The provider's site_id is not reliable, so the facility is identified by
+	// its Standort. Published so the control tower keys facilities and areas
+	// alike by smetadata.provider_id.
+	metadata["provider_id"] = siteID
 
 	// Map of capacity by type for the metadata
 	for typ, cap := range capacityByType {

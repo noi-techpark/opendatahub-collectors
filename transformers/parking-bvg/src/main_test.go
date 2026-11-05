@@ -146,3 +146,24 @@ func Test1(t *testing.T) {
 	// testsuite.WriteOutput(req, "testdata/out.json")
 	bdpmock.CompareBdpMockCalls(t, out, req)
 }
+
+// The provider renames an area when its capacity changes ("_A010_006_STD" became
+// "_A010_016_STD") but keeps its id, so the record must still be found.
+func TestRenamedAreaKeepsItsRecord(t *testing.T) {
+	loadFixtures(t)
+
+	in := CountingAreaList{
+		countingArea("Bruneck-Mobilitaetszentrum_A010_016_STD", "a10447fb-c4d7-4e05-a90a-2583bfbec88a", 3),
+	}
+	raw := rdb.Raw[CountingAreaList]{Rawdata: in, Timestamp: time.Now()}
+	b := bdpmock.MockFromEnv(bdplib.BdpEnv{})
+
+	require.NoError(t, Transform(context.TODO(), b, &raw))
+
+	req := b.(*bdpmock.BdpMock).Requests()
+	stations := req.SyncedStations[StationTypeParkingStation][0].Stations
+	require.Len(t, stations, 1)
+	require.Equal(t, "Bruneck-Mobilitaetszentrum_A010_016_STD", stations[0].Id)
+	require.Equal(t, "Parkplatz Bruneck Mobilitaetszentrum (A010_006_STD)", stations[0].Name)
+	require.NotZero(t, stations[0].Latitude)
+}
