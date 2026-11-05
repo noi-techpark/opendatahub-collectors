@@ -1,0 +1,200 @@
+{
+  "103": {
+    "gps": {
+      "lat": 46.497805,
+      "lon": 11.355115
+    },
+    "name": "P03 - Piazza Walther",
+    "names": {
+      "de": "Waltherplatz",
+      "en": "Piazza Walther",
+      "it": "Piazza Walther"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Piazza Walther"
+  },
+  "104": {
+    "gps": {
+      "lat": 46.500551,
+      "lon": 11.358216
+    },
+    "name": "P04 - Luna via Molini",
+    "names": {
+      "de": "Luna MoliniStraße",
+      "en": "Luna via Molini",
+      "it": "Luna via Molini it"
+    },
+    "netex": {
+      "charging": true,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Luna Via Molini"
+  },
+  "106": {
+    "gps": {
+      "lat": 46.497134,
+      "lon": 11.358907
+    },
+    "name": "P06 - Lauben Parking Portici",
+    "names": {
+      "de": "Lauben Parking",
+      "en": "Lauben Parking Portici",
+      "it": "Lauben Parking Portici"
+    },
+    "netex": {
+      "charging": true,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Lauben Parking"
+  },
+  "107": {
+    "gps": {
+      "lat": 46.502958,
+      "lon": 11.351793
+    },
+    "name": "P07 - Mareccio via C. de Medici",
+    "names": {
+      "de": "Mareccio C. de Medici Strasse",
+      "en": "Mareccio via C. de Medici",
+      "it": "Mareccio via C. de Medici"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Mareccio"
+  },
+  "108": {
+    "gps": {
+      "lat": 46.494402,
+      "lon": 11.356716
+    },
+    "name": "P08 - BZ Centro via Mayr Nusser",
+    "names": {
+      "de": "BZ Centro Mayr Nusser Straße",
+      "en": "BZ Centro via Mayr Nusser",
+      "it": "BZ Centro via Mayr Nusser"
+    },
+    "netex": {
+      "charging": true,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio BZ-Centro"
+  },
+  "112": {
+    "gps": {
+      "lat": 46.49781,
+      "lon": 11.33851
+    },
+    "name": "P12 – Piazza Tribunale",
+    "names": {
+      "de": "Gerichtsplatz",
+      "en": "Piazza Tribunale",
+      "it": "Piazza Tribunale"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Tribunale"
+  },
+  "113": {
+    "gps": {
+      "lat": 46.49869,
+      "lon": 11.33818
+    },
+    "name": "P13 – Direzional Park",
+    "names": {
+      "de": "Direzional Park",
+      "en": "Direzional Park",
+      "it": "Direzional Park"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "underground",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Direzional Park"
+  },
+  "115": {
+    "gps": {
+      "lat": 46.491603,
+      "lon": 11.318078
+    },
+    "name": "P15 - Palasport via Resia",
+    "names": {
+      "de": "Palasport Reschenstraße",
+      "en": "Palasport via Resia",
+      "it": "Palasport via Resia"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Palasport"
+  },
+  "116": {
+    "gps": {
+      "lat": 46.472249,
+      "lon": 11.327066
+    },
+    "name": "P16 - Fiera via Marco Polo/Buozzi",
+    "names": {
+      "de": "Messe Marco Polo/Buozzi Straße",
+      "en": "Fiera via Marco Polo/Buozzi",
+      "it": "Fiera via Marco Polo/Buozzi"
+    },
+    "netex": {
+      "charging": true,
+      "hazard_prohibited": true,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parcheggio Fiera"
+  }
+}

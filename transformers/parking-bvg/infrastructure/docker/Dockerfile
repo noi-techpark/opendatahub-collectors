@@ -14,13 +14,12 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o main
 FROM alpine:latest as build
 WORKDIR /app
 COPY --from=build-env /app/main .
-COPY --from=build-env /app/resources ./resources
 ENTRYPOINT [ "./main"]
 
 # LOCAL DEVELOPMENT
 FROM base as dev
 WORKDIR /code
-CMD ["go", "run", "main.go"]
+CMD ["go", "run", "."]
 
 # TESTS
 FROM base AS test

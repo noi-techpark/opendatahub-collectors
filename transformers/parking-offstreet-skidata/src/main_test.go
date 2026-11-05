@@ -7,6 +7,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
 	"sort"
 	"testing"
 	"time"
@@ -14,6 +15,7 @@ import (
 	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"github.com/noi-techpark/go-bdp-client/bdpmock"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/reftable"
 	"github.com/noi-techpark/opendatahub-go-sdk/testsuite"
 	"github.com/stretchr/testify/require"
 	"gotest.tools/v3/assert"
@@ -22,21 +24,14 @@ import (
 // NormalizeBdpMockCalls sorts all slices contained within the BdpMockCalls structure
 // so that comparisons between expected and actual calls are order-independent.
 func NormalizeBdpMockCalls(calls *bdpmock.BdpMockCalls) {
-	// Normalize SyncedDataTypes: map[string][][]bdplib.DataType
-	for key, dataTypesCalls := range calls.SyncedDataTypes {
-		// For each call (a slice of DataType slices)
-		for i := range dataTypesCalls {
-			// Sort each inner slice by a string representation.
-			sort.Slice(dataTypesCalls[i], func(a, b int) bool {
-				return fmt.Sprintf("%v", dataTypesCalls[i][a]) < fmt.Sprintf("%v", dataTypesCalls[i][b])
-			})
-		}
-		// Sort the outer slice by comparing the string representation of each inner slice.
-		sort.Slice(dataTypesCalls, func(i, j int) bool {
-			return dataTypeSliceToString(dataTypesCalls[i]) < dataTypeSliceToString(dataTypesCalls[j])
+	for i := range calls.SyncedDataTypes {
+		sort.Slice(calls.SyncedDataTypes[i], func(a, b int) bool {
+			return fmt.Sprintf("%v", calls.SyncedDataTypes[i][a]) < fmt.Sprintf("%v", calls.SyncedDataTypes[i][b])
 		})
-		calls.SyncedDataTypes[key] = dataTypesCalls
 	}
+	sort.Slice(calls.SyncedDataTypes, func(i, j int) bool {
+		return dataTypeSliceToString(calls.SyncedDataTypes[i]) < dataTypeSliceToString(calls.SyncedDataTypes[j])
+	})
 
 	// Normalize SyncedData: map[string][]bdplib.DataMap
 	for key, dataMaps := range calls.SyncedData {
@@ -91,8 +86,8 @@ func dataTypeSliceToString(slice []bdplib.DataType) string {
 
 func TestSkidata(t *testing.T) {
 	var in = FacilityData{}
-	station_proto = ReadStations("../resources/stations.csv")
-	err := bdpmock.LoadInputData(&in, "../testdata/input/skidata.json")
+	loadFixtures(t)
+	err := testsuite.LoadInputData(&in, "../testdata/input/skidata.json")
 	require.Nil(t, err)
 
 	timestamp, err := time.Parse("2006-01-02", "2025-01-01")
@@ -104,10 +99,10 @@ func TestSkidata(t *testing.T) {
 	}
 
 	var out = bdpmock.BdpMockCalls{}
-	err = bdpmock.LoadOutput(&out, "../testdata/output/skidata--out.json")
+	err = testsuite.LoadOutput(&out, "../testdata/output/skidata--out.json")
 	require.Nil(t, err)
 
-	b := bdpmock.MockFromEnv()
+	b := bdpmock.MockFromEnv(bdplib.BdpEnv{})
 
 	err = Transform(context.TODO(), b, &raw)
 	require.Nil(t, err)
@@ -116,13 +111,13 @@ func TestSkidata(t *testing.T) {
 
 	req := mock.Requests()
 	NormalizeBdpMockCalls(&req)
-	testsuite.DeepEqualFromFile(t, out, req)
+	bdpmock.CompareBdpMockCalls(t, out, req)
 }
 
 func TestMyBestParking(t *testing.T) {
 	var in = FacilityData{}
-	station_proto = ReadStations("../resources/stations.csv")
-	err := bdpmock.LoadInputData(&in, "../testdata/input/mybestparking.json")
+	loadFixtures(t)
+	err := testsuite.LoadInputData(&in, "../testdata/input/mybestparking.json")
 	require.Nil(t, err)
 
 	timestamp, err := time.Parse("2006-01-02", "2025-01-01")
@@ -134,10 +129,10 @@ func TestMyBestParking(t *testing.T) {
 	}
 
 	var out = bdpmock.BdpMockCalls{}
-	err = bdpmock.LoadOutput(&out, "../testdata/output/mybestparking--out.json")
+	err = testsuite.LoadOutput(&out, "../testdata/output/mybestparking--out.json")
 	require.Nil(t, err)
 
-	b := bdpmock.MockFromEnv()
+	b := bdpmock.MockFromEnv(bdplib.BdpEnv{})
 
 	err = Transform(context.TODO(), b, &raw)
 	require.Nil(t, err)
@@ -147,33 +142,48 @@ func TestMyBestParking(t *testing.T) {
 	req := mock.Requests()
 
 	NormalizeBdpMockCalls(&req)
-	testsuite.DeepEqualFromFile(t, out, req)
+	bdpmock.CompareBdpMockCalls(t, out, req)
 }
 
-func TestStations(t *testing.T) {
-	stations := ReadStations("../resources/stations.csv")
+func loadFixtures(t *testing.T) {
+	t.Helper()
+	raw, err := os.ReadFile("../testdata/enrichment.json")
+	require.NoError(t, err)
+	refTable, err = reftable.StaticFromJSON[map[string]any](raw)
+	require.NoError(t, err)
+	t.Cleanup(func() { refTable = nil })
+}
 
-	s := stations.GetStationByID("")
-	require.Nil(t, s)
+func TestLaurinKeepsItsLegacyCodes(t *testing.T) {
+	assert.Equal(t, "105_facility", stationCode("406983"))
+	assert.Equal(t, "105", stationCode("406983_0"))
+	assert.Equal(t, "608612_0", stationCode("608612_0"))
+}
 
-	s = stations.GetStationByID("406983")
-	require.NotNil(t, s)
-	assert.Equal(t, "105_facility", s.ID)
+// A facility's totals are summed over its carparks, so it is published whole or
+// not at all, and never takes the other facilities of the payload down with it.
+func TestFacilityWithUnknownCarparkIsSkippedWhole(t *testing.T) {
+	loadFixtures(t)
+	in := FacilityData{
+		{FacilityID: 609883, FacilityDetails: []FreePlace{{ParkNo: 0, CountingCategoryNo: 3, Capacity: 10}}},
+		{FacilityID: 608612, FacilityDetails: []FreePlace{
+			{ParkNo: 0, CountingCategoryNo: 3, Capacity: 10},
+			{ParkNo: 9, CountingCategoryNo: 3, Capacity: 10},
+		}},
+	}
+	b := bdpmock.MockFromEnv(bdplib.BdpEnv{})
+	require.NoError(t, Transform(context.TODO(), b, &rdb.Raw[FacilityData]{Rawdata: in, Timestamp: time.Now()}))
 
-	m := s.ToMetadata()
-	net := m["netex_parking"].(map[string]any)
-	assert.Equal(t, len(net), 7)
-	vtypes := (net["vehicletypes"]).(string)
-	assert.Equal(t, vtypes, "allPassengerVehicles")
-
-	s = stations.GetStationByID("608612")
-	require.NotNil(t, s)
-	assert.Equal(t, "608612", s.ID)
-
-	m = s.ToMetadata()
-	net2, ok := m["netex_parking"]
-	assert.Equal(t, false, ok)
-	assert.Equal(t, nil, net2)
+	var codes []string
+	for _, calls := range b.(*bdpmock.BdpMock).Requests().SyncedStations {
+		for _, c := range calls {
+			for _, st := range c.Stations {
+				codes = append(codes, st.Id)
+			}
+		}
+	}
+	sort.Strings(codes)
+	assert.DeepEqual(t, []string{"609883", "609883_0"}, codes)
 }
 
 // func TestMain(t *testing.T) {

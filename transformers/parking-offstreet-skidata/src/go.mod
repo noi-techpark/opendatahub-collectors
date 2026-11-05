@@ -1,13 +1,12 @@
 module opendatahub.com/tr-parking-offstreet-skidata
 
-go 1.23.7
+go 1.24.1
 
 require (
-	github.com/gocarina/gocsv v0.0.0-20240520201108-78e41c74b4b1
-	github.com/noi-techpark/go-bdp-client v1.2.1
-	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.5
+	github.com/noi-techpark/go-bdp-client v1.5.2
+	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.1.1
 	github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0
-	github.com/noi-techpark/opendatahub-go-sdk/testsuite v1.0.0
+	github.com/noi-techpark/opendatahub-go-sdk/testsuite v1.1.1
 	github.com/stretchr/testify v1.10.0
 	gotest.tools/v3 v3.5.2
 )
@@ -43,6 +42,7 @@ require (
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/lithammer/shortuuid/v3 v3.0.7 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/mitchellh/hashstructure/v2 v2.0.2 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect

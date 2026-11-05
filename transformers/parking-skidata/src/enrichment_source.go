@@ -44,7 +44,7 @@ var enrichEnv struct {
 // rather than a field that quietly stops arriving.
 //
 // The record is written in the parking vocabulary and shares no shape with
-// bdplib.Station — `names.it` reaches two different destinations, `netex` is a
+// bdplib.Station — `standard_name` reaches two different destinations, `netex` is a
 // subtree that lands nested under another name, `gps` splits into two scalars.
 // Relocating that by hand in every transformer is the duplication this removes.
 //
@@ -55,7 +55,7 @@ var stationRules = merge.MustCompile(merge.Map{
 	Target: "bdp.Station",
 	Schema: "parking.v1",
 	Rules: []merge.Rule{
-		{Src: "$.names.it", Dst: "$.name"},
+		{Src: "$.standard_name", Dst: "$.name"},
 		{Src: "$.gps.lat", Dst: "$.latitude"},
 		{Src: "$.gps.lon", Dst: "$.longitude"},
 
@@ -63,8 +63,6 @@ var stationRules = merge.MustCompile(merge.Map{
 		{Src: "$.names.it", Dst: "$.metaData.name_it"},
 		{Src: "$.names.en", Dst: "$.metaData.name_en"},
 		{Src: "$.standard_name", Dst: "$.metaData.standard_name"},
-
-		{Src: "$.municipality", Dst: "$.metaData.municipality"},
 
 		// The record owns the netex subtree outright. Skidata supplies none of
 		// it, so anything the transformation might put there is wrong rather

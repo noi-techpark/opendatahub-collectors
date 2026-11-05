@@ -1,0 +1,422 @@
+{
+  "Bruneck-Mobilitaetszentrum": {
+    "gps": {
+      "lat": 46.79246,
+      "lon": 11.92889
+    },
+    "names": {
+      "de": "Parking Bruneck Mobility Center",
+      "en": "Parking Bruneck Mobility Center",
+      "it": "Parcheggio Brunico Centro Mobilità"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": false,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parkplatz Bruneck Mobilitaetszentrum"
+  },
+  "Bruneck-Mobilitaetszentrum_A001_010_STD": {
+    "gps": {
+      "lat": 46.79246,
+      "lon": 11.92889
+    },
+    "names": {
+      "de": "Parkplatz Bruneck Mobilitätszentrum (A001_010_STD)",
+      "en": "Parking Bruneck Mobility Center (A001_010_STD)",
+      "it": "Parcheggio Brunico Centro Mobilità (A001_010_STD)"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": false,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parkplatz Bruneck Mobilitaetszentrum (A001_010_STD)"
+  },
+  "Bruneck-Mobilitaetszentrum_A002_009_STD": {
+    "gps": {
+      "lat": 46.79246,
+      "lon": 11.92889
+    },
+    "names": {
+      "de": "Parkplatz Bruneck Mobilitätszentrum (A002_009_STD)",
+      "en": "Parking Bruneck Mobility Center (A002_009_STD)",
+      "it": "Parcheggio Brunico Centro Mobilità (A002_009_STD)"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": false,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parkplatz Bruneck Mobilitaetszentrum (A002_009_STD)"
+  },
+  "Bruneck-Mobilitaetszentrum_A003_008_STD": {
+    "gps": {
+      "lat": 46.79246,
+      "lon": 11.92889
+    },
+    "names": {
+      "de": "Parkplatz Bruneck Mobilitätszentrum (A003_008_STD)",
+      "en": "Parking Bruneck Mobility Center (A003_008_STD)",
+      "it": "Parcheggio Brunico Centro Mobilità (A003_008_STD)"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": false,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parkplatz Bruneck Mobilitaetszentrum (A003_008_STD)"
+  },
+  "Bruneck-Mobilitaetszentrum_A004_011_STD": {
+    "gps": {
+      "lat": 46.79246,
+      "lon": 11.92889
+    },
+    "names": {
+      "de": "Parkplatz Bruneck Mobilitätszentrum (A004_011_STD)",
+      "en": "Parking Bruneck Mobility Center (A004_011_STD)",
+      "it": "Parcheggio Brunico Centro Mobilità (A004_011_STD)"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": false,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parkplatz Bruneck Mobilitaetszentrum (A004_011_STD)"
+  },
+  "Bruneck-Mobilitaetszentrum_A005_009_STD": {
+    "gps": {
+      "lat": 46.79246,
+      "lon": 11.92889
+    },
+    "names": {
+      "de": "Parkplatz Bruneck Mobilitätszentrum (A005_009_STD)",
+      "en": "Parking Bruneck Mobility Center (A005_009_STD)",
+      "it": "Parcheggio Brunico Centro Mobilità (A005_009_STD)"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": false,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parkplatz Bruneck Mobilitaetszentrum (A005_009_STD)"
+  },
+  "Bruneck-Mobilitaetszentrum_A006_023_STD": {
+    "gps": {
+      "lat": 46.79246,
+      "lon": 11.92889
+    },
+    "names": {
+      "de": "Parkplatz Bruneck Mobilitätszentrum (A006_023_STD)",
+      "en": "Parking Bruneck Mobility Center (A006_023_STD)",
+      "it": "Parcheggio Brunico Centro Mobilità (A006_023_STD)"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": false,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parkplatz Bruneck Mobilitaetszentrum (A006_023_STD)"
+  },
+  "Bruneck-Mobilitaetszentrum_A007_018_STD": {
+    "gps": {
+      "lat": 46.79246,
+      "lon": 11.92889
+    },
+    "names": {
+      "de": "Parkplatz Bruneck Mobilitätszentrum (A007_018_STD)",
+      "en": "Parking Bruneck Mobility Center (A007_018_STD)",
+      "it": "Parcheggio Brunico Centro Mobilità (A007_018_STD)"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": false,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parkplatz Bruneck Mobilitaetszentrum (A007_018_STD)"
+  },
+  "Bruneck-Mobilitaetszentrum_A008_021_STD": {
+    "gps": {
+      "lat": 46.79246,
+      "lon": 11.92889
+    },
+    "names": {
+      "de": "Parkplatz Bruneck Mobilitätszentrum (A008_021_STD)",
+      "en": "Parking Bruneck Mobility Center (A008_021_STD)",
+      "it": "Parcheggio Brunico Centro Mobilità (A008_021_STD)"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": false,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parkplatz Bruneck Mobilitaetszentrum (A008_021_STD)"
+  },
+  "Bruneck-Mobilitaetszentrum_A009_008_STD": {
+    "gps": {
+      "lat": 46.79246,
+      "lon": 11.92889
+    },
+    "names": {
+      "de": "Parkplatz Bruneck Mobilitätszentrum (A009_008_STD)",
+      "en": "Parking Bruneck Mobility Center (A009_008_STD)",
+      "it": "Parcheggio Brunico Centro Mobilità (A009_008_STD)"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": false,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parkplatz Bruneck Mobilitaetszentrum (A009_008_STD)"
+  },
+  "Bruneck-Mobilitaetszentrum_A010_006_STD": {
+    "gps": {
+      "lat": 46.79246,
+      "lon": 11.92889
+    },
+    "names": {
+      "de": "Parkplatz Bruneck Mobilitätszentrum (A010_006_STD)",
+      "en": "Parking Bruneck Mobility Center (A010_006_STD)",
+      "it": "Parcheggio Brunico Centro Mobilità (A010_006_STD)"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": false,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parkplatz Bruneck Mobilitaetszentrum (A010_006_STD)"
+  },
+  "Bruneck-Mobilitaetszentrum_A011_015_STD": {
+    "gps": {
+      "lat": 46.79246,
+      "lon": 11.92889
+    },
+    "names": {
+      "de": "Parkplatz Bruneck Mobilitätszentrum (A011_015_STD)",
+      "en": "Parking Bruneck Mobility Center (A011_015_STD)",
+      "it": "Parcheggio Brunico Centro Mobilità (A011_015_STD)"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": false,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parkplatz Bruneck Mobilitaetszentrum (A011_015_STD)"
+  },
+  "Bruneck-Mobilitaetszentrum_A012_009_STD": {
+    "gps": {
+      "lat": 46.79246,
+      "lon": 11.92889
+    },
+    "names": {
+      "de": "Parkplatz Bruneck Mobilitätszentrum (A012_009_STD)",
+      "en": "Parking Bruneck Mobility Center (A012_009_STD)",
+      "it": "Parcheggio Brunico Centro Mobilità (A012_009_STD)"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": false,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parkplatz Bruneck Mobilitaetszentrum (A012_009_STD)"
+  },
+  "Bruneck-Mobilitaetszentrum_A013_014_STD": {
+    "gps": {
+      "lat": 46.79246,
+      "lon": 11.92889
+    },
+    "names": {
+      "de": "Parkplatz Bruneck Mobilitätszentrum (A013_014_STD)",
+      "en": "Parking Bruneck Mobility Center (A013_014_STD)",
+      "it": "Parcheggio Brunico Centro Mobilità (A013_014_STD)"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": false,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parkplatz Bruneck Mobilitaetszentrum (A013_014_STD)"
+  },
+  "Bruneck-Mobilitaetszentrum_A014_019_STD": {
+    "gps": {
+      "lat": 46.79246,
+      "lon": 11.92889
+    },
+    "names": {
+      "de": "Parkplatz Bruneck Mobilitätszentrum (A014_019_STD)",
+      "en": "Parking Bruneck Mobility Center (A014_019_STD)",
+      "it": "Parcheggio Brunico Centro Mobilità (A014_019_STD)"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": false,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parkplatz Bruneck Mobilitaetszentrum (A014_019_STD)"
+  },
+  "Bruneck-Mobilitaetszentrum_A015_010_STD": {
+    "gps": {
+      "lat": 46.79246,
+      "lon": 11.92889
+    },
+    "names": {
+      "de": "Parkplatz Bruneck Mobilitätszentrum (A015_010_STD)",
+      "en": "Parking Bruneck Mobility Center (A015_010_STD)",
+      "it": "Parcheggio Brunico Centro Mobilità (A015_010_STD)"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": false,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parkplatz Bruneck Mobilitaetszentrum (A015_010_STD)"
+  },
+  "Bruneck-Mobilitaetszentrum_A016_004_STD": {
+    "gps": {
+      "lat": 46.79246,
+      "lon": 11.92889
+    },
+    "names": {
+      "de": "Parkplatz Bruneck Mobilitätszentrum (A016_004_STD)",
+      "en": "Parking Bruneck Mobility Center (A016_004_STD)",
+      "it": "Parcheggio Brunico Centro Mobilità (A016_004_STD)"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": false,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parkplatz Bruneck Mobilitaetszentrum (A016_004_STD)"
+  },
+  "Bruneck-Mobilitaetszentrum_A017_019_DIS": {
+    "gps": {
+      "lat": 46.79246,
+      "lon": 11.92889
+    },
+    "names": {
+      "de": "Parkplatz Bruneck Mobilitätszentrum (A017_019_DIS)",
+      "en": "Parking Bruneck Mobility Center (A017_019_DIS)",
+      "it": "Parcheggio Brunico Centro Mobilità (A017_019_DIS)"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": false,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parkplatz Bruneck Mobilitaetszentrum (A017_019_DIS)"
+  },
+  "Bruneck-Mobilitaetszentrum_A018_002_LKW": {
+    "gps": {
+      "lat": 46.79246,
+      "lon": 11.92889
+    },
+    "names": {
+      "de": "Parkplatz Bruneck Mobilitätszentrum (A018_002_LKW)",
+      "en": "Parking Bruneck Mobility Center (A018_002_LKW)",
+      "it": "Parcheggio Brunico Centro Mobilità (A018_002_LKW)"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": false,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parkplatz Bruneck Mobilitaetszentrum (A018_002_LKW)"
+  },
+  "Salurn-Bahnhof": {
+    "gps": {
+      "lat": 46.2459784652761,
+      "lon": 11.2035783419516
+    },
+    "names": {
+      "de": "Parking Salurn Mobility Center",
+      "en": "Parking Salurn Mobility Center",
+      "it": "Parcheggio Salorno Centro Mobilità"
+    },
+    "netex": {
+      "charging": false,
+      "hazard_prohibited": false,
+      "layout": "openSpace",
+      "reservation": "noReservations",
+      "surveillance": true,
+      "type": "urbanParking",
+      "vehicletypes": "allPassengerVehicles"
+    },
+    "standard_name": "Parkplatz Salurn Mobilitaetszentrum"
+  }
+}

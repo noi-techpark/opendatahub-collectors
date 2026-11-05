@@ -6,28 +6,25 @@ package main
 
 import (
 	"context"
+	"os"
 	"testing"
 	"time"
 
 	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"github.com/noi-techpark/go-bdp-client/bdpmock"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/reftable"
 	"github.com/noi-techpark/opendatahub-go-sdk/testsuite"
 	"github.com/stretchr/testify/require"
 )
 
-// Guards the enrichment CSV itself: an area that is missing from it, or present
-// without coordinates, ends up as a station on Null Island and disappears from
-// every bounding-box query, while its parent facility keeps showing up.
-func TestStationsCsv(t *testing.T) {
-	stations := ReadStations("./resources/stations.csv")
-	require.NotEmpty(t, stations)
-
-	for _, s := range stations {
-		require.NotEmpty(t, s.ProviderID, "row %q has no provider_id, it can never be matched", s.StandardName)
-		require.NotZero(t, s.Lat, "row %q has no latitude", s.ProviderID)
-		require.NotZero(t, s.Lon, "row %q has no longitude", s.ProviderID)
-	}
+func loadFixtures(t *testing.T) {
+	t.Helper()
+	raw, err := os.ReadFile("testdata/enrichment.json")
+	require.NoError(t, err)
+	refTable, err = reftable.StaticFromJSON[map[string]any](raw)
+	require.NoError(t, err)
+	t.Cleanup(func() { refTable = nil })
 }
 
 func countingArea(name, providerId string, vehicles int) CountingArea {
@@ -53,7 +50,7 @@ func syncedCodes(t *testing.T, calls []bdpmock.BdpMockStationCall) []string {
 // One payload carries every facility of the provider account, so an area the csv
 // does not describe must cost exactly its own facility and leave the rest flowing.
 func TestUnknownStationSkipsOnlyItsOwnFacility(t *testing.T) {
-	StationProto = ReadStations("./resources/stations.csv")
+	loadFixtures(t)
 
 	in := CountingAreaList{
 		// fully described by the csv
@@ -83,7 +80,7 @@ func TestUnknownStationSkipsOnlyItsOwnFacility(t *testing.T) {
 // letting the known siblings through would report free/occupied totals that silently
 // cover only part of the car park.
 func TestPartlyUnknownFacilityIsSkippedWhole(t *testing.T) {
-	StationProto = ReadStations("./resources/stations.csv")
+	loadFixtures(t)
 
 	in := CountingAreaList{
 		countingArea("Bruneck-Mobilitaetszentrum_A001_010_STD", "733b3ee3-ff74-4ec9-b799-cfbd1d909c58", 3),
@@ -103,7 +100,7 @@ func TestPartlyUnknownFacilityIsSkippedWhole(t *testing.T) {
 // Publishing nothing is correct when nothing is understood; deactivating every
 // station of the origin is not.
 func TestNothingKnownLeavesExistingStationsAlone(t *testing.T) {
-	StationProto = ReadStations("./resources/stations.csv")
+	loadFixtures(t)
 
 	in := CountingAreaList{
 		countingArea("Marlengo_A001_010_STD", "00000000-0000-0000-0000-000000000000", 1),
@@ -123,7 +120,7 @@ func TestNothingKnownLeavesExistingStationsAlone(t *testing.T) {
 func Test1(t *testing.T) {
 	var in = CountingAreaList{}
 	err := testsuite.LoadInputData(&in, "testdata/in.json")
-	StationProto = ReadStations("./resources/stations.csv")
+	loadFixtures(t)
 	require.Nil(t, err)
 
 	timestamp, err := time.Parse("2006-01-02", "2025-01-01")
