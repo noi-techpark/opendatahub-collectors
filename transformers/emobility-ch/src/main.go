@@ -83,13 +83,14 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 		return fmt.Errorf("processing static data: %w", err)
 	}
 
-	err = bdp.SyncStations(StationTypeStation, parentStations, false, false)
+	// The feed is a full snapshot, so stations no longer in it are set inactive.
+	err = bdp.SyncStations(StationTypeStation, parentStations, true, false)
 	if err != nil {
 		return fmt.Errorf("syncing parent stations: %w", err)
 	}
 	slog.Info("Synced parent stations", "count", len(parentStations))
 
-	err = bdp.SyncStations(StationTypePlug, plugStations, false, false)
+	err = bdp.SyncStations(StationTypePlug, plugStations, true, false)
 	if err != nil {
 		return fmt.Errorf("syncing plug stations: %w", err)
 	}
