@@ -4,13 +4,6 @@
 
 package odhContentModel
 
-// ODHActivityPoiType represents a type classification for the POI
-type ODHActivityPoiType struct {
-	ID   *string `json:"Id,omitempty"`
-	Type *string `json:"Type,omitempty"`
-	Key  *string `json:"Key,omitempty"`
-}
-
 // Tag represents a tag in ODH
 type Tag struct {
 	ID     *string `json:"Id,omitempty"`
@@ -35,11 +28,10 @@ type Exposition []string
 // ODHActivityPoi corresponds to the OpenDataHub ODHActivityPoi model.
 // This is the target format for ski lifts, slopes, snow parks, and tobogganing runs.
 type ODHActivityPoi struct {
-	Generic // Embedded struct for inlining fields
+	Generic // Embedded struct for inlining fields (Id, Active, Source, Mapping, TagIds, ...)
 
-	Type    *string `json:"Type,omitempty"`
-	SubType *string `json:"SubType,omitempty"`
-	PoiType *string `json:"PoiType,omitempty"`
+	// Type, SubType, PoiType and ODHActivityPoiTypes are deprecated: classification is done with Tags/TagIds.
+	// They are left out of the model so the cached entities drop them and the PUT removes them.
 
 	Detail       map[string]Detail       `json:"Detail,omitempty"`
 	ContactInfos map[string]ContactInfos `json:"ContactInfos,omitempty"`
@@ -81,8 +73,7 @@ type ODHActivityPoi struct {
 	MaxSeatingCapacity *int `json:"MaxSeatingCapacity,omitempty"`
 
 	// Tags and categories
-	Tags                []Tag                `json:"Tags,omitempty"`
-	ODHActivityPoiTypes []ODHActivityPoiType `json:"ODHActivityPoiTypes,omitempty"`
+	Tags []Tag `json:"Tags,omitempty"`
 
 	// Operation schedule
 	OperationSchedule []OperationSchedule `json:"OperationSchedule,omitempty"`

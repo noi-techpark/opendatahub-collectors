@@ -130,13 +130,13 @@ func TestTransformSkiArea(t *testing.T) {
 	for i, poi := range result.POI {
 		assert.NotNil(t, poi.ID, "POI[%d] ID should not be nil", i)
 		assert.True(t, poi.Active || !poi.Active, "POI[%d] Active should be set", i)
-		assert.NotNil(t, poi.Type, "POI[%d] Type should not be nil", i)
+		assert.NotEmpty(t, poi.TagIds, "POI[%d] TagIds should not be empty", i)
 
 		// Validate single-language POI Detail
 		assert.Len(t, poi.Detail, 1, "POI[%d] Detail should have one language entry", i)
 		assert.Contains(t, poi.Detail, lang, "POI[%d] Detail should contain lang %s", i, lang)
 
-		t.Logf("POI[%d]: ID=%s Type=%s", i, *poi.ID, *poi.Type)
+		t.Logf("POI[%d]: ID=%s TagIds=%v", i, *poi.ID, poi.TagIds)
 	}
 
 }
@@ -176,7 +176,7 @@ func TestMapSubEntityToPOI(t *testing.T) {
 
 	assert.NotNil(t, poi.ID, "POI ID should not be nil")
 	assert.True(t, poi.Active, "POI should be active")
-	assert.Equal(t, "SkiSlope", *poi.Type, "Type should be SkiSlope")
+	assert.Contains(t, poi.TagIds, "slope", "TagIds should classify the POI as slope")
 	assert.NotNil(t, poi.IsOpen, "IsOpen should not be nil")
 	assert.True(t, *poi.IsOpen, "Should be open")
 	assert.NotNil(t, poi.AltitudeHighestPoint, "AltitudeHighestPoint should be set")
@@ -419,4 +419,45 @@ func TestPointWKT(t *testing.T) {
 	assert.Equal(t, "POINT (6.057447195053101 46.47980135096053)", PointWKT(6.057447195053101, 46.47980135096053))
 	assert.Equal(t, "POINT (11 46.5)", PointWKT(11, 46.5))
 	assert.Equal(t, "POINT (-0.000001 -45)", PointWKT(-0.000001, -45))
+}
+
+func TestOperationScheduleState(t *testing.T) {
+	assert.Equal(t, 0, operationScheduleState("", ""), "no times is undefined")
+	assert.Equal(t, 1, operationScheduleState("00:00:00", "00:00:00"), "equal opens/closes is closed")
+	assert.Equal(t, 2, operationScheduleState("09:00:00", "16:30:00"), "regular hours are open")
+	assert.Equal(t, 2, operationScheduleState("09:00:00", "00:00:00"), "open until midnight is open")
+}
+
+func TestMapPOIOperationScheduleType(t *testing.T) {
+	specs := []dto.OpeningHoursSpec{
+		{DayOfWeek: "Monday", Opens: "09:00:00", Closes: "16:30:00", ValidFrom: "2026-11-28T23:00:00+00:00", ValidThrough: "2027-04-11T22:00:00+00:00"},
+		{DayOfWeek: "Tuesday", Opens: "00:00:00", Closes: "00:00:00", ValidFrom: "2026-11-28T23:00:00+00:00", ValidThrough: "2027-04-11T22:00:00+00:00"},
+	}
+	schedules := mapPOIOperationSchedule(specs, "de")
+	assert.Len(t, schedules, 1)
+	assert.Equal(t, "1", *schedules[0].Type)
+	states := map[int]bool{}
+	for _, st := range schedules[0].OperationScheduleTime {
+		states[st.State] = true
+	}
+	assert.True(t, states[1] && states[2], "expected one closed and one open time slot")
+}
+
+func TestSlopeKmPerColour(t *testing.T) {
+	s := &summaryData{}
+	for id, v := range map[string]string{"slopeLevelEasy": "20", "slopeLevelMiddle": "65", "slopeLevelDifficult": "10", "slopeLevelExpert": "5"} {
+		s.AdditionalProperty = append(s.AdditionalProperty, struct {
+			PropertyID string `json:"propertyId"`
+			Value      string `json:"value"`
+		}{id, v})
+	}
+	blue, red, black := slopeKmPerColour(s, 100)
+	assert.Equal(t, "20.0", *blue)
+	assert.Equal(t, "65.0", *red)
+	assert.Equal(t, "15.0", *black, "difficult and expert are both black")
+
+	blue, red, black = slopeKmPerColour(&summaryData{}, 100)
+	assert.Nil(t, blue)
+	assert.Nil(t, red)
+	assert.Nil(t, black)
 }

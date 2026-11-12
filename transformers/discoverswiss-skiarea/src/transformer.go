@@ -284,10 +284,6 @@ func MapSubEntityToPOI(raw dto.SkiSubEntityDetails, subEntityType string, parent
 		poi.Shortname = IfNotEmpty(raw.Name)
 	}
 
-	// Map type classification
-	poi.Type = IfNotEmpty(subEntityType)
-	poi.SubType = IfNotEmpty(raw.AdditionalType)
-
 	// Map detail (name, description, additional texts)
 	poi.Detail = mapPOIDetailData(raw, lang)
 
@@ -413,9 +409,6 @@ func MapSubEntityToPOI(raw dto.SkiSubEntityDetails, subEntityType string, parent
 
 	// Map categories to SmgTags
 	poi.SmgTags = mapCategoriesToTags(raw.Category)
-
-	// Map ODHActivityPoiTypes from type and additionalType
-	poi.ODHActivityPoiTypes = mapPOITypes(raw, subEntityType)
 
 	// Map location info: use sub-entity's own containedInPlace, fall back to parent's
 	places := raw.ContainedInPlace
@@ -756,31 +749,6 @@ func mapPOITags(tags []dto.Tag) []odhContentModel.Tag {
 	return result
 }
 
-// mapPOITypes generates ODHActivityPoiTypes from the sub-entity type info
-func mapPOITypes(raw dto.SkiSubEntityDetails, subEntityType string) []odhContentModel.ODHActivityPoiType {
-	var types []odhContentModel.ODHActivityPoiType
-
-	// Primary type based on sub-entity kind
-	primaryType := odhContentModel.ODHActivityPoiType{
-		Type: StringPtr(subEntityType),
-	}
-	if raw.Type != "" {
-		primaryType.Key = IfNotEmpty(raw.Type)
-	}
-	types = append(types, primaryType)
-
-	// Additional type if present
-	if raw.AdditionalType != "" {
-		additionalType := odhContentModel.ODHActivityPoiType{
-			Type: StringPtr(raw.AdditionalType),
-			Key:  IfNotEmpty(raw.AdditionalType),
-		}
-		types = append(types, additionalType)
-	}
-
-	return types
-}
-
 // mapPlacesToLocationInfo extracts location info from containedInPlace entries for a single language.
 // Used by both SkiArea and POI mapping.
 func mapPlacesToLocationInfo(places []dto.AdministrativeArea, lang string) *odhContentModel.LocationInfo {
@@ -873,6 +841,7 @@ func mapPOIOperationSchedule(specs []dto.OpeningHoursSpec, lang string) []odhCon
 				schedule: &odhContentModel.OperationSchedule{
 					Start: IfNotEmpty(spec.ValidFrom),
 					Stop:  IfNotEmpty(spec.ValidThrough),
+					Type:  StringPtr("1"), // standard opening period
 				},
 				times: make(map[timeKey]*odhContentModel.OperationScheduleTime),
 			}
@@ -900,7 +869,7 @@ func mapPOIOperationSchedule(specs []dto.OpeningHoursSpec, lang string) []odhCon
 			schedTime = &odhContentModel.OperationScheduleTime{
 				Start: IfNotEmpty(spec.Opens),
 				End:   IfNotEmpty(spec.Closes),
-				State: 2, // open
+				State: operationScheduleState(spec.Opens, spec.Closes),
 			}
 			pd.times[tKey] = schedTime
 		}
@@ -939,6 +908,48 @@ func mapPOIOperationSchedule(specs []dto.OpeningHoursSpec, lang string) []odhCon
 	}
 
 	return result
+}
+
+// operationScheduleState maps opening hours to the ODH OperationScheduleTime state
+// (0 = undefined, 1 = closed, 2 = open). schema.org marks a closed day with equal
+// opens/closes (usually "00:00:00"); "09:00"-"00:00" means open until midnight.
+func operationScheduleState(opens, closes string) int {
+	switch {
+	case opens == "" && closes == "":
+		return 0
+	case opens == closes:
+		return 1
+	default:
+		return 2
+	}
+}
+
+// slopeKmPerColour splits the total slope length by the slopeLevel* shares (% of the
+// slope length) of skiSlopeSummary. DiscoverSwiss has no colour per slope, only these
+// shares: Easy -> blue, Middle -> red, Difficult + Expert -> black.
+// Returns nil for all colours when no share is delivered.
+func slopeKmPerColour(s *summaryData, totalKm float64) (blue, red, black *string) {
+	share := func(propertyIDs ...string) (float64, bool) {
+		var sum float64
+		found := false
+		for _, id := range propertyIDs {
+			if v, err := strconv.ParseFloat(getSummaryProperty(s, id), 64); err == nil {
+				sum += v
+				found = true
+			}
+		}
+		return sum, found
+	}
+	easy, okEasy := share("slopeLevelEasy")
+	middle, okMiddle := share("slopeLevelMiddle")
+	difficult, okDifficult := share("slopeLevelDifficult", "slopeLevelExpert")
+	if !okEasy && !okMiddle && !okDifficult {
+		return nil, nil, nil
+	}
+	km := func(pct float64) *string {
+		return StringPtr(strconv.FormatFloat(totalKm*pct/100, 'f', 1, 64))
+	}
+	return km(easy), km(middle), km(difficult)
 }
 
 // MapSkiAreaToODH converts raw SkiArea data from DiscoverSwiss to OpenDataHub SkiArea model.
@@ -1077,6 +1088,7 @@ func MapSkiAreaToODH(raw dto.SkiArea, id string, lang string) (odhContentModel.S
 		if lengthM, err := strconv.Atoi(lengthStr); err == nil && lengthM > 0 {
 			km := float64(lengthM) / 1000.0
 			skiArea.TotalSlopeKm = StringPtr(strconv.FormatFloat(km, 'f', 1, 64))
+			skiArea.SlopeKmBlue, skiArea.SlopeKmRed, skiArea.SlopeKmBlack = slopeKmPerColour(slopeSummary, km)
 		}
 	}
 
@@ -1090,6 +1102,9 @@ func MapSkiAreaToODH(raw dto.SkiArea, id string, lang string) (odhContentModel.S
 		schedule := odhContentModel.OperationSchedule{
 			Start: IfNotEmpty(raw.SeasonStart),
 			Stop:  IfNotEmpty(raw.SeasonEnd),
+			// "1" = standard opening period; consumers (e.g. webcomp-tourism-skiinfo) only
+			// consider schedules of Type 1/2/3 when deciding whether a ski area is open
+			Type: StringPtr("1"),
 		}
 		skiArea.OperationSchedule = []odhContentModel.OperationSchedule{schedule}
 	}

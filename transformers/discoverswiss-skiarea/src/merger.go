@@ -112,8 +112,6 @@ func MergePOI(base *odhContentModel.ODHActivityPoi, overlay odhContentModel.ODHA
 	base.FirstImport = overlay.FirstImport
 	base.TagIds = overlay.TagIds
 
-	base.Type = overlay.Type
-	base.SubType = overlay.SubType
 	base.GpsInfo = overlay.GpsInfo
 	base.AltitudeHighestPoint = overlay.AltitudeHighestPoint
 	base.AltitudeLowestPoint = overlay.AltitudeLowestPoint
@@ -129,7 +127,6 @@ func MergePOI(base *odhContentModel.ODHActivityPoi, overlay odhContentModel.ODHA
 	base.Highlight = overlay.Highlight
 	base.OperationSchedule = mergeOperationSchedules(base.OperationSchedule, overlay.OperationSchedule)
 	base.Tags = overlay.Tags
-	base.ODHActivityPoiTypes = overlay.ODHActivityPoiTypes
 	base.AreaId = overlay.AreaId
 	base.CustomId = overlay.CustomId
 	base.GpsTrack = overlay.GpsTrack
@@ -461,7 +458,8 @@ func mergeOperationSchedules(base, overlay []odhContentModel.OperationSchedule) 
 					base[idx].OperationscheduleName[lang] = name
 				}
 			}
-			// Overwrite time slots from overlay
+			// Overwrite type and time slots from overlay
+			base[idx].Type = o.Type
 			base[idx].OperationScheduleTime = o.OperationScheduleTime
 		} else {
 			base = append(base, o)
