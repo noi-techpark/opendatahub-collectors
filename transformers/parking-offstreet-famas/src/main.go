@@ -60,6 +60,7 @@ var occupiedDatatype = bdplib.CreateDataType("occupied", "", "Occupacy of a park
 
 func main() {
 	ms.InitWithEnv(context.Background(), "", &env)
+	ms.InitWithEnv(context.Background(), "", &enrichEnv)
 	slog.Info("Starting data transformer...")
 
 	defer tel.FlushOnPanic()
@@ -68,103 +69,86 @@ func main() {
 
 	b.SyncDataTypes([]bdplib.DataType{occupiedDatatype})
 
-	stationMeta, err := LoadMeta("stations.csv")
-	ms.FailOnError(context.Background(), err, "failed loading metadata")
+	var err error
+	err = startEnrichment(context.Background(), env.Env)
+	ms.FailOnError(context.Background(), err, "failed to start the enrichment table")
+	defer stopEnrichment()
 
 	listener := tr.NewTr[RawRecs](context.Background(), env.Env)
 	err = listener.Start(context.Background(), func(ctx context.Context, r *rdb.Raw[RawRecs]) error {
-
-		stations := []bdplib.Station{}
-		recs := b.CreateDataMap()
-		for _, raw := range r.Rawdata {
-			sCode := strconv.Itoa(raw.Id)
-			if raw.Meta.Array == nil {
-				slog.Warn("Skipping station because of invalid metadata", "id", sCode, "raw.Meta", raw.Meta)
-				continue
-			}
-
-			meta, metaFound := stationMeta[sCode]
-			if !metaFound {
-				// Only consider what's in the CSV.
-				// Also needed because we want to ignore stations that FAMAS got from the open data hub and thus would be duplicates
-				continue
-			}
-
-			sName := meta.Name
-			if sName == "" {
-				sName = *raw.Meta.Array.Data[1].String
-			}
-
-			s := bdplib.CreateStation(
-				sCode,
-				sName,
-				STATIONTYPE,
-				meta.Latitude,
-				meta.Longitude,
-				env.BDP_ORIGIN,
-			)
-
-			capacity := *raw.Meta.Array.Data[2].I4
-
-			s.MetaData = map[string]any{
-				"capacity":      capacity,
-				"municipality":  "Bolzano - Bozen",
-				"name_de":       meta.NameDe,
-				"name_en":       meta.NameEn,
-				"name_it":       meta.NameIt,
-				"standard_name": meta.StandardName,
-				"netex_parking": map[string]any{
-					"type":              meta.NetexType,
-					"layout":            meta.NetexLayout,
-					"charging":          meta.NetexCharging,
-					"reservation":       meta.NetexReservation,
-					"surveillance":      meta.NetexSurveillance,
-					"vehicletypes":      meta.NetexVehicletypes,
-					"hazard_prohibited": meta.NetexHazardProhibited,
-				},
-			}
-			stations = append(stations, s)
-
-			if raw.Data.Struct == nil {
-				slog.Warn("Skipping station because it has no record data or wrong format", "scode", sCode, "data", raw.Data)
-				continue
-			}
-
-			state := members2Map(raw.Data.Struct.Members)
-
-			if _, found := state["faultCode"]; found {
-				slog.Warn("Skipping station because it has errors in raw data", "scode", sCode, "faultCode", *state["faultCode"].I4, "faultString", *state["faultString"].String)
-				continue
-			}
-
-			if *state["StatoComunicazione"].Boolean != 1 &&
-				*state["AllarmePostiTotali"].Boolean != 1 &&
-				*state["AllarmeInattivita"].Boolean != 1 &&
-				*state["AllarmePostiOccupati"].Boolean != 1 {
-
-				free := *state["PostiLiberi"].I4
-				// Sometimes we get -1 out of the blue. Probably and API error, just ignore
-				if free >= 0 {
-					occupied := min(max(capacity-free, 0), capacity) // clamp between 0 and capacity
-					timestamp := *state["PostiLiberiTs"].I4 * 1000
-
-					recs.AddRecord(sCode, occupiedDatatype.Name, bdplib.CreateRecord(int64(timestamp), occupied, PERIOD))
-				}
-			}
-		}
-
-		err := b.SyncStations(STATIONTYPE, stations, true, false)
-		if err != nil {
-			return err
-		}
-		err = b.PushData(STATIONTYPE, recs)
-		if err != nil {
-			return err
-		}
-		return nil
+		return Transform(ctx, b, r)
 	})
 
 	ms.FailOnError(context.Background(), err, "error while listening to queue")
+}
+
+func Transform(ctx context.Context, b bdplib.Bdp, r *rdb.Raw[RawRecs]) error {
+	stations := []bdplib.Station{}
+	recs := b.CreateDataMap()
+	for _, raw := range r.Rawdata {
+		sCode := strconv.Itoa(raw.Id)
+		if raw.Meta.Array == nil {
+			slog.Warn("Skipping station because of invalid metadata", "id", sCode, "raw.Meta", raw.Meta)
+			continue
+		}
+
+		if !hasRecord(sCode) {
+			slog.Debug("Skipping station without enrichment record", "scode", sCode)
+			continue
+		}
+
+		sName := sCode
+		if n := raw.Meta.Array.Data[1].String; n != nil && *n != "" {
+			sName = *n
+		}
+
+		s := bdplib.CreateStation(sCode, sName, STATIONTYPE, 0, 0, b.GetOrigin())
+
+		capacity := *raw.Meta.Array.Data[2].I4
+
+		s.MetaData = map[string]any{
+			"capacity": capacity,
+		}
+		enrichStation(sCode, &s)
+		stations = append(stations, s)
+
+		if raw.Data.Struct == nil {
+			slog.Warn("Skipping station because it has no record data or wrong format", "scode", sCode, "data", raw.Data)
+			continue
+		}
+
+		state := members2Map(raw.Data.Struct.Members)
+
+		if _, found := state["faultCode"]; found {
+			slog.Warn("Skipping station because it has errors in raw data", "scode", sCode, "faultCode", *state["faultCode"].I4, "faultString", *state["faultString"].String)
+			continue
+		}
+
+		if *state["StatoComunicazione"].Boolean != 1 &&
+			*state["AllarmePostiTotali"].Boolean != 1 &&
+			*state["AllarmeInattivita"].Boolean != 1 &&
+			*state["AllarmePostiOccupati"].Boolean != 1 {
+
+			free := *state["PostiLiberi"].I4
+			// Sometimes we get -1 out of the blue. Probably and API error, just ignore
+			if free >= 0 {
+				occupied := min(max(capacity-free, 0), capacity) // clamp between 0 and capacity
+				timestamp := *state["PostiLiberiTs"].I4 * 1000
+
+				recs.AddRecord(sCode, occupiedDatatype.Name, bdplib.CreateRecord(int64(timestamp), occupied, PERIOD))
+			}
+		}
+	}
+
+	err := b.SyncStations(STATIONTYPE, stations, true, false)
+	if err != nil {
+		return err
+	}
+	err = b.PushData(STATIONTYPE, recs)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func members2Map(members []XmlRpcStructMember) map[string]XmlRpcValue {

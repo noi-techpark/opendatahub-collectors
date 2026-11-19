@@ -213,10 +213,14 @@ func assertExpectedBdpCalls(t *testing.T, calls bdpmock.BdpMockCalls) {
 	parents := calls.SyncedStations[StationTypeStation]
 	require.Len(t, parents, 1)
 	assert.Len(t, parents[0].Stations, 1)
+	assert.True(t, parents[0].SyncState, "parent sync should update station states")
+	assert.False(t, parents[0].OnlyActivate, "parent sync should also deactivate stations missing from the feed")
 
 	plugs := calls.SyncedStations[StationTypePlug]
 	require.Len(t, plugs, 1)
 	assert.Len(t, plugs[0].Stations, 1)
+	assert.True(t, plugs[0].SyncState, "plug sync should update station states")
+	assert.False(t, plugs[0].OnlyActivate, "plug sync should also deactivate stations missing from the feed")
 
 	assert.Contains(t, calls.SyncedData, StationTypePlug, "expected status data push")
 	assert.Contains(t, calls.SyncedData, StationTypeStation, "expected number-available data push")

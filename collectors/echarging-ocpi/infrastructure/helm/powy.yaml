@@ -41,7 +41,7 @@ env:
 envSecret:
   # List of valid tokens, no spaces etc.
   OCPI_TOKENS: ExampleToken1,ExampleToken2
-  PULL_LOCATIONS_ENDPOINT: "set-after-handshake"
+  PULL_LOCATIONS_ENDPOINT: https://api.wavelab.k23.mwd.cloud/api/ocpi/versions/2.2.1/locations
   PULL_TOKEN: "***"
 
 envSecretRef:

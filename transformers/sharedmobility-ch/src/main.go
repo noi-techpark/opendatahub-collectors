@@ -274,17 +274,18 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[Root]) erro
 		}
 	}
 
-	// 5. Sync provider stations first (parents), then physical stations (children)
+	// 5. Sync provider stations first (parents), then physical stations (children).
+	// The feed is a full snapshot, so stations no longer in it are set inactive.
 	for sType, stations := range providerStationsByType {
 		slog.Info("Syncing provider stations", "type", sType, "count", len(stations))
-		if err := bdp.SyncStations(sType, stations, true, true); err != nil {
+		if err := bdp.SyncStations(sType, stations, true, false); err != nil {
 			return err
 		}
 	}
 
 	for sType, stations := range physicalStationsByType {
 		slog.Info("Syncing physical stations", "type", sType, "count", len(stations))
-		if err := bdp.SyncStations(sType, stations, true, true); err != nil {
+		if err := bdp.SyncStations(sType, stations, true, false); err != nil {
 			return err
 		}
 	}

@@ -489,6 +489,7 @@ func TestEnrichmentChangeResyncsTheStation(t *testing.T) {
 	s, ok := stationByProviderID(t, b, "0404467_0")
 	require.True(t, ok)
 	require.Equal(t, "Parcheggio Rinominato", s.MetaData["name_it"])
+	require.Equal(t, "Test lad 0404467_0", s.MetaData["name_lad"])
 }
 
 // Capacity comes from the provider, not from an operator. When the categories
