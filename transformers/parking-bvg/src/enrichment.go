@@ -42,6 +42,7 @@ var stationRules = merge.MustCompile(merge.Map{
 		{Src: "$.names.de", Dst: "$.metaData.name_de"},
 		{Src: "$.names.it", Dst: "$.metaData.name_it"},
 		{Src: "$.names.en", Dst: "$.metaData.name_en"},
+		{Src: "$.names.lad", Dst: "$.metaData.name_lad"},
 		{Src: "$.standard_name", Dst: "$.metaData.standard_name"},
 
 		// The record owns the netex subtree outright: the provider supplies none

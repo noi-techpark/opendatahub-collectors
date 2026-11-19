@@ -30,7 +30,8 @@
     "names": {
       "de": "Parkplatz Dantestrasse",
       "en": "Parking Dante Street",
-      "it": "Parcheggio Via Dante"
+      "it": "Parcheggio Via Dante",
+      "lad": "Test lad 0404467_0"
     },
     "netex": {
       "charging": false,
