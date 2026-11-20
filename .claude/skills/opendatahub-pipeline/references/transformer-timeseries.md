@@ -63,14 +63,14 @@ err := bdp.SyncStations(StationType, stations, true, false) // syncState=true, o
                                                             // stations absent from this list get deactivated
 ```
 
-**Variant — station set fully known at startup** (exemplar: `transformers/parking-offstreet-skidata/src/main.go`; note it uses an older go-bdp-client API surface — follow the `FromEnv(bdplib.BdpEnv{...})` bootstrap above for new code). Only possible when the complete station master data is known upfront (e.g. shipped as CSVs in `resources/`). Sync stations **once at startup**, keep the hot path measurements-only:
+**Variant — station set fully known at startup** (exemplar: `transformers/parking-offstreet-skidata/src/main.go`; note it uses an older go-bdp-client API surface — follow the `FromEnv(bdplib.BdpEnv{...})` bootstrap above for new code). Only possible when the complete station set is known upfront. Station descriptions and other lookup data that change without a deploy come from a reference table, not from CSVs in `resources/`: see [reftable.md](reftable.md). Sync stations **once at startup**, keep the hot path measurements-only:
 
 ```go
 err := bdp.SyncStations(stationType, stations, true, true)  // onlyActivate=true: activate/update listed
                                                             // stations, never deactivate others
 ```
 
-Situational techniques some stateful transformers add — reach for them only when the pipeline needs them: an in-memory latest-value cache hydrated at startup from the timeseries API (`github.com/noi-techpark/go-timeseries-client/odhts`, reusing the same OAuth client) so aggregates survive restarts, and a `RESOURCES_OVERLAY` env that merges `*.test.csv` overlay rows in lower environments. **Normally stations do not need overlays** — do not add them by default. If you ship master-data CSVs, add referential-integrity tests for them (see testing reference).
+Situational techniques some stateful transformers add — reach for them only when the pipeline needs them: an in-memory latest-value cache hydrated at startup from the timeseries API (`github.com/noi-techpark/go-timeseries-client/odhts`, reusing the same OAuth client) so aggregates survive restarts, and a `RESOURCES_OVERLAY` env that merges `*.test.csv` overlay rows in lower environments. **Normally stations do not need overlays** — do not add them by default. If you still ship master-data CSVs (only for data that never changes without a deploy), add referential-integrity tests for them (see testing reference).
 
 Hierarchy: create parents and children as separate station types, link with `station.ParentStation = parent.Id` (and `ParentStationType`). Station metadata lives in `station.MetaData map[string]any` — only stations carry metadata, never measurements.
 
