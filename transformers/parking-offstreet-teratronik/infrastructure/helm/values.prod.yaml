@@ -1,0 +1,59 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/noi-techpark/opendatahub-collectors/tr-parking-offstreet-teratronik
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: sometaghere
+
+imagePullSecrets:
+  - name: container-registry-r
+
+env:
+  LOG_LEVEL: INFO
+
+  # The queue, key and client names are the ones the retired consumer used, so
+  # the deploy reuses the bound queue and its backlog.
+  MQ_QUEUE: sta.parking-marlengo
+  MQ_EXCHANGE: routed
+  MQ_KEY: sta.parking-marlengo
+  MQ_CLIENT: tr-parking-offstreet-teratronik
+
+  BDP_BASE_URL: http://bdp-core.core.svc.cluster.local
+  BDP_PROVENANCE_NAME:
+  BDP_PROVENANCE_VERSION:
+  BDP_ORIGIN: STA
+
+  RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
+
+  # Station descriptions edited in the parking control tower, published through
+  # rest-push. Required: the transformer refuses to start without it.
+  REFTABLE_DB: sta
+  REFTABLE_COLLECTION: parking-enrichment
+  REFTABLE_KEY: key
+  REFTABLE_MQ_QUEUE: tr-parking-offstreet-teratronik-enrichment
+  REFTABLE_MQ_KEY: sta.parking-enrichment
+  # Everything the provider sends is published today, with or without a record.
+  REFTABLE_GATE: "false"
+
+  # Every station seen, and what was done with it, for the control tower.
+  DISCOVERY_PROVIDER: sta/parking-discovery
+  DISCOVERY_GONE_AFTER: "0"
+  RAW_WRITER_URL: http://raw-writer-2.core.svc.cluster.local
+
+  SERVICE_NAME: tr-parking-offstreet-teratronik
+  TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
+
+envSecretRef:
+  - name: MQ_URI
+    secret: rabbitmq-svcbind
+    key: uri
+  - name: BDP_TOKEN_URL
+    secret: oauth-collector
+    key: tokenUri
+  - name: BDP_CLIENT_ID
+    secret: oauth-collector
+    key: clientId
+  - name: BDP_CLIENT_SECRET
+    secret: oauth-collector
+    key: clientSecret

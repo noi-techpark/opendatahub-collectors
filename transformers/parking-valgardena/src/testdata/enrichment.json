@@ -1,0 +1,23 @@
+{
+  "GARDENA:passo_sella": {
+    "gps": {
+      "lat": 46.5097,
+      "lon": 11.7577
+    },
+    "name": "Passo Sella operator name",
+    "names": {
+      "de": "Sellajoch Parkplatz",
+      "en": "Sella Pass car park",
+      "it": "Parcheggio Passo Sella",
+      "lad": "Test lad Sella"
+    },
+    "netex": {
+      "layout": "open",
+      "type": "urbanParking"
+    },
+    "standard_name": "Parcheggio Passo Sella"
+  },
+  "GARDENA:cristauta": {
+    "name": "Cristauta operator name"
+  }
+}

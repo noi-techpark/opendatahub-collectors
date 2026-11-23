@@ -1,0 +1,637 @@
+[
+  {
+    "syncedData": {
+      "ParkingStation": [
+        {
+          "branch": {
+            "parking-bz:8:0": {
+              "branch": {
+                "entering-vehicles-today": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424804443,
+                      "value": 17
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                },
+                "exiting-vehicles-today": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424804443,
+                      "value": 5
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                },
+                "free": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424804443,
+                      "value": 288
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                },
+                "occupied": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424804443,
+                      "value": 82
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                }
+              },
+              "data": null,
+              "name": "(default)",
+              "provenance": ""
+            }
+          },
+          "data": null,
+          "name": "(default)",
+          "provenance": ""
+        }
+      ]
+    },
+    "syncedDataTypes": [
+      [
+        {
+          "description": "free",
+          "metaData": null,
+          "name": "free",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        },
+        {
+          "description": "occupied",
+          "metaData": null,
+          "name": "occupied",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        },
+        {
+          "description": "Number of vehicles that entered since start of day",
+          "metaData": null,
+          "name": "entering-vehicles-today",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        },
+        {
+          "description": "Number of vehicles that exited since start of day",
+          "metaData": null,
+          "name": "exiting-vehicles-today",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        }
+      ]
+    ],
+    "syncedStations": {
+      "ParkingStation": [
+        {
+          "OnlyActivate": false,
+          "Stations": [
+            {
+              "id": "parking-bz:8:0",
+              "latitude": 46.49623289133699,
+              "longitude": 11.367794908451254,
+              "metaData": {
+                "capacity": 370,
+                "floor": 0,
+                "municipality": "Bolzano - Bozen"
+              },
+              "name": "TURIST-PARKING",
+              "origin": "Municipality Bolzano",
+              "stationType": "ParkingStation"
+            }
+          ],
+          "SyncState": true
+        }
+      ]
+    }
+  },
+  {
+    "syncedData": {
+      "ParkingStation": [
+        {
+          "branch": {
+            "parking-bz:8:0": {
+              "branch": {
+                "entering-vehicles-today": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424780934,
+                      "value": 16
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                },
+                "exiting-vehicles-today": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424780934,
+                      "value": 5
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                },
+                "free": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424780934,
+                      "value": 289
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                },
+                "occupied": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424780934,
+                      "value": 81
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                }
+              },
+              "data": null,
+              "name": "(default)",
+              "provenance": ""
+            }
+          },
+          "data": null,
+          "name": "(default)",
+          "provenance": ""
+        }
+      ]
+    },
+    "syncedDataTypes": [
+      [
+        {
+          "description": "free",
+          "metaData": null,
+          "name": "free",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        },
+        {
+          "description": "occupied",
+          "metaData": null,
+          "name": "occupied",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        },
+        {
+          "description": "Number of vehicles that entered since start of day",
+          "metaData": null,
+          "name": "entering-vehicles-today",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        },
+        {
+          "description": "Number of vehicles that exited since start of day",
+          "metaData": null,
+          "name": "exiting-vehicles-today",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        }
+      ]
+    ],
+    "syncedStations": {
+      "ParkingStation": [
+        {
+          "OnlyActivate": false,
+          "Stations": [
+            {
+              "id": "parking-bz:8:0",
+              "latitude": 46.49623289133699,
+              "longitude": 11.367794908451254,
+              "metaData": {
+                "capacity": 370,
+                "floor": 0,
+                "municipality": "Bolzano - Bozen"
+              },
+              "name": "TURIST-PARKING",
+              "origin": "Municipality Bolzano",
+              "stationType": "ParkingStation"
+            }
+          ],
+          "SyncState": true
+        }
+      ]
+    }
+  },
+  {
+    "syncedData": {
+      "ParkingStation": [
+        {
+          "branch": {
+            "parking-bz:8:0": {
+              "branch": {
+                "entering-vehicles-today": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424694802,
+                      "value": 16
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                },
+                "exiting-vehicles-today": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424694802,
+                      "value": 4
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                },
+                "free": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424694802,
+                      "value": 288
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                },
+                "occupied": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424694802,
+                      "value": 82
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                }
+              },
+              "data": null,
+              "name": "(default)",
+              "provenance": ""
+            }
+          },
+          "data": null,
+          "name": "(default)",
+          "provenance": ""
+        }
+      ]
+    },
+    "syncedDataTypes": [
+      [
+        {
+          "description": "free",
+          "metaData": null,
+          "name": "free",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        },
+        {
+          "description": "occupied",
+          "metaData": null,
+          "name": "occupied",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        },
+        {
+          "description": "Number of vehicles that entered since start of day",
+          "metaData": null,
+          "name": "entering-vehicles-today",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        },
+        {
+          "description": "Number of vehicles that exited since start of day",
+          "metaData": null,
+          "name": "exiting-vehicles-today",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        }
+      ]
+    ],
+    "syncedStations": {
+      "ParkingStation": [
+        {
+          "OnlyActivate": false,
+          "Stations": [
+            {
+              "id": "parking-bz:8:0",
+              "latitude": 46.49623289133699,
+              "longitude": 11.367794908451254,
+              "metaData": {
+                "capacity": 370,
+                "floor": 0,
+                "municipality": "Bolzano - Bozen"
+              },
+              "name": "TURIST-PARKING",
+              "origin": "Municipality Bolzano",
+              "stationType": "ParkingStation"
+            }
+          ],
+          "SyncState": true
+        }
+      ]
+    }
+  },
+  {
+    "syncedData": {
+      "ParkingStation": [
+        {
+          "branch": {
+            "parking-bz:8:0": {
+              "branch": {
+                "entering-vehicles-today": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424433882,
+                      "value": 15
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                },
+                "exiting-vehicles-today": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424433882,
+                      "value": 4
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                },
+                "free": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424433882,
+                      "value": 289
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                },
+                "occupied": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424433882,
+                      "value": 81
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                }
+              },
+              "data": null,
+              "name": "(default)",
+              "provenance": ""
+            }
+          },
+          "data": null,
+          "name": "(default)",
+          "provenance": ""
+        }
+      ]
+    },
+    "syncedDataTypes": [
+      [
+        {
+          "description": "free",
+          "metaData": null,
+          "name": "free",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        },
+        {
+          "description": "occupied",
+          "metaData": null,
+          "name": "occupied",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        },
+        {
+          "description": "Number of vehicles that entered since start of day",
+          "metaData": null,
+          "name": "entering-vehicles-today",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        },
+        {
+          "description": "Number of vehicles that exited since start of day",
+          "metaData": null,
+          "name": "exiting-vehicles-today",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        }
+      ]
+    ],
+    "syncedStations": {
+      "ParkingStation": [
+        {
+          "OnlyActivate": false,
+          "Stations": [
+            {
+              "id": "parking-bz:8:0",
+              "latitude": 46.49623289133699,
+              "longitude": 11.367794908451254,
+              "metaData": {
+                "capacity": 370,
+                "floor": 0,
+                "municipality": "Bolzano - Bozen"
+              },
+              "name": "TURIST-PARKING",
+              "origin": "Municipality Bolzano",
+              "stationType": "ParkingStation"
+            }
+          ],
+          "SyncState": true
+        }
+      ]
+    }
+  },
+  {
+    "syncedData": {
+      "ParkingStation": [
+        {
+          "branch": {
+            "parking-bz:8:0": {
+              "branch": {
+                "entering-vehicles-today": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424398544,
+                      "value": 14
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                },
+                "exiting-vehicles-today": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424398544,
+                      "value": 4
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                },
+                "free": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424398544,
+                      "value": 290
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                },
+                "occupied": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424398544,
+                      "value": 80
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                }
+              },
+              "data": null,
+              "name": "(default)",
+              "provenance": ""
+            }
+          },
+          "data": null,
+          "name": "(default)",
+          "provenance": ""
+        }
+      ]
+    },
+    "syncedDataTypes": [
+      [
+        {
+          "description": "free",
+          "metaData": null,
+          "name": "free",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        },
+        {
+          "description": "occupied",
+          "metaData": null,
+          "name": "occupied",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        },
+        {
+          "description": "Number of vehicles that entered since start of day",
+          "metaData": null,
+          "name": "entering-vehicles-today",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        },
+        {
+          "description": "Number of vehicles that exited since start of day",
+          "metaData": null,
+          "name": "exiting-vehicles-today",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        }
+      ]
+    ],
+    "syncedStations": {
+      "ParkingStation": [
+        {
+          "OnlyActivate": false,
+          "Stations": [
+            {
+              "id": "parking-bz:8:0",
+              "latitude": 46.49623289133699,
+              "longitude": 11.367794908451254,
+              "metaData": {
+                "capacity": 370,
+                "floor": 0,
+                "municipality": "Bolzano - Bozen"
+              },
+              "name": "TURIST-PARKING",
+              "origin": "Municipality Bolzano",
+              "stationType": "ParkingStation"
+            }
+          ],
+          "SyncState": true
+        }
+      ]
+    }
+  }
+]

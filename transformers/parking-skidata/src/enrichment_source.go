@@ -134,6 +134,9 @@ func startEnrichment(ctx context.Context, b bdplib.Bdp) error {
 			// version is refused before it reaches a rule: the table was
 			// written against this shape and nothing else vouches for it.
 			Schema: stationRules.Schema(),
+			// Without the gate an empty table publishes everything unchanged, so the
+			// first record need not exist before the transformer may start.
+			AllowMissing: !gated(),
 
 			// Enrichment is published through the generic rest-push collector,
 			// which sends the body as []byte and so marshals it to base64, and

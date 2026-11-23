@@ -16,9 +16,22 @@ env:
   KUBERNETES_NAMESPACE: collector
 
 jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    concurrency: tr-parking-offstreet-sfhera-tests
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    - name: Run tests
+      run: docker run --rm --volume ./src:/code $(docker build -q . -f infrastructure/docker/Dockerfile --target test)
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+
   build:
     runs-on: ubuntu-22.04
     concurrency: tr-parking-offstreet-sfhera-build
+    needs:
+      - tests
     permissions:
       packages: write
     steps:
@@ -40,7 +53,7 @@ jobs:
     concurrency: tr-parking-offstreet-sfhera-deploy-test
     environment: test
     env:
-      VALUES_YAML: infrastructure/helm/values.yaml
+      VALUES_YAML: infrastructure/helm/values.test.yaml
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -78,7 +91,7 @@ jobs:
     concurrency: tr-parking-offstreet-sfhera-deploy-prod
     environment: prod
     env:
-      VALUES_YAML: infrastructure/helm/values.yaml
+      VALUES_YAML: infrastructure/helm/values.prod.yaml
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4

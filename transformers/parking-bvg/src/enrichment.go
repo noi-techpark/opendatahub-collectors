@@ -107,6 +107,9 @@ func startEnrichment(ctx context.Context, conn tr.Env) error {
 			Key:        enrichEnv.REFTABLE_KEY,
 			PageLimit:  enrichEnv.REFTABLE_PAGE_LIMIT,
 			Schema:     stationRules.Schema(),
+			// Without the gate an empty table publishes everything unchanged, so the
+			// first record need not exist before the transformer may start.
+			AllowMissing: !gated(),
 
 			// rest-push stores the control tower's body base64-encoded.
 			Decode: reftable.DecodeBase64,

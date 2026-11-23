@@ -1,0 +1,20 @@
+{
+  "parking-sta-marlengo": {
+    "gps": {
+      "lat": 46.6649,
+      "lon": 11.1382
+    },
+    "name": "Marlengo stazione",
+    "names": {
+      "de": "Bahnhof Marling",
+      "en": "Marlengo station",
+      "it": "Stazione di Marlengo",
+      "lad": "Test lad marlengo"
+    },
+    "netex": {
+      "layout": "open",
+      "type": "parkAndRide"
+    },
+    "standard_name": "Parcheggio stazione Marlengo"
+  }
+}

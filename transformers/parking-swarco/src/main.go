@@ -52,6 +52,8 @@ var env struct {
 func main() {
 	ctx := context.Background()
 	ms.InitWithEnv(ctx, "", &env)
+	ms.InitWithEnv(ctx, "", &enrichEnv)
+	ms.InitWithEnv(ctx, "", &discoveryEnv)
 	log := logger.Get(ctx)
 	log.Info("Starting parking-swarco transformer...")
 
@@ -60,6 +62,10 @@ func main() {
 	b := bdplib.FromEnv(env.BdpEnv)
 
 	ms.FailOnError(ctx, syncDataTypes(b), "failed to sync data types")
+
+	ms.FailOnError(ctx, startEnrichment(ctx, env.Env), "failed to start the enrichment table")
+	defer stopEnrichment()
+	ms.FailOnError(ctx, startDiscovery(ctx, env.Env), "failed to start the discovery reporter")
 
 	listener := tr.NewTr[string](ctx, env.Env)
 	err := listener.Start(ctx, tr.RawString2JsonMiddleware[SwarcoData](TransformWithBdp(b)))
@@ -117,17 +123,8 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[SwarcoData]
 			parent := bdplib.CreateStation(
 				stationCode(poi.ObjectID), poi.Name, StationTypeParkingFacility, lat, lon, bdp.GetOrigin())
 			parent.MetaData = poi.ToMetadata()
-			facilities = append(facilities, parent)
-			if hasDyn {
-				addOccupancyRecords(ctx, &facilityData, parent.Id, dyn.OccupancyTotal, tsMillis)
-			}
 
-			areaOccupancy := map[string]OccupancyData{}
-			for _, ad := range dyn.OccupancyAreas {
-				if ad.Occupancy != nil {
-					areaOccupancy[ad.ObjectID] = *ad.Occupancy
-				}
-			}
+			var children []member
 			for _, area := range poi.Areas {
 				if area.ObjectID == "" {
 					log.Warn("skipping area without objectID", "facility", poi.ObjectID, "name", area.Name)
@@ -142,21 +139,52 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[SwarcoData]
 				child.ParentStation = parent.Id
 				child.ParentStationType = StationTypeParkingFacility
 				child.MetaData = areaMetadata(area)
-				stations = append(stations, child)
-				if occ, ok := areaOccupancy[area.ObjectID]; ok {
-					addOccupancyRecords(ctx, &stationData, child.Id, []OccupancyData{occ}, tsMillis)
+				children = append(children, member{key: area.ObjectID, station: child})
+			}
+
+			if !publishFacility(log, member{key: poi.ObjectID, station: parent}, children) {
+				continue
+			}
+
+			enrichStation(poi.ObjectID, &parent)
+			facilities = append(facilities, parent)
+			if hasDyn {
+				addOccupancyRecords(ctx, &facilityData, parent.Id, dyn.OccupancyTotal, tsMillis)
+			}
+
+			areaOccupancy := map[string]OccupancyData{}
+			for _, ad := range dyn.OccupancyAreas {
+				if ad.Occupancy != nil {
+					areaOccupancy[ad.ObjectID] = *ad.Occupancy
+				}
+			}
+			for _, c := range children {
+				enrichStation(c.key, &c.station)
+				stations = append(stations, c.station)
+				if occ, ok := areaOccupancy[c.key]; ok {
+					addOccupancyRecords(ctx, &stationData, c.station.Id, []OccupancyData{occ}, tsMillis)
 				}
 			}
 		} else {
 			station := bdplib.CreateStation(
 				stationCode(poi.ObjectID), poi.Name, StationTypeParkingStation, lat, lon, bdp.GetOrigin())
 			station.MetaData = poi.ToMetadata()
+
+			if !publishStation(log, member{key: poi.ObjectID, station: station}) {
+				continue
+			}
+
+			enrichStation(poi.ObjectID, &station)
 			stations = append(stations, station)
 			if hasDyn {
 				addOccupancyRecords(ctx, &stationData, station.Id, dyn.OccupancyTotal, tsMillis)
 			}
 		}
 	}
+
+	// The static list is the provider's complete station set, which is why a
+	// station missing from it is deactivated by the sync below.
+	reportDiscovery(ctx, true)
 
 	if len(facilities) > 0 {
 		if err := bdp.SyncStations(StationTypeParkingFacility, facilities, true, false); err != nil {

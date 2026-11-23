@@ -160,21 +160,62 @@ err := merge.Into(&station, func(doc map[string]any) error { return stationRules
 
 ## Missing keys
 
-Decide explicitly, per transformer, what an item without a record does, and log it at `Warn` or
-higher:
-- **overlay only:** publish the item as the transformation built it.
-- **gate:** skip the item until a record exists. Use this when the record is the only source of
+Decide explicitly, per transformer, what an item without a record does, and make it a switch
+(`REFTABLE_GATE`) rather than code:
+- **gate off:** publish the item as the transformation built it.
+- **gate on:** withhold it until a record exists. Use this when the record is the only source of
   something mandatory.
+
+Whatever the gate decides, the item must not vanish silently: report it to a discovery table
+(below). A withheld item reaches no silo, so nothing downstream can notice it otherwise.
+
+`Config.AllowMissing` lets the table start before its collection exists. Set it to `!gate`: with
+the gate off an empty table changes nothing, so the first record must not be a prerequisite for
+starting; with the gate on a missing collection is far more often a misspelt name and must stop
+the process.
+
+## Discovery table
+
+`.../ingest/discovery` writes the entities the transformer saw, and what it did with each, into
+`<db>/<collection>` (next to the reference table, e.g. `famas/parking-discovery` beside
+`famas/parking-enrichment`), one normalised document per key, only when it changed. Anyone reads
+it with `reftable.New[discovery.Record]` (`Schema: discovery.Schema`, `DecodeText`), without
+knowing the provider format.
+
+```go
+rep := discovery.New(bridge, discovery.Config{
+    Provider: "famas/parking-discovery", RawWriterURL: env.RAW_WRITER_URL, GoneAfter: 3})
+ms.FailOnError(ctx, rep.Start(ctx), "failed to start the discovery reporter")
+observer = rep // package-level discovery.Observer; tests inject discovery.NewRecorder()
+
+// per item, inside Transform:
+observer.Observe(key, discovery.Entry{Status: discovery.StatusWithheld, Reason: "no-record",
+    Name: providerName, Data: map[string]any{"capacity": capacity}, Seed: seed})
+// once per message; a failed flush is logged, never fails the message:
+if err := observer.Flush(ctx); err != nil { log.Error("discovery flush failed", "err", err) }
+```
+
+- **Key** = exactly the key the reference-table lookup uses.
+- **Name/Lat/Lon/Parent/Data** = the provider's view before the overlay; nothing that changes every
+  poll (no measurements), or every poll rewrites the document.
+- **Complete()** only when the payload is the provider's full set (then `GoneAfter` consecutive
+  misses mark a key `gone`); never when several deployments share the table or the source is
+  event-driven.
+- **Seed**: the record that, overlaid with your rules, reproduces what you publish without one,
+  built only from values the provider actually states (never 0,0 placeholders or a name that is
+  just the code). Test it: the item built without a record equals the item built with its Seed.
 
 ## Rollout
 
 Records first, transformer second:
-1. Publish the table in the target environment.
+1. Publish the table in the target environment (or, with the gate off, rely on `AllowMissing`).
 2. Confirm that the lake has the expected number of distinct `meta.<Key>` values, with the right
    `meta.schema`.
 3. Deploy the transformer, and check that it logs the table as ready with the expected count.
 
-A gating transformer started on an empty table publishes nothing.
+Moving an existing pipeline to a gate must neither discontinue what is published nor release what
+is filtered: deploy with the gate at today's behaviour, create records from the Seeds of the
+`published` discovery entries (never in bulk for `withheld` ones), verify, then turn the gate on.
 
 ## Testing
 

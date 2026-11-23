@@ -1,0 +1,20 @@
+{
+  "parking-bz:8:0": {
+    "gps": {
+      "lat": 46.4962,
+      "lon": 11.3678
+    },
+    "name": "Parcheggio Macello",
+    "names": {
+      "de": "Parkplatz Schlachthof",
+      "en": "Macello parking",
+      "it": "Parcheggio Macello",
+      "lad": "Test lad macello"
+    },
+    "netex": {
+      "layout": "underground",
+      "type": "urbanParking"
+    },
+    "standard_name": "Parcheggio Macello Bolzano"
+  }
+}

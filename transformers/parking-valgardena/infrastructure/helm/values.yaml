@@ -33,6 +33,21 @@ env:
 
   RAW_DATA_BRIDGE_ENDPOINT: http://raw-data-bridge.core.svc.cluster.local:2000
 
+  # Station descriptions edited in the parking control tower, published through
+  # rest-push. Required: the transformer refuses to start without it.
+  REFTABLE_DB: valgardena
+  REFTABLE_COLLECTION: parking-enrichment
+  REFTABLE_KEY: key
+  REFTABLE_MQ_QUEUE: tr-parking-valgardena-enrichment
+  REFTABLE_MQ_KEY: valgardena.parking-enrichment
+  # Everything the provider sends is published today, with or without a record.
+  REFTABLE_GATE: "false"
+
+  # Every station seen, and what was done with it, for the control tower.
+  DISCOVERY_PROVIDER: valgardena/parking-discovery
+  DISCOVERY_GONE_AFTER: "3"
+  RAW_WRITER_URL: http://raw-writer-2.core.svc.cluster.local
+
   SERVICE_NAME: tr-parking-valgardena
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317
 

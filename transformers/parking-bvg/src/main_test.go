@@ -25,6 +25,16 @@ func loadFixtures(t *testing.T) {
 	refTable, err = reftable.StaticFromJSON[map[string]any](raw)
 	require.NoError(t, err)
 	t.Cleanup(func() { refTable = nil })
+	setGate(t, true)
+}
+
+// setGate pins REFTABLE_GATE for one test. The fixtures default it to true, the
+// behaviour the goldens were recorded with.
+func setGate(t *testing.T, on bool) {
+	t.Helper()
+	prev := discoveryEnv.REFTABLE_GATE
+	discoveryEnv.REFTABLE_GATE = on
+	t.Cleanup(func() { discoveryEnv.REFTABLE_GATE = prev })
 }
 
 func countingArea(name, providerId string, vehicles int) CountingArea {
