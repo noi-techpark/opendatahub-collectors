@@ -10,6 +10,7 @@ import (
 	"strconv"
 
 	"github.com/noi-techpark/go-bdp-client/bdplib"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/discovery"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
@@ -61,6 +62,7 @@ var occupiedDatatype = bdplib.CreateDataType("occupied", "", "Occupacy of a park
 func main() {
 	ms.InitWithEnv(context.Background(), "", &env)
 	ms.InitWithEnv(context.Background(), "", &enrichEnv)
+	ms.InitWithEnv(context.Background(), "", &discoveryEnv)
 	slog.Info("Starting data transformer...")
 
 	defer tel.FlushOnPanic()
@@ -74,6 +76,9 @@ func main() {
 	ms.FailOnError(context.Background(), err, "failed to start the enrichment table")
 	defer stopEnrichment()
 
+	err = startDiscovery(context.Background(), env.Env)
+	ms.FailOnError(context.Background(), err, "failed to start the discovery reporter")
+
 	listener := tr.NewTr[RawRecs](context.Background(), env.Env)
 	err = listener.Start(context.Background(), func(ctx context.Context, r *rdb.Raw[RawRecs]) error {
 		return Transform(ctx, b, r)
@@ -83,23 +88,25 @@ func main() {
 }
 
 func Transform(ctx context.Context, b bdplib.Bdp, r *rdb.Raw[RawRecs]) error {
+	defer flushDiscovery(ctx)
+
 	stations := []bdplib.Station{}
 	recs := b.CreateDataMap()
 	for _, raw := range r.Rawdata {
 		sCode := strconv.Itoa(raw.Id)
 		if raw.Meta.Array == nil {
 			slog.Warn("Skipping station because of invalid metadata", "id", sCode, "raw.Meta", raw.Meta)
+			// Still part of the provider's list: leaving it out would let it age
+			// into "gone" while the provider keeps returning it.
+			observer.Observe(sCode, discovery.Entry{Status: discovery.StatusWithheld, Reason: "invalid-metadata"})
 			continue
 		}
 
-		if !hasRecord(sCode) {
-			slog.Debug("Skipping station without enrichment record", "scode", sCode)
+		sName, capacityFact := metaFacts(sCode, raw.Meta.Array.Data)
+		hasRec := hasRecord(sCode)
+		observer.Observe(sCode, entryFor(sCode, hasRec, sName, capacityFact))
+		if gated() && !hasRec {
 			continue
-		}
-
-		sName := sCode
-		if n := raw.Meta.Array.Data[1].String; n != nil && *n != "" {
-			sName = *n
 		}
 
 		s := bdplib.CreateStation(sCode, sName, STATIONTYPE, 0, 0, b.GetOrigin())
@@ -140,6 +147,12 @@ func Transform(ctx context.Context, b bdplib.Bdp, r *rdb.Raw[RawRecs]) error {
 		}
 	}
 
+	// An empty list is more likely a provider hiccup than a provider with no
+	// stations; it must not age every station towards "gone".
+	if len(r.Rawdata) > 0 {
+		observer.Complete()
+	}
+
 	err := b.SyncStations(STATIONTYPE, stations, true, false)
 	if err != nil {
 		return err
@@ -149,6 +162,19 @@ func Transform(ctx context.Context, b bdplib.Bdp, r *rdb.Raw[RawRecs]) error {
 		return err
 	}
 	return nil
+}
+
+// metaFacts reads the provider's name and capacity without assuming the
+// metadata is well formed: it is also called for stations that are not published.
+func metaFacts(code string, data []XmlRpcValue) (name string, capacity *int) {
+	name = code
+	if len(data) > 1 && data[1].String != nil && *data[1].String != "" {
+		name = *data[1].String
+	}
+	if len(data) > 2 {
+		capacity = data[2].I4
+	}
+	return name, capacity
 }
 
 func members2Map(members []XmlRpcStructMember) map[string]XmlRpcValue {

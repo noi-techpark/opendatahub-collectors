@@ -29,6 +29,13 @@ env:
   REFTABLE_KEY: key
   REFTABLE_MQ_QUEUE: tr-parking-offstreet-famas-enrichment
   REFTABLE_MQ_KEY: famas.parking-enrichment
+  # true: a station without a record is withheld; false: published unenriched.
+  REFTABLE_GATE: "true"
+
+  # Every station seen in a payload is reported here with what was done with it.
+  DISCOVERY_PROVIDER: famas/parking-discovery
+  DISCOVERY_GONE_AFTER: "3"
+  RAW_WRITER_URL: http://raw-writer-2.core.svc.cluster.local
 
   SERVICE_NAME: tr-parking-offstreet-famas
   TELEMETRY_TRACE_GRPC_ENDPOINT: tempo-distributor-discovery.monitoring.svc.cluster.local:4317

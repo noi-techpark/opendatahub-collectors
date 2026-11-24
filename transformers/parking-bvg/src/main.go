@@ -72,6 +72,7 @@ type AreaNameComponents struct {
 func main() {
 	ms.InitWithEnv(context.Background(), "", &env)
 	ms.InitWithEnv(context.Background(), "", &enrichEnv)
+	ms.InitWithEnv(context.Background(), "", &discoveryEnv)
 	slog.Info("Starting data (parking) transformer...")
 
 	b := bdplib.FromEnv(bdplib.BdpEnv{
@@ -89,6 +90,9 @@ func main() {
 	err = startEnrichment(context.Background(), env)
 	ms.FailOnError(context.Background(), err, "failed to start the enrichment table")
 	defer stopEnrichment()
+
+	err = startDiscovery(context.Background(), env)
+	ms.FailOnError(context.Background(), err, "failed to start the discovery reporter")
 
 	slog.Info("Syncing data types on startup")
 	err = syncDataTypes(b)
@@ -114,6 +118,7 @@ func TransformWithBdp(bdp bdplib.Bdp) tr.Handler[CountingAreaList] {
 
 func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CountingAreaList]) error {
 	slog.Info("Processing parking counting area data transformation", "timestamp", payload.Timestamp)
+	defer flushDiscovery(ctx)
 
 	stationDataMap := bdp.CreateDataMap()
 	facilityDataMap := bdp.CreateDataMap() // Data map for Facility measurements
@@ -130,11 +135,25 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CountingAre
 
 		if len(area.Counts.Totals) == 0 {
 			slog.Warn("Skipping area with no count data", "id", area.ID, "name", area.Name)
+			// Still one of the provider's areas: leaving it out would let it age
+			// into "gone" while the provider keeps returning it.
+			parsed := parseAreaName(area.Name)
+			observer.Observe(area.ID, entry(hasRecord(area.ID), true, "no-data", area.Name, parsed.Standort,
+				map[string]any{"capacity": parsed.AnzahlGesamtparkplaetze, "type": parsed.Typ}))
 			continue
 		}
 
 		parsed := parseAreaName(area.Name)
 		areasByStandort[parsed.Standort] = append(areasByStandort[parsed.Standort], area)
+	}
+
+	for standort, areas := range areasByStandort {
+		observeFacility(standort, areas)
+	}
+	// An empty payload is more likely a provider hiccup than an account without
+	// areas; it must not age every station towards "gone".
+	if len(payload.Rawdata) > 0 {
+		observer.Complete()
 	}
 
 	var allParkingStations []*bdplib.Station
@@ -144,10 +163,12 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CountingAre
 	for standort, areas := range areasByStandort {
 		// A payload carries every facility of the provider account, so an unknown area
 		// may only cost us its own facility, never the others.
-		if err := checkKnownStations(standort, areas); err != nil {
-			slog.Error("skipping facility", "facility", standort, "err", err)
-			skipped = append(skipped, standort)
-			continue
+		if gated() {
+			if err := checkKnownStations(standort, areas); err != nil {
+				slog.Error("skipping facility", "facility", standort, "err", err)
+				skipped = append(skipped, standort)
+				continue
+			}
 		}
 
 		totalCapacity := 0
@@ -171,10 +192,7 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CountingAre
 
 			// 2. Create the ParkingStation (Camera)
 			singleTypeCapacityMap := map[string]int{parsed.Typ: capacity}
-			station, err := createParkingStation(bdp, area, parsed, capacity, singleTypeCapacityMap)
-			if err != nil {
-				return err
-			}
+			station := createParkingStation(bdp, area, parsed, capacity, singleTypeCapacityMap)
 			allParkingStations = append(allParkingStations, station)
 
 			// 3. Calculate and Add Measurements for the ParkingStation
@@ -206,10 +224,7 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[CountingAre
 		}
 
 		// --- 1. Create Parking Facility (Site) ---
-		facility, err := createParkingFacility(bdp, standort, standort, totalCapacity, facilityCapacityByType)
-		if err != nil {
-			return err
-		}
+		facility := createParkingFacility(bdp, standort, standort, totalCapacity, facilityCapacityByType)
 		allParkingFacilities = append(allParkingFacilities, facility)
 
 		// --- 4. Push Facility Measurements ---
@@ -357,8 +372,44 @@ func checkKnownStations(standort string, areas []CountingArea) error {
 		len(missing), strings.Join(missing, ", "))
 }
 
+// observeFacility reports a facility and its areas. Behind the gate a facility
+// is published whole or not at all, so one area without a record withholds every
+// station of it.
+func observeFacility(standort string, areas []CountingArea) {
+	facilityHasRec := hasRecord(standort)
+	incomplete := gated() && !facilityHasRec
+	capacityByType := map[string]int{}
+	total := 0
+	for _, area := range areas {
+		parsed := parseAreaName(area.Name)
+		total += parsed.AnzahlGesamtparkplaetze
+		capacityByType[parsed.Typ] += parsed.AnzahlGesamtparkplaetze
+		incomplete = incomplete || (gated() && !hasRecord(area.ID))
+	}
+
+	withheldReason := func(hasRec bool) string {
+		if !hasRec {
+			return "no-record"
+		}
+		return "parent-incomplete"
+	}
+
+	facilityData := map[string]any{"capacity": total}
+	for typ, c := range capacityByType {
+		facilityData["capacity_"+strings.ToLower(typ)] = c
+	}
+	observer.Observe(standort, entry(facilityHasRec, incomplete, withheldReason(facilityHasRec), standort, "", facilityData))
+
+	for _, area := range areas {
+		parsed := parseAreaName(area.Name)
+		hasRec := hasRecord(area.ID)
+		observer.Observe(area.ID, entry(hasRec, incomplete, withheldReason(hasRec), area.Name, standort,
+			map[string]any{"capacity": parsed.AnzahlGesamtparkplaetze, "type": parsed.Typ}))
+	}
+}
+
 // createParkingStation now accepts a map for capacityByType
-func createParkingStation(bdp bdplib.Bdp, area CountingArea, parsed AreaNameComponents, capacity int, capacityByType map[string]int) (*bdplib.Station, error) {
+func createParkingStation(bdp bdplib.Bdp, area CountingArea, parsed AreaNameComponents, capacity int, capacityByType map[string]int) *bdplib.Station {
 	metadata := map[string]any{}
 
 	station := bdplib.CreateStation(
@@ -387,13 +438,11 @@ func createParkingStation(bdp bdplib.Bdp, area CountingArea, parsed AreaNameComp
 	}
 
 	station.MetaData = metadata
-	if !enrichStation(area.ID, &station) {
-		return nil, fmt.Errorf("counting area %q (provider_id %s) has no enrichment record", area.Name, area.ID)
-	}
-	return &station, nil
+	enrichStation(area.ID, &station)
+	return &station
 }
 
-func createParkingFacility(bdp bdplib.Bdp, siteID, facilityName string, totalCapacity int, capacityByType map[string]int) (*bdplib.Station, error) {
+func createParkingFacility(bdp bdplib.Bdp, siteID, facilityName string, totalCapacity int, capacityByType map[string]int) *bdplib.Station {
 	metadata := map[string]any{}
 
 	station := bdplib.CreateStation(
@@ -418,10 +467,8 @@ func createParkingFacility(bdp bdplib.Bdp, siteID, facilityName string, totalCap
 	}
 
 	station.MetaData = metadata
-	if !enrichStation(siteID, &station) {
-		return nil, fmt.Errorf("facility %q has no enrichment record", siteID)
-	}
-	return &station, nil
+	enrichStation(siteID, &station)
+	return &station
 }
 
 // Normalizes the type suffix from the name string

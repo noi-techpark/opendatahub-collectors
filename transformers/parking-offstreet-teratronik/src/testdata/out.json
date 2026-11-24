@@ -1,0 +1,442 @@
+[
+  {
+    "syncedData": {
+      "ParkingStation": [
+        {
+          "branch": {
+            "parking-sta-marlengo": {
+              "branch": {
+                "free": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424891121,
+                      "value": 18
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                },
+                "occupied": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424891121,
+                      "value": 19
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                }
+              },
+              "data": null,
+              "name": "(default)",
+              "provenance": ""
+            }
+          },
+          "data": null,
+          "name": "(default)",
+          "provenance": ""
+        }
+      ]
+    },
+    "syncedDataTypes": [
+      [
+        {
+          "description": "free",
+          "metaData": null,
+          "name": "free",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        },
+        {
+          "description": "occupied",
+          "metaData": null,
+          "name": "occupied",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        }
+      ]
+    ],
+    "syncedStations": {
+      "ParkingStation": [
+        {
+          "OnlyActivate": false,
+          "Stations": [
+            {
+              "id": "parking-sta-marlengo",
+              "latitude": 46.66489445071061,
+              "longitude": 11.138228889410987,
+              "metaData": {
+                "capacity": 37,
+                "municipality": "Marling - Marlengo",
+                "name_DE": "Parkplatz Marling Bahnhof",
+                "name_IT": "Parcheggio stazione Marlengo"
+              },
+              "name": "Parcheggio stazione Marlengo",
+              "origin": "STA",
+              "stationType": "ParkingStation"
+            }
+          ],
+          "SyncState": true
+        }
+      ]
+    }
+  },
+  {
+    "syncedData": {
+      "ParkingStation": [
+        {
+          "branch": {
+            "parking-sta-marlengo": {
+              "branch": {
+                "free": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424861057,
+                      "value": 18
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                },
+                "occupied": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424861057,
+                      "value": 19
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                }
+              },
+              "data": null,
+              "name": "(default)",
+              "provenance": ""
+            }
+          },
+          "data": null,
+          "name": "(default)",
+          "provenance": ""
+        }
+      ]
+    },
+    "syncedDataTypes": [
+      [
+        {
+          "description": "free",
+          "metaData": null,
+          "name": "free",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        },
+        {
+          "description": "occupied",
+          "metaData": null,
+          "name": "occupied",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        }
+      ]
+    ],
+    "syncedStations": {
+      "ParkingStation": [
+        {
+          "OnlyActivate": false,
+          "Stations": [
+            {
+              "id": "parking-sta-marlengo",
+              "latitude": 46.66489445071061,
+              "longitude": 11.138228889410987,
+              "metaData": {
+                "capacity": 37,
+                "municipality": "Marling - Marlengo",
+                "name_DE": "Parkplatz Marling Bahnhof",
+                "name_IT": "Parcheggio stazione Marlengo"
+              },
+              "name": "Parcheggio stazione Marlengo",
+              "origin": "STA",
+              "stationType": "ParkingStation"
+            }
+          ],
+          "SyncState": true
+        }
+      ]
+    }
+  },
+  {
+    "syncedData": {
+      "ParkingStation": [
+        {
+          "branch": {
+            "parking-sta-marlengo": {
+              "branch": {
+                "free": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424830787,
+                      "value": 18
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                },
+                "occupied": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424830787,
+                      "value": 19
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                }
+              },
+              "data": null,
+              "name": "(default)",
+              "provenance": ""
+            }
+          },
+          "data": null,
+          "name": "(default)",
+          "provenance": ""
+        }
+      ]
+    },
+    "syncedDataTypes": [
+      [
+        {
+          "description": "free",
+          "metaData": null,
+          "name": "free",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        },
+        {
+          "description": "occupied",
+          "metaData": null,
+          "name": "occupied",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        }
+      ]
+    ],
+    "syncedStations": {
+      "ParkingStation": [
+        {
+          "OnlyActivate": false,
+          "Stations": [
+            {
+              "id": "parking-sta-marlengo",
+              "latitude": 46.66489445071061,
+              "longitude": 11.138228889410987,
+              "metaData": {
+                "capacity": 37,
+                "municipality": "Marling - Marlengo",
+                "name_DE": "Parkplatz Marling Bahnhof",
+                "name_IT": "Parcheggio stazione Marlengo"
+              },
+              "name": "Parcheggio stazione Marlengo",
+              "origin": "STA",
+              "stationType": "ParkingStation"
+            }
+          ],
+          "SyncState": true
+        }
+      ]
+    }
+  },
+  {
+    "syncedData": {
+      "ParkingStation": [
+        {
+          "branch": {
+            "parking-sta-marlengo": {
+              "branch": {
+                "free": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424800660,
+                      "value": 18
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                },
+                "occupied": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424800660,
+                      "value": 19
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                }
+              },
+              "data": null,
+              "name": "(default)",
+              "provenance": ""
+            }
+          },
+          "data": null,
+          "name": "(default)",
+          "provenance": ""
+        }
+      ]
+    },
+    "syncedDataTypes": [
+      [
+        {
+          "description": "free",
+          "metaData": null,
+          "name": "free",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        },
+        {
+          "description": "occupied",
+          "metaData": null,
+          "name": "occupied",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        }
+      ]
+    ],
+    "syncedStations": {
+      "ParkingStation": [
+        {
+          "OnlyActivate": false,
+          "Stations": [
+            {
+              "id": "parking-sta-marlengo",
+              "latitude": 46.66489445071061,
+              "longitude": 11.138228889410987,
+              "metaData": {
+                "capacity": 37,
+                "municipality": "Marling - Marlengo",
+                "name_DE": "Parkplatz Marling Bahnhof",
+                "name_IT": "Parcheggio stazione Marlengo"
+              },
+              "name": "Parcheggio stazione Marlengo",
+              "origin": "STA",
+              "stationType": "ParkingStation"
+            }
+          ],
+          "SyncState": true
+        }
+      ]
+    }
+  },
+  {
+    "syncedData": {
+      "ParkingStation": [
+        {
+          "branch": {
+            "parking-sta-marlengo": {
+              "branch": {
+                "free": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424770529,
+                      "value": 18
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                },
+                "occupied": {
+                  "branch": null,
+                  "data": [
+                    {
+                      "period": 300,
+                      "timestamp": 1795424770529,
+                      "value": 19
+                    }
+                  ],
+                  "name": "(default)",
+                  "provenance": ""
+                }
+              },
+              "data": null,
+              "name": "(default)",
+              "provenance": ""
+            }
+          },
+          "data": null,
+          "name": "(default)",
+          "provenance": ""
+        }
+      ]
+    },
+    "syncedDataTypes": [
+      [
+        {
+          "description": "free",
+          "metaData": null,
+          "name": "free",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        },
+        {
+          "description": "occupied",
+          "metaData": null,
+          "name": "occupied",
+          "period": 0,
+          "rtype": "Instantaneous",
+          "unit": ""
+        }
+      ]
+    ],
+    "syncedStations": {
+      "ParkingStation": [
+        {
+          "OnlyActivate": false,
+          "Stations": [
+            {
+              "id": "parking-sta-marlengo",
+              "latitude": 46.66489445071061,
+              "longitude": 11.138228889410987,
+              "metaData": {
+                "capacity": 37,
+                "municipality": "Marling - Marlengo",
+                "name_DE": "Parkplatz Marling Bahnhof",
+                "name_IT": "Parcheggio stazione Marlengo"
+              },
+              "name": "Parcheggio stazione Marlengo",
+              "origin": "STA",
+              "stationType": "ParkingStation"
+            }
+          ],
+          "SyncState": true
+        }
+      ]
+    }
+  }
+]

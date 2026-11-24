@@ -47,6 +47,7 @@ func main() {
 	ms.InitWithEnv(ctx, "", &env)
 	ms.InitWithEnv(ctx, "", &enrichEnv)
 	ms.InitWithEnv(ctx, "", &catEnv)
+	ms.InitWithEnv(ctx, "", &discoveryEnv)
 	log := logger.Get(ctx)
 	log.Info("Starting parking-skidata transformer...")
 
@@ -73,6 +74,8 @@ func main() {
 
 	ms.FailOnError(ctx, startEnrichment(ctx, b), "failed to start the enrichment table")
 	defer stopEnrichment()
+
+	ms.FailOnError(ctx, startDiscovery(ctx, env.Env), "failed to start the discovery reporter")
 
 	log.Info("Syncing data types on startup", "datatypes", allDataTypeNames())
 	ms.FailOnError(ctx, syncDataTypes(b), "failed to sync types")
@@ -106,6 +109,7 @@ func main() {
 			// one car park would sync the whole fleet. Paying it at boot keeps
 			// every later sync proportional to what actually changed.
 			syncChanged(ctx, b, nil)
+			flushDiscovery(ctx)
 		}
 
 		index := buildURNIndex()
@@ -185,6 +189,8 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[ParkingEven
 	ts := payload.Timestamp.UnixMilli()
 	log := logger.Get(ctx)
 
+	defer flushDiscovery(ctx)
+
 	facilityID, carparkID := providerIDs(event)
 
 	// A malformed event carries no facility. Registering it would create a
@@ -237,8 +243,12 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[ParkingEven
 		carparkData.AddRecord(childURN, freeType(suffix), bdplib.CreateRecord(ts, free, measurementPeriod))
 	}
 
-	if err := bdp.PushData(stationType, carparkData); err != nil {
-		return fmt.Errorf("failed to push carpark data: %w", err)
+	// A withheld station is not in the silo, so there is nothing to attach its
+	// measurements to. They stay in the cache, which the facility totals need.
+	if withheldReason(childProviderID, facilityID, true) == "" {
+		if err := bdp.PushData(stationType, carparkData); err != nil {
+			return fmt.Errorf("failed to push carpark data: %w", err)
+		}
 	}
 
 	// 2. Facility aggregate. Withheld entirely unless every carpark of the
@@ -271,6 +281,9 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[ParkingEven
 		return nil
 	}
 
+	if withheldReason(facilityID, facilityID, false) != "" {
+		return nil
+	}
 	if err := bdp.PushData(stationTypeParent, facilityData); err != nil {
 		return fmt.Errorf("failed to push facility data: %w", err)
 	}

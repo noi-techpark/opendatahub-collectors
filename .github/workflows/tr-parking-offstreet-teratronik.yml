@@ -14,12 +14,24 @@ env:
   DOCKER_IMAGE: ghcr.io/noi-techpark/opendatahub-collectors/tr-parking-offstreet-teratronik
   DOCKER_TAG: ${{ github.sha }}
   KUBERNETES_NAMESPACE: collector
-  VALUES_YAML: infrastructure/helm/sta-marlengo.yaml
 
 jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    concurrency: tr-parking-offstreet-teratronik-tests
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    - name: Run tests
+      run: docker run --rm --volume ./src:/code $(docker build -q . -f infrastructure/docker/Dockerfile --target test)
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+
   build:
     runs-on: ubuntu-24.04
     concurrency: tr-parking-offstreet-teratronik-build
+    needs:
+      - tests
     permissions:
       packages: write
     steps:
@@ -40,6 +52,8 @@ jobs:
     runs-on: ubuntu-22.04
     concurrency: tr-parking-offstreet-teratronik-deploy-test
     environment: test
+    env:
+      VALUES_YAML: infrastructure/helm/values.test.yaml
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -76,6 +90,8 @@ jobs:
     runs-on: ubuntu-24.04
     concurrency: tr-parking-offstreet-teratronik-deploy-prod
     environment: prod
+    env:
+      VALUES_YAML: infrastructure/helm/values.prod.yaml
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4

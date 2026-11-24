@@ -1,0 +1,34 @@
+{
+  "100308": {
+    "gps": {
+      "lat": 46.5,
+      "lon": 11.3
+    },
+    "name": "Zumis operator name",
+    "names": {
+      "de": "Parkplatz Zumis",
+      "it": "Parcheggio Zumis"
+    },
+    "standard_name": "Parcheggio Zumis"
+  },
+  "200001": {
+    "gps": {
+      "lat": 46.71,
+      "lon": 11.71
+    },
+    "name": "Test Facility operator name",
+    "names": {
+      "it": "Parcheggio di prova"
+    },
+    "netex": {
+      "layout": "multistorey",
+      "type": "urbanParking"
+    }
+  },
+  "200001-A": {
+    "name": "Area Nord operator name",
+    "names": {
+      "it": "Area Nord IT"
+    }
+  }
+}

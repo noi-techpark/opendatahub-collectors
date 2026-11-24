@@ -5,7 +5,7 @@ go 1.25.0
 require (
 	github.com/noi-techpark/go-bdp-client v1.5.1
 	github.com/noi-techpark/opendatahub-go-sdk/clib v0.0.2
-	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.0.9
+	github.com/noi-techpark/opendatahub-go-sdk/ingest v1.2.0
 	github.com/noi-techpark/opendatahub-go-sdk/tel v1.0.0
 	github.com/noi-techpark/opendatahub-go-sdk/testsuite v1.1.1
 	github.com/stretchr/testify v1.11.1

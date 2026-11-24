@@ -37,6 +37,13 @@ env:
   REFTABLE_KEY: key
   REFTABLE_MQ_QUEUE: tr-parking-skidata-enrichment
   REFTABLE_MQ_KEY: skidata.parking-enrichment
+  # true: a station without a record is withheld; false: every station the provider sends is published.
+  REFTABLE_GATE: "false"
+
+  # Every station seen is reported here with what was done with it.
+  DISCOVERY_PROVIDER: skidata/parking-discovery
+  DISCOVERY_GONE_AFTER: "0"
+  RAW_WRITER_URL: http://raw-writer-2.core.svc.cluster.local
 
   # Provider-derived reference flow: the facility->carpark topology and the
   # total capacity, republished by the collector. Never merged with operator

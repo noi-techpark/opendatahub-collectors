@@ -55,6 +55,7 @@ Determinism rules: fix `Raw.Timestamp`, fix `time.Now` via a `timeNow` variable,
 ## Beyond snapshots
 
 - **Behavioral unit tests** for mapping edge cases: clamping, sentinel dates, geometry math with tolerance asserts, multi-event sequences against a primed cache. Multi-provider snapshot tests: `transformers/parking-offstreet-skidata/src/main_test.go` (`TestSkidata`, `TestMyBestParking`, `TestStations`).
+- **Reference-table fixtures**: inject the table with `reftable.StaticFromJSON` and cover a missing key and a record lacking a field. See [reftable.md](reftable.md#testing).
 - **Master-data integrity tests** whenever the transformer ships resource CSVs/JSON: load the *real* files and assert invariants — every child references an existing parent, IDs follow the expected format, no duplicates. Snapshots alone do not catch a broken CSV edit.
 - **Integration tests** for servers with auth (pattern: `collectors/rest-push/test/`): a dedicated `test/docker-compose.yml` spins up the app (Dockerfile `test` target), RabbitMQ with `rabbitmq-definitions.json`, and Keycloak with a realm fixture; `run-tests.sh` brings the stack up and propagates the exit code. The workflow's `test` job runs `sh run-tests.sh`.
 

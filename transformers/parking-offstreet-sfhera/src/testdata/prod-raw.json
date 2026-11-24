@@ -1,0 +1,27 @@
+[
+  {
+    "provider": "municipality-bolzano/parking-macello",
+    "timestamp": "2026-11-23T09:06:44.443810123Z",
+    "rawdata": "eyJ1aWQiOiI4IiwicGFyayI6IlRVUklTVC1QQVJLSU5HIiwibGF0IjoiNDYuNDk2MjMyODkxMzM2OTkwIiwibG9uZyI6IjExLjM2Nzc5NDkwODQ1MTI1NCIsImluIjoiMTciLCJvdXQiOiI1IiwiZmxvb3IiOiIwIiwibG90cyI6Mjg4LCJ0b3QiOiIzNzAiLCJyZXNlcnZlZCI6IjAifQ=="
+  },
+  {
+    "provider": "municipality-bolzano/parking-macello",
+    "timestamp": "2026-11-23T09:06:20.934470533Z",
+    "rawdata": "eyJ1aWQiOiI4IiwicGFyayI6IlRVUklTVC1QQVJLSU5HIiwibGF0IjoiNDYuNDk2MjMyODkxMzM2OTkwIiwibG9uZyI6IjExLjM2Nzc5NDkwODQ1MTI1NCIsImluIjoiMTYiLCJvdXQiOiI1IiwiZmxvb3IiOiIwIiwibG90cyI6Mjg5LCJ0b3QiOiIzNzAiLCJyZXNlcnZlZCI6IjAifQ=="
+  },
+  {
+    "provider": "municipality-bolzano/parking-macello",
+    "timestamp": "2026-11-23T09:04:54.802101924Z",
+    "rawdata": "eyJ1aWQiOiI4IiwicGFyayI6IlRVUklTVC1QQVJLSU5HIiwibGF0IjoiNDYuNDk2MjMyODkxMzM2OTkwIiwibG9uZyI6IjExLjM2Nzc5NDkwODQ1MTI1NCIsImluIjoiMTYiLCJvdXQiOiI0IiwiZmxvb3IiOiIwIiwibG90cyI6Mjg4LCJ0b3QiOiIzNzAiLCJyZXNlcnZlZCI6IjAifQ=="
+  },
+  {
+    "provider": "municipality-bolzano/parking-macello",
+    "timestamp": "2026-11-23T09:00:33.882306773Z",
+    "rawdata": "eyJ1aWQiOiI4IiwicGFyayI6IlRVUklTVC1QQVJLSU5HIiwibGF0IjoiNDYuNDk2MjMyODkxMzM2OTkwIiwibG9uZyI6IjExLjM2Nzc5NDkwODQ1MTI1NCIsImluIjoiMTUiLCJvdXQiOiI0IiwiZmxvb3IiOiIwIiwibG90cyI6Mjg5LCJ0b3QiOiIzNzAiLCJyZXNlcnZlZCI6IjAifQ=="
+  },
+  {
+    "provider": "municipality-bolzano/parking-macello",
+    "timestamp": "2026-11-23T08:59:58.544781593Z",
+    "rawdata": "eyJ1aWQiOiI4IiwicGFyayI6IlRVUklTVC1QQVJLSU5HIiwibGF0IjoiNDYuNDk2MjMyODkxMzM2OTkwIiwibG9uZyI6IjExLjM2Nzc5NDkwODQ1MTI1NCIsImluIjoiMTQiLCJvdXQiOiI0IiwiZmxvb3IiOiIwIiwibG90cyI6MjkwLCJ0b3QiOiIzNzAiLCJyZXNlcnZlZCI6IjAifQ=="
+  }
+]

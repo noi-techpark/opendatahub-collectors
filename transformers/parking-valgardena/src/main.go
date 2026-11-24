@@ -10,6 +10,7 @@ import (
 	"os"
 
 	"github.com/noi-techpark/go-bdp-client/bdplib"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/discovery"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
@@ -62,6 +63,8 @@ type ParkingMetadata struct {
 func main() {
 	ctx := context.Background()
 	ms.InitWithEnv(ctx, "", &env)
+	ms.InitWithEnv(ctx, "", &enrichEnv)
+	ms.InitWithEnv(ctx, "", &discoveryEnv)
 	defer tel.FlushOnPanic()
 
 	b := bdplib.FromEnv(bdplib.BdpEnv{
@@ -75,6 +78,10 @@ func main() {
 	})
 
 	ms.FailOnError(ctx, syncDataTypes(b), "failed to sync data types")
+
+	ms.FailOnError(ctx, startEnrichment(ctx, env.Env), "failed to start the enrichment table")
+	defer stopEnrichment()
+	ms.FailOnError(ctx, startDiscovery(ctx, env.Env), "failed to start the discovery reporter")
 
 	data := tr.NewTr[string](ctx, env.Env)
 	meta := tr.NewTr[string](ctx, metaEnv())
@@ -117,7 +124,13 @@ func transformDataWithBdp(bdp bdplib.Bdp) tr.Handler[ParkingData] {
 }
 
 func TransformData(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[ParkingData]) error {
+	// The station is withheld by the metadata queue, so it does not exist for
+	// the writer to attach a measurement to.
 	station := stationId(payload.Rawdata.Uid)
+	if enrichEnv.REFTABLE_GATE && !hasRecord(station) {
+		logger.Get(ctx).Debug("skipping occupancy of a station without enrichment record", "station", station)
+		return nil
+	}
 
 	dm := bdp.CreateDataMap()
 	dm.AddRecord(station, dataTypeFree,
@@ -138,6 +151,7 @@ func transformMetadataWithBdp(bdp bdplib.Bdp) tr.Handler[[]ParkingMetadata] {
 }
 
 func TransformMetadata(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[[]ParkingMetadata]) error {
+	log := logger.Get(ctx)
 	stations := make([]bdplib.Station, 0, len(payload.Rawdata))
 	for _, m := range payload.Rawdata {
 		s := bdplib.CreateStation(stationId(m.Uid), m.NameIT, stationType, m.Lat, m.Long, origin)
@@ -147,8 +161,33 @@ func TransformMetadata(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[[]P
 			"capacity":     m.Capacity,
 			"municipality": municipality,
 		}
+
+		entry := discoveryEntry(s, "", map[string]any{
+			"capacity": m.Capacity,
+			"name_de":  m.NameDE,
+			"provider": m.Provider,
+		})
+		// Records are keyed by station code, the control tower's default
+		// provider-id path; nothing else on the station carries the uid alone.
+		key := s.Id
+		entry.Reason = "no-record"
+		if hasRecord(key) {
+			entry.Reason = ""
+		} else if enrichEnv.REFTABLE_GATE {
+			log.Warn("withholding station without enrichment record", "id", m.Uid, "name", m.NameIT)
+			entry.Status = discovery.StatusWithheld
+			observe(key, entry)
+			continue
+		}
+		entry.Status = discovery.StatusPublished
+		observe(key, entry)
+
+		enrichStation(key, &s)
 		stations = append(stations, s)
 	}
+
+	// An empty list is a provider glitch, not an empty car park set.
+	reportDiscovery(ctx, len(payload.Rawdata) > 0)
 
 	if err := bdp.SyncStations(stationType, stations, true, false); err != nil {
 		return fmt.Errorf("failed syncing parking stations: %w", err)

@@ -13,6 +13,7 @@ import (
 
 	"github.com/noi-techpark/go-bdp-client/bdplib"
 	"github.com/noi-techpark/opendatahub-go-sdk/clib"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/discovery"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
 	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
@@ -48,6 +49,8 @@ var env struct {
 func main() {
 	ctx := context.Background()
 	ms.InitWithEnv(ctx, "", &env)
+	ms.InitWithEnv(ctx, "", &enrichEnv)
+	ms.InitWithEnv(ctx, "", &discoveryEnv)
 	logger.Get(ctx).Info("Starting parking-affluences transformer...")
 
 	defer tel.FlushOnPanic()
@@ -56,6 +59,10 @@ func main() {
 
 	logger.Get(ctx).Info("Syncing data types on startup")
 	ms.FailOnError(ctx, syncDataTypes(b), "failed to sync data types")
+
+	ms.FailOnError(ctx, startEnrichment(ctx, env.Env), "failed to start the enrichment table")
+	defer stopEnrichment()
+	ms.FailOnError(ctx, startDiscovery(ctx, env.Env), "failed to start the discovery reporter")
 
 	logger.Get(ctx).Info("Starting transformer listener...")
 	listener := tr.NewTr[string](ctx, env.Env)
@@ -103,7 +110,23 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[AffluencesP
 		// provider site id (never the raw provider id). Same code is used
 		// for the station and all its records.
 		code := clib.GenerateID(IDTemplate, site.ID)
-		stations = append(stations, buildStation(bdp, code, site))
+		station := buildStation(bdp, code, site)
+
+		entry := discoveryEntry(station, "", discoveryData(site))
+		entry.Reason = "no-record"
+		if hasRecord(site.ID) {
+			entry.Reason = ""
+		} else if enrichEnv.REFTABLE_GATE {
+			log.Warn("withholding site without enrichment record", "provider_id", site.ID, "name", site.PrimaryName)
+			entry.Status = discovery.StatusWithheld
+			observe(site.ID, entry)
+			continue
+		}
+		entry.Status = discovery.StatusPublished
+		observe(site.ID, entry)
+
+		enrichStation(site.ID, &station)
+		stations = append(stations, station)
 
 		rt := site.Realtime
 		ts := measurementTimestamp(rt.OccupancyDatetimeUTC, payload.Timestamp)
@@ -135,6 +158,8 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[AffluencesP
 		dm.AddRecord(code, DataTypeOccupancy, bdplib.CreateRecord(ts, occupancy, Period))
 		dm.AddRecord(code, DataTypeFree, bdplib.CreateRecord(ts, free, Period))
 	}
+
+	reportDiscovery(ctx, len(sites) > 0)
 
 	log.Info("Syncing stations and pushing measurements", "stations", len(stations))
 	if err := bdp.SyncStations(StationTypeParkingStation, stations, true, false); err != nil {
@@ -192,6 +217,22 @@ func buildStation(bdp bdplib.Bdp, code string, site Site) bdplib.Station {
 
 	station.MetaData = meta
 	return station
+}
+
+// discoveryData is the provider-side view shown to the operator; nothing that
+// changes with every poll.
+func discoveryData(site Site) map[string]any {
+	data := map[string]any{}
+	if site.Realtime.Capacity != nil {
+		data["capacity"] = *site.Realtime.Capacity
+	}
+	if site.SecondaryName != "" {
+		data["secondary_name"] = site.SecondaryName
+	}
+	if addr := buildAddress(site.Location.Address); len(addr) > 0 {
+		data["address"] = addr
+	}
+	return data
 }
 
 // buildAddress collects the non-null address fields into a metadata map.

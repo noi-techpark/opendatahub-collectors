@@ -280,6 +280,10 @@ func syncChanged(ctx context.Context, bdp bdplib.Bdp, ids []string) {
 		if !ok {
 			continue
 		}
+		reportStation(id, e)
+		if withheldReason(id, e.facilityID, e.carparkID >= 0) != "" {
+			continue
+		}
 		s := merged(id, e.base)
 		isChanged, err := syncedStations.Changed(id, s)
 		if err != nil {
@@ -329,6 +333,7 @@ func resyncAll(ctx context.Context, bdp bdplib.Bdp) {
 		return
 	}
 	syncChanged(ctx, bdp, nil)
+	flushDiscovery(ctx)
 }
 
 // providerIDs derives the facility id and carpark id an event refers to.

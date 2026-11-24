@@ -67,6 +67,8 @@ It asks for project name, the two provider-tuple parts, and origin (must match t
 - **Timeseries** (stations + measurements, BDP): [references/transformer-timeseries.md](references/transformer-timeseries.md)
 - **Content** (structured entities, Content API): [references/transformer-content.md](references/transformer-content.md)
 
+Slowly-changing lookup data a transformation needs (station descriptions, code tables, per-provider configuration) is a **reference table** published into the raw data lake, not a CSV baked into the image: [references/reftable.md](references/reftable.md).
+
 ## New-pipeline checklist (end to end)
 
 1. Collector chosen via the table above; for generic collectors add values file + workflow, for `rest-push` request Keycloak UMA setup.
@@ -87,7 +89,8 @@ It asks for project name, the two provider-tuple parts, and origin (must match t
 | Declarative crawler + configs | `collectors/api-crawler/src/main.go`, `collectors/api-crawler/infrastructure/crawler-config/*.silky.yaml` |
 | Push collector + Keycloak UMA | `collectors/rest-push/src/` |
 | Timeseries transformer (stations derived per payload — default) | `transformers/bike-boxes/src/` |
-| Timeseries transformer (station set known at startup from CSV) | `transformers/parking-offstreet-skidata/src/` |
+| Timeseries transformer (station set known at startup) | `transformers/parking-offstreet-skidata/src/` |
+| Reference tables (lookup data from the raw data lake, merge rules) | `transformers/parking-skidata/src/category_source.go`, `transformers/parking-offstreet-famas/src/enrichment.go` |
 | Content transformer | `transformers/traffic-event-prov-bz/src/` (pre-clib client, same patterns); clib-based reference per docs: `transformers/traffic-event-a22-opendata` upstream |
 | Deployment (chart, workflows) | `helm/generic-collector/`, `.github/workflows/tr-parking-offstreet-skidata.yml`, `.github/workflows/tr-bike-boxes.yml` |
 | Local validation stack | `.claude/skills/opendatahub-pipeline/assets/docker-compose.validation.yml` |

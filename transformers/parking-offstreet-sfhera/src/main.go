@@ -6,157 +6,37 @@ package main
 
 import (
 	"context"
-	"encoding/base64"
-	"encoding/json"
 	"fmt"
-	"log"
-	"log/slog"
-	"os"
 	"strconv"
-	"time"
 
 	"github.com/noi-techpark/go-bdp-client/bdplib"
-	"github.com/rabbitmq/amqp091-go"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/discovery"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/ms"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/rdb"
+	"github.com/noi-techpark/opendatahub-go-sdk/ingest/tr"
+	"github.com/noi-techpark/opendatahub-go-sdk/tel"
+	"github.com/noi-techpark/opendatahub-go-sdk/tel/logger"
 )
-
-// read logger level from env and uses INFO as default
-func initLogging() {
-	logLevel := os.Getenv("LOG_LEVEL")
-
-	level := new(slog.LevelVar)
-	level.UnmarshalText([]byte(logLevel))
-
-	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-		Level: level,
-	})))
-
-	slog.Info("Start logger with level: " + logLevel)
-}
-func failOnError(err error, msg string) {
-	if err != nil {
-		slog.Error(msg, "err", err)
-		panic(err)
-	}
-}
 
 const ParkingStation = "ParkingStation"
 const Period = 300
 
-func main() {
-	initLogging()
+const municipality = "Bolzano - Bozen"
 
-	conn, err := amqp091.Dial(os.Getenv("MQ_LISTEN_URI"))
-	failOnError(err, "Failed to connect to RabbitMQ")
-	defer conn.Close()
-
-	ch, err := conn.Channel()
-	failOnError(err, "Failed to open a channel")
-	defer ch.Close()
-
-	q, err := ch.QueueDeclare(os.Getenv("MQ_LISTEN_QUEUE"), true, false, false, false, nil)
-	failOnError(err, "Failed to declare a queue")
-	err = ch.QueueBind(q.Name, os.Getenv("MQ_LISTEN_KEY"), os.Getenv("MQ_LISTEN_EXCHANGE"), false, nil)
-	failOnError(err, "Failed binding queue to exchange")
-	mq, err := ch.Consume(q.Name, os.Getenv("MQ_LISTEN_CONSUMER"), false, false, false, false, nil)
-	failOnError(err, "Failed to register a consumer")
-
-	go func() {
-		b := bdplib.FromEnv()
-
-		dtFree := bdplib.CreateDataType("free", "", "free", "Instantaneous")
-		dtOccupied := bdplib.CreateDataType("occupied", "", "occupied", "Instantaneous")
-		dtEnter := bdplib.CreateDataType("entering-vehicles-today", "", "Number of vehicles that entered since start of day", "Instantaneous")
-		dtExit := bdplib.CreateDataType("exiting-vehicles-today", "", "Number of vehicles that exited since start of day", "Instantaneous")
-
-		ds := []bdplib.DataType{dtFree, dtOccupied, dtEnter, dtExit}
-		failOnError(b.SyncDataTypes(ParkingStation, ds), "Error pushing datatypes")
-
-		for msg := range mq {
-			log.Printf("Received a message: %s", msg.Body)
-
-			msgBody := incoming{}
-			if err := json.Unmarshal(msg.Body, &msgBody); err != nil {
-				slog.Error("Error unmarshalling mq message", "err", err)
-				msgReject(&msg)
-				continue
-			}
-
-			rawFrame, err := getRawFrame(msgBody)
-			if err != nil {
-				slog.Error("Cannot get mongo raw data", "err", err, "msg", msgBody)
-				msgReject(&msg)
-				continue
-			}
-
-			raw, err := unmarshalRaw(rawFrame.Rawdata)
-			if err != nil {
-				slog.Error("Unable to unmarshal raw payload", "err", err, "msg", msgBody, "raw", raw)
-				msgReject(&msg)
-				continue
-			}
-
-			lat, _ := strconv.ParseFloat(raw.Lat, 64)
-			lon, _ := strconv.ParseFloat(raw.Long, 64)
-
-			sname := fmt.Sprintf("parking-bz:%s:%s", raw.Uid, raw.Floor)
-			s := bdplib.CreateStation(sname, raw.Park, ParkingStation, lat, lon, b.Origin)
-
-			tot, _ := strconv.Atoi(raw.Tot)
-			floor, _ := strconv.Atoi(raw.Floor)
-			s.MetaData = map[string]any{
-				"floor":        floor,
-				"capacity":     tot,
-				"municipality": "Bolzano - Bozen",
-			}
-			if err := b.SyncStations(ParkingStation, []bdplib.Station{s}, true, false); err != nil {
-				slog.Error("Error syncing stations", "err", err, "msg", msgBody)
-				msgReject(&msg)
-				continue
-			}
-
-			dm := b.CreateDataMap()
-			dm.AddRecord(s.Id, dtFree.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), raw.Lots, Period))
-			dm.AddRecord(s.Id, dtOccupied.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), tot-raw.Lots, Period))
-			in, _ := strconv.Atoi(raw.In)
-			dm.AddRecord(s.Id, dtEnter.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), in, Period))
-			out, _ := strconv.Atoi(raw.Out)
-			dm.AddRecord(s.Id, dtExit.Name, bdplib.CreateRecord(rawFrame.Timestamp.UnixMilli(), out, Period))
-
-			if err := b.PushData(ParkingStation, dm); err != nil {
-				slog.Error("Error pushing data to bdp", "err", err, "msg", msgBody)
-				msgReject(&msg)
-				continue
-			}
-
-			failOnError(msg.Ack(false), "Could not ACK elaborated msg")
-		}
-		log.Fatal("Message channel closed!")
-	}()
-
-	<-make(chan int) //wait forever
+var env struct {
+	tr.Env
+	bdplib.BdpEnv
 }
 
-func getRawFrame(m incoming) (*raw, error) {
-	raw, err := getMongo(m)
-	if err != nil {
-		return nil, fmt.Errorf("error getting raw from mongo: %w", err)
-	}
+var (
+	dtFree     = bdplib.CreateDataType("free", "", "free", "Instantaneous")
+	dtOccupied = bdplib.CreateDataType("occupied", "", "occupied", "Instantaneous")
+	dtEnter    = bdplib.CreateDataType("entering-vehicles-today", "", "Number of vehicles that entered since start of day", "Instantaneous")
+	dtExit     = bdplib.CreateDataType("exiting-vehicles-today", "", "Number of vehicles that exited since start of day", "Instantaneous")
+)
 
-	slog.Debug("Dumping raw data", "dto", raw)
-	return raw, nil
-}
-
-func msgReject(d *amqp091.Delivery) {
-	if err := d.Reject(false); err != nil {
-		slog.Error("error rejecting already errored message", "err", err)
-		panic(err)
-	}
-}
-
+// payload is one parking level as the provider pushes it: every number is a
+// string except Lots.
 type payload struct {
 	Uid      string
 	Park     string
@@ -170,45 +50,109 @@ type payload struct {
 	Reserved string
 }
 
-func unmarshalRaw(s string) (payload, error) {
-	var p payload
-	decoded, err := base64.StdEncoding.DecodeString(s)
-	if err != nil {
-		slog.Error("Debug failed base64", "string", s)
-		return p, fmt.Errorf("error decoding raw from base64: %w", err)
-	}
-	if err := json.Unmarshal(decoded, &p); err != nil {
-		return p, fmt.Errorf("error unmarshalling payload json: %w", err)
-	}
+func main() {
+	ctx := context.Background()
+	ms.InitWithEnv(ctx, "", &env)
+	ms.InitWithEnv(ctx, "", &enrichEnv)
+	ms.InitWithEnv(ctx, "", &discoveryEnv)
+	logger.Get(ctx).Info("Starting parking-offstreet-sfhera transformer...")
 
-	return p, nil
+	defer tel.FlushOnPanic()
+
+	b := bdplib.FromEnv(env.BdpEnv)
+
+	ms.FailOnError(ctx, syncDataTypes(b), "failed to sync data types")
+
+	ms.FailOnError(ctx, startEnrichment(ctx, env.Env), "failed to start the enrichment table")
+	defer stopEnrichment()
+	ms.FailOnError(ctx, startDiscovery(ctx, env.Env), "failed to start the discovery reporter")
+
+	// rest-push stores the provider's JSON body base64-encoded as a string.
+	listener := tr.NewTr[string](ctx, env.Env)
+	err := listener.Start(ctx, tr.RawBase64JsonMiddleware(TransformWithBdp(b)))
+	ms.FailOnError(ctx, err, "error while listening to queue")
 }
 
-type raw struct {
-	Provider  string
-	Timestamp time.Time
-	Rawdata   string
-	ID        string
-}
-type incoming struct {
-	Id         string
-	Db         string
-	Collection string
+func syncDataTypes(b bdplib.Bdp) error {
+	return b.SyncDataTypes([]bdplib.DataType{dtFree, dtOccupied, dtEnter, dtExit})
 }
 
-func getMongo(m incoming) (*raw, error) {
-	c, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(os.Getenv("MONGO_URI")))
-	if err != nil {
-		return nil, err
+func TransformWithBdp(b bdplib.Bdp) tr.Handler[payload] {
+	return func(ctx context.Context, r *rdb.Raw[payload]) error {
+		return Transform(ctx, b, r)
 	}
-	defer c.Disconnect(context.TODO())
-	id, err := primitive.ObjectIDFromHex(m.Id)
-	if err != nil {
-		return nil, err
+}
+
+// scode is the station code, and the key of the station's enrichment and
+// discovery records.
+func scode(p payload) string {
+	return fmt.Sprintf("parking-bz:%s:%s", p.Uid, p.Floor)
+}
+
+// Unparsable numbers become zero, as they always have: a level with a garbled
+// field is still published.
+func buildStation(origin string, p payload) (bdplib.Station, int) {
+	lat, _ := strconv.ParseFloat(p.Lat, 64)
+	lon, _ := strconv.ParseFloat(p.Long, 64)
+	s := bdplib.CreateStation(scode(p), p.Park, ParkingStation, lat, lon, origin)
+
+	tot, _ := strconv.Atoi(p.Tot)
+	floor, _ := strconv.Atoi(p.Floor)
+	s.MetaData = map[string]any{
+		"floor":        floor,
+		"capacity":     tot,
+		"municipality": municipality,
 	}
-	r := &raw{}
-	if err := c.Database(m.Db).Collection(m.Collection).FindOne(context.TODO(), bson.M{"_id": id}).Decode(r); err != nil {
-		return nil, err
+	return s, tot
+}
+
+// Transform maps one parking level, which is one station per message.
+func Transform(ctx context.Context, b bdplib.Bdp, r *rdb.Raw[payload]) error {
+	log := logger.Get(ctx)
+	p := r.Rawdata
+
+	s, tot := buildStation(b.GetOrigin(), p)
+	code := s.Id
+
+	entry := discoveryEntry(s, map[string]any{
+		"capacity": s.MetaData["capacity"],
+		"floor":    s.MetaData["floor"],
+		"uid":      p.Uid,
+	})
+	defer reportDiscovery(ctx)
+
+	if hasRecord(code) {
+		entry.Status = discovery.StatusPublished
+	} else {
+		entry.Reason = "no-record"
+		if enrichEnv.REFTABLE_GATE {
+			log.Warn("withholding station without enrichment record", "scode", code)
+			entry.Status = discovery.StatusWithheld
+			observe(code, entry)
+			return nil
+		}
+		entry.Status = discovery.StatusPublished
+		log.Debug("publishing station without enrichment record", "scode", code)
 	}
-	return r, nil
+	observe(code, entry)
+
+	enrichStation(code, &s)
+	if err := b.SyncStations(ParkingStation, []bdplib.Station{s}, true, false); err != nil {
+		return fmt.Errorf("failed to sync stations: %w", err)
+	}
+
+	in, _ := strconv.Atoi(p.In)
+	out, _ := strconv.Atoi(p.Out)
+	ts := r.Timestamp.UnixMilli()
+
+	dm := b.CreateDataMap()
+	dm.AddRecord(code, dtFree.Name, bdplib.CreateRecord(ts, p.Lots, Period))
+	dm.AddRecord(code, dtOccupied.Name, bdplib.CreateRecord(ts, tot-p.Lots, Period))
+	dm.AddRecord(code, dtEnter.Name, bdplib.CreateRecord(ts, in, Period))
+	dm.AddRecord(code, dtExit.Name, bdplib.CreateRecord(ts, out, Period))
+
+	if err := b.PushData(ParkingStation, dm); err != nil {
+		return fmt.Errorf("failed to push data: %w", err)
+	}
+	return nil
 }

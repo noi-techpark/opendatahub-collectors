@@ -36,6 +36,13 @@ env:
   REFTABLE_KEY: key
   REFTABLE_MQ_QUEUE: tr-parking-offstreet-mybestparking-enrichment
   REFTABLE_MQ_KEY: skidata.parking-offstreet-enrichment
+  # true: a facility without a complete set of records is withheld; false: published unenriched.
+  REFTABLE_GATE: "true"
+
+  # Every station seen is reported here with what was done with it.
+  DISCOVERY_PROVIDER: skidata/parking-offstreet-discovery
+  DISCOVERY_GONE_AFTER: "0"
+  RAW_WRITER_URL: http://raw-writer-2.core.svc.cluster.local
 
   
   SERVICE_NAME: tr-parking-offstreet-mybestparking

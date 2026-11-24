@@ -43,6 +43,7 @@ func TransformWithBdp(bdp bdplib.Bdp) tr.Handler[FacilityData] {
 
 func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[FacilityData]) error {
 	log := logger.Get(ctx)
+	defer flushDiscovery(ctx)
 
 	var parentStations []bdplib.Station
 	// save stations by stationCode
@@ -55,7 +56,9 @@ func Transform(ctx context.Context, bdp bdplib.Bdp, payload *rdb.Raw[FacilityDat
 
 	for _, facility := range payload.Rawdata {
 		facilityID := strconv.Itoa(facility.GetID())
-		if missing := unknownStations(facility); len(missing) > 0 {
+		missing := unknownStations(facility)
+		observeFacility(facility, facilityID, missing)
+		if gated() && len(missing) > 0 {
 			log.Error("skipping facility, stations without enrichment record",
 				"facility_id", facilityID, "missing", missing)
 			continue
@@ -224,6 +227,63 @@ func carparkProviderID(facilityID string, parkNo int) string {
 	return facilityID + "_" + strconv.Itoa(parkNo)
 }
 
+// observeFacility reports a facility and its carparks. Behind the gate a
+// facility is published whole or not at all, so one carpark without a record
+// withholds every station of it.
+func observeFacility(facility Facility, facilityID string, missing []string) {
+	incomplete := gated() && len(missing) > 0
+	reason := func(code string) string {
+		if slices.Contains(missing, code) {
+			return "no-record"
+		}
+		return "parent-incomplete"
+	}
+
+	parentCode := stationCode(facilityID)
+	data := capacityFacts(facility.FacilityDetails)
+	for k, v := range map[string]string{
+		"description": facility.Description,
+		"address":     facility.Address,
+		"city":        facility.City,
+	} {
+		if v != "" {
+			data[k] = v
+		}
+	}
+	observer.Observe(parentCode, entry(hasRecord(parentCode), incomplete, reason(parentCode), parentCode, "", data))
+
+	byPark := map[int][]FreePlace{}
+	for _, d := range facility.FacilityDetails {
+		byPark[d.ParkNo] = append(byPark[d.ParkNo], d)
+	}
+	for parkNo, details := range byPark {
+		code := stationCode(carparkProviderID(facilityID, parkNo))
+		observer.Observe(code, entry(hasRecord(code), incomplete, reason(code), code, parentCode, capacityFacts(details)))
+	}
+}
+
+// capacityFacts lists the capacity the provider states per counting category.
+// A capacity is a stable fact; the levels and free places are measurements and
+// would rewrite the discovery document on every poll.
+func capacityFacts(details []FreePlace) map[string]any {
+	sums := map[string]int{}
+	for _, d := range details {
+		switch d.CountingCategoryNo {
+		case 1:
+			sums["capacity_"+shortStay] += d.Capacity
+		case 2:
+			sums["capacity_"+subscribers] += d.Capacity
+		case 3:
+			sums["capacity"] += d.Capacity
+		}
+	}
+	data := make(map[string]any, len(sums)+3)
+	for k, v := range sums {
+		data[k] = v
+	}
+	return data
+}
+
 // unknownStations lists the stations of a facility the enrichment table does not
 // describe. A facility is published whole or not at all: its totals are summed
 // over its carparks.
@@ -244,6 +304,7 @@ func unknownStations(facility Facility) []string {
 func main() {
 	ms.InitWithEnv(context.Background(), "", &env)
 	ms.InitWithEnv(context.Background(), "", &enrichEnv)
+	ms.InitWithEnv(context.Background(), "", &discoveryEnv)
 	slog.Info("Starting data transformer...")
 
 	defer tel.FlushOnPanic()
@@ -262,6 +323,9 @@ func main() {
 	err = startEnrichment(context.Background(), env)
 	ms.FailOnError(context.Background(), err, "failed to start the enrichment table")
 	defer stopEnrichment()
+
+	err = startDiscovery(context.Background(), env)
+	ms.FailOnError(context.Background(), err, "failed to start the discovery reporter")
 
 	SyncDataTypes(b)
 

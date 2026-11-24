@@ -1,0 +1,21 @@
+{
+  "a5a6294b-36b5-4d57-851d-c66e90024fe5": {
+    "gps": {
+      "lat": 46.6818,
+      "lon": 11.8225
+    },
+    "name": "P1 Passo delle Erbe",
+    "names": {
+      "de": "Parkplatz Würzjoch",
+      "en": "Passo delle Erbe car park",
+      "it": "Parcheggio Passo delle Erbe",
+      "lad": "Test lad P1"
+    },
+    "netex": {
+      "charging": false,
+      "layout": "open",
+      "type": "urbanParking"
+    },
+    "standard_name": "Parcheggio Passo delle Erbe"
+  }
+}
