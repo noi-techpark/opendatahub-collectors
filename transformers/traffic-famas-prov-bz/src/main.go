@@ -167,18 +167,18 @@ func addTrafficMeasurements(dm bdplib.DataMap, stationCode string, records []Agg
 
 		addRecord(dm, stationCode, trafficDataTypes[idxTotalTransits], ts, rec.TotaleVeicoli)
 
-		if rec.TotaliPerClasseVeicolare == nil {
-			continue
-		}
-
+		counts := make([]float64, idxAvgSpeed)
 		for class, count := range rec.TotaliPerClasseVeicolare {
 			idx, err := strconv.Atoi(class)
-			if err != nil || idx < 0 || idx >= len(trafficDataTypes) {
+			if err != nil || idx <= idxTotalTransits || idx >= idxAvgSpeed {
 				slog.Warn("skipping unknown vehicle class", "station", stationCode, "class", class)
 				continue
 			}
-			count := count
-			addRecord(dm, stationCode, trafficDataTypes[idx], ts, &count)
+			counts[idx] = count
+		}
+		// Vehicle classes missing from the record are reported as 0.
+		for idx := idxTotalTransits + 1; idx < idxAvgSpeed; idx++ {
+			addRecord(dm, stationCode, trafficDataTypes[idx], ts, &counts[idx])
 		}
 
 		addRecord(dm, stationCode, trafficDataTypes[idxAvgSpeed], ts, rec.MediaArmonicaVelocita)
