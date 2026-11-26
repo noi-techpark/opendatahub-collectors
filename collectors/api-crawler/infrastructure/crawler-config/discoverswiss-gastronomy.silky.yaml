@@ -1,0 +1,43 @@
+# SPDX-FileCopyrightText: 2026 NOI Techpark <digital@noi.bz.it>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+# 12233 food establishments are about 10 KB each, so one language is ~118 MB.
+# MongoDB stores each raw payload as one document, capped at 16 MB, so stream
+# publishes one gastronomy (one language) per message. Disappeared items are
+# deactivated later by sync time, not by comparing one full list.
+# The subscription key is expanded from DISCOVERSWISS_SUBSCRIPTION_KEY at load
+# time. The deploy workflow overwrites this header from the GitHub secret.
+# DiscoverSwiss test Info API, as specified for this import:
+# https://api.discover.swiss/test/info/v2/foodEstablishments?project=noi-web
+rootContext: []
+stream: true
+
+headers:
+  Accept: application/json
+  Ocp-Apim-Subscription-Key: ${DISCOVERSWISS_SUBSCRIPTION_KEY}
+
+steps:
+  - type: forValues
+    values: ["it", "de", "en", "fr"]
+    as: language
+    steps:
+      - type: request
+        name: gastronomies
+        request:
+          url: https://api.discover.swiss/test/info/v2/foodEstablishments?project=noi-web&top=-1
+          method: GET
+          headers:
+            Accept-Language: "{{ .language }}"
+          pagination:
+            nextPageUrlSelector: body:"https://api.discover.swiss/test/info/v2/foodEstablishments?project=noi-web&top=-1&continuationToken=" + (.nextPageToken | tostring | gsub("#"; "%23") | gsub("\\+"; "%2B"))
+            stopOn:
+              - type: responseBody
+                expression: ".hasNextPage == false"
+        # DiscoverSwiss does not say which language a document is in.
+        # An empty project omits data instead of returning [].
+        resultTransformer: |
+          [(.data // [])[] | . + {__api_crawler_lang: $ctx.language}]
+        mergeWithContext:
+          name: root
+          rule: ". += $res"
