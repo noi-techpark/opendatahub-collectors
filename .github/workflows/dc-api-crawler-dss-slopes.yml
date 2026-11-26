@@ -56,16 +56,14 @@ jobs:
           yq -i '.configMap.files["config.yaml"] = load_str("${{ env.HTTP_CONFIG_PATH }}")' ${{ env.VALUES_YAML }}
 
       - name: Deploy on cluster  
-        uses: noi-techpark/github-actions/helm-deploy@v2
+        uses: noi-techpark/github-actions/helm-deploy-scw@v3
         with:
           k8s-name: dc-api-crawler-dss-slopes
           k8s-namespace: collector
           chart-path: helm/generic-collector
           values-file: ${{ env.WORKING_DIRECTORY }}/${{ env.VALUES_YAML }}
-          aws-access-key-id: ${{ secrets[vars.AWS_KEY_ID] }}
-          aws-secret-access-key: ${{ secrets[vars.AWS_KEY_SECRET] }}
-          aws-eks-cluster-name: aws-main-eu-01
-          aws-region: eu-west-1
+          scw-access-key: ${{ secrets.SCW_DEV_ACCESS_KEY_ID }}
+          scw-secret-key: ${{ secrets.SCW_DEV_ACCESS_KEY_SECRET }}
 
   deploy-slopes-prod:
     if: github.ref == 'refs/heads/prod'
