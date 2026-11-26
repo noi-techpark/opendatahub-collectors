@@ -9,6 +9,7 @@ on:
     paths:
       - "transformers/trains-rt-sad/**"
       - ".github/workflows/tr-trains-rt-sad.yml"     
+  workflow_dispatch:
 
 env:
   PROJECT_NAME: tr-trains-rt-sad
