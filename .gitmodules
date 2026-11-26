@@ -1,0 +1,3 @@
+[submodule "transformers/trains-rt-sad/src/testdata/SIRI"]
+	path = transformers/trains-rt-sad/src/testdata/SIRI
+	url = https://github.com/SIRI-CEN/SIRI

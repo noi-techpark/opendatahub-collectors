@@ -10,8 +10,8 @@ services:
       keycloak:
         condition: service_healthy
     build:
-      dockerfile: ../infrastructure/docker/Dockerfile
-      context: . 
+      dockerfile: infrastructure/docker/Dockerfile
+      context: ..
       target: test
     environment:
       APP_LOGLEVEL: "INFO"
