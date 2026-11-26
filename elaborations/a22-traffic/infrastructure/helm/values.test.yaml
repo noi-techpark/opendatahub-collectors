@@ -28,8 +28,8 @@ env:
   NINJA_CLIENT_ID: odh-a22-dataprocessor
   NINJA_SCOPES: openid
 
-  A22DB_HOST: test-pg-misc.co90ybcr8iim.eu-west-1.rds.amazonaws.com
-  A22DB_PORT: 5432
+  A22DB_HOST: 163.172.176.125
+  A22DB_PORT: 3208
   A22DB_NAME: a22db
   A22DB_SSLMODE: require
 
