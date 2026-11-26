@@ -24,6 +24,11 @@ func MapStarRatingToCategory(starRating float64) string {
 	}
 }
 
+// PointWKT builds a WKT point (longitude first), as used for Geo.Geometry
+func PointWKT(lon, lat float64) string {
+	return fmt.Sprintf("POINT (%s %s)", strconv.FormatFloat(lon, 'f', -1, 64), strconv.FormatFloat(lat, 'f', -1, 64))
+}
+
 func MapAdditionalTypeToAccoTypeId(value string) string {
 	if value == "Hotel" || value == "Pension" {
 		return "HotelPension"
@@ -56,21 +61,17 @@ func MapLodgingBusinessToAccommodation(lb odhContentModel.LodgingBusiness) odhCo
 	acco.LicenseInfo.ClosedData = false
 	acco.LicenseInfo.LicenseHolder = "www.discover.swiss"
 
-	acco.GpsInfo = []struct {
-		Gpstype               string  `json:"Gpstype"`
-		Latitude              float64 `json:"Latitude"`
-		Longitude             float64 `json:"Longitude"`
-		Altitude              float64 `json:"Altitude"`
-		AltitudeUnitofMeasure string  `json:"AltitudeUnitofMeasure"`
-	}{
-		{
-			Gpstype:               "position",
-			Latitude:              lb.Geo.Latitude,
-			Longitude:             lb.Geo.Longitude,
-			Altitude:              lb.Geo.Elevation,
-			AltitudeUnitofMeasure: "m",
-		},
+	position := odhContentModel.GpsInfo{
+		Gpstype:               "position",
+		Latitude:              lb.Geo.Latitude,
+		Longitude:             lb.Geo.Longitude,
+		Altitude:              lb.Geo.Elevation,
+		AltitudeUnitofMeasure: "m",
+		Geometry:              PointWKT(lb.Geo.Longitude, lb.Geo.Latitude),
+		Default:               true,
 	}
+	acco.GpsInfo = []odhContentModel.GpsInfo{position}
+	acco.Geo = map[string]odhContentModel.GpsInfo{"position": position}
 
 	//apparently the publishedOn does not reflects the provider
 	// publishedOn := strings.Replace(lb.DataGovernance.Provider.Link[0].Url, "https://www.", "", 1)
@@ -147,6 +148,9 @@ func MapLodgingBusinessToAccommodation(lb odhContentModel.LodgingBusiness) odhCo
 	acco.AccoTypeId = MapAdditionalTypeToAccoTypeId(lb.AdditionalType)
 
 	acco.AccoCategoryId = MapStarRatingToCategory(lb.StarRating.RatingValue)
+
+	// Type and categorization are also assigned as tags
+	acco.TagIds = []string{acco.AccoTypeId, acco.AccoCategoryId}
 
 	return acco
 }

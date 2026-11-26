@@ -23,13 +23,12 @@ type Accommodation struct {
 		LanguageIt AccoDetailLanguage `json:"it"`
 	} `json:"AccoDetail"`
 
-	GpsInfo []struct {
-		Gpstype               string  `json:"Gpstype"`
-		Latitude              float64 `json:"Latitude"`
-		Longitude             float64 `json:"Longitude"`
-		Altitude              float64 `json:"Altitude"`
-		AltitudeUnitofMeasure string  `json:"AltitudeUnitofMeasure"`
-	} `json:"GpsInfo"`
+	GpsInfo []GpsInfo `json:"GpsInfo"`
+
+	// Geo is not (yet) supported by the content api for accommodations, it is ignored there
+	Geo map[string]GpsInfo `json:"Geo,omitempty"`
+
+	TagIds []string `json:"TagIds,omitempty"`
 
 	PublishedOn []string `json:"PublishedOn"`
 
@@ -64,6 +63,16 @@ type Accommodation struct {
 	} `json:"LocationInfo"`
 
 	ImageGallery []ImageGalleryItem `json:"ImageGallery"`
+}
+
+type GpsInfo struct {
+	Gpstype               string  `json:"Gpstype"`
+	Latitude              float64 `json:"Latitude"`
+	Longitude             float64 `json:"Longitude"`
+	Altitude              float64 `json:"Altitude"`
+	AltitudeUnitofMeasure string  `json:"AltitudeUnitofMeasure"`
+	Geometry              string  `json:"Geometry,omitempty"`
+	Default               bool    `json:"Default"`
 }
 
 type ImageGalleryItem struct {
