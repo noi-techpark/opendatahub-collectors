@@ -1,0 +1,14 @@
+[
+  {"id": "gastronomy", "name-de": "Gastronomie", "name-it": "Gastronomia", "name-en": "Gastronomy", "types": ["poi"]},
+  {"id": "Restaurant", "name-de": "Restaurant", "name-it": "Ristorante", "name-en": "Restaurant", "types": ["poi", "gastronomy"]},
+  {"id": "CafeOrCoffeeShop", "name-de": "Café", "name-it": "Caffè", "name-en": "Café", "types": ["poi", "gastronomy"]},
+  {"id": "BarOrPub", "name-de": "Bar", "name-it": "Bar", "name-en": "Bar", "types": ["poi", "gastronomy"]},
+  {"id": "MountainRestaurant", "name-de": "Bergrestaurant", "name-it": "Ristorante di montagna", "name-en": "Mountain restaurant", "types": ["poi", "gastronomy"]},
+  {"id": "Imbiss", "name-de": "Imbiss", "name-it": "Chiosco", "name-en": "Snack bar", "types": ["poi", "gastronomy"]},
+  {"id": "Winery", "name-de": "Weingut", "name-it": "Cantina", "name-en": "Winery", "types": ["poi", "gastronomy"]},
+  {"id": "FastFoodRestaurant", "name-de": "Schnellrestaurant", "name-it": "Fast food", "name-en": "Fast food", "types": ["poi", "gastronomy"]},
+  {"id": "Bakery", "name-de": "Bäckerei", "name-it": "Panetteria", "name-en": "Bakery", "types": ["poi", "gastronomy"]},
+  {"id": "Brewery", "name-de": "Brauerei", "name-it": "Birrificio", "name-en": "Brewery", "types": ["poi", "gastronomy"]},
+  {"id": "sui_05", "name-de": "Essen", "name-it": "Cibo", "name-en": "Food", "types": ["poi", "gastronomy"]},
+  {"id": "sui_0502", "name-de": "Essen", "name-it": "Cibo", "name-en": "Food", "types": ["poi", "gastronomy"]}
+]
